@@ -1,0 +1,35 @@
+This directory contains patches for embedded targets that can be applied to vanilla fpc-trunk
+
+to apply do the following:
+copy the patchfile you want to apply in your directory where fpc-trunk resides, then run patch or use your prefered tool to apply the patchfile
+
+Example:
+
+cd <you-fpc-trunk-directory>
+patch -p1 <fpc-trunk-stm32l4.patch
+
+Now rebuild fpc, have fun!
+
+To make your experience perfect, edit your fpc.cfg file, change the following lines:
+
+# searchpath for units and other system dependent things
+-Fu/usr/local/lib/fpc/$fpcversion/units/$fpctarget
+-Fu/usr/local/lib/fpc/$fpcversion/units/$fpctarget/*
+-Fu/usr/local/lib/fpc/$fpcversion/units/$fpctarget/rtl
+
+to
+
+# searchpath for units and other system dependent things
+#ifdef embedded
+-Fu/usr/local/lib/fpc/$fpcversion/units/$fpctarget/$fpcsubarch
+-Fu/usr/local/lib/fpc/$fpcversion/units/$fpctarget/$fpcsubarch/*
+-Fu/usr/local/lib/fpc/$fpcversion/units/$fpctarget/$fpcsubarch/rtl
+#else
+-Fu/usr/local/lib/fpc/$fpcversion/units/$fpctarget
+-Fu/usr/local/lib/fpc/$fpcversion/units/$fpctarget/*
+-Fu/usr/local/lib/fpc/$fpcversion/units/$fpctarget/rtl
+#endif
+
+This allows you to use several subarchs (armv6, armv7 and armv7em) at the same time.
+
+

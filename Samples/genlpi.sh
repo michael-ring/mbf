@@ -53,6 +53,13 @@ case $BOARD_OR_CPU in
                  ARCHSVD=Cortex-M4.svd
                  DEVICESVD=STM32F411.svd
                  ;;
+  nucleol432kc)  ARCH=arm
+                 BINUTILS_PATH=/usr/local/bin/arm-none-eabi-
+                 SUBARCH=armv7em
+                 DEVICE=stm32l432kc
+                 ARCHSVD=Cortex-M4.svd
+                 DEVICESVD=STM32L4x2.svd
+                 ;;
   pic32mx150f128b) ARCH=mipsel
                  BINUTILS_PATH=/usr/local/bin/mips-sde-elf-
                  SUBARCH=mips32r2
