@@ -11,7 +11,7 @@ patch -p1 <fpc-trunk-stm32l4.patch
 Now rebuild fpc, have fun!
 
 To make your experience perfect, edit your fpc.cfg file, change the following lines:
-
+```shell
 # searchpath for units and other system dependent things
 -Fu/usr/local/lib/fpc/$fpcversion/units/$fpctarget
 -Fu/usr/local/lib/fpc/$fpcversion/units/$fpctarget/*
@@ -29,7 +29,7 @@ to
 -Fu/usr/local/lib/fpc/$fpcversion/units/$fpctarget/*
 -Fu/usr/local/lib/fpc/$fpcversion/units/$fpctarget/rtl
 #endif
-
+```
 This allows you to use several subarchs (armv6, armv7 and armv7em) at the same time.
 
 
