@@ -10,7 +10,7 @@ You can also directly open the available projects in Lazarus.
 Please note that you will need to first compile and install trunk version of fpc to be able to use the embedded target and mbf
 
 Here's how to build fpc on Unix-ish systems:
-
+```shell
 CROSSOPT="-O1 -gw2 -dDEBUG"
 SUBARCH=armv6m
 make clean buildbase CROSSINSTALL=1 OS_TARGET=embedded CPU_TARGET=arm SUBARCH=$SUBARCH CROSSOPT="$CROSSOPT" BINUTILSPREFIX=arm-none-eabi- || exit 1
@@ -32,3 +32,4 @@ SUBARCH=mips32r2
 make clean buildbase  CROSSINSTALL=1 OS_TARGET=embedded CPU_TARGET=mipsel SUBARCH=$SUBARCH CROSSOPT="$CROSSOPT" BINUTILSPREFIX=mips-sde-elf- || exit 1
 make      installbase CROSSINSTALL=1 OS_TARGET=embedded CPU_TARGET=mipsel SUBARCH=$SUBARCH CROSSOPT="$CROSSOPT" BINUTILSPREFIX=mips-sde-elf- INSTALL_UNITDIR=/usr/local/lib/fpc/3.1.1/units/mipsel-embedded/$SUBARCH/rtl || exit 1
 fi
+```
