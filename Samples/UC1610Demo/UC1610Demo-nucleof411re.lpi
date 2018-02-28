@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CONFIG>
+  <ProjectOptions>
+    <Version Value="11"/>
+    <General>
+      <Flags>
+        <LRSInOutputDirectory Value="False"/>
+      </Flags>
+      <MainUnit Value="0"/>
+      <UseAppBundle Value="False"/>
+    </General>
+    <BuildModes Count="1">
+      <Item1 Name="default" Default="True"/>
+    </BuildModes>
+    <PublishOptions>
+      <Version Value="2"/>
+    </PublishOptions>
+    <RunParams>
+      <FormatVersion Value="2"/>
+      <Modes Count="1">
+        <Mode0 Name="default"/>
+      </Modes>
+    </RunParams>
+    <Units Count="6">
+      <Unit0>
+        <Filename Value="UC1610Demo.lpr"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="ucs1610Demo"/>
+        <TopLine Value="23"/>
+        <CursorPos X="73" Y="44"/>
+        <UsageCount Value="47"/>
+        <Loaded Value="True"/>
+        <LoadedDesigner Value="True"/>
+      </Unit0>
+      <Unit1>
+        <Filename Value="../../Source/MBF.STM32F4.SPI.pas"/>
+        <UnitName Value="mbf.stm32f4.spi"/>
+        <EditorIndex Value="-1"/>
+        <CursorPos X="17" Y="19"/>
+        <UsageCount Value="24"/>
+      </Unit1>
+      <Unit2>
+        <Filename Value="../../Source/MBF.Displays.UC1610.pas"/>
+        <EditorIndex Value="1"/>
+        <TopLine Value="18"/>
+        <CursorPos X="23" Y="620"/>
+        <UsageCount Value="23"/>
+        <Loaded Value="True"/>
+      </Unit2>
+      <Unit3>
+        <Filename Value="../../Source/MBF.Displays.CustomDisplay.pas"/>
+        <IsVisibleTab Value="True"/>
+        <EditorIndex Value="2"/>
+        <CursorPos X="20" Y="16"/>
+        <UsageCount Value="23"/>
+        <Loaded Value="True"/>
+      </Unit3>
+      <Unit4>
+        <Filename Value="../../Source/MBF.STM32F4.GPIO.pas"/>
+        <UnitName Value="mbf.stm32f4.gpio"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="104"/>
+        <UsageCount Value="20"/>
+      </Unit4>
+      <Unit5>
+        <Filename Value="../../Source/MBF.Config.inc"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="32"/>
+        <CursorPos X="3" Y="52"/>
+        <UsageCount Value="11"/>
+      </Unit5>
+    </Units>
+    <JumpHistory Count="28" HistoryIndex="27">
+      <Position1>
+        <Filename Value="../../Source/MBF.Displays.UC1610.pas"/>
+        <Caret Line="99" Column="19" TopLine="96"/>
+      </Position1>
+      <Position2>
+        <Filename Value="../../Source/MBF.Displays.UC1610.pas"/>
+        <Caret Line="95" Column="74" TopLine="67"/>
+      </Position2>
+      <Position3>
+        <Filename Value="../../Source/MBF.Displays.UC1610.pas"/>
+        <Caret Line="458" TopLine="420"/>
+      </Position3>
+      <Position4>
+        <Filename Value="../../Source/MBF.Displays.UC1610.pas"/>
+        <Caret Line="94" Column="7" TopLine="72"/>
+      </Position4>
+      <Position5>
+        <Filename Value="../../Source/MBF.Displays.UC1610.pas"/>
+        <Caret Line="123" Column="19" TopLine="99"/>
+      </Position5>
+      <Position6>
+        <Filename Value="../../Source/MBF.Displays.UC1610.pas"/>
+        <Caret Line="30" Column="25" TopLine="21"/>
+      </Position6>
+      <Position7>
+        <Filename Value="../../Source/MBF.Displays.UC1610.pas"/>
+        <Caret Line="153" Column="19" TopLine="129"/>
+      </Position7>
+      <Position8>
+        <Filename Value="../../Source/MBF.Displays.UC1610.pas"/>
+        <Caret Line="185" Column="19" TopLine="159"/>
+      </Position8>
+      <Position9>
+        <Filename Value="../../Source/MBF.Displays.UC1610.pas"/>
+        <Caret Line="214" Column="7" TopLine="189"/>
+      </Position9>
+      <Position10>
+        <Filename Value="../../Source/MBF.Displays.UC1610.pas"/>
+        <Caret Line="213" Column="19" TopLine="193"/>
+      </Position10>
+      <Position11>
+        <Filename Value="../../Source/MBF.Displays.UC1610.pas"/>
+        <Caret Line="244" Column="7" TopLine="219"/>
+      </Position11>
+      <Position12>
+        <Filename Value="../../Source/MBF.Displays.UC1610.pas"/>
+        <Caret Line="243" Column="19" TopLine="223"/>
+      </Position12>
+      <Position13>
+        <Filename Value="../../Source/MBF.Displays.UC1610.pas"/>
+        <Caret Line="273" Column="19" TopLine="249"/>
+      </Position13>
+      <Position14>
+        <Filename Value="../../Source/MBF.Displays.UC1610.pas"/>
+        <Caret Line="303" Column="19" TopLine="279"/>
+      </Position14>
+      <Position15>
+        <Filename Value="../../Source/MBF.Displays.UC1610.pas"/>
+        <Caret Line="333" Column="19" TopLine="309"/>
+      </Position15>
+      <Position16>
+        <Filename Value="../../Source/MBF.Displays.UC1610.pas"/>
+        <Caret Line="365" Column="7" TopLine="339"/>
+      </Position16>
+      <Position17>
+        <Filename Value="../../Source/MBF.Displays.UC1610.pas"/>
+        <Caret Line="30" Column="25" TopLine="21"/>
+      </Position17>
+      <Position18>
+        <Filename Value="../../Source/MBF.Displays.UC1610.pas"/>
+        <Caret Line="393" Column="19" TopLine="369"/>
+      </Position18>
+      <Position19>
+        <Filename Value="../../Source/MBF.Displays.UC1610.pas"/>
+        <Caret Line="423" Column="19" TopLine="399"/>
+      </Position19>
+      <Position20>
+        <Filename Value="../../Source/MBF.Displays.UC1610.pas"/>
+        <Caret Line="453" Column="19" TopLine="429"/>
+      </Position20>
+      <Position21>
+        <Filename Value="../../Source/MBF.Displays.UC1610.pas"/>
+        <Caret Line="483" Column="19" TopLine="459"/>
+      </Position21>
+      <Position22>
+        <Filename Value="../../Source/MBF.Displays.UC1610.pas"/>
+        <Caret Line="514" Column="7" TopLine="489"/>
+      </Position22>
+      <Position23>
+        <Filename Value="../../Source/MBF.Displays.UC1610.pas"/>
+        <Caret Line="540" Column="5" TopLine="519"/>
+      </Position23>
+      <Position24>
+        <Filename Value="UC1610Demo.lpr"/>
+        <Caret Line="59" Column="20" TopLine="24"/>
+      </Position24>
+      <Position25>
+        <Filename Value="UC1610Demo.lpr"/>
+        <Caret Line="52" Column="20" TopLine="15"/>
+      </Position25>
+      <Position26>
+        <Filename Value="../../Source/MBF.Displays.UC1610.pas"/>
+        <Caret Line="595" Column="36" TopLine="579"/>
+      </Position26>
+      <Position27>
+        <Filename Value="../../Source/MBF.Displays.UC1610.pas"/>
+        <Caret Line="608" Column="43" TopLine="576"/>
+      </Position27>
+      <Position28>
+        <Filename Value="UC1610Demo.lpr"/>
+        <Caret Line="59" Column="15" TopLine="23"/>
+      </Position28>
+    </JumpHistory>
+  </ProjectOptions>
+  <CompilerOptions>
+    <Version Value="11"/>
+    <Target>
+      <Filename Value="UC1610Demo"/>
+    </Target>
+    <SearchPaths>
+      <IncludeFiles Value="../../Source;$(ProjOutDir)"/>
+      <OtherUnitFiles Value="../../Source"/>
+      <UnitOutputDirectory Value="lib/$(TargetCPU)-$(TargetOS)"/>
+    </SearchPaths>
+    <Parsing>
+      <SyntaxOptions>
+        <UseAnsiStrings Value="False"/>
+      </SyntaxOptions>
+    </Parsing>
+    <CodeGeneration>
+      <HeapSize Value="8192"/>
+      <StackSize Value="8192"/>
+      <TargetCPU Value="arm"/>
+      <TargetOS Value="embedded"/>
+    </CodeGeneration>
+    <Linking>
+      <Debugging>
+        <UseLineInfoUnit Value="False"/>
+      </Debugging>
+    </Linking>
+    <Other>
+      <CustomOptions Value="-Cparmv7em
+-XP/usr/local/bin/arm-none-eabi-
+-Wpnucleof411re
+-dnucleof411re"/>
+    </Other>
+  </CompilerOptions>
+</CONFIG>

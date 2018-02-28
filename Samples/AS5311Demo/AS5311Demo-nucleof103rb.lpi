@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CONFIG>
+  <ProjectOptions>
+    <Version Value="11"/>
+    <General>
+      <Flags>
+        <LRSInOutputDirectory Value="False"/>
+      </Flags>
+      <MainUnit Value="0"/>
+    </General>
+    <BuildModes Count="1">
+      <Item1 Name="default" Default="True"/>
+    </BuildModes>
+    <PublishOptions>
+      <Version Value="2"/>
+    </PublishOptions>
+    <RunParams>
+      <FormatVersion Value="2"/>
+      <Modes Count="1">
+        <Mode0 Name="default"/>
+      </Modes>
+    </RunParams>
+    <Units Count="2">
+      <Unit0>
+        <Filename Value="AS5311Demo.lpr"/>
+        <IsPartOfProject Value="True"/>
+        <IsVisibleTab Value="True"/>
+        <TopLine Value="23"/>
+        <CursorPos X="21" Y="24"/>
+        <UsageCount Value="31"/>
+        <Loaded Value="True"/>
+      </Unit0>
+      <Unit1>
+        <Filename Value="../../Source/MBF.STM32F1.GPIO.pas"/>
+        <EditorIndex Value="1"/>
+        <TopLine Value="137"/>
+        <CursorPos Y="23"/>
+        <UsageCount Value="15"/>
+        <Loaded Value="True"/>
+      </Unit1>
+    </Units>
+    <JumpHistory Count="30" HistoryIndex="29">
+      <Position1>
+        <Filename Value="../../Source/MBF.STM32F1.GPIO.pas"/>
+        <Caret Line="250" Column="23" TopLine="228"/>
+      </Position1>
+      <Position2>
+        <Filename Value="../../Source/MBF.STM32F1.GPIO.pas"/>
+        <Caret Line="349" TopLine="334"/>
+      </Position2>
+      <Position3>
+        <Filename Value="../../Source/MBF.STM32F1.GPIO.pas"/>
+        <Caret Line="365" Column="43" TopLine="337"/>
+      </Position3>
+      <Position4>
+        <Filename Value="../../Source/MBF.STM32F1.GPIO.pas"/>
+        <Caret Line="385" Column="32" TopLine="343"/>
+      </Position4>
+      <Position5>
+        <Filename Value="../../Source/MBF.STM32F1.GPIO.pas"/>
+        <Caret Line="384" Column="9" TopLine="350"/>
+      </Position5>
+      <Position6>
+        <Filename Value="../../Source/MBF.STM32F1.GPIO.pas"/>
+        <Caret Line="429" TopLine="386"/>
+      </Position6>
+      <Position7>
+        <Filename Value="../../Source/MBF.STM32F1.GPIO.pas"/>
+        <Caret Line="405" Column="20" TopLine="382"/>
+      </Position7>
+      <Position8>
+        <Filename Value="../../Source/MBF.STM32F1.GPIO.pas"/>
+        <Caret Line="408" Column="60" TopLine="385"/>
+      </Position8>
+      <Position9>
+        <Filename Value="../../Source/MBF.STM32F1.GPIO.pas"/>
+        <Caret Line="450" Column="50" TopLine="418"/>
+      </Position9>
+      <Position10>
+        <Filename Value="../../Source/MBF.STM32F1.GPIO.pas"/>
+        <Caret Line="522" TopLine="477"/>
+      </Position10>
+      <Position11>
+        <Filename Value="../../Source/MBF.STM32F1.GPIO.pas"/>
+        <Caret Line="473" Column="72" TopLine="451"/>
+      </Position11>
+      <Position12>
+        <Filename Value="../../Source/MBF.STM32F1.GPIO.pas"/>
+        <Caret Line="475" Column="70" TopLine="452"/>
+      </Position12>
+      <Position13>
+        <Filename Value="../../Source/MBF.STM32F1.GPIO.pas"/>
+        <Caret Line="508" TopLine="480"/>
+      </Position13>
+      <Position14>
+        <Filename Value="../../Source/MBF.STM32F1.GPIO.pas"/>
+        <Caret Line="529" Column="84" TopLine="496"/>
+      </Position14>
+      <Position15>
+        <Filename Value="../../Source/MBF.STM32F1.GPIO.pas"/>
+        <Caret Line="527" Column="86" TopLine="496"/>
+      </Position15>
+      <Position16>
+        <Filename Value="../../Source/MBF.STM32F1.GPIO.pas"/>
+        <Caret Line="146" Column="50" TopLine="134"/>
+      </Position16>
+      <Position17>
+        <Filename Value="../../Source/MBF.STM32F1.GPIO.pas"/>
+        <Caret Line="560" Column="48" TopLine="515"/>
+      </Position17>
+      <Position18>
+        <Filename Value="../../Source/MBF.STM32F1.GPIO.pas"/>
+        <Caret Line="534" Column="9" TopLine="515"/>
+      </Position18>
+      <Position19>
+        <Filename Value="../../Source/MBF.STM32F1.GPIO.pas"/>
+        <Caret Line="550" Column="84" TopLine="515"/>
+      </Position19>
+      <Position20>
+        <Filename Value="../../Source/MBF.STM32F1.GPIO.pas"/>
+        <Caret Line="555" Column="84" TopLine="515"/>
+      </Position20>
+      <Position21>
+        <Filename Value="../../Source/MBF.STM32F1.GPIO.pas"/>
+        <Caret Line="167" Column="63" TopLine="125"/>
+      </Position21>
+      <Position22>
+        <Filename Value="../../Source/MBF.STM32F1.GPIO.pas"/>
+        <Caret Line="303" Column="16" TopLine="275"/>
+      </Position22>
+      <Position23>
+        <Filename Value="../../Source/MBF.STM32F1.GPIO.pas"/>
+        <Caret Line="205" Column="52" TopLine="172"/>
+      </Position23>
+      <Position24>
+        <Filename Value="../../Source/MBF.STM32F1.GPIO.pas"/>
+        <Caret Line="555" Column="5" TopLine="510"/>
+      </Position24>
+      <Position25>
+        <Filename Value="../../Source/MBF.STM32F1.GPIO.pas"/>
+        <Caret Line="181" TopLine="177"/>
+      </Position25>
+      <Position26>
+        <Filename Value="AS5311Demo.lpr"/>
+        <Caret Line="62" TopLine="23"/>
+      </Position26>
+      <Position27>
+        <Filename Value="AS5311Demo.lpr"/>
+        <Caret Line="24" Column="65" TopLine="4"/>
+      </Position27>
+      <Position28>
+        <Filename Value="AS5311Demo.lpr"/>
+        <Caret Line="48" Column="16" TopLine="23"/>
+      </Position28>
+      <Position29>
+        <Filename Value="AS5311Demo.lpr"/>
+        <Caret Line="42" Column="15" TopLine="22"/>
+      </Position29>
+      <Position30>
+        <Filename Value="AS5311Demo.lpr"/>
+        <Caret Line="45" Column="7" TopLine="23"/>
+      </Position30>
+    </JumpHistory>
+  </ProjectOptions>
+  <CompilerOptions>
+    <Version Value="11"/>
+    <Target>
+      <Filename Value="AS5311Demo"/>
+    </Target>
+    <SearchPaths>
+      <IncludeFiles Value="../../Source;$(ProjOutDir)"/>
+      <OtherUnitFiles Value="../../Source"/>
+      <UnitOutputDirectory Value="lib/$(TargetCPU)-$(TargetOS)"/>
+    </SearchPaths>
+    <Parsing>
+      <SyntaxOptions>
+        <UseAnsiStrings Value="False"/>
+      </SyntaxOptions>
+    </Parsing>
+    <CodeGeneration>
+      <HeapSize Value="8192"/>
+      <StackSize Value="8192"/>
+      <TargetCPU Value="arm"/>
+      <TargetOS Value="embedded"/>
+    </CodeGeneration>
+    <Linking>
+      <Debugging>
+        <UseLineInfoUnit Value="False"/>
+      </Debugging>
+    </Linking>
+    <Other>
+      <CustomOptions Value="-Cparmv7m
+         -XP/usr/local/bin/arm-none-eabi-
+         -Wpnucleof103rb
+         -dnucleof103rb"/>
+    </Other>
+  </CompilerOptions>
+</CONFIG>
