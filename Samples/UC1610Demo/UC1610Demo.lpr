@@ -1,5 +1,5 @@
 program ucs1610Demo;
-{
+(*
   This file is part of Pascal Microcontroller Board Framework (MBF)
   Copyright (c) 2015 -  Michael Ring
   based on Pascal eXtended Library (PXL)
@@ -11,10 +11,11 @@ program ucs1610Demo;
   This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied
   warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the FPC modified GNU Library General Public
   License for more details.
-
+*)
 {$INCLUDE MBF.Config.inc}
 
 uses
+  HeapMgr,
   MBF.__CONTROLLERTYPE__.SystemCore,
   MBF.__CONTROLLERTYPE__.GPIO,
   MBF.__CONTROLLERTYPE__.SPI,

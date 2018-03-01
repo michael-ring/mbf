@@ -153,8 +153,6 @@ end;
 
 procedure TKinetisSystemCore.Initialize;
 begin
-  FCPUFrequency := GetSystemClockFrequency;
-  FTimerNormalize := 1;
   ConfigureSystem;
   ConfigureTimer;
 end;
@@ -168,16 +166,15 @@ procedure TKinetisSystemCore.ConfigureSystem;
 begin
 end;
 
-
 function TKinetisSystemCore.GetCPUFrequency: Cardinal;
 begin
-  Result := FCPUFrequency;
+  //TODO, for now always take Bootup Frequency
+  Result := $1400000;
 end;
 
 procedure TKinetisSystemCore.SetCPUFrequency(const Value: Cardinal);
 begin
   //TODO, for now always take Bootup Frequency
-  FCPUFrequency := $1400000;
   ConfigureTimer;
 end;
 

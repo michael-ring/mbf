@@ -22,8 +22,8 @@ uses
 
 type
   TSPIMOSIPins = (
-  {$if defined(has_SPI4) and defined(has_gpioa) }   PA1_SPI4 = ALT5 or TNativePin.PA1  {$endif}
-  {$if defined(has_SPI1) and defined(has_gpioa) },  PA7_SPI1 = ALT5 or TNativePin.PA7  {$endif}
+  {$if defined(has_SPI1) and defined(has_gpioa) }   PA7_SPI1 = ALT5 or TNativePin.PA7  {$endif}
+  {$if defined(has_SPI4) and defined(has_gpioa) },  PA1_SPI4 = ALT5 or TNativePin.PA1  {$endif}
   {$if defined(has_arduinopins)                 },  D11_SPI  = ALT5 or TNativePin.PA7  {$endif}
   {$if defined(has_SPI1) and defined(has_gpiob) },  PB5_SPI1 = ALT5 or TNativePin.PB5  {$endif}
   {$if defined(has_SPI2) and defined(has_gpiob) }, PB15_SPI2 = ALT5 or TNativePin.PB15 {$endif}

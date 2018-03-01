@@ -18,7 +18,6 @@ interface
 {$INCLUDE MBF.Config.inc}
 
 uses
-  PXL.TypeDef,
   MBF.Kinetis.GPIO;
 
 {$REGION PinDefinitions}
@@ -352,7 +351,7 @@ begin
 
   //Take the NSS Pin Low in software Mode (start transfer)
     if SoftNSSPin <> TNativePin.None then
-      GPIO.PinValue[SoftNSSPin] := TPinValue.Low;
+      GPIO.PinLevel[SoftNSSPin] := TPinLevel.Low;
 
   self.PUSHR := (1 shl 16) or Value;
 
@@ -362,7 +361,7 @@ begin
 
   // Take NSS High again in Software Mode (end of Transfer)
     if SoftNSSPin <> TNativePin.None then
-      GPIO.PinValue[SoftNSSPin] := TPinValue.High;
+      GPIO.PinLevel[SoftNSSPin] := TPinLevel.High;
   Result :=  self.POPR;
 end;
 
@@ -385,7 +384,7 @@ begin
   while ((ReadBuffer <> nil) and (ReadBytes < BufferSize)) or ((WriteBuffer <> nil) and (WriteBytes < BufferSize)) do
   begin
     if SoftNSSPin <> TNativePin.None then
-      GPIO.PinValue[SoftNSSPin] := TPinValue.Low;
+      GPIO.PinLevel[SoftNSSPin] := TPinLevel.Low;
     if WriteBuffer <> nil then
     begin
       if ((self.CTAR[0] shr 27) and %1111) > 8 then
@@ -427,7 +426,7 @@ begin
       end;
     end;
     if SoftNSSPin <> TNativePin.None then
-      GPIO.PinValue[SoftNSSPin] := TPinValue.High;
+      GPIO.PinLevel[SoftNSSPin] := TPinLevel.High;
   end;
 
   if WriteBytes > ReadBytes then

@@ -21,115 +21,115 @@ uses
 
 procedure command(i : byte);
 begin
-  GPIO.SetPinValueHigh(TArduinoPin.D5); //RD = 1;
-  GPIO.SetPinValueLow(TArduinoPin.D3); //D_C = 0; 
+  GPIO.SetPinLevelHigh(TArduinoPin.D5); //RD = 1;
+  GPIO.SetPinLevelLow(TArduinoPin.D3); //D_C = 0; 
 
-  GPIO.SetPinValueLow(TArduinoPin.D10); //C_S = 0;
-  GPIO.SetPinValueLow(TArduinoPin.D4); //WR = 0;
+  GPIO.SetPinLevelLow(TArduinoPin.D10); //C_S = 0;
+  GPIO.SetPinLevelLow(TArduinoPin.D4); //WR = 0;
 
   if i and %00010000 <> 0 then
-    GPIO.SetPinValueLow(TArduinoPin.D6)
+    GPIO.SetPinLevelLow(TArduinoPin.D6)
   else
-    GPIO.SetPinValueLow(TArduinoPin.D6);
+    GPIO.SetPinLevelLow(TArduinoPin.D6);
 
   if i and %00100000 <> 0 then
-    GPIO.SetPinValueLow(TArduinoPin.D7)
+    GPIO.SetPinLevelLow(TArduinoPin.D7)
   else
-    GPIO.SetPinValueLow(TArduinoPin.D7);
+    GPIO.SetPinLevelLow(TArduinoPin.D7);
 
   if i and %01000000 <> 0 then
-    GPIO.SetPinValueLow(TArduinoPin.D8)
+    GPIO.SetPinLevelLow(TArduinoPin.D8)
   else
-    GPIO.SetPinValueLow(TArduinoPin.D8);
+    GPIO.SetPinLevelLow(TArduinoPin.D8);
 
   if i and %10000000 <> 0 then
-    GPIO.SetPinValueLow(TArduinoPin.D9)
+    GPIO.SetPinLevelLow(TArduinoPin.D9)
   else
-    GPIO.SetPinValueLow(TArduinoPin.D9);
+    GPIO.SetPinLevelLow(TArduinoPin.D9);
   Systemcore.BusyWait(1);
-  GPIO.SetPinValueHigh(TArduinoPin.D4); //WR = 1;
+  GPIO.SetPinLevelHigh(TArduinoPin.D4); //WR = 1;
   Systemcore.BusyWait(1);
-  GPIO.SetPinValueLow(TArduinoPin.D4); //WR = 0;
+  GPIO.SetPinLevelLow(TArduinoPin.D4); //WR = 0;
 
   if i and %0001 <> 0 then
-    GPIO.SetPinValueLow(TArduinoPin.D6)
+    GPIO.SetPinLevelLow(TArduinoPin.D6)
   else
-    GPIO.SetPinValueLow(TArduinoPin.D6);
+    GPIO.SetPinLevelLow(TArduinoPin.D6);
 
   if i and %0010 <> 0 then
-    GPIO.SetPinValueLow(TArduinoPin.D7)
+    GPIO.SetPinLevelLow(TArduinoPin.D7)
   else
-    GPIO.SetPinValueLow(TArduinoPin.D7);
+    GPIO.SetPinLevelLow(TArduinoPin.D7);
 
   if i and %0100 <> 0 then
-    GPIO.SetPinValueLow(TArduinoPin.D8)
+    GPIO.SetPinLevelLow(TArduinoPin.D8)
   else
-    GPIO.SetPinValueLow(TArduinoPin.D8);
+    GPIO.SetPinLevelLow(TArduinoPin.D8);
 
   if i and %1000 <> 0 then
-    GPIO.SetPinValueLow(TArduinoPin.D9)
+    GPIO.SetPinLevelLow(TArduinoPin.D9)
   else
-    GPIO.SetPinValueLow(TArduinoPin.D9);
+    GPIO.SetPinLevelLow(TArduinoPin.D9);
 
   Systemcore.BusyWait(1);
-  GPIO.SetPinValueHigh(TArduinoPin.D4); //WR = 1;
+  GPIO.SetPinLevelHigh(TArduinoPin.D4); //WR = 1;
   Systemcore.BusyWait(1);
-  GPIO.SetPinValueHigh(TArduinoPin.D10) //C_S = 1;
+  GPIO.SetPinLevelHigh(TArduinoPin.D10) //C_S = 1;
 end;
 
 procedure data(i : byte);
 begin
-  GPIO.SetPinValueHigh(TArduinoPin.D5); //RD = 1;
-  GPIO.SetPinValueHigh(TArduinoPin.D3); //D_C = 1;
+  GPIO.SetPinLevelHigh(TArduinoPin.D5); //RD = 1;
+  GPIO.SetPinLevelHigh(TArduinoPin.D3); //D_C = 1;
 
-  GPIO.SetPinValueLow(TArduinoPin.D10); //C_S = 0;
-  GPIO.SetPinValueLow(TArduinoPin.D4); //WR = 0;
+  GPIO.SetPinLevelLow(TArduinoPin.D10); //C_S = 0;
+  GPIO.SetPinLevelLow(TArduinoPin.D4); //WR = 0;
 
   if i and %00010000 <> 0 then
-    GPIO.SetPinValueLow(TArduinoPin.D6)
+    GPIO.SetPinLevelLow(TArduinoPin.D6)
   else
-    GPIO.SetPinValueLow(TArduinoPin.D6);
+    GPIO.SetPinLevelLow(TArduinoPin.D6);
 
   if i and %00100000 <> 0 then
-    GPIO.SetPinValueLow(TArduinoPin.D7)
+    GPIO.SetPinLevelLow(TArduinoPin.D7)
   else
-    GPIO.SetPinValueLow(TArduinoPin.D7);
+    GPIO.SetPinLevelLow(TArduinoPin.D7);
 
   if i and %01000000 <> 0 then
-    GPIO.SetPinValueLow(TArduinoPin.D8)
+    GPIO.SetPinLevelLow(TArduinoPin.D8)
   else
-    GPIO.SetPinValueLow(TArduinoPin.D8);
+    GPIO.SetPinLevelLow(TArduinoPin.D8);
 
   if i and %10000000 <> 0 then
-    GPIO.SetPinValueLow(TArduinoPin.D9)
+    GPIO.SetPinLevelLow(TArduinoPin.D9)
   else
-    GPIO.SetPinValueLow(TArduinoPin.D9);
+    GPIO.SetPinLevelLow(TArduinoPin.D9);
 
-  GPIO.SetPinValueHigh(TArduinoPin.D4); //WR = 1;
-  GPIO.SetPinValueLow(TArduinoPin.D4); //WR = 0;
+  GPIO.SetPinLevelHigh(TArduinoPin.D4); //WR = 1;
+  GPIO.SetPinLevelLow(TArduinoPin.D4); //WR = 0;
 
   if i and %0001 <> 0 then
-    GPIO.SetPinValueLow(TArduinoPin.D6)
+    GPIO.SetPinLevelLow(TArduinoPin.D6)
   else
-    GPIO.SetPinValueLow(TArduinoPin.D6);
+    GPIO.SetPinLevelLow(TArduinoPin.D6);
 
   if i and %0010 <> 0 then
-    GPIO.SetPinValueLow(TArduinoPin.D7)
+    GPIO.SetPinLevelLow(TArduinoPin.D7)
   else
-    GPIO.SetPinValueLow(TArduinoPin.D7);
+    GPIO.SetPinLevelLow(TArduinoPin.D7);
 
   if i and %0100 <> 0 then
-    GPIO.SetPinValueLow(TArduinoPin.D8)
+    GPIO.SetPinLevelLow(TArduinoPin.D8)
   else
-    GPIO.SetPinValueLow(TArduinoPin.D8);
+    GPIO.SetPinLevelLow(TArduinoPin.D8);
 
   if i and %1000 <> 0 then
-    GPIO.SetPinValueLow(TArduinoPin.D9)
+    GPIO.SetPinLevelLow(TArduinoPin.D9)
   else
-    GPIO.SetPinValueLow(TArduinoPin.D9);
+    GPIO.SetPinLevelLow(TArduinoPin.D9);
 
-  GPIO.SetPinValueHigh(TArduinoPin.D4); //WR = 1;
-  GPIO.SetPinValueHigh(TArduinoPin.D10) //C_S = 1;
+  GPIO.SetPinLevelHigh(TArduinoPin.D4); //WR = 1;
+  GPIO.SetPinLevelHigh(TArduinoPin.D10) //C_S = 1;
 end;
 
 var
@@ -167,15 +167,15 @@ begin
   GPIO.PinMode[TArduinoPin.D14] := TPinMode.Output;
 
   //Reset Chip
-  GPIO.SetPinValueHigh(TArduinoPin.D11);
+  GPIO.SetPinLevelHigh(TArduinoPin.D11);
   // Set 4-Bit 8080 Mode
-  GPIO.SetPinValueHigh(TArduinoPin.D12);
-  GPIO.SetPinValueHigh(TArduinoPin.D13);
-  GPIO.SetPinValueHigh(TArduinoPin.D14);
+  GPIO.SetPinLevelHigh(TArduinoPin.D12);
+  GPIO.SetPinLevelHigh(TArduinoPin.D13);
+  GPIO.SetPinLevelHigh(TArduinoPin.D14);
 
   //Reset Chip
-  GPIO.SetPinValueLow(TArduinoPin.D11);
-  GPIO.SetPinValueHigh(TArduinoPin.D11);
+  GPIO.SetPinLevelLow(TArduinoPin.D11);
+  GPIO.SetPinLevelHigh(TArduinoPin.D11);
   SystemCore.Delay(1);
   command($2A); //function set (extended command set)
   command($71); //function selection A

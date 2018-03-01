@@ -46,6 +46,13 @@ case $BOARD_OR_CPU in
                  ARCHSVD=Cortex-M4.svd
                  DEVICESVD=STM32F401.svd
                  ;;
+  stm32f407vg)   ARCH=arm
+                 BINUTILS_PATH=/usr/local/bin/arm-none-eabi-
+                 SUBARCH=armv7em
+                 DEVICE=stm32f407vg
+                 ARCHSVD=Cortex-M4.svd
+                 DEVICESVD=STM32F407.svd
+                 ;;
   nucleof411re)  ARCH=arm
                  BINUTILS_PATH=/usr/local/bin/arm-none-eabi-
                  SUBARCH=armv7em
@@ -59,6 +66,27 @@ case $BOARD_OR_CPU in
                  DEVICE=stm32l432kc
                  ARCHSVD=Cortex-M4.svd
                  DEVICESVD=STM32L4x2.svd
+                 ;;
+  freedom_k22f)  ARCH=arm
+                 BINUTILS_PATH=/usr/local/bin/arm-none-eabi-
+                 SUBARCH=armv7em
+                 DEVICE=mk22fn512vlh12
+                 ARCHSVD=Cortex-M4.svd
+                 DEVICESVD=
+                 ;;
+  freedom_k64f)  ARCH=arm
+                 BINUTILS_PATH=/usr/local/bin/arm-none-eabi-
+                 SUBARCH=armv7em
+                 DEVICE=mk64fn1m0vll12
+                 ARCHSVD=Cortex-M4.svd
+                 DEVICESVD=
+                 ;;
+  teensy31)      ARCH=arm
+                 BINUTILS_PATH=/usr/local/bin/arm-none-eabi-
+                 SUBARCH=armv7em
+                 DEVICE=mk20dx256vlh7
+                 ARCHSVD=Cortex-M4.svd
+                 DEVICESVD=
                  ;;
   pic32mx150f128b) ARCH=mipsel
                  BINUTILS_PATH=/usr/local/bin/mips-sde-elf-

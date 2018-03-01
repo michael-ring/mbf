@@ -9,12 +9,18 @@
 **********************************************************************
 */                                                                    
 void OnProjectLoad (void) {
-
-  Project.SetDevice ("MK22FN512xxx12");
+  //
+  // Dialog-generated settings
+  //
+  Project.SetDevice ("mk22fn512vlh12");
   Project.SetHostIF ("USB", "");
   Project.SetTargetIF ("SWD");
-  Project.SetTIFSpeed ("100 kHz");
-  Project.SetPeripheralFile ("/Applications/SEGGER/JLinkDebugger/Config/Peripherals/MK22F51212.svd");
+  Project.SetTIFSpeed ("auto");
+  Project.AddSvdFile ("Cortex-M4.svd");
+  Project.AddSvdFile ("");
+  //
+  // User settings
+  //
   File.Open ("SPIDemo.elf");
 }
 
@@ -31,26 +37,27 @@ void OnProjectLoad (void) {
 *                                                                     
 **********************************************************************
 */                                                                    
-/*
-void TargetReset (void) {                                             
-                                                                      
-  unsigned int SP;                                                    
-  unsigned int PC;                                                    
-  unsigned int VectorTableAddr;                                       
-                                                                      
-  Util.Log("Resetting Program.");                                   
-                                                                      
-  Exec.Reset();                                                       
-                                                                      
-  VectorTableAddr = Elf.GetBaseAddr();                                
-                                                                      
-  SP = Target.ReadU32(VectorTableAddr);                               
-  Target.SetReg("SP", SP);                                          
-                                                                      
-  PC = Target.ReadU32(VectorTableAddr + 4);                           
-  Target.SetReg("PC", PC);                                          
-}                                                                     
-*/
+//void TargetReset (void) {                                           
+//                                                                    
+//  unsigned int SP;                                                  
+//  unsigned int PC;                                                  
+//  unsigned int VectorTableAddr;                                     
+//                                                                    
+//  Exec.Reset();                                                     
+//                                                                    
+//  VectorTableAddr = Elf.GetBaseAddr();                              
+//                                                                    
+//  if (VectorTableAddr != 0xFFFFFFFF) {                              
+//                                                                    
+//    Util.Log("Resetting Program.");                               
+//                                                                    
+//    SP = Target.ReadU32(VectorTableAddr);                           
+//    Target.SetReg("SP", SP);                                      
+//                                                                    
+//    PC = Target.ReadU32(VectorTableAddr + 4);                       
+//    Target.SetReg("PC", PC);                                      
+//  }                                                                 
+//}                                                                   
 
 /*********************************************************************
 *                                                                     
@@ -61,10 +68,8 @@ void TargetReset (void) {
 *                                                                     
 **********************************************************************
 */                                                                    
-/*
-void BeforeTargetReset (void) {                                       
-}                                                                     
-*/
+//void BeforeTargetReset (void) {                                     
+//}                                                                   
 
 /*********************************************************************
 *                                                                     
@@ -75,10 +80,8 @@ void BeforeTargetReset (void) {
 *                                                                     
 **********************************************************************
 */                                                                    
-/*
-void AfterTargetReset (void) {                                        
-}                                                                     
-*/
+//void AfterTargetReset (void) {                                      
+//}                                                                   
 
 /*********************************************************************
 *                                                                     
@@ -89,24 +92,20 @@ void AfterTargetReset (void) {
 *                                                                     
 **********************************************************************
 */                                                                    
-/*
-void DebugStart (void) {                                              
-}                                                                     
-*/
+//void DebugStart (void) {                                            
+//}                                                                   
 
 /*********************************************************************
 *                                                                     
 *       TargetConnect                                                 
 *                                                                     
 * Function description                                                
-*   Replaces the default target device connect routine. Optional.     
+*   Replaces the default target IF connection routine. Optional.      
 *                                                                     
 **********************************************************************
 */                                                                    
-/*
-void TargetConnect (void) {                                           
-}                                                                     
-*/
+//void TargetConnect (void) {                                         
+//}                                                                   
 
 /*********************************************************************
 *                                                                     
@@ -117,10 +116,8 @@ void TargetConnect (void) {
 *                                                                     
 **********************************************************************
 */                                                                    
-/*
-void BeforeTargetConnect (void) {                                     
-}                                                                     
-*/
+//void BeforeTargetConnect (void) {                                   
+//}                                                                   
 
 /*********************************************************************
 *                                                                     
@@ -131,10 +128,8 @@ void BeforeTargetConnect (void) {
 *                                                                     
 **********************************************************************
 */                                                                    
-/*
-void AfterTargetConnect (void) {                                      
-}                                                                     
-*/
+//void AfterTargetConnect (void) {                                    
+//}                                                                   
 
 /*********************************************************************
 *                                                                     
@@ -145,10 +140,8 @@ void AfterTargetConnect (void) {
 *                                                                     
 **********************************************************************
 */                                                                    
-/*
-void TargetDownload (void) {                                          
-}                                                                     
-*/
+//void TargetDownload (void) {                                        
+//}                                                                   
 
 /*********************************************************************
 *                                                                     
@@ -159,10 +152,8 @@ void TargetDownload (void) {
 *                                                                     
 **********************************************************************
 */                                                                    
-/*
-void BeforeTargetDownload (void) {                                    
-}                                                                     
-*/
+//void BeforeTargetDownload (void) {                                  
+//}                                                                   
 
 /*********************************************************************
 *                                                                     
@@ -178,22 +169,25 @@ void BeforeTargetDownload (void) {
 *                                                                     
 **********************************************************************
 */                                                                    
-void AfterTargetDownload (void) {                                     
-                                                                      
-  unsigned int SP;                                                    
-  unsigned int PC;                                                    
-  unsigned int VectorTableAddr;                                       
-                                                                      
-  Util.Log("Initializing PC and SP.");                              
-                                                                      
-  VectorTableAddr = Elf.GetBaseAddr();                                
-                                                                      
-  SP = Target.ReadU32(VectorTableAddr);                               
-  Target.SetReg("SP", SP);                                          
-                                                                      
-  PC = Target.ReadU32(VectorTableAddr + 4);                           
-  Target.SetReg("PC", PC);                                          
-}                                                                     
+//void AfterTargetDownload (void) {                                   
+//                                                                    
+//  unsigned int SP;                                                  
+//  unsigned int PC;                                                  
+//  unsigned int VectorTableAddr;                                     
+//                                                                    
+//  VectorTableAddr = Elf.GetBaseAddr();                              
+//                                                                    
+//  if (VectorTableAddr != 0xFFFFFFFF) {                              
+//                                                                    
+//    Util.Log("Initializing PC and SP.");                          
+//                                                                    
+//    SP = Target.ReadU32(VectorTableAddr);                           
+//    Target.SetReg("SP", SP);                                      
+//                                                                    
+//    PC = Target.ReadU32(VectorTableAddr + 4);                       
+//    Target.SetReg("PC", PC);                                      
+//  }                                                                 
+//}                                                                   
 
 /*********************************************************************
 *                                                                     
@@ -204,10 +198,8 @@ void AfterTargetDownload (void) {
 *                                                                     
 **********************************************************************
 */                                                                    
-/*
-void BeforeTargetDisconnect (void) {                                  
-}                                                                     
-*/
+//void BeforeTargetDisconnect (void) {                                
+//}                                                                   
 
 /*********************************************************************
 *                                                                     
@@ -218,10 +210,8 @@ void BeforeTargetDisconnect (void) {
 *                                                                     
 **********************************************************************
 */                                                                    
-/*
-void AfterTargetDisconnect (void) {                                   
-}                                                                     
-*/
+//void AfterTargetDisconnect (void) {                                 
+//}                                                                   
 
 /*********************************************************************
 *                                                                     
@@ -232,21 +222,5 @@ void AfterTargetDisconnect (void) {
 *                                                                     
 **********************************************************************
 */                                                                    
-/*
-void AfterTargetHalt (void) {                                         
-}                                                                     
-*/
-
-/*********************************************************************
-*                                                                     
-*       BeforeTargetResume                                            
-*                                                                     
-* Function description                                                
-*   Event handler routine. Optional.                                  
-*                                                                     
-**********************************************************************
-*/                                                                    
-/*
-void BeforeTargetResume (void) {                                      
-}                                                                     
-*/
+//void AfterTargetHalt (void) {                                       
+//}                                                                   

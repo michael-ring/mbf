@@ -12,7 +12,7 @@ void OnProjectLoad (void) {
   //
   // Dialog-generated settings
   //
-  Project.SetDevice ("mk22fn512vlh12");
+  Project.SetDevice ("mk20dx256vlh7");
   Project.SetHostIF ("USB", "");
   Project.SetTargetIF ("SWD");
   Project.SetTIFSpeed ("auto");
@@ -21,7 +21,7 @@ void OnProjectLoad (void) {
   //
   // User settings
   //
-  File.Open ("MotorDemo.elf");
+  File.Open ("SerialPort.elf");
 }
 
 /*********************************************************************

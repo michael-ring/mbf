@@ -63,21 +63,21 @@ end;
 
 procedure TULN2003.Step;
 const
-  Matrix: array[0..7] of array[0..3] of TPinValue = ((TPinValue.Low ,TPinValue.Low ,TPinValue.Low ,TPinValue.High),
-                                                     (TPinValue.Low ,TPinValue.Low ,TPinValue.High,TPinValue.High),
-                                                     (TPinValue.Low ,TPinValue.Low ,TPinValue.High,TPinValue.Low),
-                                                     (TPinValue.Low ,TPinValue.High,TPinValue.High,TPinValue.Low),
-                                                     (TPinValue.Low ,TPinValue.High,TPinValue.Low ,TPinValue.Low),
-                                                     (TPinValue.High,TPinValue.High,TPinValue.Low ,TPinValue.Low),
-                                                     (TPinValue.High,TPinValue.Low ,TPinValue.Low ,TPinValue.Low),
-                                                     (TPinValue.High,TPinValue.Low ,TPinValue.Low ,TPinValue.High));
+  Matrix: array[0..7] of array[0..3] of TPinLevel = ((TPinLevel.Low ,TPinLevel.Low ,TPinLevel.Low ,TPinLevel.High),
+                                                     (TPinLevel.Low ,TPinLevel.Low ,TPinLevel.High,TPinLevel.High),
+                                                     (TPinLevel.Low ,TPinLevel.Low ,TPinLevel.High,TPinLevel.Low),
+                                                     (TPinLevel.Low ,TPinLevel.High,TPinLevel.High,TPinLevel.Low),
+                                                     (TPinLevel.Low ,TPinLevel.High,TPinLevel.Low ,TPinLevel.Low),
+                                                     (TPinLevel.High,TPinLevel.High,TPinLevel.Low ,TPinLevel.Low),
+                                                     (TPinLevel.High,TPinLevel.Low ,TPinLevel.Low ,TPinLevel.Low),
+                                                     (TPinLevel.High,TPinLevel.Low ,TPinLevel.Low ,TPinLevel.High));
 var
   i : byte;
 begin
   if FDirection = TULN2003Direction.Left then
   begin
     for i := 0 to 3 do
-      GPIO.SetPinValue(longWord(Pins[i]),Matrix[StepState,i]);
+      GPIO.SetPinLevel(longWord(Pins[i]),Matrix[StepState,i]);
     SystemCore.Delay(Delay);
     StepState := StepState + 1;
     if StepState >= 8 then
@@ -86,7 +86,7 @@ begin
   else
   begin
     for i := 0 to 3 do
-      GPIO.SetPinValue(longWord(Pins[i]),Matrix[StepState,i]);
+      GPIO.SetPinLevel(longWord(Pins[i]),Matrix[StepState,i]);
     SystemCore.Delay(Delay);
     StepState := StepState - 1;
     if StepState < 0  then
@@ -99,7 +99,7 @@ var
   i : byte;
 begin
   for i := 0 to 3 do
-    GPIO.SetPinValue(longWord(Pins[i]),TPinValue.Low);
+    GPIO.SetPinLevel(longWord(Pins[i]),TPinLevel.Low);
 end;
 
 end.

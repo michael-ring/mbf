@@ -174,24 +174,24 @@ var
 procedure OLED_C_command(const reg_index : byte; const reg_value : byte);
 begin
   //Select index addr
-  GPIO.SetPinValueLow(DC);
+  GPIO.SetPinLevelLow(DC);
   SPI.TransferWord(reg_index);
   //Write data to reg
-  GPIO.SetPinValueHigh(DC);
+  GPIO.SetPinLevelHigh(DC);
   SPI.TransferWord(reg_value);
 end;
 
 //Send data to OLED C display
 procedure OLED_C_data(const data_value : byte);
 begin
-  GPIO.SetPinValueHigh(DC);
+  GPIO.SetPinLevelHigh(DC);
   SPI.TransferWord(data_value);
 end;
 
 //Send 16 bit data to OLED C display
 procedure OLED_C_data16(const data_value : word);
 begin
-  GPIO.SetPinValueHigh(DC);
+  GPIO.SetPinLevelHigh(DC);
   SPI.TransferWord(data_value shr 8);
   SPI.TransferWord(data_value and $ff);
 end;
@@ -199,16 +199,16 @@ end;
 //Sekvence before writing data to memory
 procedure DDRAM_access;
 begin
-  GPIO.SetPinValueLow(DC);
+  GPIO.SetPinLevelLow(DC);
   SPI.TransferWord($08);
 end;
 
 // Init sequence for 96x96 OLED color module
 procedure OLED_C_Init();
 begin
-  GPIO.SetPinValueLow(RST);
+  GPIO.SetPinLevelLow(RST);
   SystemCore.Delay(10);
-  GPIO.SetPinValueHigh(RST);
+  GPIO.SetPinLevelHigh(RST);
   SystemCore.Delay(10);
   //  Soft reset
   OLED_C_command(SEPS114A_SOFT_RESET,$00);
@@ -361,7 +361,7 @@ begin
   SPI.SCLKPin := TSPISCLKPins.D13_SPI;
   SPI.NSSPin  := TSPINSSPins.D10_SPI;
 
-  GPIO.setPinValueLow(RW);
+  GPIO.setPinLevelLow(RW);
   //Delay_ms(100);
   OLED_C_Init;
   // 0,0 is on top left

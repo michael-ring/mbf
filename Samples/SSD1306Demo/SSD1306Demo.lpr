@@ -16,7 +16,6 @@ program SSD1306Demo;
 {$INCLUDE MBF.Config.inc}
 
 uses
-  PXL.TypeDef,
   MBF.__CONTROLLERTYPE__.SystemCore,
   MBF.__CONTROLLERTYPE__.GPIO,
   MBF.__CONTROLLERTYPE__.SPI;
@@ -91,7 +90,7 @@ const
 type
   TPoint2px = record
     { The coordinate in 2D space. }
-    X, Y: VectorInt;
+    X, Y: longWord;
   end;
 operator = (a,b:TPoint2px) : boolean;
 begin
@@ -148,11 +147,11 @@ procedure TCustomDisplay.Reset;
 begin
   if FPinRST <> TNativePin.None then
   begin
-    GPIO.PinValue[FPinRST] := TPinValue.High;
+    GPIO.PinLevel[FPinRST] := TPinLevel.High;
     SystemCore.Delay(5);
-    GPIO.PinValue[FPinRST] := TPinValue.Low;
+    GPIO.PinLevel[FPinRST] := TPinLevel.Low;
     SystemCore.Delay(10);
-    GPIO.PinValue[FPinRST] := TPinValue.High;
+    GPIO.PinLevel[FPinRST] := TPinLevel.High;
   end;
 end;
 
@@ -218,26 +217,26 @@ end;
 
 procedure TCustomDisplay.WriteCommand(const Value: Byte);
 begin
-  GPIO.PinValue[FPinDC] := TPinValue.Low;
+  GPIO.PinLevel[FPinDC] := TPinLevel.Low;
   FpSPI^.Write(@Value, 1);
 end;
 
 procedure TCustomDisplay.WriteCommand(const Values: array of Byte);
 begin
-  GPIO.PinValue[FPinDC] := TPinValue.Low;
+  GPIO.PinLevel[FPinDC] := TPinLevel.Low;
   if Length(Values) > 0 then
     FpSPI^.Write(@Values[0], Length(Values));
 end;
 
 procedure TCustomDisplay.WriteData(const Value: Byte);
 begin
-  GPIO.PinValue[FPinDC] := TPinValue.High;
+  GPIO.PinLevel[FPinDC] := TPinLevel.High;
   FpSPI^.Write(@Value, 1);
 end;
 
 procedure TCustomDisplay.WriteData(const Values: array of Byte);
 begin
-  GPIO.PinValue[FPinDC] := TPinValue.High;
+  GPIO.PinLevel[FPinDC] := TPinLevel.High;
   if Length(Values) > 0 then
     FpSPI^.Write(@Values[0], Length(Values));
 end;

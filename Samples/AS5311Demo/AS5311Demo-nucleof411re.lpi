@@ -20,13 +20,14 @@
         <Mode0 Name="default"/>
       </Modes>
     </RunParams>
-    <Units Count="8">
+    <Units Count="7">
       <Unit0>
         <Filename Value="AS5311Demo.lpr"/>
         <IsPartOfProject Value="True"/>
         <IsVisibleTab Value="True"/>
+        <TopLine Value="145"/>
         <CursorPos X="10" Y="25"/>
-        <UsageCount Value="119"/>
+        <UsageCount Value="144"/>
         <Loaded Value="True"/>
       </Unit0>
       <Unit1>
@@ -34,7 +35,7 @@
         <EditorIndex Value="6"/>
         <TopLine Value="128"/>
         <CursorPos Y="23"/>
-        <UsageCount Value="59"/>
+        <UsageCount Value="72"/>
         <Loaded Value="True"/>
       </Unit1>
       <Unit2>
@@ -43,7 +44,7 @@
         <EditorIndex Value="5"/>
         <TopLine Value="226"/>
         <CursorPos X="3" Y="261"/>
-        <UsageCount Value="54"/>
+        <UsageCount Value="67"/>
         <Loaded Value="True"/>
       </Unit2>
       <Unit3>
@@ -52,41 +53,35 @@
         <EditorIndex Value="4"/>
         <TopLine Value="205"/>
         <CursorPos Y="20"/>
-        <UsageCount Value="52"/>
+        <UsageCount Value="65"/>
         <Loaded Value="True"/>
       </Unit3>
       <Unit4>
-        <Filename Value="../../Source/MBF.STM32F1.UART.pas"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="144"/>
-        <UsageCount Value="2"/>
-      </Unit4>
-      <Unit5>
         <Filename Value="../../Source/MBF.TypeHelpers.pas"/>
         <UnitName Value="MBF.typehelpers"/>
         <EditorIndex Value="3"/>
         <TopLine Value="161"/>
         <CursorPos Y="161"/>
-        <UsageCount Value="51"/>
+        <UsageCount Value="64"/>
         <Loaded Value="True"/>
-      </Unit5>
-      <Unit6>
+      </Unit4>
+      <Unit5>
         <Filename Value="../../Source/MBF.STM32F4.SystemCore.pas"/>
         <UnitName Value="mbf.stm32f4.systemcore"/>
         <EditorIndex Value="2"/>
-        <TopLine Value="62"/>
+        <TopLine Value="69"/>
         <CursorPos X="5" Y="107"/>
-        <UsageCount Value="26"/>
+        <UsageCount Value="39"/>
         <Loaded Value="True"/>
-      </Unit6>
-      <Unit7>
+      </Unit5>
+      <Unit6>
         <Filename Value="../../Source/MBF.SystemCore.pas"/>
         <EditorIndex Value="1"/>
-        <TopLine Value="21"/>
-        <CursorPos X="35" Y="60"/>
-        <UsageCount Value="24"/>
+        <TopLine Value="97"/>
+        <CursorPos X="36" Y="33"/>
+        <UsageCount Value="37"/>
         <Loaded Value="True"/>
-      </Unit7>
+      </Unit6>
     </Units>
     <JumpHistory Count="30" HistoryIndex="29">
       <Position1>

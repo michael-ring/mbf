@@ -33,13 +33,13 @@
     </CodeGeneration>
     <Linking>
       <Debugging>
-        <GenerateDebugInfo Value="False"/>
+        <GenerateDebugInfo Value="True"/>
         <UseLineInfoUnit Value="False"/>
       </Debugging>
     </Linking>
     <Other>
       <CustomOptions Value="-Cparmv7em
--XPusr/local/bin/arm-none-eabi-
+-XP/usr/local/bin/arm-none-eabi-
 -Wpnucleof401re
 -dnucleof401re
       "/>

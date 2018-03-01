@@ -12,16 +12,16 @@ void OnProjectLoad (void) {
   //
   // Dialog-generated settings
   //
-  Project.SetDevice ("mk22fn512vlh12");
+  Project.SetDevice ("stm32f401re");
   Project.SetHostIF ("USB", "");
   Project.SetTargetIF ("SWD");
   Project.SetTIFSpeed ("auto");
   Project.AddSvdFile ("Cortex-M4.svd");
-  Project.AddSvdFile ("");
+  Project.AddSvdFile ("STM32F401.svd");
   //
   // User settings
   //
-  File.Open ("MotorDemo.elf");
+  File.Open ("I2CDemo.elf");
 }
 
 /*********************************************************************

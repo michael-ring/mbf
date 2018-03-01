@@ -9,7 +9,7 @@
     </BuildModes>
     <Units Count="1">
       <Unit0>
-        <Filename Value="SerialPort.lpr"/>
+        <Filename Value="SEPS114ADemo.lpr"/>
         <IsPartOfProject Value="True"/>
         <IsVisibleTab Value="True"/>
         <Loaded Value="True"/>
@@ -18,7 +18,7 @@
   </ProjectOptions>
   <CompilerOptions>
     <Target>
-      <Filename Value="SerialPort"/>
+      <Filename Value="SEPS114ADemo"/>
     </Target>
     <SearchPaths>
       <IncludeFiles Value="../../Source;$(ProjOutDir)"/>

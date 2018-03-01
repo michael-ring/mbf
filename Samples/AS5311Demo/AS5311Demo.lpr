@@ -38,7 +38,8 @@ type
 
 function ReadAS5311(CS,CLOCK,DATA : TPinIdentifier):TAS5311Data;
 var
-  rawValue, inputstream,c : longWord;
+  rawValue, c : longWord;
+  inputStream : TPinValue;
 begin
   inputStream := 0;
   rawValue := 0;
@@ -66,7 +67,8 @@ end;
 
 function ReadAS5311(CS,CLOCK,DATA1,DATA2,DATA3,DATA4 : TPinIdentifier):TAS5311DataArray;
 var
-  rawValue1,rawValue2,rawValue3,rawValue4, inputstream1,inputstream2,inputstream3,inputstream4,c : longWord;
+  rawValue1,rawValue2,rawValue3,rawValue4,c : longWord;
+  inputstream1,inputstream2,inputstream3,inputstream4 : TPinValue;
 begin
   inputStream1 := 0;
   inputStream2 := 0;

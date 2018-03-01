@@ -40,8 +40,8 @@
     <Other>
       <CustomOptions Value="-Cparmv7em
 -XP/usr/local/bin/arm-none-eabi-
--Wpfreedom_k22f
--dfreedom_k22f
+-Wpnucleof401re
+-dnucleof401re
       "/>
     </Other>
   </CompilerOptions>

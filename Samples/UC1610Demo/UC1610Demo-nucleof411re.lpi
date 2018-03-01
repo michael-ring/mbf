@@ -26,9 +26,9 @@
         <Filename Value="UC1610Demo.lpr"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="ucs1610Demo"/>
-        <TopLine Value="23"/>
-        <CursorPos X="73" Y="44"/>
-        <UsageCount Value="47"/>
+        <IsVisibleTab Value="True"/>
+        <CursorPos X="11" Y="18"/>
+        <UsageCount Value="48"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
       </Unit0>
@@ -49,7 +49,6 @@
       </Unit2>
       <Unit3>
         <Filename Value="../../Source/MBF.Displays.CustomDisplay.pas"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="2"/>
         <CursorPos X="20" Y="16"/>
         <UsageCount Value="23"/>
@@ -181,7 +180,7 @@
       </Position27>
       <Position28>
         <Filename Value="UC1610Demo.lpr"/>
-        <Caret Line="59" Column="15" TopLine="23"/>
+        <Caret Line="59" TopLine="22"/>
       </Position28>
     </JumpHistory>
   </ProjectOptions>

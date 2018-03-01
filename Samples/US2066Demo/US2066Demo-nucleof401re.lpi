@@ -9,7 +9,7 @@
     </BuildModes>
     <Units Count="1">
       <Unit0>
-        <Filename Value="SerialPort.lpr"/>
+        <Filename Value="US2066Demo.lpr"/>
         <IsPartOfProject Value="True"/>
         <IsVisibleTab Value="True"/>
         <Loaded Value="True"/>
@@ -18,7 +18,7 @@
   </ProjectOptions>
   <CompilerOptions>
     <Target>
-      <Filename Value="SerialPort"/>
+      <Filename Value="US2066Demo"/>
     </Target>
     <SearchPaths>
       <IncludeFiles Value="../../Source;$(ProjOutDir)"/>
@@ -40,8 +40,8 @@
     <Other>
       <CustomOptions Value="-Cparmv7em
 -XP/usr/local/bin/arm-none-eabi-
--Wpfreedom_k22f
--dfreedom_k22f
+-Wpnucleof401re
+-dnucleof401re
       "/>
     </Other>
   </CompilerOptions>

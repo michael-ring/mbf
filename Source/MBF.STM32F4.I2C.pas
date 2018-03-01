@@ -16,7 +16,6 @@ interface
 {$INCLUDE MBF.Config.inc}
 
 uses
-  PXL.TypeDef,
   MBF.STM32F4.GPIO;
 
 {$REGION PinDefinitions}

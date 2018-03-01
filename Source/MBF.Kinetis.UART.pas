@@ -17,7 +17,6 @@ interface
 {$INCLUDE MBF.Config.inc}
 
 uses
-  PXL.TypeDef,
   MBF.Kinetis.GPIO;
 
 {$define has_lpusart0}
@@ -62,7 +61,7 @@ type
   TUARTTXPins= (
       PA2_UART0 = ALT2 + TNativePin.PA2,
      PB17_UART0 = ALT2 + TNativePin.PB17,
-     {$IF DEFINED(teensy)}D1_UART = ALT2 + TNativePin.PB17{$ENDIF}
+     {$IF DEFINED(teensy)}D1_UART = ALT2 + TNativePin.PB17,{$ENDIF}
      PA14_UART0 = ALT3 + TNativePin.PA14,
       PC4_UART1 = ALT3 + TNativePin.PC4,
       PD3_UART2 = ALT3 + TNativePin.PD3,
@@ -182,7 +181,7 @@ public
       is set to zero, then the function will read only as much data as fits in readable FIFO buffers (or fail when
       such buffers are not supported).)
     @returns(Number of bytes that were actually read.) }
-  function ReadString(out Text: StdString; const MaxCharacters: Cardinal = 0;
+  function ReadString(out Text: String; const MaxCharacters: Cardinal = 0;
     const Timeout: Cardinal = 0): Boolean;
 
   { Writes string to UART (serial) port.
@@ -191,7 +190,7 @@ public
         is set to zero, then the function will write only what fits in writable FIFO buffers (or fail when such
         buffers are not supported).)
       @returns(Number of bytes that were actually read.) }
-  function WriteString(const Text: StdString; const Timeout: Cardinal = 0): Boolean;
+  function WriteString(const Text: String; const Timeout: Cardinal = 0): Boolean;
 
   property BaudRate : Cardinal read getBaudRate write setBaudRate;
   property BitsPerWord : TUARTBitsPerWord read getBitsPerWord write setBitsPerWord;
@@ -450,14 +449,14 @@ begin
     Result := False;
 end;
 
-function TUARTRegistersHelper.ReadString(out Text: StdString; const MaxCharacters: Cardinal = 0;
+function TUARTRegistersHelper.ReadString(out Text: String; const MaxCharacters: Cardinal = 0;
   const Timeout: Cardinal = 0): Boolean;
 begin
   Text := '';
   Result := false;
 end;
 
-function TUARTRegistersHelper.WriteString(const Text: StdString; const Timeout: Cardinal = 0): Boolean;
+function TUARTRegistersHelper.WriteString(const Text: String; const Timeout: Cardinal = 0): Boolean;
 begin
   WriteBuffer(@Text[1],length(Text),TimeOut);
   result := true;
