@@ -24,10 +24,9 @@
       <Unit0>
         <Filename Value="AS5311Demo.lpr"/>
         <IsPartOfProject Value="True"/>
-        <IsVisibleTab Value="True"/>
-        <TopLine Value="145"/>
+        <TopLine Value="25"/>
         <CursorPos X="10" Y="25"/>
-        <UsageCount Value="144"/>
+        <UsageCount Value="166"/>
         <Loaded Value="True"/>
       </Unit0>
       <Unit1>
@@ -35,16 +34,17 @@
         <EditorIndex Value="6"/>
         <TopLine Value="128"/>
         <CursorPos Y="23"/>
-        <UsageCount Value="72"/>
+        <UsageCount Value="83"/>
         <Loaded Value="True"/>
       </Unit1>
       <Unit2>
         <Filename Value="../../Source/MBF.STM32F4.GPIO.pas"/>
         <UnitName Value="mbf.stm32f4.gpio"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="5"/>
         <TopLine Value="226"/>
         <CursorPos X="3" Y="261"/>
-        <UsageCount Value="67"/>
+        <UsageCount Value="78"/>
         <Loaded Value="True"/>
       </Unit2>
       <Unit3>
@@ -53,7 +53,7 @@
         <EditorIndex Value="4"/>
         <TopLine Value="205"/>
         <CursorPos Y="20"/>
-        <UsageCount Value="65"/>
+        <UsageCount Value="76"/>
         <Loaded Value="True"/>
       </Unit3>
       <Unit4>
@@ -62,7 +62,7 @@
         <EditorIndex Value="3"/>
         <TopLine Value="161"/>
         <CursorPos Y="161"/>
-        <UsageCount Value="64"/>
+        <UsageCount Value="75"/>
         <Loaded Value="True"/>
       </Unit4>
       <Unit5>
@@ -71,7 +71,7 @@
         <EditorIndex Value="2"/>
         <TopLine Value="69"/>
         <CursorPos X="5" Y="107"/>
-        <UsageCount Value="39"/>
+        <UsageCount Value="50"/>
         <Loaded Value="True"/>
       </Unit5>
       <Unit6>
@@ -79,7 +79,7 @@
         <EditorIndex Value="1"/>
         <TopLine Value="97"/>
         <CursorPos X="36" Y="33"/>
-        <UsageCount Value="37"/>
+        <UsageCount Value="48"/>
         <Loaded Value="True"/>
       </Unit6>
     </Units>

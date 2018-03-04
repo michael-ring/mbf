@@ -148,7 +148,7 @@ type
     function  GetPinValue(const Pin: TPinIdentifier): TPinValue;
     procedure SetPinValue(const Pin: TPinIdentifier; const Value: TPinValue);
     function  GetPinLevel(const Pin: TPinIdentifier): TPinLevel;
-    procedure SetPinLevel(const Pin: TPinIdentifier; const Value: TPinLevel);
+    procedure SetPinLevel(const Pin: TPinIdentifier; const Level: TPinLevel);
 
     procedure SetPinLevelHigh(const Pin: TPinIdentifier);
     procedure SetPinLevelLow(const Pin: TPinIdentifier);
@@ -271,9 +271,9 @@ begin
     Result := TPinLevel.Low;
 end;
 
-procedure TGPIO.SetPinLevel(const Pin: TPinIdentifier; const Value: TPinLevel);
+procedure TGPIO.SetPinLevel(const Pin: TPinIdentifier; const Level: TPinLevel);
 begin
-  if Value = TPinLevel.High then
+  if Level = TPinLevel.High then
     GPIOMem[Pin shr 4]^.BSRR := 1 shl (Pin and $0f)
   else
     GPIOMem[Pin shr 4]^.BSRR := $10000 shl (Pin and $0f);

@@ -134,7 +134,8 @@ type
 {$endregion}
 
 type
-  TPinValue=(Low=0,High=1);
+  TPinLevel=(Low=0,High=1);
+  TPinValue=0..1;
   TPinIdentifier=-1..160;
   TPinMode = (Input=%00, Output=%01, Analog=%11, AF0=$10, AF1, AF2, AF3, AF4, AF5, AF6, AF7, AF8, AF9, AF10, AF11, AF12, AF13, AF14, AF15);
   TPinDrive = (None=%00,PullUp=%01,PullDown=%10);
@@ -169,15 +170,19 @@ type
     procedure Initialize;
     function  GetPinValue(const Pin: TPinIdentifier): TPinValue;
     procedure SetPinValue(const Pin: TPinIdentifier; const Value: TPinValue);
-    procedure SetPinValueHigh(const Pin: TPinIdentifier);
-    procedure SetPinValueLow(const Pin: TPinIdentifier);
+    function  GetPinLevel(const Pin: TPinIdentifier): TPinLevel;
+    procedure SetPinLevel(const Pin: TPinIdentifier; const Level: TPinLevel);
+    procedure SetPinLevelHigh(const Pin: TPinIdentifier);
+    procedure SetPinLevelLow(const Pin: TPinIdentifier);
     procedure TogglePinValue(const Pin: TPinIdentifier);
+    procedure TogglePinLevel(const Pin: TPinIdentifier);
 
     property PinMode[const Pin : TPinIdentifier]: TPinMode read getPinMode write setPinMode;
     property PinDrive[const Pin : TPinIdentifier] : TPinDrive read getPinDrive write setPinDrive;
     property PinOutputMode[const Pin : TPinIdentifier] : TPinOutputMode read getPinOutputMode write setPinOutputMode;
     property PinOutputSpeed[const Pin : TPinIdentifier] : TPinOutputSpeed read getPinOutputSpeed write setPinOutputSpeed;
     property PinValue[const Pin : TPinIdentifier] : TPinValue read getPinValue write setPinValue;
+    property PinLevel[const Pin : TPinIdentifier] : TPinLevel read getPinLevel write setPinLevel;
   end;
 
 var
@@ -269,30 +274,54 @@ end;
 function TGPIO.GetPinValue(const Pin: TPinIdentifier): TPinValue;
 begin
   if GPIOMem[Pin shr 4]^.IDR and (1 shl (Pin and $0f)) <> 0 then
-    Result := TPinValue.High
+    Result := 1
   else
-    Result := TPinValue.Low;
+    Result := 0;
 end;
 
 procedure TGPIO.SetPinValue(const Pin: TPinIdentifier; const Value: TPinValue);
 begin
-  if Value = TPinValue.High then
+  if Value = 1 then
     GPIOMem[Pin shr 4]^.BSRR := 1 shl (Pin and $0f)
   else
     GPIOMem[Pin shr 4]^.BSRR := $10000 shl (Pin and $0f);
 end;
 
-procedure TGPIO.SetPinValueHigh(const Pin: TPinIdentifier);
+function TGPIO.GetPinLevel(const Pin: TPinIdentifier): TPinLevel;
+begin
+  if GPIOMem[Pin shr 4]^.IDR and (1 shl (Pin and $0f)) <> 0 then
+    Result := TPinLevel.High
+  else
+    Result := TPinLevel.Low;
+end;
+
+procedure TGPIO.SetPinLevel(const Pin: TPinIdentifier; const Level: TPinLevel);
+begin
+  if Level = TPinLevel.High then
+    GPIOMem[Pin shr 4]^.BSRR := 1 shl (Pin and $0f)
+  else
+    GPIOMem[Pin shr 4]^.BSRR := $10000 shl (Pin and $0f);
+end;
+
+procedure TGPIO.SetPinLevelHigh(const Pin: TPinIdentifier);
 begin
   GPIOMem[Pin shr 4]^.BSRR := 1 shl (Pin and $0f)
 end;
 
-procedure TGPIO.SetPinValueLow(const Pin: TPinIdentifier);
+procedure TGPIO.SetPinLevelLow(const Pin: TPinIdentifier);
 begin
   GPIOMem[Pin shr 4]^.BSRR := $10000 shl (Pin and $0f);
 end;
 
 procedure TGPIO.TogglePinValue(const Pin: TPinIdentifier);
+begin
+  if GPIOMem[Pin shr 4]^.ODR and (1 shl (Pin and $0f)) = 0 then
+    GPIOMem[Pin shr 4]^.BSRR := 1 shl (Pin and $0f)
+  else
+    GPIOMem[Pin shr 4]^.BSRR := $10000 shl (Pin and $0f);
+end;
+
+procedure TGPIO.TogglePinLevel(const Pin: TPinIdentifier);
 begin
   if GPIOMem[Pin shr 4]^.ODR and (1 shl (Pin and $0f)) = 0 then
     GPIOMem[Pin shr 4]^.BSRR := 1 shl (Pin and $0f)

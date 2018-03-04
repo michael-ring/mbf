@@ -18,12 +18,12 @@ if [ "$?" == "0" ]; then
   CROSSOPT="-O1 -gw2 -dDEBUG"
 
   SUBARCH=armv6m
-#  make clean buildbase CROSSINSTALL=1 OS_TARGET=embedded CPU_TARGET=arm SUBARCH=$SUBARCH CROSSOPT="$CROSSOPT" BINUTILSPREFIX=arm-none-eabi- || exit 1
+  make clean buildbase CROSSINSTALL=1 OS_TARGET=embedded CPU_TARGET=arm SUBARCH=$SUBARCH CROSSOPT="$CROSSOPT" BINUTILSPREFIX=arm-none-eabi- || exit 1
 #  make installbase CROSSINSTALL=1 OS_TARGET=embedded CPU_TARGET=arm SUBARCH=$SUBARCH CROSSOPT="$CROSSOPT" BINUTILSPREFIX=arm-none-eabi- INSTALL_UNITDIR=/usr/local/lib/fpc/3.1.1/units/arm-embedded/$SUBARCH/rtl || exit 1
 #  mv /usr/local/lib/fpc/3.1.1/ppcrossarm /usr/local/lib/fpc/3.1.1/ppcrossarm-$SUBARCH
 
   SUBARCH=armv7m
-#  make clean buildbase CROSSINSTALL=1 OS_TARGET=embedded CPU_TARGET=arm SUBARCH=$SUBARCH CROSSOPT="$CROSSOPT" BINUTILSPREFIX=arm-none-eabi- || exit 1
+  make clean buildbase CROSSINSTALL=1 OS_TARGET=embedded CPU_TARGET=arm SUBARCH=$SUBARCH CROSSOPT="$CROSSOPT" BINUTILSPREFIX=arm-none-eabi- || exit 1
 #  make installbase CROSSINSTALL=1 OS_TARGET=embedded CPU_TARGET=arm SUBARCH=$SUBARCH CROSSOPT="$CROSSOPT" BINUTILSPREFIX=arm-none-eabi- INSTALL_UNITDIR=/usr/local/lib/fpc/3.1.1/units/arm-embedded/$SUBARCH/rtl || exit 1
 #  mv /usr/local/lib/fpc/3.1.1/ppcrossarm /usr/local/lib/fpc/3.1.1/ppcrossarm-$SUBARCH
 

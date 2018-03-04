@@ -1,50 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CONFIG>
   <ProjectOptions>
-    <Version Value="10"/>
     <General>
-      <Flags>
-        <LRSInOutputDirectory Value="False"/>
-      </Flags>
-      <MainUnit Value="0"/>
       <UseAppBundle Value="False"/>
     </General>
     <BuildModes Count="1">
       <Item1 Name="default" Default="True"/>
     </BuildModes>
-    <PublishOptions>
-      <Version Value="2"/>
-    </PublishOptions>
-    <RunParams>
-      <local>
-        <FormatVersion Value="1"/>
-      </local>
-    </RunParams>
-    <Units Count="2">
+    <Units Count="1">
       <Unit0>
         <Filename Value="Blinky.lpr"/>
         <IsPartOfProject Value="True"/>
         <IsVisibleTab Value="True"/>
-        <UsageCount Value="20"/>
         <Loaded Value="True"/>
-        <LoadedDesigner Value="True"/>
       </Unit0>
-      <Unit1>
-        <Filename Value="/usr/local/share/lazarus/ide/lazarus.pp"/>
-        <UnitName Value="Lazarus"/>
-        <EditorIndex Value="-1"/>
-        <CursorPos X="3" Y="57"/>
-        <UsageCount Value="10"/>
-      </Unit1>
     </Units>
-    <JumpHistory Count="1">
-      <Position1>
-        <Filename Value="Blinky.lpr"/>
-      </Position1>
-    </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>
-    <Version Value="11"/>
     <Target>
       <Filename Value="Blinky"/>
     </Target>
@@ -53,11 +25,6 @@
       <OtherUnitFiles Value="../../Source"/>
       <UnitOutputDirectory Value="lib/$(TargetCPU)-$(TargetOS)"/>
     </SearchPaths>
-    <Parsing>
-      <SyntaxOptions>
-        <UseAnsiStrings Value="False"/>
-      </SyntaxOptions>
-    </Parsing>
     <CodeGeneration>
       <HeapSize Value="8192"/>
       <StackSize Value="8192"/>
@@ -66,15 +33,16 @@
     </CodeGeneration>
     <Linking>
       <Debugging>
-        <GenerateDebugInfo Value="False"/>
+        <GenerateDebugInfo Value="True"/>
         <UseLineInfoUnit Value="False"/>
       </Debugging>
     </Linking>
     <Other>
       <CustomOptions Value="-Cparmv7em
--XPusr/local/bin/arm-none-eabi-
+-XP/usr/local/bin/arm-none-eabi-
 -Wpnucleof303k8
--dnucleof303k8"/>
+-dnucleof303k8
+      "/>
     </Other>
   </CompilerOptions>
 </CONFIG>
