@@ -1,188 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CONFIG>
   <ProjectOptions>
-    <Version Value="11"/>
     <General>
-      <Flags>
-        <LRSInOutputDirectory Value="False"/>
-      </Flags>
-      <MainUnit Value="0"/>
       <UseAppBundle Value="False"/>
     </General>
     <BuildModes Count="1">
       <Item1 Name="default" Default="True"/>
     </BuildModes>
-    <PublishOptions>
-      <Version Value="2"/>
-    </PublishOptions>
-    <RunParams>
-      <FormatVersion Value="2"/>
-      <Modes Count="1">
-        <Mode0 Name="default"/>
-      </Modes>
-    </RunParams>
-    <Units Count="4">
+    <Units Count="1">
       <Unit0>
         <Filename Value="Blinky.lpr"/>
         <IsPartOfProject Value="True"/>
         <IsVisibleTab Value="True"/>
-        <TopLine Value="159"/>
-        <CursorPos X="3" Y="197"/>
-        <UsageCount Value="44"/>
         <Loaded Value="True"/>
-        <LoadedDesigner Value="True"/>
       </Unit0>
-      <Unit1>
-        <Filename Value="../../Source/MBF.SystemCore.pas"/>
-        <EditorIndex Value="1"/>
-        <TopLine Value="64"/>
-        <CursorPos Y="97"/>
-        <UsageCount Value="22"/>
-        <Loaded Value="True"/>
-      </Unit1>
-      <Unit2>
-        <Filename Value="../../../fpc-mipsel/rtl/embedded/arm/cortexm4.pp"/>
-        <EditorIndex Value="3"/>
-        <TopLine Value="139"/>
-        <CursorPos X="2" Y="165"/>
-        <UsageCount Value="22"/>
-        <Loaded Value="True"/>
-      </Unit2>
-      <Unit3>
-        <Filename Value="../../Source/MBF.STM32F4.SystemCore.pas"/>
-        <UnitName Value="mbf.stm32f4.systemcore"/>
-        <EditorIndex Value="2"/>
-        <TopLine Value="90"/>
-        <CursorPos X="18" Y="109"/>
-        <UsageCount Value="21"/>
-        <Loaded Value="True"/>
-      </Unit3>
     </Units>
-    <JumpHistory Count="30" HistoryIndex="29">
-      <Position1>
-        <Filename Value="Blinky.lpr"/>
-        <Caret Line="30" Column="18" TopLine="5"/>
-      </Position1>
-      <Position2>
-        <Filename Value="../../Source/MBF.SystemCore.pas"/>
-        <Caret Line="76" Column="7" TopLine="51"/>
-      </Position2>
-      <Position3>
-        <Filename Value="../../Source/MBF.SystemCore.pas"/>
-        <Caret Line="41" Column="7" TopLine="39"/>
-      </Position3>
-      <Position4>
-        <Filename Value="../../Source/MBF.SystemCore.pas"/>
-        <Caret Line="201" Column="3" TopLine="176"/>
-      </Position4>
-      <Position5>
-        <Filename Value="../../Source/MBF.SystemCore.pas"/>
-        <Caret Line="57" Column="7" TopLine="21"/>
-      </Position5>
-      <Position6>
-        <Filename Value="../../Source/MBF.SystemCore.pas"/>
-        <Caret Line="192" Column="5" TopLine="172"/>
-      </Position6>
-      <Position7>
-        <Filename Value="../../Source/MBF.SystemCore.pas"/>
-        <Caret Line="272" Column="3" TopLine="263"/>
-      </Position7>
-      <Position8>
-        <Filename Value="../../Source/MBF.SystemCore.pas"/>
-        <Caret Line="304" Column="3" TopLine="280"/>
-      </Position8>
-      <Position9>
-        <Filename Value="../../Source/MBF.SystemCore.pas"/>
-        <Caret Line="365" Column="3" TopLine="343"/>
-      </Position9>
-      <Position10>
-        <Filename Value="../../Source/MBF.STM32F4.SystemCore.pas"/>
-        <Caret Line="101" Column="5" TopLine="81"/>
-      </Position10>
-      <Position11>
-        <Filename Value="../../Source/MBF.STM32F4.SystemCore.pas"/>
-        <Caret Line="365" Column="4" TopLine="331"/>
-      </Position11>
-      <Position12>
-        <Filename Value="../../Source/MBF.STM32F4.SystemCore.pas"/>
-        <Caret Line="72" Column="5" TopLine="50"/>
-      </Position12>
-      <Position13>
-        <Filename Value="../../Source/MBF.STM32F4.SystemCore.pas"/>
-        <Caret Line="81" Column="7" TopLine="52"/>
-      </Position13>
-      <Position14>
-        <Filename Value="../../Source/MBF.SystemCore.pas"/>
-        <Caret Line="104" Column="5" TopLine="112"/>
-      </Position14>
-      <Position15>
-        <Filename Value="../../Source/MBF.SystemCore.pas"/>
-        <Caret Line="202" TopLine="178"/>
-      </Position15>
-      <Position16>
-        <Filename Value="../../Source/MBF.SystemCore.pas"/>
-        <Caret Line="382" Column="3" TopLine="345"/>
-      </Position16>
-      <Position17>
-        <Filename Value="../../Source/MBF.SystemCore.pas"/>
-        <Caret Line="58" Column="7" TopLine="23"/>
-      </Position17>
-      <Position18>
-        <Filename Value="../../Source/MBF.STM32F4.SystemCore.pas"/>
-        <Caret Line="98" Column="3" TopLine="293"/>
-      </Position18>
-      <Position19>
-        <Filename Value="../../Source/MBF.STM32F4.SystemCore.pas"/>
-        <Caret Line="201" TopLine="182"/>
-      </Position19>
-      <Position20>
-        <Filename Value="../../Source/MBF.SystemCore.pas"/>
-        <Caret Line="111" Column="3" TopLine="73"/>
-      </Position20>
-      <Position21>
-        <Filename Value="../../Source/MBF.SystemCore.pas"/>
-        <Caret Line="383" TopLine="345"/>
-      </Position21>
-      <Position22>
-        <Filename Value="../../Source/MBF.SystemCore.pas"/>
-        <Caret Line="237" TopLine="209"/>
-      </Position22>
-      <Position23>
-        <Filename Value="../../Source/MBF.SystemCore.pas"/>
-        <Caret Line="297" Column="3" TopLine="273"/>
-      </Position23>
-      <Position24>
-        <Filename Value="../../Source/MBF.STM32F4.SystemCore.pas"/>
-        <Caret Line="85" Column="5" TopLine="50"/>
-      </Position24>
-      <Position25>
-        <Filename Value="../../Source/MBF.STM32F4.SystemCore.pas"/>
-        <Caret Line="69" Column="30" TopLine="50"/>
-      </Position25>
-      <Position26>
-        <Filename Value="../../Source/MBF.STM32F4.SystemCore.pas"/>
-        <Caret Line="371" Column="7" TopLine="333"/>
-      </Position26>
-      <Position27>
-        <Filename Value="../../Source/MBF.SystemCore.pas"/>
-        <Caret Line="297" Column="3" TopLine="77"/>
-      </Position27>
-      <Position28>
-        <Filename Value="../../Source/MBF.STM32F4.SystemCore.pas"/>
-        <Caret Line="94" Column="12" TopLine="58"/>
-      </Position28>
-      <Position29>
-        <Filename Value="../../Source/MBF.STM32F4.SystemCore.pas"/>
-        <Caret Line="84" Column="15" TopLine="58"/>
-      </Position29>
-      <Position30>
-        <Filename Value="../../Source/MBF.STM32F4.SystemCore.pas"/>
-        <Caret Line="109" Column="18" TopLine="90"/>
-      </Position30>
-    </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>
-    <Version Value="11"/>
     <Target>
       <Filename Value="Blinky"/>
     </Target>
@@ -191,11 +25,6 @@
       <OtherUnitFiles Value="../../Source"/>
       <UnitOutputDirectory Value="lib/$(TargetCPU)-$(TargetOS)"/>
     </SearchPaths>
-    <Parsing>
-      <SyntaxOptions>
-        <UseAnsiStrings Value="False"/>
-      </SyntaxOptions>
-    </Parsing>
     <CodeGeneration>
       <HeapSize Value="8192"/>
       <StackSize Value="8192"/>
@@ -204,7 +33,8 @@
     </CodeGeneration>
     <Linking>
       <Debugging>
-        <GenerateDebugInfo Value="False"/>
+        <GenerateDebugInfo Value="True"/>
+        <DebugInfoType Value="dsDwarf2"/>
         <UseLineInfoUnit Value="False"/>
       </Debugging>
     </Linking>
@@ -212,7 +42,8 @@
       <CustomOptions Value="-Cparmv7em
 -XP/usr/local/bin/arm-none-eabi-
 -Wpnucleof411re
--dnucleof411re"/>
+-dnucleof411re
+      "/>
     </Other>
   </CompilerOptions>
 </CONFIG>

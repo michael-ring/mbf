@@ -50,11 +50,12 @@ type
     function GetFlexbusClockFrequency: Cardinal;
     function GetFlashClockFrequency: Cardinal;
     function GetMCGOUTCLKFrequency: Cardinal;
-    function GetCPUFrequency: Cardinal;
-    procedure SetCPUFrequency(const Value: Cardinal);
     function GetSysTickClockFrequency : Cardinal;
   public
     procedure Initialize;
+    function GetMaxCPUFrequency: Cardinal;
+    function GetCPUFrequency: Cardinal;
+    procedure SetCPUFrequency(const Value: Cardinal);
     function GetSystemClockFrequency: Cardinal;
     property CPUFrequency: Cardinal read GetCPUFrequency write SetCPUFrequency;
 
@@ -170,6 +171,11 @@ function TKinetisSystemCore.GetCPUFrequency: Cardinal;
 begin
   //TODO, for now always take Bootup Frequency
   Result := $1400000;
+end;
+
+function TKinetisSystemCore.GetMaxCPUFrequency: Cardinal;
+begin
+  Result := MaxCPUFrequency;
 end;
 
 procedure TKinetisSystemCore.SetCPUFrequency(const Value: Cardinal);

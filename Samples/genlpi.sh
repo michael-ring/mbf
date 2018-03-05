@@ -18,10 +18,10 @@ if [ -z "$BOARD_OR_CPU" ]; then
 fi
 
 case $BOARD_OR_CPU in
-  nucleof103re)  ARCH=arm
+  nucleof103rb)  ARCH=arm
                  BINUTILS_PATH=/usr/local/bin/arm-none-eabi-
                  SUBARCH=armv7m
-                 DEVICE=stm32f103re
+                 DEVICE=stm32f103rb
                  ARCHSVD=Cortex-M3.svd
                  DEVICESVD=STM32F103.svd
                  ;;

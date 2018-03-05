@@ -12,12 +12,12 @@ void OnProjectLoad (void) {
   //
   // Dialog-generated settings
   //
-  Project.SetDevice ("stm32f411re");
+  Project.SetDevice ("mk20dx256vlh7");
   Project.SetHostIF ("USB", "");
   Project.SetTargetIF ("SWD");
   Project.SetTIFSpeed ("auto");
   Project.AddSvdFile ("Cortex-M4.svd");
-  Project.AddSvdFile ("STM32F411.svd");
+  Project.AddSvdFile ("");
   //
   // User settings
   //

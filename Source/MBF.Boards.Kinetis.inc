@@ -37,6 +37,12 @@
   {$define mk22fn512vlh12}
 {$endif}
 
+{$if defined(freedom_k64f) }
+  {$define freedom}
+  {$define has_arduinopins}
+  {$define mk64fn1m0vll12}
+{$endif}
+
 // We now need to define the casing (often needed for finding out how many GPIO and devices a controller has)
 // Also a more general devices name is assigned to group devices that are similar (same datasheet)
 
