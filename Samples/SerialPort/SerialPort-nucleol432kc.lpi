@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CONFIG>
+  <ProjectOptions>
+    <Version Value="11"/>
+    <General>
+      <Flags>
+        <LRSInOutputDirectory Value="False"/>
+      </Flags>
+      <MainUnit Value="0"/>
+      <UseAppBundle Value="False"/>
+    </General>
+    <BuildModes Count="1">
+      <Item1 Name="default" Default="True"/>
+    </BuildModes>
+    <PublishOptions>
+      <Version Value="2"/>
+    </PublishOptions>
+    <RunParams>
+      <FormatVersion Value="2"/>
+      <Modes Count="1">
+        <Mode0 Name="default"/>
+      </Modes>
+    </RunParams>
+    <Units Count="4">
+      <Unit0>
+        <Filename Value="SerialPort.lpr"/>
+        <IsPartOfProject Value="True"/>
+        <IsVisibleTab Value="True"/>
+        <TopLine Value="4"/>
+        <CursorPos X="135" Y="50"/>
+        <UsageCount Value="57"/>
+        <Loaded Value="True"/>
+        <LoadedDesigner Value="True"/>
+      </Unit0>
+      <Unit1>
+        <Filename Value="../../Source/MBF.STM32L4.UART.pas"/>
+        <EditorIndex Value="1"/>
+        <TopLine Value="440"/>
+        <CursorPos Y="202"/>
+        <UsageCount Value="27"/>
+        <Loaded Value="True"/>
+      </Unit1>
+      <Unit2>
+        <Filename Value="../../Source/MBF.STM32L4.GPIO.pas"/>
+        <EditorIndex Value="3"/>
+        <TopLine Value="40"/>
+        <CursorPos X="37" Y="115"/>
+        <UsageCount Value="27"/>
+        <Loaded Value="True"/>
+      </Unit2>
+      <Unit3>
+        <Filename Value="../../Source/MBF.STM32L4.SystemCore.pas"/>
+        <UnitName Value="mbf.stm32l4.systemcore"/>
+        <EditorIndex Value="2"/>
+        <TopLine Value="70"/>
+        <CursorPos X="25" Y="75"/>
+        <UsageCount Value="15"/>
+        <Loaded Value="True"/>
+      </Unit3>
+    </Units>
+    <JumpHistory Count="18" HistoryIndex="17">
+      <Position1>
+        <Filename Value="../../Source/MBF.STM32L4.UART.pas"/>
+        <Caret Line="199" Column="14" TopLine="173"/>
+      </Position1>
+      <Position2>
+        <Filename Value="../../Source/MBF.STM32L4.UART.pas"/>
+        <Caret Line="49" Column="56" TopLine="6"/>
+      </Position2>
+      <Position3>
+        <Filename Value="../../Source/MBF.STM32L4.UART.pas"/>
+        <Caret Line="224" Column="41" TopLine="174"/>
+      </Position3>
+      <Position4>
+        <Filename Value="../../Source/MBF.STM32L4.UART.pas"/>
+        <Caret Line="52" Column="38" TopLine="27"/>
+      </Position4>
+      <Position5>
+        <Filename Value="../../Source/MBF.STM32L4.GPIO.pas"/>
+        <Caret Line="137" Column="24" TopLine="109"/>
+      </Position5>
+      <Position6>
+        <Filename Value="../../Source/MBF.STM32L4.UART.pas"/>
+        <Caret Line="20" Column="17"/>
+      </Position6>
+      <Position7>
+        <Filename Value="../../Source/MBF.STM32L4.GPIO.pas"/>
+        <Caret Line="145" Column="64" TopLine="120"/>
+      </Position7>
+      <Position8>
+        <Filename Value="../../Source/MBF.STM32L4.UART.pas"/>
+        <Caret Line="238" Column="43" TopLine="202"/>
+      </Position8>
+      <Position9>
+        <Filename Value="../../Source/MBF.STM32L4.UART.pas"/>
+        <Caret Line="95" Column="8" TopLine="51"/>
+      </Position9>
+      <Position10>
+        <Filename Value="../../Source/MBF.STM32L4.UART.pas"/>
+        <Caret Line="266" Column="58" TopLine="238"/>
+      </Position10>
+      <Position11>
+        <Filename Value="../../Source/MBF.STM32L4.SystemCore.pas"/>
+        <Caret Line="105" Column="21" TopLine="58"/>
+      </Position11>
+      <Position12>
+        <Filename Value="../../Source/MBF.STM32L4.SystemCore.pas"/>
+        <Caret Line="75" Column="25" TopLine="70"/>
+      </Position12>
+      <Position13>
+        <Filename Value="../../Source/MBF.STM32L4.UART.pas"/>
+        <Caret Line="266" Column="63" TopLine="241"/>
+      </Position13>
+      <Position14>
+        <Filename Value="../../Source/MBF.STM32L4.UART.pas"/>
+        <Caret Line="292" Column="60" TopLine="267"/>
+      </Position14>
+      <Position15>
+        <Filename Value="../../Source/MBF.STM32L4.UART.pas"/>
+        <Caret Line="92" Column="9" TopLine="76"/>
+      </Position15>
+      <Position16>
+        <Filename Value="../../Source/MBF.STM32L4.UART.pas"/>
+        <Caret Line="302" Column="38" TopLine="278"/>
+      </Position16>
+      <Position17>
+        <Filename Value="../../Source/MBF.STM32L4.UART.pas"/>
+        <Caret Line="91" Column="19" TopLine="52"/>
+      </Position17>
+      <Position18>
+        <Filename Value="SerialPort.lpr"/>
+        <Caret Line="46" Column="40"/>
+      </Position18>
+    </JumpHistory>
+  </ProjectOptions>
+  <CompilerOptions>
+    <Version Value="11"/>
+    <Target>
+      <Filename Value="SerialPort"/>
+    </Target>
+    <SearchPaths>
+      <IncludeFiles Value="../../Source;$(ProjOutDir)"/>
+      <OtherUnitFiles Value="../../Source"/>
+      <UnitOutputDirectory Value="lib/$(TargetCPU)-$(TargetOS)"/>
+    </SearchPaths>
+    <Parsing>
+      <SyntaxOptions>
+        <UseAnsiStrings Value="False"/>
+      </SyntaxOptions>
+    </Parsing>
+    <CodeGeneration>
+      <HeapSize Value="8192"/>
+      <StackSize Value="8192"/>
+      <TargetCPU Value="arm"/>
+      <TargetOS Value="embedded"/>
+    </CodeGeneration>
+    <Linking>
+      <Debugging>
+        <DebugInfoType Value="dsDwarf2"/>
+        <UseLineInfoUnit Value="False"/>
+      </Debugging>
+    </Linking>
+    <Other>
+      <CustomOptions Value="-Cparmv7em
+-XP/usr/local/bin/arm-none-eabi-
+-Wpnucleol432kc
+-dnucleol432kc"/>
+    </Other>
+  </CompilerOptions>
+</CONFIG>

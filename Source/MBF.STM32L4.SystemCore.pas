@@ -72,6 +72,7 @@ type
   public
     procedure Initialize;
     function GetSYSCLKFrequency: Cardinal;
+    function GetHSIClockFrequency: Cardinal;
     function GetAPB1PeripheralClockFrequency : Cardinal;
     function GetAPB1TimerClockFrequency : Cardinal;
     function GetAPB2PeripheralClockFrequency : Cardinal;
@@ -97,6 +98,11 @@ end;
 function TSTM32SystemCore.GetSysTickClockFrequency : Cardinal; [public, alias: 'MBF_GetSysTickClockFrequency'];
 begin
   Result := GetHCLKFrequency;
+end;
+
+function TSTM32SystemCore.GetHSIClockFrequency : Cardinal;
+begin
+  Result := HSIClockFrequency;
 end;
 
 function TSTM32SystemCore.GetAPB1PeripheralClockFrequency : Cardinal;

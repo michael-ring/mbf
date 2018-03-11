@@ -32,6 +32,7 @@ begin
   // If the board is not Arduino compatible then you will have to use 'real' UARTs instead which are usually named UART0, UART1 ....
   // Also, if you plan to use more than one UART you should always use 'real' UART names to avoid accidentially using an UART twice.
   // Default Initialization is 115200,8,n,1
+  // DEBUG_UART.Initialize; //Use this when UART Pins are not passed to the STLink/JLink like on Nucleo-L476
   UART.Initialize;
 
   //UART.BaudRate := 115200;
@@ -39,11 +40,14 @@ begin
   //UART.Parity := TUARTParity.None;
   //UART.StopBits := TUARTStopBits.One;
 
-  // Now define which Pins to use for the choosen UART
+  // Now define which Pins to use for the choosen UART,
+  //DEBUG_UART.RxPin := TUARTRXPins.DEBUG_UART; //Use this when UART Pins are not passed to the STLink/JLink like on Nucleo-L476
+  //DEBUG_UART.TxPin := TUARTTXPins.DEBUG_UART; //Use this when UART Pins are not passed to the STLink/JLink like on Nucleo-L476
   UART.RxPin := TUARTRXPins.D0_UART;
   UART.TxPin := TUARTTXPins.D1_UART;
 
   repeat
+    //DEBUG_UART.WriteString('Hello World!'+#13+#10); //Use this when UART Pins are not passed to the STLink/JLink like on Nucleo-L476
     UART.WriteString('Hello World!'+#13+#10);
     SystemCore.Delay(1000);
   until 1=0

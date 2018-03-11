@@ -55,7 +55,10 @@ type
                               PF8= 88;  PF9= 89; PF10= 90; PF11= 91; PF12= 92; PF13= 93; PF14= 94; PF15= 95; {$endif}
     {$if defined (has_gpiog)} PG0= 96;  PG1= 97;  PG2= 98;  PG3= 99;  PG4=100;  PG5=101;  PG6=102;  PG7=103;
                               PG8=104;  PG9=105; PG10=106; PG11=107; PG12=108; PG13=109; PG14=110; PG15=111; {$endif}
-    {$if defined (has_gpioh)} PH0=112;  PH1=113;  PH2=114; {$endif}
+    {$if defined (has_gpioh)} PH0=112;  PH1=113;  PH2=114;  PH3=115;  PH4=116;  PH5=117;  PH6=118;  PH7=119;
+                              PH8=120;  PH9=121; PH10=122; PH11=123; PH12=124; PH13=125; PH14=126; PH15=127; {$endif}
+    {$if defined (has_gpioi)} PI0=128;  PI1=129;  PI2=130;  PI3=131;  PI4=132;  PI5=133;  PI6=134;  PI7=135;
+                              PI8=136;  PI9=137; PI10=138; PI11=139; {$endif}
   end;
 
   {$if defined(has_arduinopins)}
@@ -95,7 +98,7 @@ type
       P1 =TNativePin.PC10; P2 =TNativePin.PC11; P3 =TNativePin.PC12; P4 =TNativePin.PD2;
       P13=TNativePin.PA13; P15=TNativePin.PA14; P17=TNativePin.PA15; P21=TNativePin.PB7;
       P23=TNativePin.PC13; P25=TNativePin.PC14; P27=TNativePin.PC15; P28=TNativePin.PA0;
-      P29=TNativePin.PF0;  P30=TNativePin.PA1;  P31=TNativePin.PF1;  P32=TNativePin.PA4;
+      P29=TNativePin.PH0;  P30=TNativePin.PA1;  P31=TNativePin.PH1;  P32=TNativePin.PA4;
       P34=TNativePin.PB0;  P35=TNativePin.PC2;  P36=TNativePin.PC1;  P37=TNativePin.PC3;
       P38=TNativePin.PC0;
     end;
@@ -131,14 +134,15 @@ type
     pGPIORegisters = ^TGPIO_Registers;
   private const
     // Indexed mapping to GPIO registers.
-    GPIOMem: array[0..7] of pGPIORegisters = ({$ifdef has_gpioa}@GPIOA{$else}nil{$endif},
+    GPIOMem: array[0..8] of pGPIORegisters = ({$ifdef has_gpioa}@GPIOA{$else}nil{$endif},
                                               {$ifdef has_gpiob}@GPIOB{$else}nil{$endif},
                                               {$ifdef has_gpioc}@GPIOC{$else}nil{$endif},
                                               {$ifdef has_gpiod}@GPIOD{$else}nil{$endif},
                                               {$ifdef has_gpioe}@GPIOE{$else}nil{$endif},
                                               {$ifdef has_gpiof}@GPIOF{$else}nil{$endif},
                                               {$ifdef has_gpiog}@GPIOG{$else}nil{$endif},
-                                              {$ifdef has_gpioh}@GPIOH{$else}nil{$endif});
+                                              {$ifdef has_gpioh}@GPIOH{$else}nil{$endif},
+                                              {$ifdef has_gpioi}@GPIOI{$else}nil{$endif});
 
     function GetPinMode(const Pin: TPinIdentifier): TPinMode;
     procedure SetPinMode(const Pin: TPinIdentifier; const Value: TPinMode);
