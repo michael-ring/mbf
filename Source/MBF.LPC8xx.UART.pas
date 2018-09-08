@@ -17,7 +17,6 @@ interface
 {$INCLUDE MBF.Config.inc}
 
 uses
-  PXL.TypeDef,
   MBF.LPC8xx.GPIO;
 
 {$REGION PinDefinitions}

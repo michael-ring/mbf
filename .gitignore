@@ -34,3 +34,9 @@ lib/
 
 # User specific files from Segger Ozone
 *jdebug.user
+
+# Visual Studio Code directories
+.vscode/
+
+# Intellij directories
+.idea

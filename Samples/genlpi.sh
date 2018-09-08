@@ -118,5 +118,10 @@ else
   echo "Warning, no SVD file copied"
 fi
 
+if [ ! -f $APPNAME/$APPNAME.lpr ]; then
+  cat templates/template.lpr | sed "s,%%APPNAME%%,$APPNAME,g" >$APPNAME/$APPNAME.lpr
+  echo $APPNAME/$APPNAME.lpr created
+fi
+
 echo $APPNAME/$APPNAME-$BOARD_OR_CPU.lpi created
 echo $APPNAME/$APPNAME-$BOARD_OR_CPU.jdebug created

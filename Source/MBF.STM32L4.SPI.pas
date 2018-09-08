@@ -1,4 +1,4 @@
-unit mbf.stm32f4.spi;
+unit MBF.STM32L4.SPI;
 {
   This file is part of Pascal Microcontroller Board Framework (MBF)
   Copyright (c) 2015 -  Michael Ring
@@ -12,137 +12,85 @@ unit mbf.stm32f4.spi;
   warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the FPC modified GNU Library General Public
   License for more details.
 }
+
 interface
 {$INCLUDE MBF.Config.inc}
 
 uses
-  MBF.STM32F4.GPIO;
-  //MBF.STM32F4.DMA;
+  MBF.STM32L4.GPIO;
 
 {$REGION PinDefinitions}
 
 type
-  TSPIMOSIPins = (
-  {$if defined(has_SPI1) and defined(has_gpioa) }   PA7_SPI1 = ALT5 or TNativePin.PA7  {$endif}
-  {$if defined(has_SPI4) and defined(has_gpioa) },  PA1_SPI4 = ALT5 or TNativePin.PA1  {$endif}
-  {$if defined(has_arduinopins)                 },  D11_SPI  = ALT5 or TNativePin.PA7  {$endif}
-  {$if defined(has_SPI1) and defined(has_gpiob) },  PB5_SPI1 = ALT5 or TNativePin.PB5  {$endif}
-  {$if defined(has_SPI2) and defined(has_gpiob) }, PB15_SPI2 = ALT5 or TNativePin.PB15 {$endif}
-  {$if defined(has_SPI2) and defined(has_gpioc) },  PC1_SPI2 = ALT5 or TNativePin.PC1  {$endif}
-  {$if defined(has_SPI3) and defined(has_gpioc) },  PC1_SPI3 = ALT5 or TNativePin.PC1  {$endif}
-  {$if defined(has_SPI2) and defined(has_gpioc) },  PC3_SPI2 = ALT5 or TNativePin.PC3  {$endif}
-  {$if defined(has_SPI3) and defined(has_gpiod) },  PD6_SPI3 = ALT5 or TNativePin.PD6  {$endif}
-  {$if defined(has_SPI4) and defined(has_gpioe) },  PE6_SPI4 = ALT5 or TNativePin.PE6  {$endif}
-  {$if defined(has_SPI4) and defined(has_gpioe) }, PE14_SPI4 = ALT5 or TNativePin.PE14 {$endif}
-  {$if defined(has_SPI5) and defined(has_gpiof) },  PF9_SPI5 = ALT5 or TNativePin.PF9  {$endif}
-  {$if defined(has_SPI5) and defined(has_gpiof) }, PF11_SPI5 = ALT5 or TNativePin.PF11 {$endif}
-  {$if defined(has_SPI6) and defined(has_gpiog) }, PG14_SPI6 = ALT5 or TNativePin.PG14 {$endif}
-  {$if defined(has_SPI2) and defined(has_gpioi) },  PI3_SPI2 = ALT5 or TNativePin.PI3  {$endif}
-  {$if defined(has_SPI5) and defined(has_gpioa) }, PA10_SPI5 = ALT6 or TNativePin.PA10 {$endif}
-  {$if defined(has_SPI3) and defined(has_gpiob) },  PB5_SPI3 = ALT6 or TNativePin.PB5  {$endif}
-  {$if defined(has_SPI5) and defined(has_gpiob) },  PB8_SPI5 = ALT6 or TNativePin.PB8  {$endif}
-  {$if defined(has_SPI3) and defined(has_gpioc) }, PC12_SPI3 = ALT6 or TNativePin.PC12 {$endif}
-  {$if defined(has_SPI3) and defined(has_gpiod) },  PD0_SPI3 = ALT6 or TNativePin.PD0  {$endif}
-  {$if defined(has_SPI5) and defined(has_gpioe) },  PE6_SPI5 = ALT6 or TNativePin.PE6  {$endif}
-  {$if defined(has_SPI5) and defined(has_gpioe) }, PE14_SPI5 = ALT6 or TNativePin.PE14 {$endif}
-  {$if defined(has_SPI4) and defined(has_gpiog) }, PG13_SPI4 = ALT6 or TNativePin.PG13 {$endif}
-  {$if defined(has_SPI3) and defined(has_gpiob) },  PB0_SPI3 = ALT7 or TNativePin.PB0  {$endif}
-  {$if defined(has_SPI3) and defined(has_gpiob) },  PB2_SPI3 = ALT7 or TNativePin.PB2  {$endif}
-  //{$if defined(has_SPI2) and defined(has_gpioc) },  PC1_SPI2 = ALT7 or TNativePin.PC1  {$endif}
+    TSPIMOSIPins = (
+    {$if defined(has_SPI2) and defined(has_gpioc) }   PC1_SPI2 = ALT3 or TNativePin.PC1  {$endif}
+    {$if defined(has_SPI2) and defined(has_gpioc) },                                     {$endif}
+    {$if defined(has_SPI1) and defined(has_gpioa) }   PA7_SPI1 = ALT5 or TNativePin.PA7  {$endif}
+    {$if defined(has_SPI1) and defined(has_gpioa) }, PA12_SPI1 = ALT5 or TNativePin.PA12 {$endif}
+    {$if defined(has_SPI1) and defined(has_gpiob) },  PB5_SPI1 = ALT5 or TNativePin.PB5  {$endif}
+    {$if defined(has_arduinominipins)             },  D11_SPI  = ALT5 or TNativePin.PB5  {$endif}
+    {$if defined(has_SPI2) and defined(has_gpiob) }, PB15_SPI2 = ALT5 or TNativePin.PB15 {$endif}
+    {$if defined(has_SPI2) and defined(has_gpioc) },  PC3_SPI2 = ALT5 or TNativePin.PC3  {$endif}
+    {$if defined(has_SPI2) and defined(has_gpiod) },  PD4_SPI2 = ALT5 or TNativePin.PD4  {$endif}
+    {$if defined(has_SPI3) and defined(has_gpiod) },  PD6_SPI3 = ALT5 or TNativePin.PD6  {$endif}
+    {$if defined(has_SPI1) and defined(has_gpioe) }, PE15_SPI1 = ALT5 or TNativePin.PE15 {$endif}
+    {$if defined(has_SPI1) and defined(has_gpiog) },  PG4_SPI1 = ALT5 or TNativePin.PG4  {$endif}
+    {$if defined(has_SPI2) and defined(has_gpioi) },  PI3_SPI2 = ALT5 or TNativePin.PI3  {$endif}
+    {$if defined(has_SPI3) and defined(has_gpiob) },  PB5_SPI3 = ALT6 or TNativePin.PB5  {$endif}
+    {$if defined(has_SPI3) and defined(has_gpioc) }, PC12_SPI3 = ALT6 or TNativePin.PC12 {$endif}
+    {$if defined(has_SPI3) and defined(has_gpiog) }, PG11_SPI3 = ALT6 or TNativePin.PG11 {$endif}
   );
 
+    TSPIMISOPins = (
+      {$if defined(has_SPI1) and defined(has_gpioa) }   PA6_SPI1 = ALT5 or TNativePin.PA6  {$endif}
+      {$if defined(has_SPI1) and defined(has_gpioa) }, PA11_SPI1 = ALT5 or TNativePin.PA11 {$endif}
+      {$if defined(has_SPI1) and defined(has_gpiob) },  PB4_SPI1 = ALT5 or TNativePin.PB4  {$endif}
+      {$if defined(has_arduinominipins)             },  D12_SPI  = ALT5 or TNativePin.PB4  {$endif}
+      {$if defined(has_SPI2) and defined(has_gpiob) }, PB14_SPI2 = ALT5 or TNativePin.PB14 {$endif}
+      {$if defined(has_SPI2) and defined(has_gpioc) },  PC2_SPI2 = ALT5 or TNativePin.PC2  {$endif}
+      {$if defined(has_SPI2) and defined(has_gpiod) },  PD3_SPI2 = ALT5 or TNativePin.PD3  {$endif}
+      {$if defined(has_SPI1) and defined(has_gpioe) }, PE14_SPI1 = ALT5 or TNativePin.PE14 {$endif}
+      {$if defined(has_SPI1) and defined(has_gpiog) },  PG3_SPI1 = ALT5 or TNativePin.PG3  {$endif}
+      {$if defined(has_SPI2) and defined(has_gpioi) },  PI2_SPI2 = ALT5 or TNativePin.PI2  {$endif}
+      {$if defined(has_SPI3) and defined(has_gpiob) },  PB4_SPI3 = ALT6 or TNativePin.PB4  {$endif}
+      {$if defined(has_SPI3) and defined(has_gpioc) }, PC11_SPI3 = ALT6 or TNativePin.PC11 {$endif}
+      {$if defined(has_SPI3) and defined(has_gpiog) }, PG10_SPI3 = ALT6 or TNativePin.PG10 {$endif}
+    );
 
-  TSPIMISOPins = (
-  {$if defined(has_SPI1) and defined(has_gpioa) }   PA6_SPI1 = ALT5 or TNativePin.PA6  {$endif}
-  {$if defined(has_arduinopins)                 },  D12_SPI  = ALT5 or TNativePin.PA6  {$endif}
-  {$if defined(has_SPI1) and defined(has_gpiob) },  PB4_SPI1 = ALT5 or TNativePin.PB4  {$endif}
-  {$if defined(has_SPI2) and defined(has_gpiob) }, PB14_SPI2 = ALT5 or TNativePin.PB14 {$endif}
-  {$if defined(has_SPI2) and defined(has_gpioc) },  PC2_SPI2 = ALT5 or TNativePin.PC2  {$endif}
-  {$if defined(has_SPI4) and defined(has_gpiod) },  PD0_SPI4 = ALT5 or TNativePin.PD0  {$endif}
-  {$if defined(has_SPI4) and defined(has_gpioe) },  PE5_SPI4 = ALT5 or TNativePin.PE5  {$endif}
-  {$if defined(has_SPI4) and defined(has_gpioe) }, PE13_SPI4 = ALT5 or TNativePin.PE13 {$endif}
-  {$if defined(has_SPI5) and defined(has_gpiof) },  PF8_SPI5 = ALT5 or TNativePin.PF8  {$endif}
-  {$if defined(has_SPI6) and defined(has_gpiog) }, PG12_SPI6 = ALT5 or TNativePin.PG12 {$endif}
-  {$if defined(has_SPI5) and defined(has_gpioh) },  PH7_SPI5 = ALT5 or TNativePin.PH7  {$endif}
-  {$if defined(has_SPI2) and defined(has_gpioi) },  PI2_SPI2 = ALT5 or TNativePin.PI2  {$endif}
-  {$if defined(has_SPI4) and defined(has_gpioa) }, PA11_SPI4 = ALT6 or TNativePin.PA11 {$endif}
-  {$if defined(has_SPI5) and defined(has_gpioa) }, PA12_SPI5 = ALT6 or TNativePin.PA12 {$endif}
-  {$if defined(has_SPI3) and defined(has_gpiob) },  PB4_SPI3 = ALT6 or TNativePin.PB4  {$endif}
-  {$if defined(has_SPI3) and defined(has_gpioc) }, PC11_SPI3 = ALT6 or TNativePin.PC11 {$endif}
-  {$if defined(has_SPI5) and defined(has_gpioe) },  PE5_SPI5 = ALT6 or TNativePin.PE5  {$endif}
-  {$if defined(has_SPI5) and defined(has_gpioe) }, PE13_SPI5 = ALT6 or TNativePin.PE13 {$endif}
-  {$if defined(has_SPI4) and defined(has_gpiog) }, PG12_SPI4 = ALT6 or TNativePin.PG12 {$endif}  );
+    TSPISCLKPins = (
+      {$if defined(has_SPI2) and defined(has_gpioa) }   PA9_SPI2 = ALT3 or TNativePin.PA9  {$endif}
+      {$if defined(has_SPI2) and defined(has_gpiod) },  PD3_SPI2 = ALT3 or TNativePin.PD3  {$endif}
+      {$if defined(has_SPI2) and defined(has_gpiod) },                                     {$endif}
+      {$if defined(has_SPI1) and defined(has_gpioa) }   PA1_SPI1 = ALT5 or TNativePin.PA1  {$endif}
+      {$if defined(has_SPI1) and defined(has_gpioa) },  PA5_SPI1 = ALT5 or TNativePin.PA5  {$endif}
+      {$if defined(has_SPI1) and defined(has_gpiob) },  PB3_SPI1 = ALT5 or TNativePin.PB3  {$endif}
+      {$if defined(has_arduinominipins)             },  D13_SPI  = ALT5 or TNativePin.PB3  {$endif}
+      {$if defined(has_SPI2) and defined(has_gpiob) }, PB10_SPI2 = ALT5 or TNativePin.PB10 {$endif}
+      {$if defined(has_SPI2) and defined(has_gpiob) }, PB13_SPI2 = ALT5 or TNativePin.PB13 {$endif}
+      {$if defined(has_SPI2) and defined(has_gpiod) },  PD1_SPI2 = ALT5 or TNativePin.PD1  {$endif}
+      {$if defined(has_SPI1) and defined(has_gpioe) }, PE13_SPI1 = ALT5 or TNativePin.PE13 {$endif}
+      {$if defined(has_SPI1) and defined(has_gpiog) },  PG2_SPI1 = ALT5 or TNativePin.PG2  {$endif}
+      {$if defined(has_SPI2) and defined(has_gpioi) },  PI1_SPI2 = ALT5 or TNativePin.PI1  {$endif}
+      {$if defined(has_SPI3) and defined(has_gpiob) },  PB3_SPI3 = ALT6 or TNativePin.PB3  {$endif}
+      {$if defined(has_SPI3) and defined(has_gpioc) }, PC10_SPI3 = ALT6 or TNativePin.PC10 {$endif}
+      {$if defined(has_SPI3) and defined(has_gpiog) },  PG9_SPI3 = ALT6 or TNativePin.PG9  {$endif}
+    );
 
-  TSPISCLKPins = (
-  {$if defined(has_SPI1) and defined(has_gpioa) }   PA5_SPI1 = ALT5 or TNativePin.PA5  {$endif}
-  {$if defined(has_arduinopins)                 },  D13_SPI  = ALT5 or TNativePin.PA5  {$endif}
-  {$if defined(has_SPI2) and defined(has_gpioa) },  PA9_SPI2 = ALT5 or TNativePin.PA9  {$endif}
-  {$if defined(has_SPI1) and defined(has_gpiob) },  PB3_SPI1 = ALT5 or TNativePin.PB3  {$endif}
-  {$if defined(has_SPI2) and defined(has_gpiob) }, PB10_SPI2 = ALT5 or TNativePin.PB10 {$endif}
-  {$if defined(has_SPI2) and defined(has_gpiob) }, PB13_SPI2 = ALT5 or TNativePin.PB13 {$endif}
-  {$if defined(has_SPI2) and defined(has_gpioc) },  PC7_SPI2 = ALT5 or TNativePin.PC7  {$endif}
-  {$if defined(has_SPI2) and defined(has_gpiod) },  PD3_SPI2 = ALT5 or TNativePin.PD3  {$endif}
-  {$if defined(has_SPI4) and defined(has_gpioe) },  PE2_SPI4 = ALT5 or TNativePin.PE2  {$endif}
-  {$if defined(has_SPI4) and defined(has_gpioe) }, PE12_SPI4 = ALT5 or TNativePin.PE12 {$endif}
-  {$if defined(has_SPI5) and defined(has_gpiof) },  PF7_SPI5 = ALT5 or TNativePin.PF7  {$endif}
-  {$if defined(has_SPI6) and defined(has_gpiog) }, PG13_SPI6 = ALT5 or TNativePin.PG13 {$endif}
-  {$if defined(has_SPI5) and defined(has_gpioh) },  PH6_SPI5 = ALT5 or TNativePin.PH6  {$endif}
-  {$if defined(has_SPI2) and defined(has_gpioi) },  PI1_SPI2 = ALT5 or TNativePin.PI1  {$endif}
-  {$if defined(has_SPI5) and defined(has_gpiob) },  PB0_SPI5 = ALT6 or TNativePin.PB0  {$endif}
-  {$if defined(has_SPI3) and defined(has_gpiob) },  PB3_SPI3 = ALT6 or TNativePin.PB3  {$endif}
-  {$if defined(has_SPI4) and defined(has_gpiob) }, PB13_SPI4 = ALT6 or TNativePin.PB13 {$endif}
-  {$if defined(has_SPI3) and defined(has_gpioc) }, PC10_SPI3 = ALT6 or TNativePin.PC10 {$endif}
-  {$if defined(has_SPI5) and defined(has_gpioe) },  PE2_SPI5 = ALT6 or TNativePin.PE2  {$endif}
-  {$if defined(has_SPI5) and defined(has_gpioe) }, PE12_SPI5 = ALT6 or TNativePin.PE12 {$endif}
-  {$if defined(has_SPI4) and defined(has_gpiog) }, PG11_SPI4 = ALT6 or TNativePin.PG11 {$endif}
-  {$if defined(has_SPI3) and defined(has_gpiob) }, PB12_SPI3 = ALT7 or TNativePin.PB12 {$endif}  );
-
-  TSPINSSPins = (
-    //For some braindead Reason D10 Pin is not mapped to a 'real' NSS pin
-    {$if defined(has_arduinopins)                 }   D10_SPI  = TNativePin.PB6  {$endif}
-    {$if defined(has_SPI1) and defined(has_gpioa) },  PA4_SPI1 = ALT5 or TNativePin.PA4  {$endif}
+    TSPINSSPins = (
+    {$if defined(has_SPI1) and defined(has_gpioa) }   PA4_SPI1 = ALT5 or TNativePin.PA4  {$endif}
     {$if defined(has_SPI1) and defined(has_gpioa) }, PA15_SPI1 = ALT5 or TNativePin.PA15 {$endif}
+    {$if defined(has_SPI1) and defined(has_gpiob) },  PB0_SPI1 = ALT5 or TNativePin.PB0  {$endif}
     {$if defined(has_SPI2) and defined(has_gpiob) },  PB9_SPI2 = ALT5 or TNativePin.PB9  {$endif}
     {$if defined(has_SPI2) and defined(has_gpiob) }, PB12_SPI2 = ALT5 or TNativePin.PB12 {$endif}
-    {$if defined(has_SPI4) and defined(has_gpioe) },  PE4_SPI4 = ALT5 or TNativePin.PE4  {$endif}
-    {$if defined(has_SPI4) and defined(has_gpioe) }, PE11_SPI4 = ALT5 or TNativePin.PE11 {$endif}
-    {$if defined(has_SPI5) and defined(has_gpiof) },  PF6_SPI5 = ALT5 or TNativePin.PF6  {$endif}
-    {$if defined(has_SPI6) and defined(has_gpiog) },  PG8_SPI6 = ALT5 or TNativePin.PG8  {$endif}
-    {$if defined(has_SPI5) and defined(has_gpioh) },  PH5_SPI5 = ALT5 or TNativePin.PH5  {$endif}
+    {$if defined(has_SPI2) and defined(has_gpiod) },  PD0_SPI2 = ALT5 or TNativePin.PD0  {$endif}
+    {$if defined(has_SPI1) and defined(has_gpioe) }, PE12_SPI1 = ALT5 or TNativePin.PE12 {$endif}
+    {$if defined(has_SPI1) and defined(has_gpiog) },  PG5_SPI1 = ALT5 or TNativePin.PG5  {$endif}
     {$if defined(has_SPI2) and defined(has_gpioi) },  PI0_SPI2 = ALT5 or TNativePin.PI0  {$endif}
     {$if defined(has_SPI3) and defined(has_gpioa) },  PA4_SPI3 = ALT6 or TNativePin.PA4  {$endif}
     {$if defined(has_SPI3) and defined(has_gpioa) }, PA15_SPI3 = ALT6 or TNativePin.PA15 {$endif}
-    {$if defined(has_SPI5) and defined(has_gpiob) },  PB1_SPI5 = ALT6 or TNativePin.PB1  {$endif}
-    {$if defined(has_SPI4) and defined(has_gpiob) }, PB12_SPI4 = ALT6 or TNativePin.PB12 {$endif}
-    {$if defined(has_SPI5) and defined(has_gpioe) },  PE4_SPI5 = ALT6 or TNativePin.PE4  {$endif}
-    {$if defined(has_SPI5) and defined(has_gpioe) }, PE11_SPI5 = ALT6 or TNativePin.PE11 {$endif}
-    {$if defined(has_SPI4) and defined(has_gpiog) }, PG14_SPI4 = ALT6 or TNativePin.PG14 {$endif}
-    {$if defined(has_SPI2) and defined(has_gpiob) },  PB4_SPI2 = ALT7 or TNativePin.PB4  {$endif}
-    {$if defined(has_SPI2) and defined(has_gpiod) },  PD1_SPI2 = ALT7 or TNativePin.PD1  {$endif}
+    {$if defined(has_SPI3) and defined(has_gpiog) }, PG12_SPI3 = ALT6 or TNativePin.PG12 {$endif}
+    {$if defined(has_arduinominipins)             },  D10_SPI  =         TNativePin.PA11 {$endif}
   );
-
-  TSPIDMAChannels = (
-    {$if defined(has_arduinopins) }   DMA_SPI_RX =   DMA2_Stream0_BASE {$endif}
-    {$if defined(has_arduinopins) },  DMA_SPI_TX =   DMA2_Stream3_BASE,{$endif}
-    {$if defined(has_SPI1)        }   DMA2_STREAM0_SPI1_RX = DMA2_Stream0_BASE {$endif}
-    {$if defined(has_SPI1)        },  DAM2_STREAM2_SPI1_RX = DMA2_Stream2_BASE {$endif}
-    {$if defined(has_SPI1)        },  DMA2_STREAM3_SPI1_TX = DMA2_Stream3_BASE {$endif}
-    {$if defined(has_SPI1)        },  DMA2_STREAM5_SPI1_TX = DMA2_Stream5_BASE {$endif}
-
-    {$if defined(has_SPI2)        },  DMA1_STREAM3_SPI2_RX = DMA1_Stream3_BASE {$endif}
-    {$if defined(has_SPI2)        },  DMA1_STREAM4_SPI2_TX = DMA1_Stream4_BASE {$endif}
-
-    {$if defined(has_SPI3)        },  DMA1_STREAM0_SPI3_RX = DMA1_Stream0_BASE {$endif}
-    {$if defined(has_SPI3)        },  DMA1_STREAM2_SPI3_RX = DMA1_Stream2_BASE {$endif}
-    {$if defined(has_SPI3)        },  DMA1_STREAM5_SPI3_TX = DMA1_Stream5_BASE {$endif}
-    {$if defined(has_SPI3)        },  DMA1_STREAM7_SPI3_TX = DMA1_Stream7_BASE {$endif}
-
-    {$if defined(has_SPI4)        },  DMA2_STREAM0_SPI4_RX = DMA2_Stream0_BASE {$endif}
-    {$if defined(has_SPI4)        },  DMA2_STREAM1_SPI4_TX = DMA2_Stream1_BASE {$endif}
-    {$if defined(has_SPI4)        },  DMA2_STREAM3_SPI3_RX = DMA2_Stream3_BASE {$endif}
-    {$if defined(has_SPI4)        },  DMA2_STREAM4_SPI3_TX = DMA2_Stream4_BASE {$endif}
-  );
-
 {$ENDREGION}
 
 const
@@ -187,11 +135,9 @@ type
     function Read(const Buffer: Pointer; const BufferSize: Cardinal;
                   const SoftNSSPin : TPinIdentifier = TNativePin.None): Cardinal;
 
+    { Writes specified number of bytes from buffer and returns actual number of bytes written. }
     function Write(const Buffer: Pointer; const BufferSize: Cardinal;
-                  const SoftNSSPin : TPinIdentifier = TNativePin.None): Cardinal;
-
-    { Writes specified number of words from buffer. }
-    procedure Write(const WriteBuffer: array of word; WriteCount : longWord = -1; const SoftNSSPin : TPinIdentifier = TNativePin.None);
+                   const SoftNSSPin : TPinIdentifier = TNativePin.None): Cardinal;
 
     { Transfers data through SPI port asynchronously - that is, reading and writing at the same time.
       @param(ReadBuffer Pointer to data buffer where the data will be read from. If this parameter is set to @nil,
@@ -233,27 +179,29 @@ type
     SPI : TSPI_Registers absolute SPI1_BASE;
   {$ENDIF HAS ARDUINOPINS}
 
+  {$IF DEFINED(HAS_ARDUINOMINIPINS)}
+  var
+    SPI : TSPI_Registers absolute SPI1_BASE;
+  {$ENDIF HAS ARDUINOMINIPINS}
+
 implementation
 uses
-  MBF.STM32F4.SystemCore;
+  MBF.STM32L4.SystemCore;
 
 var
-  NSSPins : array[1..6] of longInt;
+  NSSPins : array[1..4] of longInt;
 
 procedure TSPIRegistersHelper.Initialize;
 var
   i,CR1,Divider : longWord;
 begin
   case longWord(@Self) of
-    SPI1_BASE : RCC.APB2ENR := RCC.APB2ENR or (1 shl 12);
-    SPI2_BASE : RCC.APB1ENR := RCC.APB1ENR or (1 shl 14);
-    SPI3_BASE : RCC.APB1ENR := RCC.APB1ENR or (1 shl 15);
-    {$ifdef has_spi4}SPI4_BASE : RCC.APB2ENR := RCC.APB2ENR or (1 shl 13);{$endif}
-    {$ifdef has_spi5}SPI5_BASE : RCC.APB2ENR := RCC.APB2ENR or (1 shl 20);{$endif}
-    {$ifdef has_spi6}SPI6_BASE : RCC.APB2ENR := RCC.APB2ENR or (1 shl 21);{$endif}
+    {$ifdef has_spi1}SPI1_BASE : RCC.APB2ENR  := RCC.APB2ENR or (1 shl 12);{$endif}
+    {$ifdef has_spi2}SPI2_BASE : RCC.APB1ENR1 := RCC.APB1ENR1 or (1 shl 14);{$endif}
+    {$ifdef has_spi3}SPI3_BASE : RCC.APB1ENR1 := RCC.APB1ENR1 or (1 shl 15);{$endif}
   end;
 
-  for i := 1 to 6 do
+  for i := 1 to 4 do
     NSSPins[i] := -1;
   // Set Defaults, all crazy Modes turned off, SPI disabled
   self.CR1:= 0;
@@ -301,7 +249,7 @@ begin
   //self.CR2 := (1 shl 2);
 
   //Disable I2S Mode
-  self.I2SCFGR := 0;
+  //self.I2SCFGR := 0;
 
   //if FNssMode = TSPINssMode.Software then
   //  FGPIO.PinValue[FNSSPin] := 1;
@@ -328,12 +276,10 @@ var
   BaseFrequency : Cardinal;
 begin
     case longWord(@Self) of
-    SPI1_BASE : BaseFrequency := SystemCore.GetAPB2PeripheralClockFrequency;
-    SPI2_BASE : BaseFrequency := SystemCore.GetAPB1PeripheralClockFrequency;
-    SPI3_BASE : BaseFrequency := SystemCore.GetAPB1PeripheralClockFrequency;
+    {$ifdef has_spi1}SPI1_BASE : BaseFrequency := SystemCore.GetAPB2PeripheralClockFrequency;{$endif}
+    {$ifdef has_spi2}SPI2_BASE : BaseFrequency := SystemCore.GetAPB1PeripheralClockFrequency;{$endif}
+    {$ifdef has_spi3}SPI3_BASE : BaseFrequency := SystemCore.GetAPB1PeripheralClockFrequency;{$endif}
     {$ifdef has_spi4}SPI4_BASE : BaseFrequency := SystemCore.GetAPB2PeripheralClockFrequency;{$endif}
-    {$ifdef has_spi5}SPI5_BASE : BaseFrequency := SystemCore.GetAPB2PeripheralClockFrequency;{$endif}
-    {$ifdef has_spi6}SPI6_BASE : BaseFrequency := SystemCore.GetAPB2PeripheralClockFrequency;{$endif}
   end;
 
   for result := 0 to 7 do
@@ -346,12 +292,10 @@ var
   BaseFrequency : Cardinal;
 begin
   case longWord(@Self) of
-      SPI1_BASE : BaseFrequency := SystemCore.GetAPB2PeripheralClockFrequency;
-      SPI2_BASE : BaseFrequency := SystemCore.GetAPB1PeripheralClockFrequency;
-      SPI3_BASE : BaseFrequency := SystemCore.GetAPB1PeripheralClockFrequency;
+      {$ifdef has_spi1}SPI1_BASE : BaseFrequency := SystemCore.GetAPB2PeripheralClockFrequency;{$endif}
+      {$ifdef has_spi2}SPI2_BASE : BaseFrequency := SystemCore.GetAPB1PeripheralClockFrequency;{$endif}
+      {$ifdef has_spi3}SPI3_BASE : BaseFrequency := SystemCore.GetAPB1PeripheralClockFrequency;{$endif}
       {$ifdef has_spi4}SPI4_BASE : BaseFrequency := SystemCore.GetAPB2PeripheralClockFrequency;{$endif}
-      {$ifdef has_spi5}SPI5_BASE : BaseFrequency := SystemCore.GetAPB2PeripheralClockFrequency;{$endif}
-      {$ifdef has_spi6}SPI6_BASE : BaseFrequency := SystemCore.GetAPB2PeripheralClockFrequency;{$endif}
   end;
   Result := BaseFrequency shr (((Self.CR1 shr 3) and %111)+1);
 end;
@@ -395,12 +339,10 @@ begin
   if _NSSPin = TNativePin.None then
   begin
     case longWord(@Self) of
-      SPI1_BASE : _NSSPin := NSSPins[1];
-      SPI2_BASE : _NSSPin := NSSPins[2];
-      SPI3_BASE : _NSSPin := NSSPins[3];
+      {$ifdef has_spi1}SPI1_BASE : _NSSPin := NSSPins[1];{$endif}
+      {$ifdef has_spi2}SPI2_BASE : _NSSPin := NSSPins[2];{$endif}
+      {$ifdef has_spi3}SPI3_BASE : _NSSPin := NSSPins[3];{$endif}
       {$ifdef has_spi4}SPI4_BASE : _NSSPin := NSSPins[4];{$endif}
-      {$ifdef has_spi5}SPI5_BASE : _NSSPin := NSSPins[5];{$endif}
-      {$ifdef has_spi6}SPI6_BASE : _NSSPin := NSSPins[6];{$endif}
     end;
   end;
 
@@ -455,82 +397,6 @@ begin
   self.CR1 := self.CR1 and (not (1 shl 6));
 end;
 
-procedure TSPIRegistersHelper.Write(const WriteBuffer: array of word; WriteCount : longWord = -1; const SoftNSSPin : TPinIdentifier = TNativePin.None);
-var
-  tmpPin, _NSSPin : TPinIdentifier;
-  dummy : word;
-  i : longWord;
-begin
-  if WriteCount = -1 then
-    WriteCount := High(WriteBuffer)
-  else
-    WriteCount := WriteCount + Low(WriteBuffer);
-
-  // This is a hack that is only necessary because on Nucleo boards the Pin D10 is not mapped to Hardware-NSS Pin
-  _NSSPin := SoftNSSPin;
-
-  if _NSSPin = TNativePin.None then
-  begin
-    case longWord(@Self) of
-      SPI1_BASE : _NSSPin := NSSPins[1];
-      SPI2_BASE : _NSSPin := NSSPins[2];
-      SPI3_BASE : _NSSPin := NSSPins[3];
-      {$ifdef has_spi4}SPI4_BASE : _NSSPin := NSSPins[4];{$endif}
-      {$ifdef has_spi5}SPI5_BASE : _NSSPin := NSSPins[5];{$endif}
-      {$ifdef has_spi6}SPI6_BASE : _NSSPin := NSSPins[6];{$endif}
-    end;
-  end;
-
-  //Take the NSS Pin Low in software Mode (start transfer)
-  if _NSSPin < ALT0 then
-    // Switch to Software Mode as either no pin is selected or a GPIO Pin
-    self.CR1 := self.CR1 or (1 shl 9) or (1 shl 8)
-  else
-    //Disable Software Mode
-    self.CR1 := self.CR1 and (not (1 shl 8));
-
-  //transfer in 16 bits
-  setBitsPerWord(TSPIBitsPerWord.Sixteen);
-  // Enable SPI, this also sets NSS Pin Low in Hardware Mode
-  self.CR1 := self.CR1 or (1 shl 6);
-
-  //wait for TXE to go high (no more data to shift out)
-  while self.SR and (1 shl 1) = 0 do
-    ;
-
-  //read data from rx buffer if available and discard it
-  if self.SR and (1 shl 0) = 1 then
-    Dummy := self.DR;
-
-  for i := Low(Writebuffer) to WriteCount do
-  begin
-    if (_NSSPin > TNativePin.None) and (_NSSPin < ALT0) then
-      GPIO.PinValue[_NSSPin] := 0;
-    dummy := WriteBuffer[i];
-    self.DR := WriteBuffer[i];
-
-    // RXNE Wait until data is completely shifted in
-    //while self.SR and (1 shl 0) = 0 do
-    //  ;
-
-    // TXE Wait until data is completely shifted in
-    while self.SR and (1 shl 1) = 0 do
-      ;
-
-    // TXE Wait until data is completely shifted in
-    //while self.SR and (1 shl 7) <> 0 do
-    //  ;
-
-    Dummy := self.DR;
-
-    if (_NSSPin > TNativePin.None) and (_NSSPin < ALT0) then
-      GPIO.PinValue[_NSSPin] := 1;
-  end;
-
-  // Disable SPI, this also sets NSS Pin High in Hardware Mode
-  self.CR1 := self.CR1 and (not (1 shl 6));
-end;
-
 function TSPIRegistersHelper.Transfer(const ReadBuffer, WriteBuffer: Pointer; const BufferSize: Cardinal;
                   const SoftNSSPin : TPinIdentifier = TNativePin.None): Cardinal;
 var
@@ -546,12 +412,10 @@ begin
   if _NSSPin = TNativePin.None then
   begin
     case longWord(@Self) of
-      SPI1_BASE : _NSSPin := NSSPins[1];
-      SPI2_BASE : _NSSPin := NSSPins[2];
-      SPI3_BASE : _NSSPin := NSSPins[3];
+      {$ifdef has_spi1}SPI1_BASE : _NSSPin := NSSPins[1];{$endif}
+      {$ifdef has_spi2}SPI2_BASE : _NSSPin := NSSPins[2];{$endif}
+      {$ifdef has_spi3}SPI3_BASE : _NSSPin := NSSPins[3];{$endif}
       {$ifdef has_spi4}SPI4_BASE : _NSSPin := NSSPins[4];{$endif}
-      {$ifdef has_spi5}SPI5_BASE : _NSSPin := NSSPins[5];{$endif}
-      {$ifdef has_spi6}SPI6_BASE : _NSSPin := NSSPins[6];{$endif}
     end;
   end;
 
@@ -596,16 +460,16 @@ begin
       self.DR := $ff; //We need to send dummy data to be able to receive
 
     // RXNE Wait until data is completely shifted in
-    //while self.SR and (1 shl 0) = 0 do
-    //  ;
+    while self.SR and (1 shl 0) = 0 do
+      ;
 
     // TXE Wait until data is completely shifted in
     while self.SR and (1 shl 1) = 0 do
       ;
 
     // TXE Wait until data is completely shifted in
-    //while self.SR and (1 shl 7) <> 0 do
-    //  ;
+    while self.SR and (1 shl 7) <> 0 do
+      ;
 
     Result := self.DR;
 
@@ -663,12 +527,10 @@ begin
       GPIO.PinMode[longWord(value)] := TPinMode.Output;
 
   case longWord(@Self) of
-      SPI1_BASE : NSSPins[1] := longInt(value);
-      SPI2_BASE : NSSPins[2] := longInt(value);
-      SPI3_BASE : NSSPins[3] := longInt(value);
+      {$ifdef has_spi1}SPI1_BASE : NSSPins[1] := longInt(value);{$endif}
+      {$ifdef has_spi2}SPI2_BASE : NSSPins[2] := longInt(value);{$endif}
+      {$ifdef has_spi3}SPI3_BASE : NSSPins[3] := longInt(value);{$endif}
       {$ifdef has_spi4}SPI4_BASE : NSSPins[4] := longInt(value);{$endif}
-      {$ifdef has_spi5}SPI5_BASE : NSSPins[5] := longInt(value);{$endif}
-      {$ifdef has_spi6}SPI6_BASE : NSSPins[6] := longInt(value);{$endif}
   end;
 end;
 
@@ -679,9 +541,9 @@ begin
 end;
 
 function TSPIRegistersHelper.Write(const Buffer: Pointer; const BufferSize: Cardinal;
-                                  const SoftNSSPin : TPinIdentifier = TNativePin.None): Cardinal;
+                                   const SoftNSSPin : TPinIdentifier = TNativePin.None): Cardinal;
 begin
-  Result := Transfer(nil,Buffer, BufferSize, SoftNSSPin);
+  Result := Transfer(nil, Buffer, BufferSize, SoftNSSPin);
 end;
 
 function TSPIRegistersHelper.Transfer(const Buffer: Pointer; const BufferSize: Cardinal;

@@ -39,16 +39,16 @@ begin
   SPI.Initialize(TSPIMOSIPins.D11_SPI,TSPIMISOPINS.D12_SPI,TSPISCLKPINS.D13_SPI,TSPINSSPins.D10_SPI);
   SPI.Frequency:= 8000000;
 
-  UC1610.Initialize(SPI,TArduinopin.D9,TArduinoPin.D8,TUC1610.LCD160x104,TDisplayBitDepth.TwoBits);
+  UC1610.Initialize(SPI,TArduinopin.D9,TArduinoPin.D8,TUC1610.LCD160x104);
   UC1610.InitSequence;
 
 
-  UC1610.ClearScreen(true);
+  UC1610.ClearScreen;
   i := ord('0');
   repeat
-    UC1610.Write('X+0'+Chr(i)+Chr(i)+'.00mm',0,8);
-    UC1610.Write('Y+000.00mm',0,40);
-    UC1610.Write('Z+000.00mm',0,72);
+    //UC1610.Write('X+0'+Chr(i)+Chr(i)+'.00mm',0,8);
+    //UC1610.Write('Y+000.00mm',0,40);
+    //UC1610.Write('Z+000.00mm',0,72);
     SystemCore.Delay(50);
     //UC1610.ClearScreen(true);
     //SystemCore.Delay(2000);

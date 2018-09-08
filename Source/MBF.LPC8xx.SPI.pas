@@ -17,7 +17,6 @@ interface
 {$INCLUDE MBF.Config.inc}
 
 uses
-  PXL.TypeDef,
   MBF.LPC8xx.GPIO;
 
 {$REGION PinDefinitions}
@@ -527,7 +526,7 @@ begin
   if _NSSPin < ALT0 then
   begin
     if _NSSPin > TNativePin.None then
-      GPIO.PinValue[_NSSPin] := TPinValue.Low;
+      GPIO.PinValue[_NSSPin] := 0;
     // Switch to Software Mode
     self.TXCTL := self.TXCTL and (not (%11111 shl 16));
   end
@@ -560,7 +559,7 @@ begin
   // Take NSS High again in Software Mode (end of Transfer)
   if _NSSPin < ALT0 then
     if (_NSSPin > TNativePin.None) and (_NSSPin < ALT0) then
-      GPIO.PinValue[_NSSPin] := TPinValue.Low;
+      GPIO.PinValue[_NSSPin] := 0;
 
   // Disable SPI, this also sets NSS Pin High in Hardware Mode
   self.CFG := self.CFG and (not (1 shl 0));
@@ -663,7 +662,7 @@ begin
     end;
 
     if (_NSSPin > TNativePin.None) and (_NSSPin < ALT0) then
-      GPIO.PinValue[_NSSPin] := TPinValue.High;
+      GPIO.PinValue[_NSSPin] := 1;
   end;
 
   // Disable SPI, this also sets NSS Pin High in Hardware Mode

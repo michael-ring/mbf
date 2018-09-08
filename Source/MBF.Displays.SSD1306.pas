@@ -164,7 +164,7 @@ begin
     (FPhysicalSize.Y div 8) - 1]);
 
   if (FPinDC <> -1) and (FDataPort is TCustomPortSPI) then
-    FGPIO.PinValue[FPinDC] := TPinValue.High;
+    FGPIO.PinValue[FPinDC] := 1;
 end;
 
 procedure TDisplay.PresentBuffer(const Rect: TIntRect);

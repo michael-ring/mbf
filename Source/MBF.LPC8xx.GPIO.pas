@@ -112,7 +112,7 @@ type
 {$endregion}
 
 type
-  TPinValue=(Low=0,High=1);
+  TPinValue=0..1;
   TPinIdentifier=-1..31;
   TPinMode = (Input=%00, Output=%01, Analog=%11, AF0=$10, AF1,  AF2,  AF3,  AF4,  AF5,  AF6,  AF7,  AF8,  AF9,
                                                  AF10,    AF11, AF12, AF13, AF14, AF15, AF16, AF17, AF18, AF19,

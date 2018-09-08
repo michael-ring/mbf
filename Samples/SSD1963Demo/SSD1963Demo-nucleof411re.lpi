@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CONFIG>
+  <ProjectOptions>
+    <Version Value="11"/>
+    <General>
+      <Flags>
+        <LRSInOutputDirectory Value="False"/>
+      </Flags>
+      <MainUnit Value="0"/>
+      <UseAppBundle Value="False"/>
+    </General>
+    <BuildModes Count="1">
+      <Item1 Name="default" Default="True"/>
+    </BuildModes>
+    <PublishOptions>
+      <Version Value="2"/>
+    </PublishOptions>
+    <RunParams>
+      <FormatVersion Value="2"/>
+      <Modes Count="1">
+        <Mode0 Name="default"/>
+      </Modes>
+    </RunParams>
+    <Units Count="5">
+      <Unit0>
+        <Filename Value="SSD1963Demo.lpr"/>
+        <IsPartOfProject Value="True"/>
+        <CursorPos X="40" Y="72"/>
+        <UsageCount Value="21"/>
+        <Loaded Value="True"/>
+        <LoadedDesigner Value="True"/>
+      </Unit0>
+      <Unit1>
+        <Filename Value="../../Source/MBF.STM32F4.DMA.pas"/>
+        <UnitName Value="mbf.stm32f4.dma"/>
+        <EditorIndex Value="1"/>
+        <TopLine Value="19"/>
+        <CursorPos X="41" Y="32"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
+      </Unit1>
+      <Unit2>
+        <Filename Value="../../Source/MBF.STM32L4.SPI.pas"/>
+        <EditorIndex Value="-1"/>
+        <UsageCount Value="10"/>
+      </Unit2>
+      <Unit3>
+        <Filename Value="../../Source/MBF.STM32F4.SPI.pas"/>
+        <UnitName Value="mbf.stm32f4.spi"/>
+        <EditorIndex Value="2"/>
+        <TopLine Value="433"/>
+        <CursorPos X="5" Y="20"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
+      </Unit3>
+      <Unit4>
+        <Filename Value="../../Source/MBF.Displays.CustomDisplay.pas"/>
+        <IsVisibleTab Value="True"/>
+        <EditorIndex Value="3"/>
+        <TopLine Value="152"/>
+        <CursorPos X="22" Y="173"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
+      </Unit4>
+    </Units>
+    <JumpHistory Count="5" HistoryIndex="4">
+      <Position1>
+        <Filename Value="SSD1963Demo.lpr"/>
+        <Caret Line="72" Column="40" TopLine="30"/>
+      </Position1>
+      <Position2>
+        <Filename Value="../../Source/MBF.STM32F4.DMA.pas"/>
+        <Caret Line="31" Column="37" TopLine="10"/>
+      </Position2>
+      <Position3>
+        <Filename Value="SSD1963Demo.lpr"/>
+        <Caret Line="72" Column="40"/>
+      </Position3>
+      <Position4>
+        <Filename Value="../../Source/MBF.STM32F4.SPI.pas"/>
+        <Caret Line="20" Column="5"/>
+      </Position4>
+      <Position5>
+        <Filename Value="../../Source/MBF.Displays.CustomDisplay.pas"/>
+        <Caret Line="173" Column="22" TopLine="179"/>
+      </Position5>
+    </JumpHistory>
+  </ProjectOptions>
+  <CompilerOptions>
+    <Version Value="11"/>
+    <Target>
+      <Filename Value="SSD1963Demo"/>
+    </Target>
+    <SearchPaths>
+      <IncludeFiles Value="../../Source;$(ProjOutDir)"/>
+      <OtherUnitFiles Value="../../Source"/>
+      <UnitOutputDirectory Value="lib/$(TargetCPU)-$(TargetOS)"/>
+    </SearchPaths>
+    <Parsing>
+      <SyntaxOptions>
+        <UseAnsiStrings Value="False"/>
+      </SyntaxOptions>
+    </Parsing>
+    <CodeGeneration>
+      <HeapSize Value="8192"/>
+      <StackSize Value="8192"/>
+      <TargetCPU Value="arm"/>
+      <TargetOS Value="embedded"/>
+    </CodeGeneration>
+    <Linking>
+      <Debugging>
+        <DebugInfoType Value="dsDwarf2"/>
+        <UseLineInfoUnit Value="False"/>
+      </Debugging>
+    </Linking>
+    <Other>
+      <CustomOptions Value="-Cparmv7em
+-XP/usr/local/bin/arm-none-eabi-
+-Wpnucleof411re
+-dnucleof411re"/>
+    </Other>
+  </CompilerOptions>
+</CONFIG>

@@ -17,7 +17,6 @@ interface
 {$INCLUDE MBF.Config.inc}
 
 uses
-  PXL.TypeDef,
   MBF.STM32F3.GPIO;
 
 {$REGION PinDefinitions}
@@ -258,7 +257,7 @@ begin
   //self.I2SCFGR := 0;
 
   //if FNssMode = TSPINssMode.Software then
-  //  FGPIO.PinValue[FNSSPin] := TPinValue.High;
+  //  FGPIO.PinValue[FNSSPin] := 1;
 end;
 
 procedure TSPIRegistersHelper.Initialize(const AMosiPin : TSPIMOSIPins;
@@ -356,7 +355,7 @@ begin
   if _NSSPin < ALT0 then
   begin
     if _NSSPin > TNativePin.None then
-      GPIO.PinValue[_NSSPin] := TPinValue.Low;
+      GPIO.PinValue[_NSSPin] := 0;
     // Switch to Software Mode
     self.CR1 := self.CR1 or (1 shl 9) or (1 shl 8);
   end
@@ -397,7 +396,7 @@ begin
   // Take NSS High again in Software Mode (end of Transfer)
   if _NSSPin < ALT0 then
     if (_NSSPin > TNativePin.None) and (_NSSPin < ALT0) then
-      GPIO.PinValue[_NSSPin] := TPinValue.Low;
+      GPIO.PinValue[_NSSPin] := 0;
 
   // Disable SPI, this also sets NSS Pin High in Hardware Mode
   self.CR1 := self.CR1 and (not (1 shl 6));
@@ -498,7 +497,7 @@ begin
     end;
 
     if (_NSSPin > TNativePin.None) and (_NSSPin < ALT0) then
-      GPIO.PinValue[_NSSPin] := TPinValue.High;
+      GPIO.PinValue[_NSSPin] := 1;
   end;
 
   // Disable SPI, this also sets NSS Pin High in Hardware Mode

@@ -18,71 +18,141 @@ unit MBF.Displays.CustomDisplay;
 interface
 
 uses
+  MBF.Types,
   MBF.__CONTROLLERTYPE__.SystemCore,
   MBF.__CONTROLLERTYPE__.GPIO,
   MBF.__CONTROLLERTYPE__.SPI;
 
 type
-  TPoint2px = record
-    { The coordinate in 2D space. }
-    X, Y: Word;
+  TDisplayBitDepth = (OneBit=1,TwoBits=2,FourBits=4,EightBits=8,SixteenBits=16);
+
+  TFontData = array[0..2047] of byte;
+  TFontInfo = record
+    Width,Height : Word;
+    BitsPerPixel : byte;
+    BytesPerChar : Word;
+    Charmap : String;
+    pFontData : ^TFontData;
   end;
-  TDisplayBitDepth = (OneBit=1,TwoBits=2,FourBits=4,EightBits=8);
 
-  //operator = (a,b:TPoint2px) : boolean;
-  //begin
-  //  Result := (a.X = b.X) and (a.Y = b.Y);
-  //end;
+  TScreenInfo = record
+    { The coordinate in 2D space. }
+    Width, Height: Word;
+    Depth : TDisplayBitDepth;
+    class operator =(a,b : TScreenInfo) : boolean;
+  end;
 
-type TCustomDisplay = record
+type TCustomDisplay = object
   private
-    FScreenSize : TPoint2px;
-    FBitDepth : TDisplayBitDepth;
+    FScreenInfo : TScreenInfo;
     FpSPI : ^TSPI_Registers;
+    FpGPIOPort : ^TGPIO_Registers;
     FPinDC : TPinIdentifier;
+    FPinWR : TPinIdentifier;
+    FPinRD : TPinIdentifier;
+    FPinCS : TPinIdentifier;
     FPinRST : TPinIdentifier;
+    FForegroundColor : TColor;
+    FBackgroundColor : TColor;
     procedure setPinDC(const Value : TPinIdentifier);
     procedure setPinRST(const Value : TPinIdentifier);
-    procedure setScreenSize(const Value : TPoint2px);
+    procedure setScreenInfo(const Value : TScreenInfo);
   public
+    procedure Reset;
+    procedure InitSequence;
+    procedure clearScreen;
+    property ForegroundColor: TColor read FForegroundColor write FForegroundColor;
+    property BackgroundColor : TColor read FBackgroundColor write FBackgroundColor;
+    property PinDC : TPinIdentifier read FPinDC write setPinDC;
+    property PinRST : TPinIdentifier read FPinRST write setPinRST;
+    property ScreenInfo : TScreenInfo read FScreenInfo write setScreenInfo;
+end;
+
+  TCustomSPIDisplay = object(TCustomDisplay)
     procedure WriteCommand(const value : byte);
     procedure WriteCommand(const Values: array of Byte);
     procedure WriteData(const value : byte);
     procedure WriteData(const Values: array of Byte);
-    procedure Initialize(var SPI : TSpi_Registers);
-    procedure Initialize(var SPI : TSpi_Registers;const APinDC : TPinIdentifier;const APinRST : TPinIdentifier;AScreenSize : TPoint2px; ABitDepth : TDisplayBitDepth);
-    procedure Reset;
-    procedure InitSequence;
-    procedure clearScreen;
-    procedure setBitDepth(const Value : TDisplayBitDepth);
-    property PinDC : TPinIdentifier read FPinDC write setPinDC;
-    property PinRST : TPinIdentifier read FPinRST write setPinRST;
-    property ScreenSize : TPoint2px read FScreenSize write setScreenSize;
-    property BitDepth : TDisplayBitDepth read FBitDepth write setBitDepth;
-end;
+    //procedure Initialize(var SPI : TSpi_Registers);
+    procedure Initialize(var SPI : TSpi_Registers;const APinDC : TPinIdentifier;const APinRST : TPinIdentifier;AScreenInfo : TScreenInfo);
+  end;
+
+  TCustomGPIODisplay = object(TCustomDisplay)
+  var
+    procedure Initialize(var GPIOPort : TGPIO_Registers;const APinDC,APinWR,APinRD,aPinCS,APinRST : TPinIdentifier;AScreenInfo : TScreenInfo);
+    procedure WriteCommand(const value : byte);
+    procedure WriteCommand(const Values: array of Byte);
+    procedure WriteData(const value : byte);
+    procedure WriteDataWord(const value : word);
+    procedure WriteData(const Values: array of Byte);
+    procedure WriteDataWord(const Values : array of word);
+  end;
 
 implementation
 
-procedure TCustomDisplay.Initialize(var SPI : TSpi_Registers);
+class operator TScreenInfo.= (a,b : TScreenInfo) : boolean;
 begin
-  FpSPI := @SPI;
-  FPinDC := TNativePin.NONE;
-  FPinRST := TNativePin.NONE;
-  FScreenSize.X := 0;
-  FScreenSize.Y := 0;
+  Result := (a.Width = b.Width) and (a.Height = b.Height) and (a.Depth = b.Depth);
 end;
 
-procedure TCustomDisplay.Initialize(var SPI : TSpi_Registers;const APinDC : TPinIdentifier;const APinRST : TPinIdentifier;AScreenSize : TPoint2px;ABitDepth : TDisplayBitDepth);
+//procedure TCustomSPIDisplay.Initialize(var SPI : TSpi_Registers);
+//begin
+//  FpSPI := @SPI;
+//  FPinDC := TNativePin.NONE;
+//  FPinRST := TNativePin.NONE;
+//  FScreenSize.X := 0;
+//  FScreenSize.Y := 0;
+//end;
+
+procedure TCustomSPIDisplay.Initialize(var SPI : TSpi_Registers;const APinDC : TPinIdentifier;const APinRST : TPinIdentifier;AScreenInfo : TScreenInfo);
 begin
   FpSPI := @SPI;
   FPinDC := APinDC;
   FPinRST := APinRST;
-  FScreenSize :=  AScreenSize;
-  FBitDepth := ABitDepth
+  FPinWR := TNativePin.None;
+  FPinRD := TNativePin.None;
+  FPinCS := TNativePin.None;
+  FScreenInfo :=  AScreenInfo;
+  FBackgroundColor := clBlack;
+  FForegroundColor := clWhite;
+end;
+
+procedure TCustomGPIODisplay.Initialize(var GPIOPort : TGPIO_Registers;const APinDC,APinWR,APinRD,aPinCS,APinRST : TPinIdentifier;AScreenInfo : TScreenInfo);
+begin
+  FpGPIOPort := @GPIOPort;
+  FPinDC := APinDC;
+  FPinWR := APinWR;
+  FPinRD := APinRD;
+  FPinCS := APinCS;
+  FPinRST := APinRST;
+  FScreenInfo :=  AScreenInfo;
+  FBackgroundColor := clBlack;
+  FForegroundColor := clWhite;
+
+  FpGPIOPort^.Initialize;
+  FpGPIOPort^.SetPortMode(TPinMode.Output);
+  FpGPIOPort^.SetPortOutputSpeed(TPinOutputSpeed.Slow);
+  FpGPIOPort^.SetPortOutputMode(TPinOutputmode.PushPull);
+  FpGPIOPort^.SetPortDrive(TPinDrive.None);
+
+  //Arduino Pins D10-D13 are connected to the additional Signal needed
+  GPIO.PinMode[FPinDC] := TPinMode.Output; //RS D/~C
+  GPIO.PinMode[FPinWR] := TPinMode.Output; //WR
+  GPIO.PinMode[FPinRD] := TPinMode.Output; //RD
+  GPIO.PinMode[FPinCS] := TPinMode.Output; //~CS
+  GPIO.PinMode[FPinRST] := TPinMode.Output; //~Reset
 end;
 
 procedure TCustomDisplay.Reset;
 begin
+  if FPinDC <> TNativePin.None then
+    GPIO.SetPinLevelHigh(FPinDC);
+  if FPinWR <> TNativePin.None then
+    GPIO.SetPinLevelHigh(FPinWR);
+  if FPinRD <> TNativePin.None then
+    GPIO.SetPinLevelHigh(FPinRD);
+  if FPinCS <> TNativePin.None then
+    GPIO.SetPinLevelHigh(FPinCS);
   if FPinRST <> TNativePin.None then
   begin
     GPIO.PinValue[FPinRST] := 1;
@@ -97,30 +167,128 @@ procedure TCustomDisplay.InitSequence;
 begin
 end;
 
-procedure TCustomDisplay.WriteCommand(const Value: Byte);
+procedure TCustomSPIDisplay.WriteCommand(const Value: Byte);
 begin
   GPIO.PinValue[FPinDC] := 0;
   FpSPI^.Write(@Value, 1);
 end;
 
-procedure TCustomDisplay.WriteCommand(const Values: array of Byte);
+procedure TCustomSPIDisplay.WriteCommand(const Values: array of Byte);
 begin
   GPIO.PinValue[FPinDC] := 0;
   if Length(Values) > 0 then
     FpSPI^.Write(@Values[0], Length(Values));
 end;
 
-procedure TCustomDisplay.WriteData(const Value: Byte);
+procedure TCustomSPIDisplay.WriteData(const Value: Byte);
 begin
   GPIO.PinValue[FPinDC] := 1;
   FpSPI^.Write(@Value, 1);
 end;
 
-procedure TCustomDisplay.WriteData(const Values: array of Byte);
+procedure TCustomSPIDisplay.WriteData(const Values: array of Byte);
 begin
   GPIO.PinValue[FPinDC] := 1;
   if Length(Values) > 0 then
     FpSPI^.Write(@Values[0], Length(Values));
+end;
+
+procedure TCustomGPIODisplay.WriteCommand(const Value: Byte);
+begin
+  GPIO.SetPinLevelHigh(FPinRD);
+  GPIO.SetPinLevelLow (FPinWR);
+  GPIO.SetPinLevelLow (FPinDC);
+  FpGPIOPort^.SetPortValues(Value);
+  GPIO.SetPinLevelLow(FPinCS);
+  GPIO.SetPinLevelHigh(FPinCS);
+  GPIO.SetPinLevelHigh(FPinDC);
+  GPIO.SetPinLevelHigh(FPinWR);
+end;
+
+procedure TCustomGPIODisplay.WriteCommand(const Values: array of Byte);
+var
+  i : integer;
+begin
+  if Length(Values) > 0 then
+  begin
+    GPIO.SetPinLevelHigh(FPinRD);
+    GPIO.SetPinLevelLow (FPinWR);
+    GPIO.SetPinLevelLow (FPinDC);
+    begin
+      for i := 0 to Length(Values)-1 do
+      begin
+        FpGPIOPort^.SetPortValues(Values[i]);
+        GPIO.SetPinLevelLow(FPinCS);
+        GPIO.SetPinLevelHigh(FPinCS);
+      end;
+    end;
+    GPIO.SetPinLevelHigh(FPinDC);
+    GPIO.SetPinLevelHigh(FPinWR);
+  end;
+end;
+
+procedure TCustomGPIODisplay.WriteData(const Value: Byte);
+begin
+  GPIO.SetPinLevelHigh(FPinRD);
+  FpGPIOPort^.SetPortValues(Value);
+  GPIO.SetPinLevelLow(FPinWR);
+  GPIO.SetPinLevelHigh(FPinDC);
+  GPIO.SetPinLevelLow(FPinCS);
+  GPIO.SetPinLevelHigh(FPinCS);
+  GPIO.SetPinLevelHigh(FPinWR);
+end;
+
+procedure TCustomGPIODisplay.WriteDataWord(const Value: Word);
+begin
+  GPIO.SetPinLevelHigh(FPinRD);
+  FpGPIOPort^.SetPortValues(Value);
+  GPIO.SetPinLevelLow(FPinWR);
+  GPIO.SetPinLevelHigh(FPinDC);
+  GPIO.SetPinLevelLow(FPinCS);
+  GPIO.SetPinLevelHigh(FPinCS);
+  GPIO.SetPinLevelHigh(FPinWR);
+end;
+
+procedure TCustomGPIODisplay.WriteData(const Values: array of Byte);
+var
+  i : integer;
+begin
+  if Length(Values) > 0 then
+  begin
+    GPIO.SetPinLevelHigh(FPinRD);
+    GPIO.SetPinLevelLow (FPinWR);
+    GPIO.SetPinLevelHigh(FPinDC);
+    begin
+      for i := 0 to Length(Values)-1 do
+      begin
+        FpGPIOPort^.SetPortValues(Values[i]);
+        GPIO.SetPinLevelLow(FPinCS);
+        GPIO.SetPinLevelHigh(FPinCS);
+      end;
+    end;
+    GPIO.SetPinLevelHigh(FPinWR);
+  end;
+end;
+
+procedure TCustomGPIODisplay.WriteDataWord(const Values: array of Word);
+var
+  i : integer;
+begin
+  if Length(Values) > 0 then
+  begin
+    GPIO.SetPinLevelHigh(FPinRD);
+    GPIO.SetPinLevelLow (FPinWR);
+    GPIO.SetPinLevelHigh(FPinDC);
+    begin
+      for i := 0 to Length(Values)-1 do
+      begin
+        FpGPIOPort^.SetPortValues(Values[i]);
+        GPIO.SetPinLevelLow(FPinCS);
+        GPIO.SetPinLevelHigh(FPinCS);
+      end;
+    end;
+    GPIO.SetPinLevelHigh(FPinWR);
+  end;
 end;
 
 procedure TCustomDisplay.setPinDC(const Value : TPinIdentifier);
@@ -135,15 +303,12 @@ end;
 
 procedure TCustomDisplay.clearScreen;
 begin
+
 end;
 
-procedure TCustomDisplay.setScreenSize(const Value : TPoint2px);
+procedure TCustomDisplay.setScreenInfo(const Value : TScreenInfo);
 begin
-  FScreenSize := Value;
+  FScreenInfo := Value;
 end;
 
-procedure TCustomDisplay.setBitDepth(const Value : TDisplayBitDepth);
-begin
-  FBitDepth := Value;
-end;
 end.

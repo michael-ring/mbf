@@ -18,7 +18,8 @@ unit MBF.Displays.UC1610;
 interface
 
 uses
-  MBF.Displays.CustomDisplay;
+  MBF.Displays.CustomDisplay,
+  MBF.Types;
 
 type
   TFont16x24Record = record
@@ -541,11 +542,12 @@ const
     )
   );
 
-type TUC1610 = record helper for TCustomDisplay
+type 
+  TUC1610 = object(TCustomSPIDisplay)
   public
     const
-      LCD160x104: TPoint2px = (X: 160; Y: 104);
-      LCD104x160: TPoint2px = (X: 104; Y: 160);
+      LCD160x104: TScreenInfo = (Width: 160; Height : 104; Depth: TDisplayBitDepth.TwoBits);
+      LCD104x160: TScreenInfo = (Width: 104; Height : 160; Depth: TDisplayBitDepth.TwoBits);
     procedure InitSequence;
     procedure clearScreen(Inverse : boolean=false);
     procedure Write(aChar : Char;x,y:longWord);
@@ -553,7 +555,7 @@ type TUC1610 = record helper for TCustomDisplay
 end;
 
 var
-  UC1610 : TCustomDisplay;
+  UC1610 : TCustomSPIDisplay;
 
 implementation
 
@@ -585,14 +587,14 @@ begin
   WriteCommand($f8); //Turn off Window Mode
   WriteCommand([$f4,0]);
   WriteCommand([$f5,0]);
-  WriteCommand([$f6,ScreenSize.x-1]);
-  WriteCommand([$f7,((ScreenSize.y-1) div 4)]);
+  WriteCommand([$f6,ScreenInfo.Width-1]);
+  WriteCommand([$f7,((ScreenInfo.Height-1) div 4)]);
   WriteCommand($f9);
   if inverse then
-    for i := 1 to (ScreenSize.X*ScreenSize.Y*longWord(BitDepth)) div 8  do
+    for i := 1 to (ScreenInfo.Width*ScreenInfo.Height*longWord(ScreenInfo.Depth)) div 8  do
       writeData($ff)
   else
-    for i := 1 to (ScreenSize.X*ScreenSize.Y*longWord(BitDepth)) div 8  do
+    for i := 1 to (ScreenInfo.Width*ScreenInfo.Height*longWord(ScreenInfo.Depth)) div 8  do
       writeData($00);
   writeCommand($00);
   writeCommand($10);

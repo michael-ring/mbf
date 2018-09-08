@@ -121,7 +121,7 @@ var
   function TSystemCore.getCoreTimerValue: longWord;
   begin
     //Create a full 32 Bit Countervalue on Arm to make it behave the same as MIPS for Microsecond Delays
-    Result := InternalSysTickOverflow + (not(SysTick.LOAD) and $0fffffff);
+    Result := InternalSysTickOverflow + (not (SysTick.VAL) and $0fffffff);
   end;
 
   {$elseif defined(CPUMIPS)}

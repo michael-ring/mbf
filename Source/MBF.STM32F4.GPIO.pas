@@ -115,6 +115,11 @@ type
   TPinDrive = (None=%00,PullUp=%01,PullDown=%10);
   TPinOutputMode = (PushPull=0,OpenDrain=1);
   TPinOutputSpeed = (Slow=%00, Medium=%01, High=%10, VeryHigh=%11);
+  //TBit = (Bit0=1, Bit1=2, Bit2=4, Bit3=8, Bit4=16, Bit5=32, Bit6=64, Bit7=128,
+  //        Bit8=256, Bit9=512, Bit10=1024, Bit11=2048, Bit12=4096, Bit13=8192, Bit14=16384, Bit15=32768);
+  TBit = (Bit0, Bit1, Bit2, Bit3, Bit4, Bit5, Bit6, Bit7,
+          Bit8, Bit9, Bit10, Bit11, Bit12, Bit13, Bit14, Bit15);
+  TBitSet = set of TBit;
 
 type
   TGPIO = record
@@ -163,10 +168,109 @@ type
     property PinLevel[const Pin : TPinIdentifier] : TPinLevel read getPinLevel write setPinLevel;
   end;
 
+  TGPIOPort = record helper for TGPIO_Registers
+  public
+    procedure Initialize;
+    function GetPortValues : word;
+    function GetPortBits : TBitSet;
+    procedure SetPortValues(const Values : Word);
+    procedure SetPortBits(const Bits : TBitSet);
+    procedure ClearPortBits(const Bits : TBitSet);
+    procedure SetPortMode(PortMode : TPinMode);
+    procedure SetPortOutputSpeed(Speed : TPinOutputSpeed);
+    procedure SetPortDrive(Drive : TPinDrive);
+    procedure SetPortOutputMode(OutputMode : TPinOutputMode);
+  end;
+
 var
   GPIO : TGPIO;
 
 implementation
+
+procedure TGPIOPort.Initialize;
+begin
+  case longWord(@Self) of
+    longWord(@GPIOA): RCC.AHB1ENR:= RCC.AHB1ENR or 1 shl 0;
+    longWord(@GPIOB): RCC.AHB1ENR:= RCC.AHB1ENR or 1 shl 1;
+    longWord(@GPIOC): RCC.AHB1ENR:= RCC.AHB1ENR or 1 shl 2;
+    {$ifdef has_gpiod}longWord(@GPIOD): RCC.AHB1ENR:= RCC.AHB1ENR or 1 shl 3;{$endif}
+    {$ifdef has_gpioe}longWord(@GPIOE): RCC.AHB1ENR:= RCC.AHB1ENR or 1 shl 4;{$endif}
+    {$ifdef has_gpiof}longWord(@GPIOF): RCC.AHB1ENR:= RCC.AHB1ENR or 1 shl 5;{$endif}
+    {$ifdef has_gpiog}longWord(@GPIOG): RCC.AHB1ENR:= RCC.AHB1ENR or 1 shl 6;{$endif}
+    {$ifdef has_gpioh}longWord(@GPIOH): RCC.AHB1ENR:= RCC.AHB1ENR or 1 shl 7;{$endif}
+    {$ifdef has_gpioi}longWord(@GPIOI): RCC.AHB1ENR:= RCC.AHB1ENR or 1 shl 8;{$endif}
+  end;
+end;
+
+function TGPIOPort.GetPortValues : word; inline;
+begin
+  Result := Self.IDR;
+end;
+
+function TGPIOPort.GetPortBits : TBitSet; inline;
+begin
+  Result := TBitSet(Self.IDR);
+end;
+
+procedure TGPIOPort.SetPortValues(const Values : word); inline;
+begin
+  Self.ODR := Values;
+end;
+
+procedure TGPIOPort.SetPortBits(const Bits : TBitSet); inline;
+begin
+  Self.BSRR := longWord(Bits);
+end;
+
+procedure TGPIOPort.ClearPortBits(const Bits : TBitSet); inline;
+begin
+  Self.BSRR := longWord(Bits) shl 16;
+end;
+
+procedure TGPIOPort.SetPortMode(PortMode : TPinMode); inline;
+begin
+  if PortMode = TPinMode.Input then
+    Self.MODER:= 0
+  else if PortMode = TPinMode.Output then
+    Self.MODER := %01010101010101010101010101010101
+  else if PortMode = TPinMode.Analog then
+    Self.MODER := %11111111111111111111111111111111
+  else
+  begin
+    Self.MODER := %10101010101010101010101010101010;
+    //TODO Set AF Modes, but it is a rare usecase
+  end;
+end;
+
+procedure TGPIOPort.SetPortOutputSpeed(Speed : TPinOutputSpeed); inline;
+begin
+  if Speed = TPinOutputSpeed.Slow then
+    Self.OSPEEDR:= 0
+  else if Speed = TPinOutputSpeed.Medium then
+    Self.OSPEEDR := %01010101010101010101010101010101
+  else if Speed = TPinOutputSpeed.High then
+    Self.OSPEEDR := %10101010101010101010101010101010
+  else
+    Self.OSPEEDR := %11111111111111111111111111111111;
+end;
+
+procedure TGPIOPort.SetPortDrive(Drive : TPinDrive); inline;
+begin
+  if Drive = TPinDrive.None then
+    Self.PUPDR:= 0
+  else if Drive = TPinDrive.PullDown then
+    Self.PUPDR := %01010101010101010101010101010101
+  else
+    Self.MODER := %10101010101010101010101010101010;
+end;
+
+procedure TGPIOPort.SetPortOutputMode(OutputMode : TPinOutputMode); inline;
+begin
+  if OutputMode = TPinOutputMode.PushPull then
+    Self.OTYPER:= 0
+  else
+    Self.OTYPER := %1111111111111111;
+end;
 
 procedure TGPIO.Initialize;
 begin
@@ -247,7 +351,7 @@ begin
   end;
 end;
 
-function TGPIO.GetPinValue(const Pin: TPinIdentifier): TPinValue;
+function TGPIO.GetPinValue(const Pin: TPinIdentifier): TPinValue; inline;
 begin
   if GPIOMem[Pin shr 4]^.IDR and (1 shl (Pin and $0f)) <> 0 then
     Result := 1
@@ -255,7 +359,7 @@ begin
     Result := 0;
 end;
 
-procedure TGPIO.SetPinValue(const Pin: TPinIdentifier; const Value: TPinValue);
+procedure TGPIO.SetPinValue(const Pin: TPinIdentifier; const Value: TPinValue); inline;
 begin
   if Value = 1 then
     GPIOMem[Pin shr 4]^.BSRR := 1 shl (Pin and $0f)
@@ -263,7 +367,7 @@ begin
     GPIOMem[Pin shr 4]^.BSRR := $10000 shl (Pin and $0f);
 end;
 
-function TGPIO.GetPinLevel(const Pin: TPinIdentifier): TPinLevel;
+function TGPIO.GetPinLevel(const Pin: TPinIdentifier): TPinLevel; inline;
 begin
   if GPIOMem[Pin shr 4]^.IDR and (1 shl (Pin and $0f)) <> 0 then
     Result := TPinLevel.High
@@ -271,7 +375,7 @@ begin
     Result := TPinLevel.Low;
 end;
 
-procedure TGPIO.SetPinLevel(const Pin: TPinIdentifier; const Level: TPinLevel);
+procedure TGPIO.SetPinLevel(const Pin: TPinIdentifier; const Level: TPinLevel); inline;
 begin
   if Level = TPinLevel.High then
     GPIOMem[Pin shr 4]^.BSRR := 1 shl (Pin and $0f)
@@ -279,17 +383,17 @@ begin
     GPIOMem[Pin shr 4]^.BSRR := $10000 shl (Pin and $0f);
 end;
 
-procedure TGPIO.SetPinLevelHigh(const Pin: TPinIdentifier);
+procedure TGPIO.SetPinLevelHigh(const Pin: TPinIdentifier); inline;
 begin
   GPIOMem[Pin shr 4]^.BSRR := 1 shl (Pin and $0f)
 end;
 
-procedure TGPIO.SetPinLevelLow(const Pin: TPinIdentifier);
+procedure TGPIO.SetPinLevelLow(const Pin: TPinIdentifier); inline;
 begin
   GPIOMem[Pin shr 4]^.BSRR := $10000 shl (Pin and $0f);
 end;
 
-procedure TGPIO.TogglePinValue(const Pin: TPinIdentifier);
+procedure TGPIO.TogglePinValue(const Pin: TPinIdentifier); inline;
 begin
   if GPIOMem[Pin shr 4]^.ODR and (1 shl (Pin and $0f)) = 0 then
     GPIOMem[Pin shr 4]^.BSRR := 1 shl (Pin and $0f)
@@ -297,7 +401,7 @@ begin
     GPIOMem[Pin shr 4]^.BSRR := $10000 shl (Pin and $0f);
 end;
 
-procedure TGPIO.TogglePinLevel(const Pin: TPinIdentifier);
+procedure TGPIO.TogglePinLevel(const Pin: TPinIdentifier); inline;
 begin
   if GPIOMem[Pin shr 4]^.ODR and (1 shl (Pin and $0f)) = 0 then
     GPIOMem[Pin shr 4]^.BSRR := 1 shl (Pin and $0f)

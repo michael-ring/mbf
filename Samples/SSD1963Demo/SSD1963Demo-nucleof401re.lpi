@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CONFIG>
+  <ProjectOptions>
+    <Version Value="11"/>
+    <General>
+      <Flags>
+        <LRSInOutputDirectory Value="False"/>
+      </Flags>
+      <MainUnit Value="0"/>
+      <UseAppBundle Value="False"/>
+    </General>
+    <BuildModes Count="1">
+      <Item1 Name="default" Default="True"/>
+    </BuildModes>
+    <PublishOptions>
+      <Version Value="2"/>
+    </PublishOptions>
+    <RunParams>
+      <FormatVersion Value="2"/>
+      <Modes Count="1">
+        <Mode0 Name="default"/>
+      </Modes>
+    </RunParams>
+    <Units Count="12">
+      <Unit0>
+        <Filename Value="SSD1963Demo.lpr"/>
+        <IsPartOfProject Value="True"/>
+        <CursorPos Y="28"/>
+        <UsageCount Value="202"/>
+        <Loaded Value="True"/>
+        <LoadedDesigner Value="True"/>
+      </Unit0>
+      <Unit1>
+        <Filename Value="../../Source/MBF.STM32F4.GPIO.pas"/>
+        <UnitName Value="mbf.stm32f4.gpio"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="222"/>
+        <CursorPos X="5" Y="241"/>
+        <UsageCount Value="98"/>
+      </Unit1>
+      <Unit2>
+        <Filename Value="../../Source/MBF.Displays.CustomDisplay.pas"/>
+        <EditorIndex Value="2"/>
+        <CursorPos X="13" Y="21"/>
+        <UsageCount Value="130"/>
+        <Loaded Value="True"/>
+      </Unit2>
+      <Unit3>
+        <Filename Value="../../Source/MBF.Displays.SSD1963.pas"/>
+        <IsVisibleTab Value="True"/>
+        <EditorIndex Value="1"/>
+        <CursorPos X="3" Y="7"/>
+        <UsageCount Value="128"/>
+        <Loaded Value="True"/>
+      </Unit3>
+      <Unit4>
+        <Filename Value="../../Source/MBF.STM32F4.SystemCore.pas"/>
+        <UnitName Value="mbf.stm32f4.systemcore"/>
+        <EditorIndex Value="-1"/>
+        <CursorPos Y="5"/>
+        <UsageCount Value="111"/>
+      </Unit4>
+      <Unit5>
+        <Filename Value="customfont32x48.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="CustomFont32x48"/>
+        <EditorIndex Value="-1"/>
+        <CursorPos X="65" Y="43"/>
+        <UsageCount Value="227"/>
+      </Unit5>
+      <Unit6>
+        <Filename Value="mbf.fonts.droidsans16x24.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="MBF.Fonts.DroidSans16x24"/>
+        <EditorIndex Value="-1"/>
+        <CursorPos Y="8"/>
+        <UsageCount Value="200"/>
+      </Unit6>
+      <Unit7>
+        <Filename Value="MBF.Fonts.DroidSansMono16x24_antialiased.pas"/>
+        <EditorIndex Value="-1"/>
+        <CursorPos Y="490"/>
+        <UsageCount Value="90"/>
+      </Unit7>
+      <Unit8>
+        <Filename Value="../../Source/MBF.TypeHelpers.pas"/>
+        <UnitName Value="MBF.typehelpers"/>
+        <EditorIndex Value="-1"/>
+        <UsageCount Value="64"/>
+      </Unit8>
+      <Unit9>
+        <Filename Value="../../Source/MBF.Config.inc"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="19"/>
+        <CursorPos X="23" Y="48"/>
+        <UsageCount Value="64"/>
+      </Unit9>
+      <Unit10>
+        <Filename Value="MBF.Fonts.DroidSansMono36x48_antialiased.pas"/>
+        <EditorIndex Value="-1"/>
+        <CursorPos X="6" Y="24"/>
+        <UsageCount Value="61"/>
+      </Unit10>
+      <Unit11>
+        <Filename Value="../APA106Demo/APA106Demo.lpr"/>
+        <EditorIndex Value="-1"/>
+        <CursorPos X="11" Y="3"/>
+        <UsageCount Value="10"/>
+      </Unit11>
+    </Units>
+    <JumpHistory Count="7" HistoryIndex="6">
+      <Position1>
+        <Filename Value="SSD1963Demo.lpr"/>
+        <Caret Line="67" Column="26" TopLine="32"/>
+      </Position1>
+      <Position2>
+        <Filename Value="SSD1963Demo.lpr"/>
+        <Caret Line="66" Column="38" TopLine="32"/>
+      </Position2>
+      <Position3>
+        <Filename Value="SSD1963Demo.lpr"/>
+        <Caret Line="49" Column="22" TopLine="32"/>
+      </Position3>
+      <Position4>
+        <Filename Value="SSD1963Demo.lpr"/>
+        <Caret Line="28" Column="3" TopLine="9"/>
+      </Position4>
+      <Position5>
+        <Filename Value="SSD1963Demo.lpr"/>
+        <Caret Line="18" Column="26"/>
+      </Position5>
+      <Position6>
+        <Filename Value="SSD1963Demo.lpr"/>
+        <Caret Line="27" Column="20"/>
+      </Position6>
+      <Position7>
+        <Filename Value="SSD1963Demo.lpr"/>
+        <Caret Line="26" Column="51"/>
+      </Position7>
+    </JumpHistory>
+  </ProjectOptions>
+  <CompilerOptions>
+    <Version Value="11"/>
+    <Target>
+      <Filename Value="SSD1963Demo"/>
+    </Target>
+    <SearchPaths>
+      <IncludeFiles Value="../../Source;$(ProjOutDir)"/>
+      <OtherUnitFiles Value="../../Source"/>
+      <UnitOutputDirectory Value="lib/$(TargetCPU)-$(TargetOS)"/>
+    </SearchPaths>
+    <Parsing>
+      <SyntaxOptions>
+        <UseAnsiStrings Value="False"/>
+      </SyntaxOptions>
+    </Parsing>
+    <CodeGeneration>
+      <HeapSize Value="8192"/>
+      <StackSize Value="8192"/>
+      <TargetCPU Value="arm"/>
+      <TargetOS Value="embedded"/>
+    </CodeGeneration>
+    <Linking>
+      <Debugging>
+        <DebugInfoType Value="dsDwarf2"/>
+        <UseLineInfoUnit Value="False"/>
+      </Debugging>
+    </Linking>
+    <Other>
+      <CustomOptions Value="-Cparmv7em
+-XP/usr/local/bin/arm-none-eabi-
+-Wpnucleof401re
+-dnucleof401re"/>
+    </Other>
+  </CompilerOptions>
+</CONFIG>
