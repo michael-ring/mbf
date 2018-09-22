@@ -1,0 +1,86 @@
+//* ========== Instance parameters for EVSYS peripheral ========== */
+const
+  EVSYS_CHANNELS             = 6;        // Number of Channels
+  EVSYS_CHANNELS_BITS        = 3;        // Number of bits to select Channel
+  EVSYS_CHANNELS_MSB         = 5;        // Number of Channels - 1
+  EVSYS_EXTEVT_NUM           = 0;        // Number of External Event Generators
+  EVSYS_GCLK_ID_0            = 7;
+  EVSYS_GCLK_ID_1            = 8;
+  EVSYS_GCLK_ID_2            = 9;
+  EVSYS_GCLK_ID_3            = 10;
+  EVSYS_GCLK_ID_4            = 11;
+  EVSYS_GCLK_ID_5            = 12;
+  EVSYS_GCLK_ID_LSB          = 7;
+  EVSYS_GCLK_ID_MSB          = 12;
+  EVSYS_GCLK_ID_SIZE         = 6;
+  EVSYS_GENERATORS           = 44;       // Total Number of Event Generators
+  EVSYS_GENERATORS_BITS      = 6;        // Number of bits to select Event Generator
+  EVSYS_USERS                = 18;       // Total Number of Event Users
+  EVSYS_USERS_BITS           = 5;        // Number of bits to select Event User
+
+// GENERATORS
+   EVSYS_ID_GEN_RTC_CMP_0     = 1;
+   EVSYS_ID_GEN_RTC_CMP_1     = 2;
+   EVSYS_ID_GEN_RTC_OVF       = 3;
+   EVSYS_ID_GEN_RTC_PER_0     = 4;
+   EVSYS_ID_GEN_RTC_PER_1     = 5;
+   EVSYS_ID_GEN_RTC_PER_2     = 6;
+   EVSYS_ID_GEN_RTC_PER_3     = 7;
+   EVSYS_ID_GEN_RTC_PER_4     = 8;
+   EVSYS_ID_GEN_RTC_PER_5     = 9;
+   EVSYS_ID_GEN_RTC_PER_6     = 10;
+   EVSYS_ID_GEN_RTC_PER_7     = 11;
+   EVSYS_ID_GEN_EIC_EXTINT_0  = 12;
+   EVSYS_ID_GEN_EIC_EXTINT_1  = 13;
+   EVSYS_ID_GEN_EIC_EXTINT_2  = 14;
+   EVSYS_ID_GEN_EIC_EXTINT_3  = 15;
+   EVSYS_ID_GEN_EIC_EXTINT_4  = 16;
+   EVSYS_ID_GEN_EIC_EXTINT_5  = 17;
+   EVSYS_ID_GEN_EIC_EXTINT_6  = 18;
+   EVSYS_ID_GEN_EIC_EXTINT_7  = 19;
+   EVSYS_ID_GEN_DMAC_CH_0     = 20;
+   EVSYS_ID_GEN_DMAC_CH_1     = 21;
+   EVSYS_ID_GEN_DMAC_CH_2     = 22;
+   EVSYS_ID_GEN_DMAC_CH_3     = 23;
+   EVSYS_ID_GEN_TCC0_OVF      = 24;
+   EVSYS_ID_GEN_TCC0_TRG      = 25;
+   EVSYS_ID_GEN_TCC0_CNT      = 26;
+   EVSYS_ID_GEN_TCC0_MCX_0    = 27;
+   EVSYS_ID_GEN_TCC0_MCX_1    = 28;
+   EVSYS_ID_GEN_TCC0_MCX_2    = 29;
+   EVSYS_ID_GEN_TCC0_MCX_3    = 30;
+   EVSYS_ID_GEN_TC1_OVF       = 31;
+   EVSYS_ID_GEN_TC1_MCX_0     = 32;
+   EVSYS_ID_GEN_TC1_MCX_1     = 33;
+   EVSYS_ID_GEN_TC2_OVF       = 34;
+   EVSYS_ID_GEN_TC2_MCX_0     = 35;
+   EVSYS_ID_GEN_TC2_MCX_1     = 36;
+   EVSYS_ID_GEN_ADC_RESRDY    = 37;
+   EVSYS_ID_GEN_ADC_WINMON    = 38;
+   EVSYS_ID_GEN_AC_COMP_0     = 39;
+   EVSYS_ID_GEN_AC_COMP_1     = 40;
+   EVSYS_ID_GEN_AC_WIN_0      = 41;
+   EVSYS_ID_GEN_DAC_EMPTY     = 42;
+   EVSYS_ID_GEN_PTC_EOC       = 43;
+   EVSYS_ID_GEN_PTC_WCOMP     = 44;
+
+   // USERS
+   EVSYS_ID_USER_DMAC_CH_0    = 0;
+   EVSYS_ID_USER_DMAC_CH_1    = 1;
+   EVSYS_ID_USER_DMAC_CH_2    = 2;
+   EVSYS_ID_USER_DMAC_CH_3    = 3;
+   EVSYS_ID_USER_TCC0_EV_0    = 4;
+   EVSYS_ID_USER_TCC0_EV_1    = 5;
+   EVSYS_ID_USER_TCC0_MC_0    = 6;
+   EVSYS_ID_USER_TCC0_MC_1    = 7;
+   EVSYS_ID_USER_TCC0_MC_2    = 8;
+   EVSYS_ID_USER_TCC0_MC_3    = 9;
+   EVSYS_ID_USER_TC1_EVU      = 10;
+   EVSYS_ID_USER_TC2_EVU      = 11;
+   EVSYS_ID_USER_ADC_START    = 12;
+   EVSYS_ID_USER_ADC_SYNC     = 13;
+   EVSYS_ID_USER_AC_SOC_0     = 14;
+   EVSYS_ID_USER_AC_SOC_1     = 15;
+   EVSYS_ID_USER_DAC_START    = 16;
+   EVSYS_ID_USER_PTC_STCONV   = 17;
+

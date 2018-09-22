@@ -88,10 +88,45 @@ case $BOARD_OR_CPU in
                  ARCHSVD=Cortex-M4.svd
                  DEVICESVD=
                  ;;
+  arduinozero)   ARCH=arm
+                 BINUTILS_PATH=/usr/local/bin/arm-none-eabi-
+                 SUBARCH=armv6m
+                 DEVICE=atsamd21g18
+                 ARCHSVD=Cortex-M0.svd
+                 DEVICESVD=ATSAMD21G18A.svd
+                 ;;
+  samd10xmini)   ARCH=arm
+                 BINUTILS_PATH=/usr/local/bin/arm-none-eabi-
+                 SUBARCH=armv6m
+                 DEVICE=atsamd10d14
+                 ARCHSVD=Cortex-M0.svd
+                 DEVICESVD=ATSAMD10D14A.svd
+                 ;;
+  samc21xpro)    ARCH=arm
+                 BINUTILS_PATH=/usr/local/bin/arm-none-eabi-
+                 SUBARCH=armv6m
+                 DEVICE=atsamc21j18
+                 ARCHSVD=Cortex-M0.svd
+                 DEVICESVD=ATSAMC21J18A.svd
+                 ;;
+  samd20xpro)    ARCH=arm
+                 BINUTILS_PATH=/usr/local/bin/arm-none-eabi-
+                 SUBARCH=armv6m
+                 DEVICE=atsamd20j18
+                 ARCHSVD=Cortex-M0.svd
+                 DEVICESVD=ATSAMD20J18.svd
+                 ;;
+  samd21xpro)    ARCH=arm
+                 BINUTILS_PATH=/usr/local/bin/arm-none-eabi-
+                 SUBARCH=armv6m
+                 DEVICE=atsamd21j18
+                 ARCHSVD=Cortex-M0.svd
+                 DEVICESVD=ATSAMD21J18A.svd
+                 ;;
   pic32mx150f128b) ARCH=mipsel
                  BINUTILS_PATH=/usr/local/bin/mips-sde-elf-
                  SUBARCH=mips32r2
-                 DEVIVE=pic32mx150f128b
+                 DEVICE=pic32mx150f128b
                  ARCHSVD=
                  DEVICESVD=
                  ;;

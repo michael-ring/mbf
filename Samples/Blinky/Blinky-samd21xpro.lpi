@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CONFIG>
+  <ProjectOptions>
+    <Version Value="11"/>
+    <General>
+      <Flags>
+        <LRSInOutputDirectory Value="False"/>
+      </Flags>
+      <MainUnit Value="0"/>
+      <UseAppBundle Value="False"/>
+    </General>
+    <BuildModes Count="1">
+      <Item1 Name="default" Default="True"/>
+    </BuildModes>
+    <PublishOptions>
+      <Version Value="2"/>
+    </PublishOptions>
+    <RunParams>
+      <FormatVersion Value="2"/>
+      <Modes Count="1">
+        <Mode0 Name="default"/>
+      </Modes>
+    </RunParams>
+    <Units Count="4">
+      <Unit0>
+        <Filename Value="Blinky.lpr"/>
+        <IsPartOfProject Value="True"/>
+        <IsVisibleTab Value="True"/>
+        <TopLine Value="34"/>
+        <CursorPos X="34" Y="80"/>
+        <UsageCount Value="23"/>
+        <Loaded Value="True"/>
+        <LoadedDesigner Value="True"/>
+      </Unit0>
+      <Unit1>
+        <Filename Value="../../Source/MBF.Boards.SAMD.inc"/>
+        <EditorIndex Value="1"/>
+        <TopLine Value="11"/>
+        <CursorPos X="81" Y="58"/>
+        <UsageCount Value="12"/>
+        <Loaded Value="True"/>
+      </Unit1>
+      <Unit2>
+        <Filename Value="../../Source/MBF.SAMCD.GPIO.pas"/>
+        <EditorIndex Value="2"/>
+        <TopLine Value="91"/>
+        <CursorPos X="96" Y="106"/>
+        <UsageCount Value="12"/>
+        <Loaded Value="True"/>
+      </Unit2>
+      <Unit3>
+        <Filename Value="../../Source/MBF.SAMCD.SystemCore.pas"/>
+        <EditorIndex Value="3"/>
+        <TopLine Value="170"/>
+        <CursorPos X="72" Y="214"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
+      </Unit3>
+    </Units>
+    <JumpHistory Count="13" HistoryIndex="12">
+      <Position1>
+        <Filename Value="Blinky.lpr"/>
+      </Position1>
+      <Position2>
+        <Filename Value="Blinky.lpr"/>
+        <Caret Line="23" Column="12"/>
+      </Position2>
+      <Position3>
+        <Filename Value="../../Source/MBF.Boards.SAMD.inc"/>
+        <Caret Line="48" Column="40"/>
+      </Position3>
+      <Position4>
+        <Filename Value="../../Source/MBF.SAMCD.GPIO.pas"/>
+        <Caret Line="22" Column="21"/>
+      </Position4>
+      <Position5>
+        <Filename Value="../../Source/MBF.SAMCD.GPIO.pas"/>
+        <Caret Line="235" TopLine="220"/>
+      </Position5>
+      <Position6>
+        <Filename Value="../../Source/MBF.SAMCD.GPIO.pas"/>
+        <Caret Line="340" Column="33" TopLine="316"/>
+      </Position6>
+      <Position7>
+        <Filename Value="../../Source/MBF.SAMCD.GPIO.pas"/>
+        <Caret Line="348" Column="31" TopLine="324"/>
+      </Position7>
+      <Position8>
+        <Filename Value="../../Source/MBF.SAMCD.GPIO.pas"/>
+        <Caret Line="28" Column="10"/>
+      </Position8>
+      <Position9>
+        <Filename Value="../../Source/MBF.SAMCD.GPIO.pas"/>
+        <Caret Line="376" Column="11" TopLine="352"/>
+      </Position9>
+      <Position10>
+        <Filename Value="../../Source/MBF.SAMCD.GPIO.pas"/>
+        <Caret Line="377" Column="52" TopLine="353"/>
+      </Position10>
+      <Position11>
+        <Filename Value="../../Source/MBF.SAMCD.GPIO.pas"/>
+        <Caret Line="384" Column="5" TopLine="360"/>
+      </Position11>
+      <Position12>
+        <Filename Value="../../Source/MBF.SAMCD.GPIO.pas"/>
+        <Caret Line="75" Column="32" TopLine="70"/>
+      </Position12>
+      <Position13>
+        <Filename Value="../../Source/MBF.SAMCD.SystemCore.pas"/>
+        <Caret Line="194" Column="7" TopLine="170"/>
+      </Position13>
+    </JumpHistory>
+  </ProjectOptions>
+  <CompilerOptions>
+    <Version Value="11"/>
+    <Target>
+      <Filename Value="Blinky"/>
+    </Target>
+    <SearchPaths>
+      <IncludeFiles Value="../../Source;$(ProjOutDir)"/>
+      <OtherUnitFiles Value="../../Source"/>
+      <UnitOutputDirectory Value="lib/$(TargetCPU)-$(TargetOS)"/>
+    </SearchPaths>
+    <Parsing>
+      <SyntaxOptions>
+        <UseAnsiStrings Value="False"/>
+      </SyntaxOptions>
+    </Parsing>
+    <CodeGeneration>
+      <HeapSize Value="8192"/>
+      <StackSize Value="8192"/>
+      <TargetCPU Value="arm"/>
+      <TargetOS Value="embedded"/>
+    </CodeGeneration>
+    <Linking>
+      <Debugging>
+        <DebugInfoType Value="dsDwarf2"/>
+        <UseLineInfoUnit Value="False"/>
+      </Debugging>
+    </Linking>
+    <Other>
+      <CustomOptions Value="-Cparmv6m
+-XP/usr/local/bin/arm-none-eabi-
+-Wpsamd21xpro
+-dsamd21xpro"/>
+    </Other>
+  </CompilerOptions>
+</CONFIG>

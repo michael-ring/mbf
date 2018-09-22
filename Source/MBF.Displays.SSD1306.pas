@@ -17,40 +17,36 @@ interface
 {$INCLUDE MBF.Config.inc}
 
 uses
-  MBF.__CONTROLLERTYPE__.SystemCore,
   MBF.__CONTROLLERTYPE__.GPIO,
-  MBF.__CONTROLLERTYPE__.SPI;
- 
+  MBF.__CONTROLLERTYPE__.SPI,
+  MBF.Displays.CustomDisplay;
+
+const
+  ScreenSize128x64x1: TScreenInfo =
+    (Width: 128; Height: 64; Depth: TDisplayBitDepth.OneBit);
+  ScreenSize128x32x1: TScreenInfo =
+    (Width: 128; Height: 32; Depth: TDisplayBitDepth.OneBit);
+  ScreenSize96x16x1: TScreenInfo =
+    (Width: 96; Height: 16; Depth: TDisplayBitDepth.OneBit);
+  ScreenSize64x48x1: TScreenInfo =
+    (Width: 64; Height: 16; Depth: TDisplayBitDepth.OneBit);
+
 type
-  TDisplay = class(TCustomDrivenDualDisplay)
-  public const
-    OLED128x64: TPoint2px = (X: 128; Y: 64);
-    OLED128x32: TPoint2px = (X: 128; Y: 32);
-    OLED96x16: TPoint2px = (X: 96; Y: 16);
-    OLED64x48: TPoint2px = (X: 64; Y: 48);
-  private
-    FScreenSize: TPoint2px;
-    FInternalVCC: Boolean;
-
-    procedure SetWriteWindow(const WriteRect: TIntRect);
-  protected
-    procedure InitSequence; override;
-    procedure PresentBuffer(const Rect: TIntRect); override;
-
-    function ReadPixel(const X, Y: Integer): TIntColor; override;
-    procedure WritePixel(const X, Y: Integer; const Color: TIntColor); override;
-
-    function GetScanline(const Index: Integer): Pointer; override;
-  public
-    constructor Create(const AScreenSize: TPoint2px; const AGPIO: TCustomGPIO; const ADataPort: TCustomDataPort;
-      const APinDC: Integer; const APinRST: Integer = PinNumberUnused; const AAddress: Integer = PinNumberUnused;
-      const AInternalVCC: Boolean = True);
-
-    property ScreenSize: TPoint2px read FScreenSize;
+  TSSD1306 = object(TCustomSPIDisplay)
+    FInternalVcc : boolean;
+    procedure InitSequence;
+    procedure ClearScreen;
+    //procedure setFont(TheFontInfo : TFontInfo);
+    //function setDrawArea(X,Y,Width,Height : word):longWord;
+    //procedure drawText(TheText : String; x,y : longWord);
   end;
 
 implementation
 
+uses
+  MBF.__CONTROLLERTYPE__.SystemCore;
+
+procedure TSSD1306.InitSequence;
 const
   CMD_CHARGE_PUMP = $8D;
   CMD_COLUMN_ADDRESS = $21;
@@ -70,62 +66,58 @@ const
   CMD_SET_PRECHARGE = $D9;
   CMD_SET_START_LINE = $40;
   CMD_SET_VCOM_DETECT = $DB;
-
-  OrderedDitherMatrix: array[0..63] of Integer = (0, 32, 8, 40, 2, 34, 10, 42, 48, 16, 56, 24, 50, 18, 58, 26, 12, 44,
-    4, 36, 14, 46, 6, 38, 60, 28, 52, 20, 62, 30, 54, 22, 3, 35, 11, 43, 1, 33, 9, 41, 51, 19, 59, 27, 49, 17, 57, 25,
-    15, 47, 7, 39, 13, 45, 5, 37, 63, 31, 55, 23, 61, 29, 53, 21);
-
-constructor TDisplay.Create(const AScreenSize: TPoint2px; const AGPIO: TCustomGPIO; const ADataPort: TCustomDataPort;
-  const APinDC, APinRST, AAddress: Integer; const AInternalVCC: Boolean);
 begin
-  FScreenSize := AScreenSize;
-
-  FPhysicalOrientation := TOrientation.Landscape;
-  FPhysicalSize := FScreenSize;
-
-  FScreenBufferSize := (FPhysicalSize.X * FPhysicalSize.Y) div 8;
-  FScreenBuffer := AllocMem(FScreenBufferSize);
-
-  FInternalVCC := AInternalVCC;
-
-  inherited Create(AGPIO, ADataPort, APinDC, APinRST, AAddress);
-end;
-
-procedure TDisplay.InitSequence;
-begin
+  //Set Display off
   WriteCommand(CMD_DISPLAY_OFF);
-  Sleep(5);
+  Systemcore.Delay(5);
 
-  WriteCommand([CMD_SET_DISPLAY_CLOCK_DIV, $80, CMD_SET_MULTIPLEX]);
+  // Set Display Clock Divide Ratio / OSC Frequency
+  WriteCommand([CMD_SET_DISPLAY_CLOCK_DIV, $80]);
 
-  if FScreenSize = OLED128x32 then
+  // Set Multiplex Ratio
+  WriteCommand(CMD_SET_MULTIPLEX);
+  if ScreenInfo = ScreenSize128x32x1 then
     WriteCommand($1F)
-  else if FScreenSize = OLED96x16 then
+  else if ScreenInfo = ScreenSize96x16x1 then
     WriteCommand($0F)
-  else if FScreenSize = OLED64x48 then
+  else if ScreenInfo = ScreenSize64x48x1 then
     WriteCommand($2F)
   else
     WriteCommand($3F);
 
-  WriteCommand([CMD_SET_DISPLAY_OFFSET, $00, CMD_SET_START_LINE or $00, CMD_CHARGE_PUMP]);
+  // Set Display Offset
+  WriteCommand([CMD_SET_DISPLAY_OFFSET, $00]);
 
+  // Set Display Start Line
+  WriteCommand(CMD_SET_START_LINE);
+
+  // Set Charge Pump
+  WriteCommand(CMD_CHARGE_PUMP);
   if FInternalVCC then
     WriteCommand($14)
   else
     WriteCommand($10);
 
-  WriteCommand([CMD_MEMORY_MODE, $00, CMD_SEGMENT_REMAP or $01, CMD_COM_SCAN_DEC, CMD_SET_COM_PINS]);
+  WriteCommand([CMD_MEMORY_MODE, $00]);
 
-  if (FScreenSize = OLED128x32) or (FScreenSize = OLED96x16) then
+  // Set Segment Re-Map
+  WriteCommand(CMD_SEGMENT_REMAP or $01);
+
+  // Set Com Output Scan Direction
+  WriteCommand(CMD_COM_SCAN_DEC);
+
+  // Set COM Hardware Configuration
+  WriteCommand(CMD_SET_COM_PINS);
+  if (ScreenInfo = ScreenSize128x32x1) or (ScreenInfo = ScreenSize96x16x1) then
     WriteCommand($02)
   else
     WriteCommand($12);
 
+  // Set Contrast
   WriteCommand(CMD_SET_CONTRAST);
-
-  if (FScreenSize = OLED128x32) or (FScreenSize = OLED64x48) then
+  if (ScreenInfo = ScreenSize128x32x1) or (ScreenInfo = ScreenSize64x48x1) then
     WriteCommand($8F)
-  else if FScreenSize = OLED96x16 then
+  else if ScreenInfo = ScreenSize96x16x1 then
   begin
     if FInternalVCC then
       WriteCommand($AF)
@@ -140,6 +132,7 @@ begin
       WriteCommand($9F);
   end;
 
+   // Set Pre-Charge Period
   WriteCommand(CMD_SET_PRECHARGE);
 
   if FInternalVCC then
@@ -147,12 +140,56 @@ begin
   else
     WriteCommand($22);
 
-  WriteCommand([CMD_SET_VCOM_DETECT, $40, CMD_DISPLAY_ALL_ON_RESUME, CMD_NORMAL_DISPLAY]);
-  Sleep(5);
+  // Set VCOMH Deselect Level
+  WriteCommand([CMD_SET_VCOM_DETECT, $40]);
+
+  // Set all pixels OFF
+  WriteCommand(CMD_DISPLAY_ALL_ON_RESUME);
+
+  // Set display not inverted
+  WriteCommand(CMD_NORMAL_DISPLAY);
+  Systemcore.Delay(5);
+
+  // Set display On
   WriteCommand(CMD_DISPLAY_ON);
 end;
 
-procedure TDisplay.SetWriteWindow(const WriteRect: TIntRect);
+procedure TSSD1306.clearScreen;
+begin
+  WriteCommand([SSD1306_COLUMNADDR,0,ScreenInfo.Width-1]);
+  WriteCommand([SSD1306_PAGEADDR,0,(ScreenInfo.Height div 8)-1]);
+
+end;
+
+(*
+function TSSD1963.setDrawArea(X,Y,Width,Height : word):longWord;
+begin
+  if X >=ScreenInfo.Width then
+    X := ScreenInfo.Width-1;
+  if Y >=ScreenInfo.Height then
+    Y := ScreenInfo.Height-1;
+
+  if X+Width >=ScreenInfo.Width then
+    Width := ScreenInfo.Width-1-X;
+  if Y+Height >=ScreenInfo.Height then
+    Height := ScreenInfo.Height-Y;
+
+  WriteCommand(SSD1963_ENTER_NORMAL_MODE);
+  WriteCommand(SSD1963_SET_COLUMN_ADDRESS);
+  WriteData(X shr 8);
+  WriteData(X and $ff);
+  WriteData((X+Width-1) shr 8);
+  WriteData((X+Width-1) and $ff);
+
+  WriteCommand(SSD1963_SET_PAGE_ADDRESS);
+  WriteData(Y shr 8);
+  WriteData(Y and $ff);
+  WriteData((Y+Height-1) shr 8);
+  WriteData((Y+Height-1) and $ff);
+  Result := Width*Height;
+end;
+
+procedure TSSD1306.SetWriteWindow(const WriteRect: TIntRect);
 const
   VirtualWidth = 128;
 var
@@ -166,65 +203,5 @@ begin
   if (FPinDC <> -1) and (FDataPort is TCustomPortSPI) then
     FGPIO.PinValue[FPinDC] := 1;
 end;
-
-procedure TDisplay.PresentBuffer(const Rect: TIntRect);
-var
-  I, StartPos, BytesToCopy, Page: Integer;
-begin
-  SetWriteWindow(Rect);
-
-  if FAddress <> -1 then
-    for I := 0 to FScreenBufferSize div MaxI2CTransferSize do
-    begin // I2C
-      StartPos := I * MaxI2CTransferSize;
-      BytesToCopy := Min(FScreenBufferSize - StartPos, MaxI2CTransferSize);
-
-      if BytesToCopy > 0 then
-        TCustomPortI2C(FDataPort).WriteBlockData(DisplayDataID, Pointer(PtrUInt(FScreenBuffer) + Cardinal(StartPos)),
-          BytesToCopy)
-      else
-        Break;
-    end
-  else
-    for I := 0 to FScreenBufferSize div MaxSPITransferSize do
-    begin // SPI
-      StartPos := I * MaxSPITransferSize;
-      BytesToCopy := Min(FScreenBufferSize - StartPos, MaxSPITransferSize);
-
-      if BytesToCopy > 0 then
-        FDataPort.Write(Pointer(PtrUInt(FScreenBuffer) + Cardinal(StartPos)), BytesToCopy)
-      else
-        Break;
-    end;
-end;
-
-function TDisplay.ReadPixel(const X, Y: Integer): TIntColor;
-var
-  Location: PByte;
-begin
-  Location := Pointer(PtrUInt(FScreenBuffer) + (Cardinal(Y) div 8) * Cardinal(FPhysicalSize.X) + Cardinal(X));
-
-  if Location^ and (1 shl (Y mod 8)) > 0 then
-    Result := IntColorWhite
-  else
-    Result := IntColorTranslucentBlack;
-end;
-
-procedure TDisplay.WritePixel(const X, Y: Integer; const Color: TIntColor);
-var
-  Location: PByte;
-begin
-  Location := Pointer(PtrUInt(FScreenBuffer) + (Cardinal(Y) div 8) * Cardinal(FPhysicalSize.X) + Cardinal(X));
-
-  if (PixelToGray(Color) div 4 >= OrderedDitherMatrix[((Y and $07) shl 3) + (X and $07)]) then
-    Location^ := Location^ or (1 shl (Y mod 8))
-  else
-    Location^ := Location^ and ($FF xor (1 shl (Y mod 8)));
-end;
-
-function TDisplay.GetScanline(const Index: Integer): Pointer;
-begin
-  Result := Pointer(PtrUInt(FScreenBuffer) + (Cardinal(Index) div 8) * Cardinal(FPhysicalSize.X));
-end;
-
+*)
 end.

@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CONFIG>
+  <ProjectOptions>
+    <Version Value="11"/>
+    <General>
+      <Flags>
+        <LRSInOutputDirectory Value="False"/>
+      </Flags>
+      <MainUnit Value="0"/>
+      <UseAppBundle Value="False"/>
+    </General>
+    <BuildModes Count="1">
+      <Item1 Name="default" Default="True"/>
+    </BuildModes>
+    <PublishOptions>
+      <Version Value="2"/>
+    </PublishOptions>
+    <RunParams>
+      <FormatVersion Value="2"/>
+      <Modes Count="1">
+        <Mode0 Name="default"/>
+      </Modes>
+    </RunParams>
+    <Units Count="3">
+      <Unit0>
+        <Filename Value="SSD1306Demo.lpr"/>
+        <IsPartOfProject Value="True"/>
+        <TopLine Value="4"/>
+        <CursorPos Y="51"/>
+        <UsageCount Value="23"/>
+        <Loaded Value="True"/>
+        <LoadedDesigner Value="True"/>
+      </Unit0>
+      <Unit1>
+        <Filename Value="../../Source/MBF.Displays.SSD1306.pas"/>
+        <IsVisibleTab Value="True"/>
+        <EditorIndex Value="1"/>
+        <CursorPos X="5" Y="38"/>
+        <UsageCount Value="12"/>
+        <Loaded Value="True"/>
+      </Unit1>
+      <Unit2>
+        <Filename Value="../../Source/MBF.Displays.CustomDisplay.pas"/>
+        <EditorIndex Value="2"/>
+        <TopLine Value="266"/>
+        <CursorPos X="2" Y="77"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
+      </Unit2>
+    </Units>
+    <JumpHistory Count="24" HistoryIndex="23">
+      <Position1>
+        <Filename Value="SSD1306Demo.lpr"/>
+      </Position1>
+      <Position2>
+        <Filename Value="SSD1306Demo.lpr"/>
+        <Caret Line="21" Column="30"/>
+      </Position2>
+      <Position3>
+        <Filename Value="SSD1306Demo.lpr"/>
+        <Caret Line="112" Column="28" TopLine="64"/>
+      </Position3>
+      <Position4>
+        <Filename Value="../../Source/MBF.Displays.SSD1306.pas"/>
+        <Caret Line="29"/>
+      </Position4>
+      <Position5>
+        <Filename Value="../../Source/MBF.Displays.SSD1306.pas"/>
+        <Caret Line="67" TopLine="43"/>
+      </Position5>
+      <Position6>
+        <Filename Value="../../Source/MBF.Displays.SSD1306.pas"/>
+        <Caret Line="27" Column="61"/>
+      </Position6>
+      <Position7>
+        <Filename Value="../../Source/MBF.Displays.SSD1306.pas"/>
+        <Caret Line="66" Column="19" TopLine="45"/>
+      </Position7>
+      <Position8>
+        <Filename Value="../../Source/MBF.Displays.SSD1306.pas"/>
+        <Caret Line="45" TopLine="2"/>
+      </Position8>
+      <Position9>
+        <Filename Value="../../Source/MBF.Displays.SSD1306.pas"/>
+        <Caret Line="20"/>
+      </Position9>
+      <Position10>
+        <Filename Value="../../Source/MBF.Displays.SSD1306.pas"/>
+        <Caret Line="71" Column="24" TopLine="47"/>
+      </Position10>
+      <Position11>
+        <Filename Value="../../Source/MBF.Displays.SSD1306.pas"/>
+        <Caret Line="82" Column="41" TopLine="51"/>
+      </Position11>
+      <Position12>
+        <Filename Value="../../Source/MBF.Displays.SSD1306.pas"/>
+        <Caret Line="36" Column="28" TopLine="12"/>
+      </Position12>
+      <Position13>
+        <Filename Value="../../Source/MBF.Displays.SSD1306.pas"/>
+        <Caret Line="103" Column="41" TopLine="71"/>
+      </Position13>
+      <Position14>
+        <Filename Value="../../Source/MBF.Displays.SSD1306.pas"/>
+        <Caret Line="126" Column="19" TopLine="102"/>
+      </Position14>
+      <Position15>
+        <Filename Value="../../Source/MBF.Displays.SSD1306.pas"/>
+        <Caret Line="130" Column="19" TopLine="106"/>
+      </Position15>
+      <Position16>
+        <Filename Value="../../Source/MBF.Displays.SSD1306.pas"/>
+        <Caret Line="88" Column="16" TopLine="65"/>
+      </Position16>
+      <Position17>
+        <Filename Value="../../Source/MBF.Displays.SSD1306.pas"/>
+        <Caret Line="108" TopLine="68"/>
+      </Position17>
+      <Position18>
+        <Filename Value="../../Source/MBF.Displays.SSD1306.pas"/>
+        <Caret Line="95" TopLine="47"/>
+      </Position18>
+      <Position19>
+        <Filename Value="../../Source/MBF.Displays.SSD1306.pas"/>
+        <Caret Line="68" Column="27"/>
+      </Position19>
+      <Position20>
+        <Filename Value="../../Source/MBF.Displays.SSD1306.pas"/>
+        <Caret Line="38" Column="7" TopLine="14"/>
+      </Position20>
+      <Position21>
+        <Filename Value="SSD1306Demo.lpr"/>
+        <Caret Line="100" Column="18" TopLine="64"/>
+      </Position21>
+      <Position22>
+        <Filename Value="SSD1306Demo.lpr"/>
+        <Caret Line="23" Column="29"/>
+      </Position22>
+      <Position23>
+        <Filename Value="SSD1306Demo.lpr"/>
+        <Caret Line="103" Column="74" TopLine="66"/>
+      </Position23>
+      <Position24>
+        <Filename Value="../../Source/MBF.Displays.SSD1306.pas"/>
+        <Caret Line="161" Column="3" TopLine="131"/>
+      </Position24>
+    </JumpHistory>
+  </ProjectOptions>
+  <CompilerOptions>
+    <Version Value="11"/>
+    <Target>
+      <Filename Value="SSD1306Demo"/>
+    </Target>
+    <SearchPaths>
+      <IncludeFiles Value="../../Source;$(ProjOutDir)"/>
+      <OtherUnitFiles Value="../../Source"/>
+      <UnitOutputDirectory Value="lib/$(TargetCPU)-$(TargetOS)"/>
+    </SearchPaths>
+    <Parsing>
+      <SyntaxOptions>
+        <UseAnsiStrings Value="False"/>
+      </SyntaxOptions>
+    </Parsing>
+    <CodeGeneration>
+      <HeapSize Value="8192"/>
+      <StackSize Value="8192"/>
+      <TargetCPU Value="arm"/>
+      <TargetOS Value="embedded"/>
+    </CodeGeneration>
+    <Linking>
+      <Debugging>
+        <DebugInfoType Value="dsDwarf2"/>
+        <UseLineInfoUnit Value="False"/>
+      </Debugging>
+    </Linking>
+    <Other>
+      <CustomOptions Value="-Cparmv7em
+-XP/usr/local/bin/arm-none-eabi-
+-Wpnucleof401re
+-dnucleof401re"/>
+    </Other>
+  </CompilerOptions>
+</CONFIG>

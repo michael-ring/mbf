@@ -68,6 +68,8 @@
 {$INCLUDE MBF.Boards.NRF51.inc}
 {$INCLUDE MBF.Boards.LPC8xx.inc}
 {$INCLUDE MBF.Boards.PIC32MX.inc}
+{$INCLUDE MBF.Boards.SAMC.inc}
+{$INCLUDE MBF.Boards.SAMD.inc}
 
 {$IFNDEF __CONTROLLERTYPE__}
   {$ERROR Unfortunately MBF has not yet been ported to your Embedded Controller}
