@@ -106,7 +106,6 @@ type
     end;
   {$endif}
 {$endregion}
-
 type
   TPinLevel=(Low=0,High=1);
   TPinValue=0..1;

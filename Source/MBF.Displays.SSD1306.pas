@@ -29,24 +29,24 @@ const
   ScreenSize96x16x1: TScreenInfo =
     (Width: 96; Height: 16; Depth: TDisplayBitDepth.OneBit);
   ScreenSize64x48x1: TScreenInfo =
-    (Width: 64; Height: 16; Depth: TDisplayBitDepth.OneBit);
+    (Width: 64; Height: 48; Depth: TDisplayBitDepth.OneBit);
 
 type
   TSSD1306 = object(TCustomSPIDisplay)
     FInternalVcc : boolean;
     procedure InitSequence;
     procedure ClearScreen;
-    //procedure setFont(TheFontInfo : TFontInfo);
-    //function setDrawArea(X,Y,Width,Height : word):longWord;
+    procedure setFont(TheFontInfo : TFontInfo);
+    function setDrawArea(X,Y,Width,Height : word):longWord;
     //procedure drawText(TheText : String; x,y : longWord);
   end;
 
 implementation
 
 uses
+  MBF.Types,
   MBF.__CONTROLLERTYPE__.SystemCore;
 
-procedure TSSD1306.InitSequence;
 const
   CMD_CHARGE_PUMP = $8D;
   CMD_COLUMN_ADDRESS = $21;
@@ -66,10 +66,16 @@ const
   CMD_SET_PRECHARGE = $D9;
   CMD_SET_START_LINE = $40;
   CMD_SET_VCOM_DETECT = $DB;
+
+var
+  FontInfo : TFontInfo;
+
+procedure TSSD1306.InitSequence;
 begin
+  FInternalVCC := true;
   //Set Display off
   WriteCommand(CMD_DISPLAY_OFF);
-  Systemcore.Delay(5);
+  Systemcore.Delay(10);
 
   // Set Display Clock Divide Ratio / OSC Frequency
   WriteCommand([CMD_SET_DISPLAY_CLOCK_DIV, $80]);
@@ -148,21 +154,38 @@ begin
 
   // Set display not inverted
   WriteCommand(CMD_NORMAL_DISPLAY);
-  Systemcore.Delay(5);
+  Systemcore.Delay(10);
 
   // Set display On
   WriteCommand(CMD_DISPLAY_ON);
 end;
 
 procedure TSSD1306.clearScreen;
+const
+  black : array[0..15] of byte = ($00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00);
+  white : array[0..15] of byte = ($ff,$ff,$ff,$ff,$ff,$ff,$ff,$ff,$ff,$ff,$ff,$ff,$ff,$ff,$ff,$ff);
+var
+  i : integer;
+  pixel : byte;
 begin
-  WriteCommand([SSD1306_COLUMNADDR,0,ScreenInfo.Width-1]);
-  WriteCommand([SSD1306_PAGEADDR,0,(ScreenInfo.Height div 8)-1]);
-
+  WriteCommand([CMD_COLUMN_ADDRESS,0,ScreenInfo.Width-1]);
+  WriteCommand([CMD_PAGE_ADDRESS,0,(ScreenInfo.Height div 8)-1]);
+  //Increase Performance by writing larger chunks of data
+  for i := 1 to (ScreenInfo.Width*ScreenInfo.Height) div (8*16) do
+  begin
+    if BackgroundColor = clBlack then
+      writeData(black)
+    else
+      writeData(white);
+  end;
 end;
 
-(*
-function TSSD1963.setDrawArea(X,Y,Width,Height : word):longWord;
+procedure TSSD1306.setFont(TheFontInfo : TFontInfo);
+begin
+  FontInfo := TheFontInfo;
+end;
+
+function TSSD1306.setDrawArea(X,Y,Width,Height : word):longWord;
 begin
   if X >=ScreenInfo.Width then
     X := ScreenInfo.Width-1;
@@ -174,34 +197,46 @@ begin
   if Y+Height >=ScreenInfo.Height then
     Height := ScreenInfo.Height-Y;
 
-  WriteCommand(SSD1963_ENTER_NORMAL_MODE);
-  WriteCommand(SSD1963_SET_COLUMN_ADDRESS);
-  WriteData(X shr 8);
-  WriteData(X and $ff);
-  WriteData((X+Width-1) shr 8);
-  WriteData((X+Width-1) and $ff);
-
-  WriteCommand(SSD1963_SET_PAGE_ADDRESS);
-  WriteData(Y shr 8);
-  WriteData(Y and $ff);
-  WriteData((Y+Height-1) shr 8);
-  WriteData((Y+Height-1) and $ff);
-  Result := Width*Height;
+  WriteCommand([CMD_COLUMN_ADDRESS,X,X+Width-1]);
+  WriteCommand([CMD_PAGE_ADDRESS,Y div 8,(((Y+Height) div 8)-1)]);
+  Result := Width*Height div 8;
 end;
 
-procedure TSSD1306.SetWriteWindow(const WriteRect: TIntRect);
-const
-  VirtualWidth = 128;
+
+(*
+procedure TSSD1306.drawText(TheText : String; x,y : longWord);
 var
-  InitOffset: Integer;
+  i,j : integer;
+  charstart : integer;
+  PixelBudget,fx,fy : longWord;
+  PixelBuffer : array of word;
+  Pixel : byte;
 begin
-  InitOffset := (VirtualWidth - FScreenSize.X) div 2;
+  // To ease up things allow caracters only on Segment boundaries
+  y := (y div 8) shl 3;
+  for i := 1 to length(TheText) do
+  begin
+    charstart := pos(TheText[i],FontInfo.Charmap);
+    if charstart > 0 then
+    begin
+      setDrawArea(x+(i-1)*FontInfo.Width,y,FontInfo.Width,FontInfo.Height);
+      charstart := (charstart-1) * FontInfo.BytesPerChar;
 
-  WriteCommand([CMD_COLUMN_ADDRESS, InitOffset, InitOffset + FScreenSize.X - 1, CMD_PAGE_ADDRESS, 0,
-    (FPhysicalSize.Y div 8) - 1]);
-
-  if (FPinDC <> -1) and (FDataPort is TCustomPortSPI) then
-    FGPIO.PinValue[FPinDC] := 1;
+      for row := 7 downto 0 do
+      begin
+        FontInfo.pFontData^[charstart + (fy*fontInfo.Width+fx)];
+        PixelBuffer[0] :=
+        FontInfo.pFontData^[charstart + ((fy*fontInfo.Width+fx) div 4)];
+          pixel := (pixel shr ((3-(fx and %11)) * 2)) and %11;
+          PixelBuffer[fy*FontInfo.Width+fx] := AntialiasColors[pixel];
+      end;
+    end
+    else
+    begin
+      for j := 0 to FontInfo.Width*FontInfo.Height-1 do
+        PixelBuffer[j] := BackgroundColor;
+    end;
+  end;
 end;
 *)
 end.

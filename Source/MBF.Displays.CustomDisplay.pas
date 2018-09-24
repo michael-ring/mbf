@@ -115,6 +115,11 @@ begin
   FScreenInfo :=  AScreenInfo;
   FBackgroundColor := clBlack;
   FForegroundColor := clWhite;
+
+  GPIO.PinMode[APinDC] := TPinMode.Output;
+  GPIO.PinMode[APinRST] := TPinMode.Output;
+  GPIO.PinValue[APinDC] := 1;
+  GPIO.PinValue[APinRST] := 1;
 end;
 
 procedure TCustomGPIODisplay.Initialize(var GPIOPort : TGPIO_Registers;const APinDC,APinWR,APinRD,aPinCS,APinRST : TPinIdentifier;AScreenInfo : TScreenInfo);

@@ -22,7 +22,8 @@ uses
   MBF.__CONTROLLERTYPE__.GPIO,
   MBF.__CONTROLLERTYPE__.SPI,
   MBF.Displays.SSD1306,
-  MBF.Displays.CustomDisplay;
+  MBF.Displays.CustomDisplay,
+  MBF.Fonts.Hack12x16;
 
 var
   Display: TSSD1306;
@@ -36,17 +37,55 @@ begin
 
   // Initialize the GPIO subsystem
   GPIO.Initialize;
-  SPI.Initialize;
+  SPI.Initialize(TSPIMOSIPins.D11_SPI,TSPIMISOPINS.D12_SPI,TSPISCLKPINS.D13_SPI,TSPINSSPins.D10_SPI);
+  SPI.Frequency:= 8000000;
 
-  Display.Initialize(SPI,TArduinopin.D8,TArduinopin.D9,ScreenSize128x64x1);
+  Display.Initialize(SPI,TArduinopin.D9,TArduinopin.D8,ScreenSize128x64x1);
   Display.Reset;
   Display.InitSequence;
   repeat
     Display.BackgroundColor := clBlack;
     Display.ClearScreen;
+
+    Display.setDrawArea(0,0,8,16);
+    Display.writeData([%11110000,
+                       %11111000,
+                       %10001100,
+                       %10000100,
+                       %10001100,
+                       %11111000,
+                       %11110000,
+                       %00000000,
+                       %00001111,
+                       %00001111,
+                       %00000000,
+                       %00000000,
+                       %00000000,
+                       %00001111,
+                       %00001111,
+                       %00000000
+    ]);
+
+    Display.setDrawArea(8,0,8,16);
+    Display.writeData([%00000100,
+                       %11111100,
+                       %11111100,
+                       %01000100,
+                       %01100100,
+                       %11111100,
+                       %10111000,
+                       %00000000,
+                       %00001000,
+                       %00001111,
+                       %00001111,
+                       %00001000,
+                       %00001000,
+                       %00001111,
+                       %00000111,
+                       %00000000
+    ]);
+
     SystemCore.Delay(5000);
-    Display.BackgroundColor := clWhite;
-    Display.ClearScreen;
-    SystemCore.Delay(5000);
+
   until 1=0
 end.

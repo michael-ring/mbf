@@ -24,8 +24,6 @@ uses
 
 const
   GPIO_PIN_FUNCTION_OFF          = $ffffffff;
-  LOW=0;
-  HIGH=1;
 
 type
   TPinValue=0..1;
@@ -87,6 +85,7 @@ type
   type
     TArduinoPin = record
     const
+      None=-1;
       D0 = TNativePin.PA11;   D1 = TNativePin.PA10;   D2 = TNativePin.PA14;  D3 = TNativePin.PA9;
       D4 = TNativePin.PA8;   D5 = TNativePin.PA15;  D6 = TNativePin.PA20;  D7 = TNativePin.PA21;
 
@@ -102,6 +101,7 @@ type
   type
     TArduinoPin = record
     const
+      None=-1;
       D0 = TNativePin.PB9;   D1 = TNativePin.PB8;   D2 = TNativePin.PB14;  D3 = TNativePin.PB2;
       D4 = TNativePin.PB5;   D5 = TNativePin.PA21;  D6 = TNativePin.PB15;  D7 = TNativePin.PA17;
 
@@ -386,19 +386,19 @@ end;
 function TGPIO_Registers.GetPinValue(const Pin: TPinIdentifier): TPinValue;
 begin
   GetPinPortMask(Pin);
-  result:=Low;
-  if GetBit(PGPIOPort^.&IN,GPIOPinNo) then result:=High;
+  result:=0;
+  if GetBit(PGPIOPort^.&IN,GPIOPinNo) then result:=1;
 end;
 
 procedure TGPIO_Registers.SetPinValue(const Pin: TPinIdentifier; const Value: TPinValue);
 begin
   GetPinPortMask(Pin);
   case (Value) of
-    Low:
+    0:
     begin
       PGPIOPort^.OUTCLR:=GPIOMask;
     end;
-    High:
+    1:
     begin
       PGPIOPort^.OUTSET:=GPIOMask;
     end;

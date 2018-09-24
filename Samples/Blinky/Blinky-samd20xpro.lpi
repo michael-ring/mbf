@@ -27,13 +27,12 @@
         <IsPartOfProject Value="True"/>
         <TopLine Value="6"/>
         <CursorPos X="30" Y="37"/>
-        <UsageCount Value="22"/>
+        <UsageCount Value="23"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
       </Unit0>
       <Unit1>
         <Filename Value="../../Source/MBF.SAMCD.SystemCore.pas"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="2"/>
         <TopLine Value="205"/>
         <CursorPos X="33" Y="245"/>
@@ -42,9 +41,9 @@
       </Unit1>
       <Unit2>
         <Filename Value="../../Source/MBF.Boards.SAMD.inc"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="3"/>
-        <TopLine Value="502"/>
-        <CursorPos Y="550"/>
+        <CursorPos Y="4"/>
         <UsageCount Value="10"/>
         <Loaded Value="True"/>
       </Unit2>

@@ -574,10 +574,14 @@ begin
   if self.SR and (1 shl 0) = 1 then
     Result := self.DR;
 
+  if (_NSSPin > TNativePin.None) and (_NSSPin < ALT0) then
+    GPIO.PinValue[_NSSPin] := 0;
+
   while ((ReadBuffer <> nil) and (ReadBytes < BufferSize)) or ((WriteBuffer <> nil) and (WriteBytes < BufferSize)) do
   begin
-    if (_NSSPin > TNativePin.None) and (_NSSPin < ALT0) then
-      GPIO.PinValue[_NSSPin] := 0;
+    // TXE Wait until data is completely shifted in
+    while self.SR and (1 shl 1) = 0 do
+      ;
     if WriteBuffer <> nil then
     begin
       if getBitsPerWord = TSPIBitsPerWord.Sixteen then
@@ -596,12 +600,12 @@ begin
       self.DR := $ff; //We need to send dummy data to be able to receive
 
     // RXNE Wait until data is completely shifted in
-    //while self.SR and (1 shl 0) = 0 do
-    //  ;
+    while self.SR and (1 shl 0) = 0 do
+      ;
 
     // TXE Wait until data is completely shifted in
-    while self.SR and (1 shl 1) = 0 do
-      ;
+    //while self.SR and (1 shl 1) = 0 do
+    //  ;
 
     // TXE Wait until data is completely shifted in
     //while self.SR and (1 shl 7) <> 0 do
@@ -627,9 +631,10 @@ begin
       end;
     end;
 
-    if (_NSSPin > TNativePin.None) and (_NSSPin < ALT0) then
-      GPIO.PinValue[_NSSPin] := 1;
   end;
+
+  if (_NSSPin > TNativePin.None) and (_NSSPin < ALT0) then
+  GPIO.PinValue[_NSSPin] := 1;
 
   // Disable SPI, this also sets NSS Pin High in Hardware Mode
   self.CR1 := self.CR1 and (not (1 shl 6));
@@ -660,7 +665,10 @@ begin
     GPIO.PinMode[longWord(value) and $ff] := TPinMode((longWord(value) shr 8) and $0f)
   else
     if longInt(Value) >= 0 then
+    begin
       GPIO.PinMode[longWord(value)] := TPinMode.Output;
+      GPIO.SetPinLevelHigh(longWord(value));
+    end;
 
   case longWord(@Self) of
       SPI1_BASE : NSSPins[1] := longInt(value);
