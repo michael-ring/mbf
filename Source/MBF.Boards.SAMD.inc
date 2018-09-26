@@ -27,7 +27,7 @@
 {$if defined(SAMD10XMINI)}
   {$define has_arduinopins}
   {$define has_samd10_xplained_mini}
-  {$define SAMD10D14}
+  {$define SAMD10D14A}
 {$endif}
 
 {$if defined(SAMD20XPRO)}
