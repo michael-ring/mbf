@@ -36,7 +36,6 @@ asm
   lsl  r3, r1
   bic  r2, r3
   str  r2, [r0]
-  //bx lr
 end;
 {$else}
 begin
@@ -188,11 +187,11 @@ procedure PutValue(var Value: longword; const Mask:longword; const Data:longword
 {$ifdef useassembler}
 assembler;nostackframe;
 asm
-  ldr  r4,[r0]
-  bic  r4,r1
-  lsl  r2,r3
-  orr  r4,r2
-  str  r4,[r0]
+  lsl  r2, r3
+  ldrh r3, [r0]
+  bic  r3, r1
+  orr  r3, r2
+  strh r3, [r0]
 end;
 {$else}
  begin
@@ -205,11 +204,11 @@ procedure PutValue(var Value: word; const Mask:word; const Data:word; const Posi
 {$ifdef useassembler}
 assembler;nostackframe;
 asm
-  ldrh r4,[r0]
-  bic  r4,r1
-  lsl  r2,r3
-  orr  r4,r2
-  strh r4,[r0]
+  lsl  r2, r3
+  ldrh r3, [r0]
+  bic  r3, r1
+  orr  r3, r2
+  strh r3, [r0]
 end;
 {$else}
 begin
@@ -222,11 +221,11 @@ procedure PutValue(var Value: byte; const Mask:byte; const Data:byte; const Posi
 {$ifdef useassembler}
 assembler;nostackframe;
 asm
-  ldrb r4,[r0]
-  bic  r4,r1
-  lsl  r2,r3
-  orr  r4,r2
-  strb r4,[r0]
+  lsl  r2, r3
+  ldrb r3, [r0]
+  bic  r3, r1
+  orr  r3, r2
+  strb r3, [r0]
 end;
 {$else}
 begin
@@ -239,10 +238,10 @@ procedure PutValue(var Value: longword; const Mask:longword; const Data:longword
 {$ifdef useassembler}
 assembler;nostackframe;
 asm
-  ldr  r3,[r0]
-  bic  r3,r1
-  orr  r3,r2
-  str  r3,[r0]
+  ldr  r3, [r0]
+  bic  r3, r1
+  orr  r3, r2
+  str  r3, [r0]
 end;
 {$else}
  begin
