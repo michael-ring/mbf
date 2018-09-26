@@ -234,7 +234,7 @@ begin
       SYSCTRL_DFLLCTRL_CCDIS OR
       {$ifdef has_usb}
       SYSCTRL_DFLLCTRL_USBCRM OR //* USB correction */
-      {$endif
+      {$endif}
       SYSCTRL_DFLLCTRL_BPLCKC;
       {$endif}
     WaitSYSCTRL;

@@ -25,10 +25,9 @@
       <Unit0>
         <Filename Value="SSD1306Demo.lpr"/>
         <IsPartOfProject Value="True"/>
-        <IsVisibleTab Value="True"/>
-        <TopLine Value="44"/>
+        <TopLine Value="23"/>
         <CursorPos X="23" Y="88"/>
-        <UsageCount Value="73"/>
+        <UsageCount Value="81"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
       </Unit0>
@@ -37,14 +36,14 @@
         <EditorIndex Value="1"/>
         <TopLine Value="193"/>
         <CursorPos X="3" Y="241"/>
-        <UsageCount Value="37"/>
+        <UsageCount Value="41"/>
         <Loaded Value="True"/>
       </Unit1>
       <Unit2>
         <Filename Value="../../Source/MBF.Displays.CustomDisplay.pas"/>
         <EditorIndex Value="2"/>
         <CursorPos X="30" Y="122"/>
-        <UsageCount Value="35"/>
+        <UsageCount Value="39"/>
         <Loaded Value="True"/>
       </Unit2>
       <Unit3>
@@ -53,7 +52,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="646"/>
         <CursorPos X="43" Y="670"/>
-        <UsageCount Value="25"/>
+        <UsageCount Value="24"/>
       </Unit3>
       <Unit4>
         <Filename Value="../../Source/MBF.STM32F4.GPIO.pas"/>
@@ -61,19 +60,21 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="67"/>
         <CursorPos Y="109"/>
-        <UsageCount Value="30"/>
+        <UsageCount Value="29"/>
       </Unit4>
       <Unit5>
         <Filename Value="../SSD1963Demo/MBF.Fonts.DroidSansMono16x24_antialiased.pas"/>
         <EditorIndex Value="-1"/>
         <CursorPos Y="6"/>
-        <UsageCount Value="14"/>
+        <UsageCount Value="13"/>
       </Unit5>
       <Unit6>
         <Filename Value="MBF.Fonts.Hack12x16.pas"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="3"/>
+        <TopLine Value="914"/>
         <CursorPos Y="28"/>
-        <UsageCount Value="18"/>
+        <UsageCount Value="22"/>
         <Loaded Value="True"/>
       </Unit6>
       <Unit7>
@@ -81,7 +82,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="442"/>
         <CursorPos Y="50"/>
-        <UsageCount Value="14"/>
+        <UsageCount Value="13"/>
       </Unit7>
     </Units>
     <JumpHistory Count="30" HistoryIndex="29">
