@@ -232,7 +232,9 @@ begin
       SYSCTRL_DFLLCTRL_QLDIS; // 1 = Disable quick lock.
       {$else}
       SYSCTRL_DFLLCTRL_CCDIS OR
+      {$ifdef has_usb}
       SYSCTRL_DFLLCTRL_USBCRM OR //* USB correction */
+      {$endif
       SYSCTRL_DFLLCTRL_BPLCKC;
       {$endif}
     WaitSYSCTRL;
