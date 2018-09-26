@@ -130,6 +130,65 @@ type
   {$endif}
   {$endif}
 
+  {$ifdef has_samd20_xplained_pro}
+  const
+    LED0                     = TNativePin.PA14;
+    SW0                      = TNativePin.PA15;
+    // Extension header #1 pin definitions
+    EXT1_PIN_3               = TNativePin.PB0;
+    EXT1_PIN_4               = TNativePin.PB1;
+    EXT1_PIN_5               = TNativePin.PB6;
+    EXT1_PIN_6               = TNativePin.PB7;
+    EXT1_PIN_7               = TNativePin.PB2;
+    EXT1_PIN_8               = TNativePin.PB3;
+    EXT1_PIN_9               = TNativePin.PB4;
+    EXT1_PIN_10              = TNativePin.PB5;
+    EXT1_PIN_11              = TNativePin.PA8;
+    EXT1_PIN_12              = TNativePin.PA9;
+    EXT1_PIN_13              = TNativePin.PB9;
+    EXT1_PIN_14              = TNativePin.PB8;
+    EXT1_PIN_15              = TNativePin.PA5;
+    EXT1_PIN_16              = TNativePin.PA6;
+    EXT1_PIN_17              = TNativePin.PA4;
+    EXT1_PIN_18              = TNativePin.PA7;
+
+    // Extension header #2 pin definitions
+    EXT2_PIN_3               = TNativePin.PA10;
+    EXT2_PIN_4               = TNativePin.PA11;
+    EXT2_PIN_5               = TNativePin.PA20;
+    EXT2_PIN_6               = TNativePin.PA21;
+    EXT2_PIN_7               = TNativePin.PA22;
+    EXT2_PIN_8               = TNativePin.PA23;
+    EXT2_PIN_9               = TNativePin.PB14;
+    EXT2_PIN_10              = TNativePin.PB15;
+    EXT2_PIN_11              = TNativePin.PA8;
+    EXT2_PIN_12              = TNativePin.PA9;
+    EXT2_PIN_13              = TNativePin.PB13;
+    EXT2_PIN_14              = TNativePin.PB12;
+    EXT2_PIN_15              = TNativePin.PA17;
+    EXT2_PIN_16              = TNativePin.PA18;
+    EXT2_PIN_17              = TNativePin.PA16;
+    EXT2_PIN_18              = TNativePin.PA19;
+
+    // Extension header #3 pin definitions
+    EXT3_PIN_3               = TNativePin.PA2;
+    EXT3_PIN_4               = TNativePin.PA3;
+    EXT3_PIN_5               = TNativePin.PB30;
+    EXT3_PIN_6               = TNativePin.PA15;
+    EXT3_PIN_7               = TNativePin.PA12;
+    EXT3_PIN_8               = TNativePin.PA13;
+    EXT3_PIN_9               = TNativePin.PA28;
+    EXT3_PIN_10              = TNativePin.PA27;
+    EXT3_PIN_11              = TNativePin.PA8;
+    EXT3_PIN_12              = TNativePin.PA9;
+    EXT3_PIN_13              = TNativePin.PB11;
+    EXT3_PIN_14              = TNativePin.PB10;
+    EXT3_PIN_15              = TNativePin.PB17;
+    EXT3_PIN_16              = TNativePin.PB22;
+    EXT3_PIN_17              = TNativePin.PB16;
+    EXT3_PIN_18              = TNativePin.PB23;
+  {$endif}
+
   {$ifdef has_samd21_xplained_pro}
   const
     LED0                     = TNativePin.PB30;
@@ -278,6 +337,9 @@ type
     procedure SetPinValue(const Pin: TPinIdentifier; const Value: TPinValue);
     procedure TogglePinValue(const Pin: TPinIdentifier);
 
+    procedure SetPinLevelHigh(const Pin: TPinIdentifier);
+    procedure SetPinLevelLow(const Pin: TPinIdentifier);
+
     property  PinMux[const Pin: TPinIdentifier]      : TPinMux   write SetPinMux;
     property  PinMode[const Pin : TPinIdentifier]    : TPinMode  read GetPinMode  write SetPinMode;
     property  PinDrive[const Pin : TPinIdentifier]   : TPinDrive read GetPinDrive write SetPinDrive;
@@ -378,6 +440,8 @@ begin
       PGPIOPort^.DIRSET:=GPIOMask;
       // enable input buffer for the I/O pin: input value will be sampled when required
       SetBit(aPINCFG^,PORT_PINCFG_INEN_Pos);
+      // Cannot use a pullup if the output driver is enabled
+      ClearBit(aPINCFG^,PORT_PINCFG_PULLEN_Pos);
     end;
 
   end;
@@ -409,6 +473,15 @@ procedure TGPIO_Registers.TogglePinValue(const Pin: TPinIdentifier);
 begin
   GetPinPortMask(Pin);
   PGPIOPort^.OUTTGL:=GPIOMask;
+end;
+
+procedure TGPIO_Registers.SetPinLevelHigh(const Pin: TPinIdentifier);
+begin
+  SetPinValue(Pin,1);
+end;
+procedure TGPIO_Registers.SetPinLevelLow(const Pin: TPinIdentifier);
+begin
+  SetPinValue(Pin,0);
 end;
 
 function TGPIO_Registers.GetPinDrive(const Pin: TPinIdentifier): TPinDrive;
