@@ -9,6 +9,15 @@ const
   SERCOM1_GCLK_ID_CORE      = $0F;       // Index of Generic Clock for Core
   SERCOM2_GCLK_ID_CORE      = $10;       // Index of Generic Clock for Core
   {$endif}
+  {$ifdef samd20}
+  SERCOM0_GCLK_ID_SLOW      = $0C;       // Index of Generic Clock for SMbus Timeout
+  SERCOM0_GCLK_ID_CORE      = $0D;       // Index of Generic Clock for Core
+  SERCOM1_GCLK_ID_CORE      = $0E;       // Index of Generic Clock for Core
+  SERCOM2_GCLK_ID_CORE      = $0F;       // Index of Generic Clock for Core
+  SERCOM3_GCLK_ID_CORE      = $10;       // Index of Generic Clock for Core
+  SERCOM4_GCLK_ID_CORE      = $11;       // Index of Generic Clock for Core
+  SERCOM5_GCLK_ID_CORE      = $12;       // Index of Generic Clock for Core
+  {$endif}
   {$ifdef samd21}
   SERCOM_GCLK_ID_SLOW       = $13;      // Index of Generic Clock for Slow
   SERCOM0_GCLK_ID_CORE      = $14;      // Index of Generic Clock for Core
@@ -68,6 +77,11 @@ const
   SERCOM_I2CM_CTRLA_PINOUT                 = ($1 shl SERCOM_I2CM_CTRLA_PINOUT_Pos);
   SERCOM_I2CM_CTRLA_SDAHOLD_Pos            = 20;           // (SERCOM_I2CM_CTRLA) SDA Hold Time */
   SERCOM_I2CM_CTRLA_SDAHOLD_Msk            = ($3 shl SERCOM_I2CM_CTRLA_SDAHOLD_Pos);
+  SERCOM_I2CM_CTRLA_SCLSM_Pos              = 27;           // (SERCOM_I2CM_CTRLA) Pin Usage */
+  SERCOM_I2CM_CTRLA_SCLSM                  = ($1 shl SERCOM_I2CM_CTRLA_SCLSM_Pos);
+  SERCOM_I2CM_CTRLA_LOWTOUT_Pos            = 30;           // (SERCOM_I2CM_CTRLA) Pin Usage */
+  SERCOM_I2CM_CTRLA_LOWTOUT                = ($1 shl SERCOM_I2CM_CTRLA_LOWTOUT_Pos);
+
 
   SERCOM_I2CM_CTRLB_SMEN_Pos = 8;            // (SERCOM_I2CM_CTRLB) Smart Mode Enable */
   SERCOM_I2CM_CTRLB_SMEN     = ($1 shl SERCOM_I2CM_CTRLB_SMEN_Pos);

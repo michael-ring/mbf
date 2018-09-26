@@ -60,7 +60,7 @@ const
   PM_APBCMASK_PTC            = (1 shl PM_APBCMASK_PTC_Pos);
   {$endif}
 
-  {$ifdef samd21}
+  {$if defined(samd20) or defined(samd21)}
   PM_APBCMASK_PAC2_Pos       = 0;            // PAC2 APB Clock Enable */
   PM_APBCMASK_PAC2           = (1 shl PM_APBCMASK_PAC2_Pos);
   PM_APBCMASK_EVSYS_Pos      = 1;            // EVSYS APB Clock Enable */

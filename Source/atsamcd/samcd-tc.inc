@@ -1,5 +1,12 @@
 //* ========== Instance parameters for TC1 peripheral ========== */
 const
+  {$ifdef samd20}
+  GCLK_CLKCTRL_ID_TC0_TC1_Val     = $13;
+  GCLK_CLKCTRL_ID_TC2_TC3_Val     = $14;
+  GCLK_CLKCTRL_ID_TC4_TC5_Val     = $15;
+  GCLK_CLKCTRL_ID_TC6_TC7_Val     = $16;
+  {$endif}
+
   TC1_DMAC_ID_MC_0           = 13;
   TC1_DMAC_ID_MC_1           = 14;
   TC1_DMAC_ID_MC_LSB         = 13;

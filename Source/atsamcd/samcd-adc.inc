@@ -6,6 +6,9 @@ const
   {$ifdef samd10}
   ADC_GCLK_ID               = $13;       // Index of Generic Clock
   {$endif}
+  {$ifdef samd20}
+  ADC_GCLK_ID               = $17;       // Index of Generic Clock
+  {$endif}
   {$ifdef samd21}
   ADC_GCLK_ID               = $1E;       // Index of Generic Clock
   {$endif}
@@ -33,12 +36,24 @@ const
   ADC_REFCTRL_REFSEL_INTVCC0_Val  = $1;   //(ADC_REFCTRL) 1/1.48 VDDANA */
   ADC_REFCTRL_REFSEL_INTVCC1_Val  = $2;   //(ADC_REFCTRL) 1/2 VDDANA (only for VDDANA > 2.0V) */
   ADC_REFCTRL_REFSEL_AREFA_Val    = $3;   //(ADC_REFCTRL) External reference */
+  {$ifdef samd}
   ADC_REFCTRL_REFSEL_AREFB_Val    = $4;   //(ADC_REFCTRL) External reference */
+  {$endif}
+  {$ifdef samc}
+  ADC_REFCTRL_REFSEL_DAC_Val      = $4;   //(ADC_REFCTRL) External reference */
+  ADC_REFCTRL_REFSEL_INTVCC2_Val  = $5;   //(ADC_REFCTRL) External reference */
+  {$endif}
   ADC_REFCTRL_REFSEL_INT1V        = (ADC_REFCTRL_REFSEL_INT1V_Val  shl ADC_REFCTRL_REFSEL_Pos);
   ADC_REFCTRL_REFSEL_INTVCC0      = (ADC_REFCTRL_REFSEL_INTVCC0_Val shl ADC_REFCTRL_REFSEL_Pos);
   ADC_REFCTRL_REFSEL_INTVCC1      = (ADC_REFCTRL_REFSEL_INTVCC1_Val shl ADC_REFCTRL_REFSEL_Pos);
   ADC_REFCTRL_REFSEL_AREFA        = (ADC_REFCTRL_REFSEL_AREFA_Val  shl ADC_REFCTRL_REFSEL_Pos);
+  {$ifdef samd}
   ADC_REFCTRL_REFSEL_AREFB        = (ADC_REFCTRL_REFSEL_AREFB_Val  shl ADC_REFCTRL_REFSEL_Pos);
+  {$endif}
+  {$ifdef samc}
+  ADC_REFCTRL_REFSEL_DAC          = (ADC_REFCTRL_REFSEL_DAC_Val  shl ADC_REFCTRL_REFSEL_Pos);
+  ADC_REFCTRL_REFSEL_INTVCC2      = (ADC_REFCTRL_REFSEL_INTVCC2_Val  shl ADC_REFCTRL_REFSEL_Pos);
+  {$endif}
   ADC_REFCTRL_REFCOMP_Pos         = 7;    //(ADC_REFCTRL) Reference Buffer Offset Compensation Enable */
   ADC_REFCTRL_REFCOMP             = ($1 shl ADC_REFCTRL_REFCOMP_Pos);
   ADC_REFCTRL_MASK                = $8F;  //(ADC_REFCTRL) MASK Register */
@@ -61,6 +76,26 @@ const
   ADC_CTRLB_RESSEL_16BIT           = (ADC_CTRLB_RESSEL_16BIT_Val    shl ADC_CTRLB_RESSEL_Pos);
   ADC_CTRLB_RESSEL_10BIT           = (ADC_CTRLB_RESSEL_10BIT_Val    shl ADC_CTRLB_RESSEL_Pos);
   ADC_CTRLB_RESSEL_8BIT            = (ADC_CTRLB_RESSEL_8BIT_Val     shl ADC_CTRLB_RESSEL_Pos);
+
+  {$ifdef samc}
+  ADC_CTRLC_R2R_Pos                = 7;
+  ADC_CTRLC_R2R                    = ($1 shl ADC_CTRLC_R2R_Pos);
+
+  ADC_CTRLC_WINMODE_Pos            = 8;
+  ADC_CTRLC_WINMODE_Msk            = ($7 shl ADC_CTRLC_WINMODE_Pos);
+  ADC_CTRLC_WINMODE_DISABLE_Val    = $0;
+  ADC_CTRLC_WINMODE_MODE1_Val      = $1;
+  ADC_CTRLC_WINMODE_MODE2_Val      = $2;
+  ADC_CTRLC_WINMODE_MODE3_Val      = $3;
+  ADC_CTRLC_WINMODE_MODE4_Val      = $4;
+
+  ADC_CTRLC_DUALSEL_Pos            = 12;
+  ADC_CTRLC_DUALSEL_Msk            = ($3 shl ADC_CTRLC_DUALSEL_Pos);
+  ADC_CTRLC_DUALSEL_BOTH_Val       = $0;
+  ADC_CTRLC_DUALSEL_INTERLEAVE_Val = $1;
+  {$endif}
+
+  {$ifdef samd}
   ADC_CTRLB_PRESCALER_Pos          = 8;            //(ADC_CTRLB) Prescaler Configuration */
   ADC_CTRLB_PRESCALER_Msk          = ($7 shl ADC_CTRLB_PRESCALER_Pos);
   ADC_CTRLB_PRESCALER_DIV4_Val     = $0;  //(ADC_CTRLB) Peripheral clock divided by 4 */
@@ -79,7 +114,29 @@ const
   ADC_CTRLB_PRESCALER_DIV128       = (ADC_CTRLB_PRESCALER_DIV128_Val shl ADC_CTRLB_PRESCALER_Pos);
   ADC_CTRLB_PRESCALER_DIV256       = (ADC_CTRLB_PRESCALER_DIV256_Val shl ADC_CTRLB_PRESCALER_Pos);
   ADC_CTRLB_PRESCALER_DIV512       = (ADC_CTRLB_PRESCALER_DIV512_Val shl ADC_CTRLB_PRESCALER_Pos);
-  ADC_CTRLB_MASK                   = $073F;     //(ADC_CTRLB) MASK Register */
+  {$endif}
+
+  {$ifdef samc}
+  ADC_CTRLB_PRESCALER_Pos          = 0;            //(ADC_CTRLB) Prescaler Configuration */
+  ADC_CTRLB_PRESCALER_Msk          = ($7 shl ADC_CTRLB_PRESCALER_Pos);
+  ADC_CTRLB_PRESCALER_DIV2_Val     = $0;  //(ADC_CTRLB) Peripheral clock divided by 4 */
+  ADC_CTRLB_PRESCALER_DIV4_Val     = $1;  //(ADC_CTRLB) Peripheral clock divided by 8 */
+  ADC_CTRLB_PRESCALER_DIV8_Val     = $2;  //(ADC_CTRLB) Peripheral clock divided by 16 */
+  ADC_CTRLB_PRESCALER_DIV16_Val    = $3;  //(ADC_CTRLB) Peripheral clock divided by 32 */
+  ADC_CTRLB_PRESCALER_DIV32_Val    = $4;  //(ADC_CTRLB) Peripheral clock divided by 64 */
+  ADC_CTRLB_PRESCALER_DIV64_Val    = $5;  //(ADC_CTRLB) Peripheral clock divided by 128 */
+  ADC_CTRLB_PRESCALER_DIV128_Val   = $6;  //(ADC_CTRLB) Peripheral clock divided by 256 */
+  ADC_CTRLB_PRESCALER_DIV256_Val   = $7;  //(ADC_CTRLB) Peripheral clock divided by 512 */
+  ADC_CTRLB_PRESCALER_DIV2         = (ADC_CTRLB_PRESCALER_DIV2_Val  shl ADC_CTRLB_PRESCALER_Pos);
+  ADC_CTRLB_PRESCALER_DIV4         = (ADC_CTRLB_PRESCALER_DIV4_Val  shl ADC_CTRLB_PRESCALER_Pos);
+  ADC_CTRLB_PRESCALER_DIV8         = (ADC_CTRLB_PRESCALER_DIV8_Val shl ADC_CTRLB_PRESCALER_Pos);
+  ADC_CTRLB_PRESCALER_DIV16        = (ADC_CTRLB_PRESCALER_DIV16_Val shl ADC_CTRLB_PRESCALER_Pos);
+  ADC_CTRLB_PRESCALER_DIV32        = (ADC_CTRLB_PRESCALER_DIV32_Val shl ADC_CTRLB_PRESCALER_Pos);
+  ADC_CTRLB_PRESCALER_DIV64        = (ADC_CTRLB_PRESCALER_DIV64_Val shl ADC_CTRLB_PRESCALER_Pos);
+  ADC_CTRLB_PRESCALER_DIV128       = (ADC_CTRLB_PRESCALER_DIV128_Val shl ADC_CTRLB_PRESCALER_Pos);
+  ADC_CTRLB_PRESCALER_DIV256       = (ADC_CTRLB_PRESCALER_DIV256_Val shl ADC_CTRLB_PRESCALER_Pos);
+  {$endif}
+
 
   ADC_AVGCTRL_SAMPLENUM_Pos        = 0;            //(ADC_AVGCTRL) Number of Samples to be Collected */
   ADC_AVGCTRL_SAMPLENUM_Msk        = ($F shl ADC_AVGCTRL_SAMPLENUM_Pos);
@@ -111,15 +168,21 @@ const
 
   ADC_INPUTCTRL_MUXPOS_Pos               = 0;            //(ADC_INPUTCTRL) Positive Mux Input Selection */
   ADC_INPUTCTRL_MUXPOS_Msk               = ($1F shl ADC_INPUTCTRL_MUXPOS_Pos);
-  ADC_INPUTCTRL_MUXPOS_TEMP_Val          = $18;  //(ADC_INPUTCTRL) Temperature Reference */
   ADC_INPUTCTRL_MUXPOS_BANDGAP_Val       = $19;  //(ADC_INPUTCTRL) Bandgap Voltage */
+  ADC_INPUTCTRL_MUXPOS_DAC_Val           = $1C;  //(ADC_INPUTCTRL) DAC Output */
+  {$ifdef samd}
+  ADC_INPUTCTRL_MUXPOS_TEMP_Val          = $18;  //(ADC_INPUTCTRL) Temperature Reference */
   ADC_INPUTCTRL_MUXPOS_SCALEDCOREVCC_Val = $1A;  //(ADC_INPUTCTRL) 1/4  Scaled Core Supply */
   ADC_INPUTCTRL_MUXPOS_SCALEDIOVCC_Val   = $1B;  //(ADC_INPUTCTRL) 1/4  Scaled I/O Supply */
-  ADC_INPUTCTRL_MUXPOS_DAC_Val           = $1C;  //(ADC_INPUTCTRL) DAC Output */
+  {$endif}
+
   ADC_INPUTCTRL_MUXNEG_Pos               = 8;            //(ADC_INPUTCTRL) Negative Mux Input Selection */
   ADC_INPUTCTRL_MUXNEG_Msk               = ($1F shl ADC_INPUTCTRL_MUXNEG_Pos);
   ADC_INPUTCTRL_MUXNEG_GND_Val           = $18;  //(ADC_INPUTCTRL) Internal Ground */
+  {$ifdef samd}
   ADC_INPUTCTRL_MUXNEG_IOGND_Val         = $19;  //(ADC_INPUTCTRL) I/O Ground */
+  {$endif}
+
   ADC_INPUTCTRL_INPUTSCAN_Pos            = 16;           //(ADC_INPUTCTRL) Number of Input Channels Included in Scan */
   ADC_INPUTCTRL_INPUTSCAN_Msk            = ($F shl ADC_INPUTCTRL_INPUTSCAN_Pos);
   ADC_INPUTCTRL_INPUTOFFSET_Pos          = 20;           //(ADC_INPUTCTRL) Positive Mux Setting Offset */
