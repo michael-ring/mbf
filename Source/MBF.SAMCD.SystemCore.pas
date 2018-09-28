@@ -104,6 +104,12 @@ begin
   //Overwriting the default value of the NVMCTRL.CTRLB.MANW bit (errata reference 13134) */
   SetBit(NvmCtrl.CTRLB,NVMCTRL_CTRLB_MANW_Pos);
 
+  {$ifdef samd10}
+  //SAMD10 errata
+  //The SYSTICK calibration value is incorrect. Errata reference: 14157
+  //The correct SYSTICK calibration value is 0x40000000
+  SysTick.Calib:=$40000000;
+  {$endif}
 
   {$ifdef TODO_has_usb}
   /* Change default QOS values to have the best performance and correct USB behaviour */
@@ -227,6 +233,9 @@ begin
     while (NOT GetBit(SysCtrl.PCLKSR,SYSCTRL_PCLKSR_DFLLRDY_Pos)) do begin end; // Wait for synchronization
     SysCtrl.DFLLCTRL:=
       SYSCTRL_DFLLCTRL_MODE OR // 1 = Closed loop mode.
+      {$ifdef samd20}
+      SYSCTRL_DFLLCTRL_STABLE OR // See SAMD20 errata
+      {$endif}
       {$ifdef CRYSTAL}
       SYSCTRL_DFLLCTRL_WAITLOCK OR
       SYSCTRL_DFLLCTRL_QLDIS; // 1 = Disable quick lock.
@@ -244,7 +253,6 @@ begin
     WaitSYSCTRL;
 
     // 10. Wait for the coarse locks.
-    // TODO This hangs on SAMD20
     while (NOT GetBit(SysCtrl.PCLKSR,SYSCTRL_PCLKSR_DFLLLCKC_Pos)) do begin end;
     {$ifdef CRYSTAL}
     // 11. Wait for the fine locks.
