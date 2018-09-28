@@ -32,12 +32,13 @@
 
 {$if defined(SAMD20XPRO)}
   {$define has_arduinopins}
+  {$define has_samd20_xplained_pro}
   {$define SAMD20J18}
 {$endif}
 
 {$if defined(SAMD21XPRO)}
   {$define has_arduinopins}
-
+  {$define has_samd21_xplained_pro}
   {$define SAMD21J18A}
 {$endif}
 
