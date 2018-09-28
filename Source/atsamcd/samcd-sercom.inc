@@ -40,6 +40,10 @@ const
   SERCOM4_GCLK_ID_CORE      = 23;      // Index of Generic Clock for Core
   SERCOM5_GCLK_ID_SLOW      = 24;      // Index of Generic Clock for Slow
   SERCOM5_GCLK_ID_CORE      = 25;      // Index of Generic Clock for Core
+  SERCOM6_GCLK_ID_SLOW      = 18;      // Index of Generic Clock for Slow
+  SERCOM6_GCLK_ID_CORE      = 41;      // Index of Generic Clock for Core
+  SERCOM7_GCLK_ID_SLOW      = 18;      // Index of Generic Clock for Slow
+  SERCOM7_GCLK_ID_CORE      = 42;      // Index of Generic Clock for Core
   {$endif}
 
   SERCOM0_INT_MSB           = 6;

@@ -11,6 +11,36 @@ const
   PM_APBAMASK_OFFSET         = $18;          // (PM_APBAMASK offset) APBA Mask */
   PM_APBAMASK_RESETVALUE     = $0000007F;    // (PM_APBAMASK reset_value) APBA Mask */
 
+  {$ifdef samc}
+  MCLK_APBAMASK_PAC0_Pos       = 0;            // (PM_APBAMASK) PAC0 APB Clock Enable */
+  MCLK_APBAMASK_PAC0           = ($1 shl MCLK_APBAMASK_PAC0_Pos);
+  MCLK_APBAMASK_PM_Pos         = 1;            // (PM_APBAMASK) PM APB Clock Enable */
+  MCLK_APBAMASK_PM             = ($1 shl MCLK_APBAMASK_PM_Pos);
+  MCLK_APBAMASK_MCLK_Pos       = 2;            // brief (MCLK_APBAMASK) MCLK APB Clock Enable */
+  MCLK_APBAMASK_MCLK           = ($1 shl MCLK_APBAMASK_MCLK_Pos);
+  MCLK_APBAMASK_RSTC_Pos       = 3;            // brief (MCLK_APBAMASK) RSTC APB Clock Enable */
+  MCLK_APBAMASK_RSTC           = ($1 shl MCLK_APBAMASK_RSTC_Pos);
+  MCLK_APBAMASK_OSCCTRL_Pos    = 4;            // brief (MCLK_APBAMASK) OSCCTRL APB Clock Enable */
+  MCLK_APBAMASK_OSCCTRL        = ($1 shl MCLK_APBAMASK_OSCCTRL_Pos);
+  MCLK_APBAMASK_OSC32KCTRL_Pos = 5;            // brief (MCLK_APBAMASK) OSC32KCTRL APB Clock Enable */
+  MCLK_APBAMASK_OSC32KCTRL     = ($1 shl MCLK_APBAMASK_OSC32KCTRL_Pos);
+  MCLK_APBAMASK_SUPC_Pos       = 6;            // brief (MCLK_APBAMASK) SUPC APB Clock Enable */
+  MCLK_APBAMASK_SUPC           = ($1 shl MCLK_APBAMASK_SUPC_Pos);
+  MCLK_APBAMASK_GCLK_Pos       = 7;            // brief (MCLK_APBAMASK) GCLK APB Clock Enable */
+  MCLK_APBAMASK_GCLK           = ($1 shl MCLK_APBAMASK_GCLK_Pos);
+  MCLK_APBAMASK_WDT_Pos        = 8;            // brief (MCLK_APBAMASK) WDT APB Clock Enable */
+  MCLK_APBAMASK_WDT            = ($1 shl MCLK_APBAMASK_WDT_Pos);
+  MCLK_APBAMASK_RTC_Pos        = 9;            // brief (MCLK_APBAMASK) RTC APB Clock Enable */
+  MCLK_APBAMASK_RTC            = ($1 shl MCLK_APBAMASK_RTC_Pos);
+  MCLK_APBAMASK_EIC_Pos        = 10;           // brief (MCLK_APBAMASK) EIC APB Clock Enable */
+  MCLK_APBAMASK_EIC            = ($1 shl MCLK_APBAMASK_EIC_Pos);
+  MCLK_APBAMASK_FREQM_Pos      = 11;           // brief (MCLK_APBAMASK) FREQM APB Clock Enable */
+  MCLK_APBAMASK_FREQM          = ($1 shl MCLK_APBAMASK_FREQM_Pos);
+  MCLK_APBAMASK_TSENS_Pos      = 12;           // brief (MCLK_APBAMASK) TSENS APB Clock Enable */
+  MCLK_APBAMASK_TSENS          = ($1 shl MCLK_APBAMASK_TSENS_Pos);
+  {$endif}
+
+  {$ifdef samd}
   PM_APBAMASK_PAC0_Pos       = 0;            // (PM_APBAMASK) PAC0 APB Clock Enable */
   PM_APBAMASK_PAC0           = (1 shl PM_APBAMASK_PAC0_Pos);
   PM_APBAMASK_PM_Pos         = 1;            // (PM_APBAMASK) PM APB Clock Enable */
@@ -25,7 +55,7 @@ const
   PM_APBAMASK_RTC            = (1 shl PM_APBAMASK_RTC_Pos);
   PM_APBAMASK_EIC_Pos        = 6;            // (PM_APBAMASK) EIC APB Clock Enable */
   PM_APBAMASK_EIC            = (1 shl PM_APBAMASK_EIC_Pos);
-  PM_APBAMASK_MASK           = $0000007F;    // (PM_APBAMASK) MASK Register */
+  {$endif}
 
   //******PM_APBB******
   PM_APBBMASK_PORT_Pos       = 3;            // PORT APB Clock Enable */

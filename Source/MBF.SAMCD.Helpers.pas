@@ -15,12 +15,18 @@ interface
 {$i atsamcd/samcd-tc.inc}
 
 function ReadCal(Position,Size:byte):longword;
+function DivCeiling(a,b:longint):longint;
 
 implementation
 
 function ReadCal(Position,Size:byte):longword;
 begin
   result:=(({%H-}plongword(NVMCTRL_OTP4+(Position DIV 32))^ shr (Position MOD 32)) AND (1 shl Size));
+end;
+
+function DivCeiling(a,b:longint):longint;
+begin
+  result:=(((a) + (b) - 1) DIV (b));
 end;
 
 end.
