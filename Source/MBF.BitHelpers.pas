@@ -188,11 +188,12 @@ procedure PutValue(var Value: longword; const Mask:longword; const Data:longword
 assembler;nostackframe;
 asm
   lsl  r2, r3
-  ldrh r3, [r0]
+  ldr  r3, [r0]
   bic  r3, r1
   orr  r3, r2
-  strh r3, [r0]
+  str  r3, [r0]
 end;
+
 {$else}
  begin
    Value:=Value AND (NOT Mask);
