@@ -40,7 +40,7 @@
     </Linking>
     <Other>
       <CustomOptions Value="-Cparmv7em
--XP/usr/local/bin/arm-none-eabi-
+-XParm-none-eabi-
 -Wpnucleof303k8
 -dnucleof303k8
       "/>

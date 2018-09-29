@@ -83,7 +83,7 @@
     </Linking>
     <Other>
       <CustomOptions Value="-Cparmv6m
--XP/usr/local/bin/arm-none-eabi-
+-XParm-none-eabi-
 -Wparduinozero
 -darduinozero"/>
     </Other>

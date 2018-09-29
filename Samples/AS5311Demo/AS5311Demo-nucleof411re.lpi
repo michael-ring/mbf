@@ -234,7 +234,7 @@
     </Linking>
     <Other>
       <CustomOptions Value="-Cparmv7em
-         -XP/usr/local/bin/arm-none-eabi-
+         -XParm-none-eabi-
          -Wpnucleof411re
          -dnucleof411re"/>
     </Other>

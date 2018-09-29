@@ -21,55 +21,42 @@
         <Mode0 Name="default"/>
       </Modes>
     </RunParams>
-    <Units Count="4">
+    <Units Count="3">
       <Unit0>
-        <Filename Value="Blinky.lpr"/>
+        <Filename Value="SerialPort.lpr"/>
         <IsPartOfProject Value="True"/>
-        <IsVisibleTab Value="True"/>
-        <CursorPos X="4" Y="20"/>
-        <UsageCount Value="23"/>
+        <UsageCount Value="35"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
       </Unit0>
       <Unit1>
-        <Filename Value="../../Source/MBF.SAMCD.SystemCore.pas"/>
-        <EditorIndex Value="2"/>
-        <TopLine Value="205"/>
-        <CursorPos X="33" Y="245"/>
-        <UsageCount Value="10"/>
+        <Filename Value="../../Source/MBF.SAMCD.UART.pas"/>
+        <IsVisibleTab Value="True"/>
+        <EditorIndex Value="1"/>
+        <TopLine Value="13"/>
+        <CursorPos Y="96"/>
+        <UsageCount Value="17"/>
         <Loaded Value="True"/>
       </Unit1>
       <Unit2>
-        <Filename Value="../../Source/MBF.Boards.SAMD.inc"/>
-        <EditorIndex Value="3"/>
-        <CursorPos Y="4"/>
-        <UsageCount Value="10"/>
+        <Filename Value="../../Source/MBF.STM32F3.UART.pas"/>
+        <EditorIndex Value="2"/>
+        <TopLine Value="23"/>
+        <CursorPos Y="27"/>
+        <UsageCount Value="17"/>
         <Loaded Value="True"/>
       </Unit2>
-      <Unit3>
-        <Filename Value="../../Source/MBF.SAMCD.GPIO.pas"/>
-        <EditorIndex Value="1"/>
-        <TopLine Value="89"/>
-        <CursorPos X="38" Y="308"/>
-        <UsageCount Value="10"/>
-        <Loaded Value="True"/>
-      </Unit3>
     </Units>
-    <JumpHistory Count="2" HistoryIndex="1">
+    <JumpHistory Count="1">
       <Position1>
-        <Filename Value="Blinky.lpr"/>
-        <Caret Line="39" Column="61"/>
+        <Filename Value="SerialPort.lpr"/>
       </Position1>
-      <Position2>
-        <Filename Value="Blinky.lpr"/>
-        <Caret Line="20" Column="5"/>
-      </Position2>
     </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>
     <Version Value="11"/>
     <Target>
-      <Filename Value="Blinky"/>
+      <Filename Value="SerialPort"/>
     </Target>
     <SearchPaths>
       <IncludeFiles Value="../../Source;$(ProjOutDir)"/>

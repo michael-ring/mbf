@@ -190,7 +190,7 @@
     </Linking>
     <Other>
       <CustomOptions Value="-Cparmv7m
-         -XP/usr/local/bin/arm-none-eabi-
+         -XParm-none-eabi-
          -Wpnucleof103rb
          -dnucleof103rb"/>
     </Other>
