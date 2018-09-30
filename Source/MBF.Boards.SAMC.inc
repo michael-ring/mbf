@@ -26,6 +26,7 @@
 
 {$if defined(SAMC20E15A)}
   {$define SAMC20}
+  {$define SAMC20E}
   {$define has_porta}
   {$define has_sercom0} {$define has_sercom1} {$define has_sercom2} {$define has_sercom3}
   {$define has_adc}
@@ -35,6 +36,7 @@
 
 {$if defined(SAMC20E16A)}
   {$define SAMC20}
+  {$define SAMC20E}
   {$define has_porta}
   {$define has_sercom0} {$define has_sercom1} {$define has_sercom2} {$define has_sercom3}
   {$define has_adc}
@@ -44,6 +46,7 @@
 
 {$if defined(SAMC20E17A)}
   {$define SAMC20}
+  {$define SAMC20E}
   {$define has_porta}
   {$define has_sercom0} {$define has_sercom1} {$define has_sercom2} {$define has_sercom3}
   {$define has_adc}
@@ -53,6 +56,7 @@
 
 {$if defined(SAMC20E18A)}
   {$define SAMC20}
+  {$define SAMC20E}
   {$define has_porta}
   {$define has_sercom0} {$define has_sercom1} {$define has_sercom2} {$define has_sercom3}
   {$define has_adc}
@@ -62,6 +66,7 @@
 
 {$if defined(SAMC20G15A)}
   {$define SAMC20}
+  {$define SAMC20G}
   {$define has_porta} {$define has_portb}
   {$define has_sercom0} {$define has_sercom1} {$define has_sercom2} {$define has_sercom3}
   {$define has_adc}
@@ -71,6 +76,7 @@
 
 {$if defined(SAMC20G16A)}
   {$define SAMC20}
+  {$define SAMC20G}
   {$define has_porta} {$define has_portb}
   {$define has_sercom0} {$define has_sercom1} {$define has_sercom2} {$define has_sercom3}
   {$define has_adc}
@@ -80,6 +86,7 @@
 
 {$if defined(SAMC20G17A)}
   {$define SAMC20}
+  {$define SAMC20G}
   {$define has_porta} {$define has_portb}
   {$define has_sercom0} {$define has_sercom1} {$define has_sercom2} {$define has_sercom3}
   {$define has_adc}
@@ -89,6 +96,7 @@
 
 {$if defined(SAMC20G18A)}
   {$define SAMC20}
+  {$define SAMC20G}
   {$define has_porta} {$define has_portb}
   {$define has_sercom0} {$define has_sercom1} {$define has_sercom2} {$define has_sercom3}
   {$define has_adc}
@@ -98,6 +106,7 @@
 
 {$if defined(SAMC20J15A)}
   {$define SAMC20}
+  {$define SAMC20J}
   {$define has_porta} {$define has_portb}
   {$define has_sercom0} {$define has_sercom1} {$define has_sercom2} {$define has_sercom3}
   {$define has_adc}
@@ -107,6 +116,7 @@
 
 {$if defined(SAMC20J16A)}
   {$define SAMC20}
+  {$define SAMC20J}
   {$define has_porta} {$define has_portb}
   {$define has_sercom0} {$define has_sercom1} {$define has_sercom2} {$define has_sercom3}
   {$define has_adc}
@@ -116,6 +126,7 @@
 
 {$if defined(SAMC20J17A)}
   {$define SAMC20}
+  {$define SAMC20J}
   {$define has_porta} {$define has_portb}
   {$define has_sercom0} {$define has_sercom1} {$define has_sercom2} {$define has_sercom3}
   {$define has_adc}
@@ -125,6 +136,7 @@
 
 {$if defined(SAMC20J17AU)}
   {$define SAMC20}
+  {$define SAMC20J}
   {$define has_porta} {$define has_portb}
   {$define has_sercom0} {$define has_sercom1} {$define has_sercom2} {$define has_sercom3}
   {$define has_adc}
@@ -134,6 +146,7 @@
 
 {$if defined(SAMC20J18A)}
   {$define SAMC20}
+  {$define SAMC20J}
   {$define has_porta} {$define has_portb}
   {$define has_sercom0} {$define has_sercom1} {$define has_sercom2} {$define has_sercom3}
   {$define has_adc}
@@ -143,6 +156,7 @@
 
 {$if defined(SAMC20J18AU)}
   {$define SAMC20}
+  {$define SAMC20J}
   {$define has_porta} {$define has_portb}
   {$define has_sercom0} {$define has_sercom1} {$define has_sercom2} {$define has_sercom3}
   {$define has_adc}
@@ -151,6 +165,7 @@
 {$endif}
 
 {$if defined(SAMC20N17A)}
+  {$define SAMC20}
   {$define SAMC20N}
   {$define has_porta} {$define has_portb}{$define has_portc}
   {$define has_sercom0} {$define has_sercom1} {$define has_sercom2} {$define has_sercom3} {$define has_sercom4} {$define has_sercom5}{$define has_sercom6}{$define has_sercom7}
@@ -160,6 +175,7 @@
 {$endif}
 
 {$if defined(SAMC20N18A)}
+  {$define SAMC20}
   {$define SAMC20N}
   {$define has_porta} {$define has_portb}{$define has_portc}
   {$define has_sercom0} {$define has_sercom1} {$define has_sercom2} {$define has_sercom3} {$define has_sercom4} {$define has_sercom5}{$define has_sercom6}{$define has_sercom7}
@@ -170,6 +186,7 @@
 
 {$if defined(SAMC21E15A)}
   {$define SAMC21}
+  {$define SAMC21E}
   {$define has_porta}
   {$define has_sercom0} {$define has_sercom1} {$define has_sercom2} {$define has_sercom3}
   {$define has_adc}
@@ -183,6 +200,7 @@
 
 {$if defined(SAMC21E16A)}
   {$define SAMC21}
+  {$define SAMC21E}
   {$define has_porta}
   {$define has_sercom0} {$define has_sercom1} {$define has_sercom2} {$define has_sercom3}
   {$define has_adc}
@@ -196,6 +214,7 @@
 
 {$if defined(SAMC21E17A)}
   {$define SAMC21}
+  {$define SAMC21E}
   {$define has_porta}
   {$define has_sercom0} {$define has_sercom1} {$define has_sercom2} {$define has_sercom3}
   {$define has_adc}
@@ -209,6 +228,7 @@
 
 {$if defined(SAMC21E18A)}
   {$define SAMC21}
+  {$define SAMC21E}
   {$define has_porta}
   {$define has_sercom0} {$define has_sercom1} {$define has_sercom2} {$define has_sercom3}
   {$define has_adc}
@@ -222,6 +242,7 @@
 
 {$if defined(SAMC21G15A)}
   {$define SAMC21}
+  {$define SAMC21G}
   {$define has_porta} {$define has_portb}
   {$define has_sercom0} {$define has_sercom1} {$define has_sercom2} {$define has_sercom3} {$define has_sercom4} {$define has_sercom5}
   {$define has_adc}
@@ -236,6 +257,7 @@
 
 {$if defined(SAMC21G16A)}
   {$define SAMC21}
+  {$define SAMC21G}
   {$define has_porta} {$define has_portb}
   {$define has_sercom0} {$define has_sercom1} {$define has_sercom2} {$define has_sercom3} {$define has_sercom4} {$define has_sercom5}
   {$define has_adc}
@@ -250,6 +272,7 @@
 
 {$if defined(SAMC21G17A)}
   {$define SAMC21}
+  {$define SAMC21G}
   {$define has_porta} {$define has_portb}
   {$define has_sercom0} {$define has_sercom1} {$define has_sercom2} {$define has_sercom3} {$define has_sercom4} {$define has_sercom5}
   {$define has_adc}
@@ -264,6 +287,7 @@
 
 {$if defined(SAMC21G18A)}
   {$define SAMC21}
+  {$define SAMC21G}
   {$define has_porta} {$define has_portb}
   {$define has_sercom0} {$define has_sercom1} {$define has_sercom2} {$define has_sercom3} {$define has_sercom4} {$define has_sercom5}
   {$define has_adc}
@@ -278,6 +302,7 @@
 
 {$if defined(SAMC21J15A)}
   {$define SAMC21}
+  {$define SAMC21J}
   {$define has_porta} {$define has_portb}
   {$define has_sercom0} {$define has_sercom1} {$define has_sercom2} {$define has_sercom3} {$define has_sercom4} {$define has_sercom5}
   {$define has_adc}
@@ -292,6 +317,7 @@
 
 {$if defined(SAMC21J16A)}
   {$define SAMC21}
+  {$define SAMC21J}
   {$define has_porta} {$define has_portb}
   {$define has_sercom0} {$define has_sercom1} {$define has_sercom2} {$define has_sercom3} {$define has_sercom4} {$define has_sercom5}
   {$define has_adc}
@@ -306,6 +332,7 @@
 
 {$if defined(SAMC21J17A)}
   {$define SAMC21}
+  {$define SAMC21J}
   {$define has_porta} {$define has_portb}
   {$define has_sercom0} {$define has_sercom1} {$define has_sercom2} {$define has_sercom3} {$define has_sercom4} {$define has_sercom5}
   {$define has_adc}
@@ -320,6 +347,7 @@
 
 {$if defined(SAMC21J17AU)}
   {$define SAMC21}
+  {$define SAMC21J}
   {$define has_porta} {$define has_portb}
   {$define has_sercom0} {$define has_sercom1} {$define has_sercom2} {$define has_sercom3} {$define has_sercom4} {$define has_sercom5}
   {$define has_adc}
@@ -334,6 +362,7 @@
 
 {$if defined(SAMC21J18A)}
   {$define SAMC21}
+  {$define SAMC21J}
   {$define has_porta} {$define has_portb}
   {$define has_sercom0} {$define has_sercom1} {$define has_sercom2} {$define has_sercom3} {$define has_sercom4} {$define has_sercom5}
   {$define has_adc}
@@ -348,6 +377,7 @@
 
 {$if defined(SAMC21J18AU)}
   {$define SAMC21}
+  {$define SAMC21J}
   {$define has_porta} {$define has_portb}
   {$define has_sercom0} {$define has_sercom1} {$define has_sercom2} {$define has_sercom3} {$define has_sercom4} {$define has_sercom5}
   {$define has_adc}
@@ -361,6 +391,7 @@
 {$endif}
 
 {$if defined(SAMC21N17A)}
+  {$define SAMC21}
   {$define SAMC21N}
   {$define has_porta} {$define has_portb}{$define has_portc}
   {$define has_sercom0} {$define has_sercom1} {$define has_sercom2} {$define has_sercom3} {$define has_sercom4} {$define has_sercom5}{$define has_sercom6}{$define has_sercom7}
@@ -375,6 +406,7 @@
 {$endif}
 
 {$if defined(SAMC21N18A)}
+  {$define SAMC21}
   {$define SAMC21N}
   {$define has_porta} {$define has_portb}{$define has_portc}
   {$define has_sercom0} {$define has_sercom1} {$define has_sercom2} {$define has_sercom3} {$define has_sercom4} {$define has_sercom5}{$define has_sercom6}{$define has_sercom7}

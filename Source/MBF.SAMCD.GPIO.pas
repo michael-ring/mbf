@@ -24,12 +24,25 @@ uses
 
 const
   GPIO_PIN_FUNCTION_OFF          = $ffffffff;
+  MuxA=$1000;
+  MuxB=$1100;
+  MuxC=$1200;
+  MuxD=$1300;
+  MuxE=$1400;
+  MuxF=$1500;
+  MuxG=$1600;
+  MuxH=$1700;
+
+  Pad0=$100000;
+  Pad1=$110000;
+  Pad2=$120000;
+  Pad3=$130000;
 
 type
   TPinValue=0..1;
   TPinIdentifier=-1..160;
   TPinMode = (Off,Input,Output,Analog);
-  TPinMux = (MuxA,MuxB,MuxC,MuxD,MuxE,MuxF,MuxG,MuxH,None=$FF);
+  TPinMux = (MuxA=0,MuxB,MuxC,MuxD,MuxE,MuxG=6,MuxH,MuxI,None=$FF);
   TPinDrive = (None,PullUp,PullDown,StrongPullUp,StrongPullDown);
 
 {$REGION PinDefinitions}
