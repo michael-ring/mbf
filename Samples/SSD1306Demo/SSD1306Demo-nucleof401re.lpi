@@ -25,9 +25,9 @@
       <Unit0>
         <Filename Value="SSD1306Demo.lpr"/>
         <IsPartOfProject Value="True"/>
-        <TopLine Value="23"/>
-        <CursorPos X="23" Y="88"/>
-        <UsageCount Value="81"/>
+        <IsVisibleTab Value="True"/>
+        <CursorPos X="106" Y="58"/>
+        <UsageCount Value="84"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
       </Unit0>
@@ -36,14 +36,14 @@
         <EditorIndex Value="1"/>
         <TopLine Value="193"/>
         <CursorPos X="3" Y="241"/>
-        <UsageCount Value="41"/>
+        <UsageCount Value="42"/>
         <Loaded Value="True"/>
       </Unit1>
       <Unit2>
         <Filename Value="../../Source/MBF.Displays.CustomDisplay.pas"/>
         <EditorIndex Value="2"/>
         <CursorPos X="30" Y="122"/>
-        <UsageCount Value="39"/>
+        <UsageCount Value="40"/>
         <Loaded Value="True"/>
       </Unit2>
       <Unit3>
@@ -70,11 +70,10 @@
       </Unit5>
       <Unit6>
         <Filename Value="MBF.Fonts.Hack12x16.pas"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="3"/>
-        <TopLine Value="914"/>
+        <TopLine Value="878"/>
         <CursorPos Y="28"/>
-        <UsageCount Value="22"/>
+        <UsageCount Value="23"/>
         <Loaded Value="True"/>
       </Unit6>
       <Unit7>
@@ -237,7 +236,7 @@
     </Linking>
     <Other>
       <CustomOptions Value="-Cparmv7em
--XP/usr/local/bin/arm-none-eabi-
+-XParm-none-eabi-
 -Wpnucleof401re
 -dnucleof401re"/>
     </Other>
