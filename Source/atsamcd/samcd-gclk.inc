@@ -118,6 +118,8 @@ const
   {$ifdef samc}
   GCLK_PCHCTRL_CLKEN_Pos       = 6;           //(GCLK_PCHCTRL) Clock Enable */
   GCLK_PCHCTRL_CLKEN           = (1 shl GCLK_PCHCTRL_CLKEN_Pos);
+  GCLK_PCHCTRL_CHEN_Pos        = GCLK_PCHCTRL_CLKEN_Pos;
+  GCLK_PCHCTRL_CHEN            = GCLK_PCHCTRL_CLKEN;
   GCLK_PCHCTRL_WRTLOCK_Pos     = 7;           //(GCLK_PCHCTRL) Write Lock */
   GCLK_PCHCTRL_WRTLOCK         = (1 shl GCLK_PCHCTRL_WRTLOCK_Pos);
   {$endif}
@@ -125,41 +127,76 @@ const
   GCLK_GENCTRL_OFFSET          = $04;          // (GCLK_GENCTRL offset) Generic Clock Generator Control */
   GCLK_GENCTRL_RESETVALUE      = $00000000; // (GCLK_GENCTRL reset_value) Generic Clock Generator Control */
 
+  {$ifdef samd}
   GCLK_GENCTRL_ID_Pos          = 0;            // (GCLK_GENCTRL) Generic Clock Generator Selection */
   GCLK_GENCTRL_ID_Msk          = ($0F shl GCLK_GENCTRL_ID_Pos);
   GCLK_GENCTRL_SRC_Pos         = 8;            // (GCLK_GENCTRL) Source Select */
   GCLK_GENCTRL_SRC_Msk         = ($1F shl GCLK_GENCTRL_SRC_Pos);
+  {$endif}
+  {$ifdef samc}
+  GCLK_GENCTRL_SRC_Pos           = 0;        // (GCLK_GENCTRL) Source Select */
+  GCLK_GENCTRL_SRC_Msk           = ($7 shl GCLK_GENCTRL_SRC_Pos);
+  {$endif}
+
   GCLK_GENCTRL_SRC_XOSC_Val    = $00;  // (GCLK_GENCTRL) XOSC oscillator output */
   GCLK_GENCTRL_SRC_GCLKIN_Val  = $01;  // (GCLK_GENCTRL) Generator input pad */
   GCLK_GENCTRL_SRC_GCLKGEN1_Val= $02;  // (GCLK_GENCTRL) Generic clock generator 1 output */
   GCLK_GENCTRL_SRC_OSCULP32K_Val = $03;  // (GCLK_GENCTRL) OSCULP32K oscillator output */
   GCLK_GENCTRL_SRC_OSC32K_Val  = $04;  // (GCLK_GENCTRL) OSC32K oscillator output */
   GCLK_GENCTRL_SRC_XOSC32K_Val = $05;  // (GCLK_GENCTRL) XOSC32K oscillator output */
+
+  {$ifdef samd}
   GCLK_GENCTRL_SRC_OSC8M_Val   = $06;  // (GCLK_GENCTRL) OSC8M oscillator output */
   GCLK_GENCTRL_SRC_DFLL48M_Val = $07;  // (GCLK_GENCTRL) DFLL48M output */
   GCLK_GENCTRL_SRC_FDPLL_Val   = $08;  // (GCLK_GENCTRL) FDPLL output */
+  {$endif}
+  {$ifdef samc}
+  GCLK_GENCTRL_SRC_OSC48M_Val    = $06;  // (GCLK_GENCTRL) OSC8M oscillator output */
+  GCLK_GENCTRL_SRC_DPLL96M_Val   = $07;  // (GCLK_GENCTRL) DFLL48M output */
+  {$endif}
+
   GCLK_GENCTRL_SRC_XOSC      = (GCLK_GENCTRL_SRC_XOSC_Val      shl GCLK_GENCTRL_SRC_Pos);
   GCLK_GENCTRL_SRC_GCLKIN    = (GCLK_GENCTRL_SRC_GCLKIN_Val    shl GCLK_GENCTRL_SRC_Pos);
   GCLK_GENCTRL_SRC_GCLKGEN1  = (GCLK_GENCTRL_SRC_GCLKGEN1_Val  shl GCLK_GENCTRL_SRC_Pos);
   GCLK_GENCTRL_SRC_OSCULP32K = (GCLK_GENCTRL_SRC_OSCULP32K_Val shl GCLK_GENCTRL_SRC_Pos);
   GCLK_GENCTRL_SRC_OSC32K    = (GCLK_GENCTRL_SRC_OSC32K_Val    shl GCLK_GENCTRL_SRC_Pos);
   GCLK_GENCTRL_SRC_XOSC32K   = (GCLK_GENCTRL_SRC_XOSC32K_Val   shl GCLK_GENCTRL_SRC_Pos);
+
+  {$ifdef samd}
   GCLK_GENCTRL_SRC_OSC8M     = (GCLK_GENCTRL_SRC_OSC8M_Val     shl GCLK_GENCTRL_SRC_Pos);
   GCLK_GENCTRL_SRC_DFLL48M   = (GCLK_GENCTRL_SRC_DFLL48M_Val   shl GCLK_GENCTRL_SRC_Pos);
   GCLK_GENCTRL_SRC_FDPLL     = (GCLK_GENCTRL_SRC_FDPLL_Val     shl GCLK_GENCTRL_SRC_Pos);
-  GCLK_GENCTRL_GENEN_Pos     = 16;           // (GCLK_GENCTRL) Generic Clock Generator Enable */
+  {$endif}
+  {$ifdef samc}
+  GCLK_GENCTRL_SRC_OSC48M    = (GCLK_GENCTRL_SRC_OSC48M_Val    shl GCLK_GENCTRL_SRC_Pos);
+  GCLK_GENCTRL_SRC_DPLL96M   = (GCLK_GENCTRL_SRC_DPLL96M_Val   shl GCLK_GENCTRL_SRC_Pos);
+  {$endif}
+
+  {$ifdef samd}
+  SAM_GCLK_GENCTRL_OFFSET   = 16;
+  {$endif}
+  {$ifdef samc}
+  SAM_GCLK_GENCTRL_OFFSET   = 8;
+  {$endif}
+
+  GCLK_GENCTRL_GENEN_Pos     = 0+SAM_GCLK_GENCTRL_OFFSET;           // (GCLK_GENCTRL) Generic Clock Generator Enable */
   GCLK_GENCTRL_GENEN         = (1 shl GCLK_GENCTRL_GENEN_Pos);
-  GCLK_GENCTRL_IDC_Pos       = 17;           // (GCLK_GENCTRL) Improve Duty Cycle */
+  GCLK_GENCTRL_IDC_Pos       = 1+SAM_GCLK_GENCTRL_OFFSET;           // (GCLK_GENCTRL) Improve Duty Cycle */
   GCLK_GENCTRL_IDC           = (1 shl GCLK_GENCTRL_IDC_Pos);
-  GCLK_GENCTRL_OOV_Pos       = 18;           // (GCLK_GENCTRL) Output Off Value */
+  GCLK_GENCTRL_OOV_Pos       = 2+SAM_GCLK_GENCTRL_OFFSET;           // (GCLK_GENCTRL) Output Off Value */
   GCLK_GENCTRL_OOV           = (1 shl GCLK_GENCTRL_OOV_Pos);
-  GCLK_GENCTRL_OE_Pos        = 19;           // (GCLK_GENCTRL) Output Enable */
+  GCLK_GENCTRL_OE_Pos        = 3+SAM_GCLK_GENCTRL_OFFSET;           // (GCLK_GENCTRL) Output Enable */
   GCLK_GENCTRL_OE            = (1 shl GCLK_GENCTRL_OE_Pos);
-  GCLK_GENCTRL_DIVSEL_Pos    = 20;           // (GCLK_GENCTRL) Divide Selection */
+  GCLK_GENCTRL_DIVSEL_Pos    = 4+SAM_GCLK_GENCTRL_OFFSET;           // (GCLK_GENCTRL) Divide Selection */
   GCLK_GENCTRL_DIVSEL        = (1 shl GCLK_GENCTRL_DIVSEL_Pos);
-  GCLK_GENCTRL_RUNSTDBY_Pos  = 21;           // (GCLK_GENCTRL) Run in Standby */
+  GCLK_GENCTRL_RUNSTDBY_Pos  = 5+SAM_GCLK_GENCTRL_OFFSET;           // (GCLK_GENCTRL) Run in Standby */
   GCLK_GENCTRL_RUNSTDBY      = (1 shl GCLK_GENCTRL_RUNSTDBY_Pos);
-  GCLK_GENCTRL_MASK          = $003F1F0F; // (GCLK_GENCTRL) MASK Register */
+
+  {$ifdef samc}
+  GCLK_GENCTRL_DIV_Pos       = 8+SAM_GCLK_GENCTRL_OFFSET;           // \brief (GCLK_GENCTRL) Division Factor */
+  GCLK_GENCTRL_DIV_Msk       = ($FFFF shl GCLK_GENCTRL_DIV_Pos);
+  {$endif}
+
 
    GCLK_GENDIV_OFFSET        = $8;          // (GCLK_GENDIV offset) Generic Clock Generator Division */
    GCLK_GENDIV_RESETVALUE    = $00000000; // (GCLK_GENDIV reset_value) Generic Clock Generator Division */
@@ -182,10 +219,10 @@ const
    GCLK_GENDIV_GEN_GCLK5       = (GCLK_GENDIV_GEN_GCLK5_Val shl GCLK_GENDIV_ID_Pos);
    GCLK_GENDIV_GEN_GCLK6       = (GCLK_GENDIV_GEN_GCLK6_Val shl GCLK_GENDIV_ID_Pos);
    GCLK_GENDIV_GEN_GCLK7       = (GCLK_GENDIV_GEN_GCLK7_Val shl GCLK_GENDIV_ID_Pos);
+  {$ifdef samd}
    GCLK_GENDIV_DIV_Pos       = 8;            // (GCLK_GENDIV) Division Factor */
    GCLK_GENDIV_DIV_Msk       = ($FFFF shl GCLK_GENDIV_DIV_Pos);
-   GCLK_GENDIV_MASK          = $00FFFF0F; // (GCLK_GENDIV) MASK Register */
-
+  {$endif}
 
   GCLK_CTRL_OFFSET           = $0;        // (GCLK_CTRL offset) Control */
   GCLK_CTRL_RESETVALUE       = $00;       // (GCLK_CTRL reset_value) Control */

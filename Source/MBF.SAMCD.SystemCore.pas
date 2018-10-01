@@ -39,7 +39,7 @@ var
   FCPUFrequency : longWord = ResetCPUFrequency;
 
 type
-  TClockType = (HSI,HSE,PLLHSI,PLLHSE);
+  TClockType = (RC,XTAL32_PLL,RC_PLL);
 
   TSAMCDSystemCore = record helper for TSystemCore
   type
@@ -59,7 +59,7 @@ type
     function getMaxCPUFrequency : Cardinal;
     procedure SetClockSourceTarget(aClockSource,aClockTarget:longword);
     function GetCPUFrequency: Cardinal;
-    procedure SetCPUFrequency(const Value: Cardinal; aClockType : TClockType = TClockType.PLLHSI);
+    procedure SetCPUFrequency(const Value: Cardinal; aClockType : TClockType = TClockType.RC);
     property CPUFrequency: Cardinal read GetCPUFrequency write SetCPUFrequency;
   end;
 
@@ -104,12 +104,6 @@ begin
   //Overwriting the default value of the NVMCTRL.CTRLB.MANW bit (errata reference 13134) */
   SetBit(NvmCtrl.CTRLB,NVMCTRL_CTRLB_MANW_Pos);
 
-  {$ifdef samd10}
-  //SAMD10 errata
-  //The SYSTICK calibration value is incorrect. Errata reference: 14157
-  //The correct SYSTICK calibration value is 0x40000000
-  SysTick.Calib:=$40000000;
-  {$endif}
 
   {$ifdef TODO_has_usb}
   /* Change default QOS values to have the best performance and correct USB behaviour */
@@ -134,14 +128,132 @@ begin
 end;
 
 {$ifdef samc}
-procedure TSAMCDSystemCore.SetCPUFrequency(const Value: Cardinal; aClockType : TClockType = TClockType.PLLHSI);
+procedure TSAMCDSystemCore.SetCPUFrequency(const Value: Cardinal; aClockType : TClockType = TClockType.RC);
+procedure WaitDPLLSync;
 begin
-  //TODO Implement for SAMC
+  while (OSCCTRL.DPLLSYNCBUSY>0) do begin end; // Wait for synchronization
+end;
+var
+  PLLFrequency:longword;
+  OSC48M_divider:word;
+  GEN0_divider:word;
+  WaitStates:byte;
+  PllFactInt:longword;
+  PllFactFra:longword;
+begin
+
+  if (FCPUFrequency<>Value) then
+  begin
+
+    GEN0_divider:=1;
+
+    if aClockType=TClockType.RC then
+begin
+      OSC48M_divider:=DivCeiling(OSC48MFrequency,Value);
+      if OSC48M_divider=0 then OSC48M_divider:=1;
+      if (OSC48M_divider>16) then
+      begin
+        OSC48M_divider:=16;
+        GEN0_divider:=DivCeiling((OSC48MFrequency DIV OSC48M_divider),Value);
+        if GEN0_divider=0 then GEN0_divider:=1;
+      end;
+      FCPUFrequency:=(OSC48MFrequency DIV OSC48M_divider);
+    end;
+
+    if aClockType = TClockType.XTAL32_PLL then
+    begin
+      if Value<48000000 then
+      begin
+        PLLFrequency:=48000000;
+        GEN0_divider:=DivCeiling(PLLFrequency,Value);
+        if GEN0_divider=0 then GEN0_divider:=1;
+      end
+      else
+      begin
+        PLLFrequency:=Value;
+      end;
+      PllFactInt := (PLLFrequency DIV 32768) - 1;
+      PllFactFra := (32*(PLLFrequency - 32768*(PllFactInt+1))) DIV 32768;
+      FCPUFrequency:=32768*(PllFactInt+1) + ((32768*PllFactFra) DIV 32);
+    end;
+
+    // GEN0    : 8 division factor bits  - DIV[7:0]
+    // GEN1    : 16 division factor bits - DIV[15:0]
+    // GEN2-11 : 5 division factor bits  - DIV[4:0]
+    if (GEN0_divider>255) then GEN0_divider:=255;
+    FCPUFrequency:=(FCPUFrequency DIV GEN0_divider);
+
+    WaitStates:=0;
+    if (FCPUFrequency>=22000000)  then Inc(WaitStates);
+    if (FCPUFrequency>=44000000)  then Inc(WaitStates);
+    if (FCPUFrequency>=67000000)  then Inc(WaitStates);
+    if (FCPUFrequency>=89000000)  then Inc(WaitStates);
+    if (FCPUFrequency>=111000000) then Inc(WaitStates);
+    if (FCPUFrequency>=120000000) then Inc(WaitStates);
+
+    // Enable the bus clock for the clock system.
+    SetBit(MCLK.APBCMASK,MCLK_APBAMASK_GCLK_Pos);
+
+    // Set waitstates
+    NVMCTRL.CTRLB:=(NVMCTRL_CTRLB_RWS_Msk AND ((WaitStates) shl NVMCTRL_CTRLB_RWS_Pos));
+
+    if aClockType = TClockType.RC then
+    begin
+      OSCCTRL.OSC48MCTRL := OSCCTRL_OSC48MCTRL_ONDEMAND OR OSCCTRL_OSC48MCTRL_ENABLE OR OSCCTRL_OSC48MCTRL_RUNSTDBY;
+      OSCCTRL.OSC48MDIV  := (OSCCTRL_OSC48MDIV_DIV_Msk AND ((OSC48M_divider-1) shl OSCCTRL_OSC48MDIV_DIV_Pos));
+      OSCCTRL.OSC48MSTUP := $07; // ~21uS startup;
+
+      while (OSCCTRL.OSC48MSYNCBUSY>0) do begin end;                         // Wait until synced
+      while ((OSCCTRL.STATUS AND OSCCTRL_STATUS_OSC48MRDY)=0) do begin end;  // Wait until ready
+
+      // Default setting for GEN0
+      GCLK.GENCTRL[0] :=
+        GCLK_GENCTRL_SRC_OSC48M OR
+        GCLK_GENCTRL_GENEN OR
+        (($FF shl GCLK_GENCTRL_DIV_Pos) AND ((GEN0_divider) shl GCLK_GENCTRL_DIV_Pos));
+    end;
+
+    if aClockType = TClockType.XTAL32_PLL then
+    begin
+      //Enable the 32.768 khz external crystal oscillator
+      OSC32KCTRL.XOSC32K:=((OSC32KCTRL_XOSC32K_STARTUP_Msk AND ((5) shl OSC32KCTRL_XOSC32K_STARTUP_Pos)) OR OSC32KCTRL_XOSC32K_XTALEN OR OSC32KCTRL_XOSC32K_EN32K OR OSC32KCTRL_XOSC32K_ENABLE);
+
+      //Wait for the crystal oscillator to start up
+      while (NOT GetBit(OSC32KCTRL.STATUS,OSC32KCTRL_STATUS_XOSC32KRDY_Pos)) do begin end; // Wait for synchronization
+
+      ClearBit(OSCCTRL.DPLLCTRLA,1);//disable DPLL
+
+      OSCCTRL.DPLLRATIO:=(PllFactFra shl 16) + PllFactInt;
+      WaitDPLLSync;
+
+      OSCCTRL.DPLLCTRLB:=
+        OSCCTRL_DPLLCTRLB_LBYPASS OR  // CLK_DPLL0 output clock is always on, and not dependent on frequency lock
+        (OSCCTRL_DPLLCTRLB_REFCLK_Msk AND ((0) shl OSCCTRL_DPLLCTRLB_REFCLK_Pos)) //XOSC32K clock reference
+      ;
+
+      SetBit(OSCCTRL.DPLLCTRLA,1);//enable DPLL
+      WaitDPLLSync;
+
+      //while (NOT GetBit(OSCCTRL.DPLLSTATUS,0)) do begin end;
+      //while (NOT GetBit(OSCCTRL.DPLLSTATUS,1)) do begin end;
+
+      // Default setting for GEN0
+      GCLK.GENCTRL[0] :=
+        //GCLK_GENCTRL_SRC_XOSC32K OR
+        GCLK_GENCTRL_SRC_DPLL96M OR
+        GCLK_GENCTRL_GENEN OR
+        (GCLK_GENCTRL_DIV_Msk AND ((GEN0_divider) shl GCLK_GENCTRL_DIV_Pos));
+    end;
+
+    ConfigureTimer;
+
+  end;
+
 end;
 {$endif}
 
 {$ifdef samd}
-procedure TSAMCDSystemCore.SetCPUFrequency(const Value: Cardinal; aClockType : TClockType = TClockType.PLLHSI);
+procedure TSAMCDSystemCore.SetCPUFrequency(const Value: Cardinal; aClockType : TClockType = TClockType.RC);
 procedure WaitGLK;
 begin
   while GetBit(GCLK.STATUS,GCLK_STATUS_SYNCBUSY_Pos) do begin end; // Wait for synchronization
@@ -157,6 +269,9 @@ begin
   begin
     FCPUFrequency:=Value;
 
+    //if aClockType = TClockType.PLL then
+    if true then
+    begin
     // Clear interrupt flags
     SYSCTRL.INTFLAG := SYSCTRL_INTFLAG_BOD33RDY OR SYSCTRL_INTFLAG_BOD33DET OR SYSCTRL_INTFLAG_DFLLRDY;
 
@@ -283,6 +398,7 @@ begin
     //PM.APBASEL    := PM_GENERALDIV_DIV1;
     //PM.APBBSEL    := PM_GENERALDIV_DIV1;
     //PM.APBCSEL    := PM_GENERALDIV_DIV1;
+    end;
 
     ConfigureTimer;
   end

@@ -239,15 +239,22 @@ var
   Value,Value2 : longWord;
 begin
   TicksPerMillisecond := GetSysTickClockFrequency div 1000;
-
 {$if defined(CPUARM)}
+
+  if (TicksPerMillisecond>$FFFFFF) then TicksPerMillisecond:=$FFFFFF;
+  if (TicksPerMillisecond<100) then TicksPerMillisecond:=100;
+
+  {$ifdef samd10}
+  //SAMD10 errata
+  //The SYSTICK calibration value is incorrect. Errata reference: 14157
+  //The correct SYSTICK calibration value is 0x40000000
+  SysTick.Calib:=$40000000;
+  {$endif}
+
   SysTick.CTRL := 0;
-  setCoreTimerValue(0);
   setCoreTimerComp(TicksPerMillisecond - 1);
+  setCoreTimerValue(0);
   SysTick.CTRL := %0111;
-  asm
-    cpsie if // enable faults and interrupts
-  end;
 {$elseif defined(CPUMIPS)}
   //Coretimer was set on Startup Code
   SetCoreTimerValue(0);
@@ -317,6 +324,7 @@ var
 begin
   StartTicks := GetCoreTimerValue;
   TickCount := convertMicroSecondsToCoreTicks(Microseconds);
+  if (TickCount=0) then exit;
   while TicksInBetween(StartTicks, GetCoreTimerValue) < TickCount do ;
 end;
 
