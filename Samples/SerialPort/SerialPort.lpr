@@ -32,7 +32,7 @@ begin
   // Also, if you plan to use more than one UART you should always use 'real' UART names to avoid accidentially using an UART twice.
   // Default Initialization is 115200,8,n,1
 
-  //UART.Initialize(TUARTRXPins.D0_UART,TUARTTXPins.D1_UART);
+  UART.Initialize(TUARTRXPins.D0_UART,TUARTTXPins.D1_UART);
 
   //Use this when UART Pins are not passed to the On-Board JTAG Debugger like on Nucleo-L476 or SAMD20-XPRO or SAMD21-XPRO
   //DEBUG_UART.Initialize(TUARTRXPins.DEBUG_UART,TUARTTXPins.DEBUG_UART); //Use this when UART Pins are not passed to the STLink/JLink like on Nucleo-L476
