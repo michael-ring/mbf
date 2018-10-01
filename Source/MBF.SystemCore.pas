@@ -244,13 +244,6 @@ begin
   if (TicksPerMillisecond>$FFFFFF) then TicksPerMillisecond:=$FFFFFF;
   if (TicksPerMillisecond<100) then TicksPerMillisecond:=100;
 
-  {$ifdef samd10}
-  //SAMD10 errata
-  //The SYSTICK calibration value is incorrect. Errata reference: 14157
-  //The correct SYSTICK calibration value is 0x40000000
-  SysTick.Calib:=$40000000;
-  {$endif}
-
   SysTick.CTRL := 0;
   setCoreTimerComp(TicksPerMillisecond - 1);
   setCoreTimerValue(0);
