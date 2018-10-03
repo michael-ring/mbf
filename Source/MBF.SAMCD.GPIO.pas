@@ -29,9 +29,10 @@ const
   MuxC=$1200;
   MuxD=$1300;
   MuxE=$1400;
-  MuxF=$1500;
+  MuxF=$1400;
   MuxG=$1600;
   MuxH=$1700;
+  MuxI=$1800;
 
   Pad0=$100000;
   Pad1=$110000;
@@ -42,7 +43,7 @@ type
   TPinValue=0..1;
   TPinIdentifier=-1..160;
   TPinMode = (Off,Input,Output,Analog);
-  TPinMux = (MuxA=0,MuxB,MuxC,MuxD,MuxE,MuxG=6,MuxH,MuxI,None=$FF);
+  TPinMux = (MuxA=0,MuxB,MuxC,MuxD,MuxE,MuXF,MuxG,MuxH,MuxI,None=$FF);
   TPinDrive = (None,PullUp,PullDown,StrongPullUp,StrongPullDown);
 
 {$REGION PinDefinitions}

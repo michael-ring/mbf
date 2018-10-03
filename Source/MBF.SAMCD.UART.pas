@@ -145,8 +145,20 @@ var
   {$if defined(has_uart4)}UART4 : TSercomUsart_Registers absolute SERCOM4_BASE;{$endif}
   {$if defined(has_uart5)}UART5 : TSercomUsart_Registers absolute SERCOM5_BASE;{$endif}
   {$if defined(has_uart6)}UART6 : TSercomUsart_Registers absolute SERCOM6_BASE;{$endif}
-  {$if defined(SAMD20XPRO) or defined(SAMD21XPRO) }UART : TSercomUsart_Registers absolute SERCOM4_BASE;{$endif}
-  {$if defined(SAMD20XPRO) or defined(SAMD21XPRO) }DEBUG_UART : TSercomUsart_Registers absolute SERCOM3_BASE;{$endif}
+
+  {$if defined(SAMC21XPRO)  }UART : TSercomUsart_Registers absolute SERCOM3_BASE;{$endif}
+  {$if defined(SAMD10XMINI) }UART : TSercomUsart_Registers absolute SERCOM0_BASE;{$endif}
+  {$if defined(SAMD11XPRO)  }UART : TSercomUsart_Registers absolute SERCOM0_BASE;{$endif}
+  {$if defined(SAMD20XPRO)  }UART : TSercomUsart_Registers absolute SERCOM4_BASE;{$endif}
+  {$if defined(SAMD21XPRO)  }UART : TSercomUsart_Registers absolute SERCOM4_BASE;{$endif}
+  {$if defined(ARDUINOZERO) }UART : TSercomUsart_Registers absolute SERCOM0_BASE;{$endif}
+
+  {$if defined(SAMC21XPRO)  }DEBUG_UART : TSercomUsart_Registers absolute SERCOM4_BASE;{$endif}
+  {$if defined(SAMD10XMINI) }DEBUG_UART : TSercomUsart_Registers absolute SERCOM4_BASE;{$endif}
+  {$if defined(SAMD11XPRO)  }DEBUG_UART : TSercomUsart_Registers absolute SERCOM4_BASE;{$endif}
+  {$if defined(SAMD20XPRO)  }DEBUG_UART : TSercomUsart_Registers absolute SERCOM3_BASE;{$endif}
+  {$if defined(SAMD21XPRO)  }DEBUG_UART : TSercomUsart_Registers absolute SERCOM3_BASE;{$endif}
+  {$if defined(ARDUINOZERO) }DEBUG_UART : TSercomUsart_Registers absolute SERCOM3_BASE;{$endif}
 
 implementation
 
@@ -221,7 +233,9 @@ begin
   TSercom_Registers(Self).SetCoreClockSource(GCLK_CLKCTRL_GEN_GCLK0); // use gclk0 at 1Mhz or 48MHz
   //RX has 4 possible pads
   aRXPO := (longword(ARxPin) shr 16) and %11;
-  //TX has only 2 possible Pads (PAD1 and PAD3)
+  //TX has only 2 possible Pads (PAD0 and PAD2) and the following Pad (PAD1 and PAD3) is reserved for Clock
+  //When PAD0 is used only PAD2 and PAD3 can be used for RX
+  //When PAD2 is used only PAD0 and PAD1 can be used for RX
   aTXPO := (longWord(ATxPin) shr 17) and %1;
 
   //Configure the provided Pins

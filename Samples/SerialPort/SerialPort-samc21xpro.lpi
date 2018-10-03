@@ -41,8 +41,8 @@
     <Other>
       <CustomOptions Value="-Cparmv6m
 -XParm-none-eabi-
--Wpsamd20xpro
--dsamd20xpro
+-Wpsamc21xpro
+-dsamc21xpro
       "/>
     </Other>
   </CompilerOptions>

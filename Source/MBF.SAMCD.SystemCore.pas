@@ -69,6 +69,18 @@ var
 implementation
 
 uses
+{$IF DEFINED(CortexM0)}
+  cortexm0,
+{$ELSEIF DEFINED(CortexM3)}
+  cortexm3,
+{$ELSEIF DEFINED(CortexM4)}
+  cortexm4,
+{$ELSEIF DEFINED(CortexM7)}
+  cortexm7,
+{$ELSEIF DEFINED(Pic32)}
+{$ELSE}
+  {$ERROR Cortex Type not defined}
+{$ENDIF}
   MBF.SAMCD.Helpers,
   MBF.BitHelpers;
 
@@ -115,6 +127,13 @@ begin
   DMAC->QOSCTRL.bit.FQOS = 2;
   DMAC->QOSCTRL.bit.WRBQOS = 2;
   {$endif has_usb}
+
+  {$ifdef samd10}
+  //SAMD10 errata
+  //The SYSTICK calibration value is incorrect. Errata reference: 14157
+  //The correct SYSTICK calibration value is 0x40000000
+  SysTick.Calib:=$40000000;
+  {$endif}
 
   {$endif samd}
 
