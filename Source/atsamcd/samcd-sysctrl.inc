@@ -229,6 +229,22 @@ const
     SYSCTRL_DFLLCTRL_MASK       = $0FFE;     // (SYSCTRL_DFLLCTRL) MASK Register */
 
 
+    SYSCTRL_DPLLCTRLB_FILTER_Pos    = 0;            //brief (SYSCTRL_DPLLCTRLB) Proportional Integral Filter Selection */
+    SYSCTRL_DPLLCTRLB_FILTER_Msk    = ($3 shl SYSCTRL_DPLLCTRLB_FILTER_Pos);
+    SYSCTRL_DPLLCTRLB_LPEN_Pos      = 2;            //brief (SYSCTRL_DPLLCTRLB) Low-Power Enable */
+    SYSCTRL_DPLLCTRLB_LPEN          = ($1 shl SYSCTRL_DPLLCTRLB_LPEN_Pos);
+    SYSCTRL_DPLLCTRLB_WUF_Pos       = 3;            //brief (SYSCTRL_DPLLCTRLB) Wake Up Fast */
+    SYSCTRL_DPLLCTRLB_WUF           = ($1 shl SYSCTRL_DPLLCTRLB_WUF_Pos);
+    SYSCTRL_DPLLCTRLB_REFCLK_Pos    = 4;            //brief (SYSCTRL_DPLLCTRLB) Reference Clock Selection */
+    SYSCTRL_DPLLCTRLB_REFCLK_Msk    = ($3 shl SYSCTRL_DPLLCTRLB_REFCLK_Pos);
+    SYSCTRL_DPLLCTRLB_LTIME_Pos     = 8;            //brief (SYSCTRL_DPLLCTRLB) Lock Time */
+    SYSCTRL_DPLLCTRLB_LTIME_Msk     = ($7 shl SYSCTRL_DPLLCTRLB_LTIME_Pos);
+    SYSCTRL_DPLLCTRLB_LBYPASS_Pos   = 12;           //brief (SYSCTRL_DPLLCTRLB) Lock Bypass */
+    SYSCTRL_DPLLCTRLB_LBYPASS       = ($1 shl SYSCTRL_DPLLCTRLB_LBYPASS_Pos);
+    SYSCTRL_DPLLCTRLB_DIV_Pos       = 16;           //brief (SYSCTRL_DPLLCTRLB) Clock Divider */
+    SYSCTRL_DPLLCTRLB_DIV_Msk       = ($7FF shl SYSCTRL_DPLLCTRLB_DIV_Pos);
+
+
      SYSCTRL_INTFLAG_OFFSET       = $08;         // (SYSCTRL_INTFLAG offset) Interrupt Flag Status and Clear */
      SYSCTRL_INTFLAG_RESETVALUE   = $00000000;   // (SYSCTRL_INTFLAG reset_value) Interrupt Flag Status and Clear */
 

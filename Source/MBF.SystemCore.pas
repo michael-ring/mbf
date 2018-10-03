@@ -242,7 +242,7 @@ begin
 {$if defined(CPUARM)}
 
   if (TicksPerMillisecond>$FFFFFF) then TicksPerMillisecond:=$FFFFFF;
-  if (TicksPerMillisecond<100) then TicksPerMillisecond:=100;
+  if (TicksPerMillisecond<70) then TicksPerMillisecond:=70;
 
   {$ifdef samd10}
   //SAMD10 errata

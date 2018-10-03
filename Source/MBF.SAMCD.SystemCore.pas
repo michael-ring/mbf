@@ -147,7 +147,7 @@ begin
     GEN0_divider:=1;
 
     if aClockType=TClockType.RC then
-begin
+    begin
       OSC48M_divider:=DivCeiling(OSC48MFrequency,Value);
       if OSC48M_divider=0 then OSC48M_divider:=1;
       if (OSC48M_divider>16) then
@@ -192,6 +192,14 @@ begin
 
     // Enable the bus clock for the clock system.
     SetBit(MCLK.APBCMASK,MCLK_APBAMASK_GCLK_Pos);
+
+    //Make a software reset of the clock system.
+    //We need the OSC48M, because this clock is used after a reset
+    //So, enable OSC48M oscillator
+    OSCCTRL.OSC48MCTRL:=OSCCTRL_OSC48MCTRL_ENABLE;
+    //Perform reset
+    SetBit(GCLK.CTRLA,GCLK_CTRL_SWRST_Pos);
+    while GetBit(GCLK.CTRLA,GCLK_CTRL_SWRST_Pos) do begin end; // Wait for synchronization
 
     // Set waitstates
     NVMCTRL.CTRLB:=(NVMCTRL_CTRLB_RWS_Msk AND ((WaitStates) shl NVMCTRL_CTRLB_RWS_Pos));
@@ -254,7 +262,7 @@ end;
 {$ifdef samd}
 procedure TSAMCDSystemCore.SetCPUFrequency(const Value: Cardinal; aClockType : TClockType = TClockType.RC);
 const
-  DFLL48REFCLOCK=3;
+  PLLREFCLOCK=3;
 procedure WaitGLK;
 begin
   while GetBit(GCLK.STATUS,GCLK_STATUS_SYNCBUSY_Pos) do begin end; // Wait for synchronization
@@ -264,7 +272,7 @@ begin
   while (NOT GetBit(SYSCTRL.PCLKSR,SYSCTRL_PCLKSR_DFLLRDY_Pos)) do begin end; // Wait for synchronization
 end;
 var
-  ValidFrequency:longword;
+  ValidPLLFrequency:longword;
   GCLKGEN0InputFrequency:longword;
   OSC8M_divider:word;
   OSC8M_prescaler:word;
@@ -276,7 +284,7 @@ var
 begin
 
   //GEN0 is the CPU clock source
-  //GEN3 (DFLL48REFCLOCK) is used as the intermediate clock source
+  //GEN3 (PLLREFCLOCK) is used as the intermediate clock source
 
   if (FCPUFrequency<>Value) then
   begin
@@ -289,27 +297,32 @@ begin
     if (aClockType = TClockType.XTAL32_FPLL) OR (aClockType = TClockType.RC_FPLL) then
     begin
       if Value<48000000 then
-        ValidFrequency:=48000000
+        ValidPLLFrequency:=48000000
       else
       if Value>96000000 then
-        ValidFrequency:=96000000
+        ValidPLLFrequency:=96000000
       else
-        ValidFrequency:=Value;
+      begin
+        ValidPLLFrequency:=Value;
+        //As the CPU frequency must be <48MHz, always divide by 2 !!
+        //Todo ... does not work yet
+        //GEN0_divider:=2;
+      end;
 
       //Calculate PLL settings
       if (aClockType = TClockType.XTAL32_FPLL) then
       begin
         // XTAL32 has (normally) a crystal of 32.768kHz
-        PllFactInt := (ValidFrequency DIV 32768) - 1;
-        PllFactFra := (32*(ValidFrequency - 32768*(PllFactInt+1))) DIV 32768;
+        PllFactInt := (ValidPLLFrequency DIV 32768) - 1;
+        PllFactFra := (32*(ValidPLLFrequency - 32768*(PllFactInt+1))) DIV 32768;
         GCLKGEN0InputFrequency:=32768*(PllFactInt+1) + ((32768*PllFactFra) DIV 32);
       end
       else
       begin
-        // Lets choose 1MHz as direct input from OSC8M (8MHz) with the prescaler
+        // Lets choose 1MHz as direct input into FPLL from OSC8M (8MHz) with the prescaler
         OSC8M_divider:=8;
-        PllFactInt := (ValidFrequency DIV 1000000) - 1;
-        PllFactFra := (32*(ValidFrequency - 1000000*(PllFactInt+1))) DIV 1000000;
+        PllFactInt := (ValidPLLFrequency DIV 1000000) - 1;
+        PllFactFra := (32*(ValidPLLFrequency - 1000000*(PllFactInt+1))) DIV 1000000;
         GCLKGEN0InputFrequency:=1000000*(PllFactInt+1) + ((1000000*PllFactFra) DIV 32);
       end;
     end;
@@ -334,7 +347,7 @@ begin
 
     if (aClockType = TClockType.RC) then
     begin
-      OSC8M_divider:=(OSC8MFrequency DIV ValidFrequency);
+      OSC8M_divider:=(OSC8MFrequency DIV ValidPLLFrequency);
       if OSC8M_divider<1 then OSC8M_divider:=1;
       if (OSC8M_divider>2) then OSC8M_divider:=2;
       GCLKGEN0InputFrequency:=(OSC8MFrequency DIV OSC8M_divider);
@@ -354,7 +367,7 @@ begin
 
     //Make a software reset of the clock system.
     //We need the OSC8M, because this clock is used after a reset
-    //Enable OSC8M oscillator
+    //So, enable OSC8M oscillator
     SetBit(SYSCTRL.OSC8M,SYSCTRL_OSC8M_ENABLE_Pos);
     //Perform reset
     SetBit(GCLK.CTRL,GCLK_CTRL_SWRST_Pos);
@@ -372,6 +385,7 @@ begin
     if (FCPUFrequency>=28000000)  then Inc(WaitStates);
     if (FCPUFrequency>=42000000)  then Inc(WaitStates);
     if (FCPUFrequency>=48000000)  then Inc(WaitStates);
+    //Set waitstates in an early stage
     PutValue(NVMCTRL.CTRLB,NVMCTRL_CTRLB_RWS_Msk,WaitStates,NVMCTRL_CTRLB_RWS_Pos);
 
     // Set OSC8M_prescaler
@@ -385,8 +399,8 @@ begin
       end;
       //Set OSC8M prescaler
       PutValue(SysCtrl.OSC8M,SYSCTRL_OSC8M_PRESC_Msk,OSC8M_prescaler,SYSCTRL_OSC8M_PRESC_Pos);
-      //No need to enable OSC8M: its always enabled due to the reset of the clock-system
-      //See reset code above
+      //No need to enable OSC8M: it is already enabled !
+      //See reset code above: after a reset, the system NEEDS to be clocked by OSC8M !!!
     end;
 
     if (aClockType = TClockType.XTAL32_PLL) OR (aClockType = TClockType.XTAL32_FPLL) then
@@ -423,13 +437,13 @@ begin
       begin
         // Set the division factor of GCLK3 to 32, which reduces the 1MHz OSC8M source to 31.250kHz
         GCLK.GENDIV:=
-          (GCLK_GENDIV_ID_Msk AND ((DFLL48REFCLOCK) shl GCLK_GENDIV_ID_Pos)) OR     // Select generator 3
+          (GCLK_GENDIV_ID_Msk AND ((PLLREFCLOCK) shl GCLK_GENDIV_ID_Pos)) OR     // Select generator 3
           (GCLK_GENDIV_DIV_Msk AND ((32) shl GCLK_GENDIV_DIV_Pos));                 // Set the division factor to 32
         WaitGLK;
 
         // Create generic clock generator 3 for the 31.250KHz signal of the DFLL
         GCLK.GENCTRL:=(
-          (GCLK_GENCTRL_ID_Msk AND ((DFLL48REFCLOCK) shl GCLK_GENCTRL_ID_Pos)) OR   // Select generator 3
+          (GCLK_GENCTRL_ID_Msk AND ((PLLREFCLOCK) shl GCLK_GENCTRL_ID_Pos)) OR   // Select generator 3
           GCLK_GENCTRL_SRC_OSC8M OR  // Select source OSC8M
           GCLK_GENCTRL_IDC OR        // Set improved duty cycle 50/50
           GCLK_GENCTRL_GENEN);       // Enable this generic clock generator
@@ -440,13 +454,13 @@ begin
       begin
         //Set the division factor of GCLK3 to 1, to produce the original 32.768kHz
         GCLK.GENDIV:=
-          (GCLK_GENDIV_ID_Msk AND ((DFLL48REFCLOCK) shl GCLK_GENDIV_ID_Pos)) OR     // Select generator 3
+          (GCLK_GENDIV_ID_Msk AND ((PLLREFCLOCK) shl GCLK_GENDIV_ID_Pos)) OR     // Select generator 3
           (GCLK_GENDIV_DIV_Msk AND ((1) shl GCLK_GENDIV_DIV_Pos));                  // Set the division factor to 1
         WaitGLK;
 
         //Create generic clock generator 3 for the 32.768KHz signal of the DFLL
         GCLK.GENCTRL:=(
-          (GCLK_GENCTRL_ID_Msk AND ((DFLL48REFCLOCK) shl GCLK_GENCTRL_ID_Pos)) OR       // Select generator 3
+          (GCLK_GENCTRL_ID_Msk AND ((PLLREFCLOCK) shl GCLK_GENCTRL_ID_Pos)) OR       // Select generator 3
           GCLK_GENCTRL_SRC_XOSC32K OR  // Select source XOSC32K
           GCLK_GENCTRL_IDC OR          // Set improved duty cycle 50/50
           GCLK_GENCTRL_GENEN);         // Enable this generic clock generator
@@ -457,7 +471,7 @@ begin
       //This is the input clock for the DFLL48M PLL
       GCLK.CLKCTRL:=(
         GCLK_CLKCTRL_ID_DFLL48 OR  // Target is DFLL48M
-        (GCLK_CLKCTRL_GEN_Msk AND ((DFLL48REFCLOCK) shl GCLK_CLKCTRL_GEN_Pos)) OR     // Select generator 3 as source.
+        (GCLK_CLKCTRL_GEN_Msk AND ((PLLREFCLOCK) shl GCLK_CLKCTRL_GEN_Pos)) OR     // Select generator 3 as source.
         //((0) shl GCLK_CLKCTRL_WRTLOCK_Pos) OR // The generic clock and the associated generic clock generator and division factor are locked */
         GCLK_CLKCTRL_CLKEN);       // Enable the DFLL48M
       WaitGLK;
@@ -516,6 +530,67 @@ begin
       WaitGLK;
     end;
 
+
+    if (aClockType = TClockType.RC_FPLL) OR (aClockType = TClockType.XTAL32_FPLL) then
+    begin
+      ClearBit(SYSCTRL.DPLLCTRLA,1);//disable DPLL
+      //while (GetBit(SYSCTRL.DPLLSTATUS,2)) do begin end;
+
+      SYSCTRL.DPLLRATIO:=(PllFactFra shl 16) + PllFactInt;
+
+      if (aClockType = TClockType.RC_FPLL) then
+      begin
+        // Set the division factor of GCLK3 to 1, which just passes the 1MHz OSC8M source
+        GCLK.GENDIV:=
+          (GCLK_GENDIV_ID_Msk AND ((PLLREFCLOCK) shl GCLK_GENDIV_ID_Pos)) OR     // Select generator 3
+          (GCLK_GENDIV_DIV_Msk AND ((1) shl GCLK_GENDIV_DIV_Pos));                 // Set the division factor to 1
+        WaitGLK;
+
+        // Create generic clock generator 3 for the 1MHz signal of the DFLL
+        GCLK.GENCTRL:=(
+          (GCLK_GENCTRL_ID_Msk AND ((PLLREFCLOCK) shl GCLK_GENCTRL_ID_Pos)) OR   // Select generator 3
+          GCLK_GENCTRL_SRC_OSC8M OR  // Select source OSC8M
+          GCLK_GENCTRL_IDC OR        // Set improved duty cycle 50/50
+          GCLK_GENCTRL_GENEN);       // Enable this generic clock generator
+        WaitGLK;
+
+        //Configure FDPLL reference clock
+        //This is the input clock for the FDPLL
+        GCLK.CLKCTRL:=(
+          GCLK_CLKCTRL_ID_FDPLL OR  // Target is FDPLL
+          (GCLK_CLKCTRL_GEN_Msk AND ((PLLREFCLOCK) shl GCLK_CLKCTRL_GEN_Pos)) OR     // Select generator 3 as source.
+          //((0) shl GCLK_CLKCTRL_WRTLOCK_Pos) OR // The generic clock and the associated generic clock generator and division factor are locked */
+          GCLK_CLKCTRL_CLKEN);
+        WaitGLK;
+      end;
+
+      if (aClockType = TClockType.RC_FPLL) then
+      begin
+        SYSCTRL.DPLLCTRLB:=
+          SYSCTRL_DPLLCTRLB_LBYPASS OR  // CLK_DPLL0 output clock is always on, and not dependent on frequency lock
+          (SYSCTRL_DPLLCTRLB_REFCLK_Msk AND ((2) shl SYSCTRL_DPLLCTRLB_REFCLK_Pos)) //GENCLK clock reference
+        ;
+      end;
+      if (aClockType = TClockType.XTAL32_FPLL) then
+      begin
+        SYSCTRL.DPLLCTRLB:=
+          SYSCTRL_DPLLCTRLB_LBYPASS OR  // CLK_DPLL0 output clock is always on, and not dependent on frequency lock
+          (SYSCTRL_DPLLCTRLB_REFCLK_Msk AND ((0) shl SYSCTRL_DPLLCTRLB_REFCLK_Pos)) //XOSC32K clock reference
+        ;
+      end;
+
+      SetBit(SYSCTRL.DPLLCTRLA,1);//enable FDPLL
+
+      // Switch generic clock 0 to the FDPLL
+      GCLK.GENCTRL:=
+        (GCLK_GENCTRL_ID_Msk AND ((0) shl GCLK_GENCTRL_ID_Pos)) OR // Select generator 0
+        GCLK_GENCTRL_SRC_FDPLL OR // Select source FDPLL
+        GCLK_GENCTRL_IDC OR // Set improved duty cycle 50/50
+        GCLK_GENCTRL_GENEN; // Enable this generic clock generator
+      WaitGLK;
+    end;
+
+
     //Switch off XTAL32 if it is not in use anymore
     if (NOT ((aClockType = TClockType.XTAL32_PLL) OR (aClockType = TClockType.XTAL32_FPLL))) then
     begin
@@ -526,20 +601,29 @@ begin
       end;
     end;
 
-    //Switch of OSC8M if it is not in use anymore
+    //Switch off OSC8M if it is not in use anymore
     if (NOT ((aClockType = TClockType.RC) OR (aClockType = TClockType.RC_PLL)  OR (aClockType = TClockType.RC_FPLL))) then
     begin
       ClearBit(SYSCTRL.OSC8M,SYSCTRL_OSC8M_ENABLE_Pos);
       while (GetBit(SYSCTRL.OSC8M,SYSCTRL_OSC8M_ENABLE_Pos)) do begin end;
     end;
 
-    //Switch of DFLL48 if it is not in use anymore
+    //Switch off DFLL48 if it is not in use anymore
     if (NOT ((aClockType = TClockType.RC_PLL) OR (aClockType = TClockType.XTAL32_PLL))) then
     begin
       if GetBit(SYSCTRL.DFLLCTRL,SYSCTRL_DFLLCTRL_ENABLE_Pos) then
       begin
         ClearBit(SYSCTRL.DFLLCTRL,SYSCTRL_DFLLCTRL_ENABLE_Pos);
         WaitDFLLRDY;
+      end;
+    end;
+
+    //Switch off FDPLL if it is not in use anymore
+    if (NOT ((aClockType = TClockType.RC_FPLL) OR (aClockType = TClockType.XTAL32_FPLL))) then
+    begin
+      if GetBit(SYSCTRL.DPLLCTRLA,1) then
+      begin
+        ClearBit(SYSCTRL.DPLLCTRLA,1);
       end;
     end;
 
