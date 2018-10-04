@@ -390,7 +390,9 @@ begin
     //Make a software reset of the clock system.
     //We need the OSC8M, because this clock is used after a reset
     //So, enable OSC8M oscillator
+    ClearBit(SYSCTRL.OSC8M,SYSCTRL_OSC8M_ONDEMAND_Pos);
     SetBit(SYSCTRL.OSC8M,SYSCTRL_OSC8M_ENABLE_Pos);
+    while (NOT GetBit(SYSCTRL.OSC8M,SYSCTRL_OSC8M_ENABLE_Pos)) do begin end;
     //Perform reset
     SetBit(GCLK.CTRL,GCLK_CTRL_SWRST_Pos);
     while GetBit(GCLK.CTRL,GCLK_CTRL_SWRST_Pos) do begin end; // Wait for synchronization
@@ -555,8 +557,8 @@ begin
     {$ifdef has_fdpll}
     if (aClockType = TClockType.RC_FPLL) OR (aClockType = TClockType.XTAL32_FPLL) then
     begin
-      ClearBit(SYSCTRL.DPLLCTRLA,1);//disable DPLL
-      //while (GetBit(SYSCTRL.DPLLSTATUS,2)) do begin end;
+      SYSCTRL.DPLLCTRLA:=0;//disable DPLL
+      while (GetBit(SYSCTRL.DPLLSTATUS,SYSCTRL_DPLLSTATUS_ENABLE_Pos)) do begin end;
 
       SYSCTRL.DPLLRATIO:=(PllFactFra shl 16) + PllFactInt;
 
@@ -601,7 +603,9 @@ begin
         ;
       end;
 
-      SetBit(SYSCTRL.DPLLCTRLA,1);//enable FDPLL
+      SYSCTRL.DPLLCTRLA:=SYSCTRL_DPLLCTRLA_ENABLE;//enable FDPLL
+      while (NOT GetBit(SYSCTRL.DPLLSTATUS,SYSCTRL_DPLLSTATUS_ENABLE_Pos)) do begin end;
+      while (NOT GetBit(SYSCTRL.DPLLSTATUS,SYSCTRL_DPLLSTATUS_CLKRDY_Pos)) do begin end;
 
       // Switch generic clock 0 to the FDPLL
       GCLK.GENCTRL:=
@@ -644,9 +648,10 @@ begin
     {$ifdef has_fdpll}
     if (NOT ((aClockType = TClockType.RC_FPLL) OR (aClockType = TClockType.XTAL32_FPLL))) then
     begin
-      if GetBit(SYSCTRL.DPLLCTRLA,1) then
+      if GetBit(SYSCTRL.DPLLCTRLA,SYSCTRL_DPLLCTRLA_ENABLE_Pos) then
       begin
-        ClearBit(SYSCTRL.DPLLCTRLA,1);
+        ClearBit(SYSCTRL.DPLLCTRLA,SYSCTRL_DPLLCTRLA_ENABLE_Pos);
+        while (GetBit(SYSCTRL.DPLLSTATUS,SYSCTRL_DPLLSTATUS_ENABLE_Pos)) do begin end;
       end;
     end;
     {$endif has_fdpll}
