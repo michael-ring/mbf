@@ -96,7 +96,12 @@
   {$define mk22fn12}
 {$endif}
 
-{$if defined(mk20dx7) or defined(mk22fn12)}
+{$if defined(mk64fn1m0vll12)}
+  {$define bga121}
+  {$define mk64fn1m}
+{$endif}
+
+{$if defined(mk20dx7) or defined(mk22fn12) or defined(mk64fn1m)}
   {$define CortexM4}
   {$DEFINE __CONTROLLERTYPE__:=Kinetis}
   {$DEFINE Kinetis}

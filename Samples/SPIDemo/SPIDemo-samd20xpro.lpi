@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CONFIG>
+  <ProjectOptions>
+    <Version Value="11"/>
+    <General>
+      <Flags>
+        <LRSInOutputDirectory Value="False"/>
+      </Flags>
+      <MainUnit Value="0"/>
+      <UseAppBundle Value="False"/>
+    </General>
+    <BuildModes Count="1">
+      <Item1 Name="default" Default="True"/>
+    </BuildModes>
+    <PublishOptions>
+      <Version Value="2"/>
+    </PublishOptions>
+    <RunParams>
+      <FormatVersion Value="2"/>
+      <Modes Count="1">
+        <Mode0 Name="default"/>
+      </Modes>
+    </RunParams>
+    <Units Count="5">
+      <Unit0>
+        <Filename Value="SPIDemo.lpr"/>
+        <IsPartOfProject Value="True"/>
+        <IsVisibleTab Value="True"/>
+        <TopLine Value="26"/>
+        <CursorPos X="65" Y="52"/>
+        <UsageCount Value="30"/>
+        <Loaded Value="True"/>
+        <LoadedDesigner Value="True"/>
+      </Unit0>
+      <Unit1>
+        <Filename Value="../../Source/MBF.SAMCD.SPI.pas"/>
+        <EditorIndex Value="2"/>
+        <TopLine Value="114"/>
+        <CursorPos Y="144"/>
+        <UsageCount Value="16"/>
+        <Loaded Value="True"/>
+      </Unit1>
+      <Unit2>
+        <Filename Value="../../Source/MBF.SAMCD.SerCom.pas"/>
+        <EditorIndex Value="4"/>
+        <CursorPos Y="174"/>
+        <UsageCount Value="14"/>
+        <Loaded Value="True"/>
+      </Unit2>
+      <Unit3>
+        <Filename Value="../../Source/MBF.SAMCD.SPI.inc"/>
+        <EditorIndex Value="3"/>
+        <CursorPos X="5" Y="1045"/>
+        <UsageCount Value="13"/>
+        <Loaded Value="True"/>
+      </Unit3>
+      <Unit4>
+        <Filename Value="../../Source/MBF.SAMCD.GPIO.pas"/>
+        <EditorIndex Value="1"/>
+        <CursorPos Y="5"/>
+        <UsageCount Value="13"/>
+        <Loaded Value="True"/>
+      </Unit4>
+    </Units>
+    <JumpHistory Count="29" HistoryIndex="28">
+      <Position1>
+        <Filename Value="../../Source/MBF.SAMCD.SPI.inc"/>
+        <Caret Line="781" Column="6" TopLine="745"/>
+      </Position1>
+      <Position2>
+        <Filename Value="../../Source/MBF.SAMCD.SPI.inc"/>
+        <Caret Line="7" Column="5"/>
+      </Position2>
+      <Position3>
+        <Filename Value="../../Source/MBF.SAMCD.SPI.inc"/>
+        <Caret Line="292" Column="5" TopLine="269"/>
+      </Position3>
+      <Position4>
+        <Filename Value="../../Source/MBF.SAMCD.SPI.inc"/>
+        <Caret Line="670" Column="5" TopLine="647"/>
+      </Position4>
+      <Position5>
+        <Filename Value="../../Source/MBF.SAMCD.SPI.inc"/>
+        <Caret Line="1045" Column="5" TopLine="1022"/>
+      </Position5>
+      <Position6>
+        <Filename Value="../../Source/MBF.SAMCD.SPI.pas"/>
+        <Caret Line="62" Column="103" TopLine="40"/>
+      </Position6>
+      <Position7>
+        <Filename Value="../../Source/MBF.SAMCD.SPI.pas"/>
+        <Caret Line="187" TopLine="144"/>
+      </Position7>
+      <Position8>
+        <Filename Value="../../Source/MBF.SAMCD.SPI.pas"/>
+        <Caret Line="184" Column="25" TopLine="144"/>
+      </Position8>
+      <Position9>
+        <Filename Value="../../Source/MBF.SAMCD.SPI.pas"/>
+        <Caret Line="53" Column="5" TopLine="28"/>
+      </Position9>
+      <Position10>
+        <Filename Value="../../Source/MBF.SAMCD.SPI.pas"/>
+        <Caret Line="180" TopLine="161"/>
+      </Position10>
+      <Position11>
+        <Filename Value="../../Source/MBF.SAMCD.SPI.pas"/>
+        <Caret Line="182" TopLine="158"/>
+      </Position11>
+      <Position12>
+        <Filename Value="../../Source/MBF.SAMCD.SPI.pas"/>
+        <Caret Line="199" Column="24" TopLine="156"/>
+      </Position12>
+      <Position13>
+        <Filename Value="../../Source/MBF.SAMCD.SPI.pas"/>
+        <Caret Line="204" Column="16" TopLine="181"/>
+      </Position13>
+      <Position14>
+        <Filename Value="SPIDemo.lpr"/>
+        <Caret Line="65" Column="16" TopLine="28"/>
+      </Position14>
+      <Position15>
+        <Filename Value="SPIDemo.lpr"/>
+        <Caret Line="57" Column="7" TopLine="28"/>
+      </Position15>
+      <Position16>
+        <Filename Value="../../Source/MBF.SAMCD.SPI.pas"/>
+        <Caret Line="69" Column="74" TopLine="60"/>
+      </Position16>
+      <Position17>
+        <Filename Value="../../Source/MBF.SAMCD.SPI.pas"/>
+        <Caret Line="70" Column="67" TopLine="39"/>
+      </Position17>
+      <Position18>
+        <Filename Value="../../Source/MBF.SAMCD.SPI.pas"/>
+        <Caret Line="175" Column="147" TopLine="152"/>
+      </Position18>
+      <Position19>
+        <Filename Value="../../Source/MBF.SAMCD.SPI.pas"/>
+        <Caret Line="179" Column="76" TopLine="156"/>
+      </Position19>
+      <Position20>
+        <Filename Value="../../Source/MBF.SAMCD.SPI.pas"/>
+        <Caret Line="70" TopLine="46"/>
+      </Position20>
+      <Position21>
+        <Filename Value="../../Source/MBF.SAMCD.SPI.pas"/>
+        <Caret Line="177" Column="20" TopLine="163"/>
+      </Position21>
+      <Position22>
+        <Filename Value="../../Source/MBF.SAMCD.SPI.pas"/>
+        <Caret Line="191" Column="60" TopLine="163"/>
+      </Position22>
+      <Position23>
+        <Filename Value="../../Source/MBF.SAMCD.SPI.pas"/>
+        <Caret Line="70" Column="36" TopLine="36"/>
+      </Position23>
+      <Position24>
+        <Filename Value="SPIDemo.lpr"/>
+        <Caret Line="72" Column="25" TopLine="28"/>
+      </Position24>
+      <Position25>
+        <Filename Value="SPIDemo.lpr"/>
+        <Caret Line="71" Column="24" TopLine="28"/>
+      </Position25>
+      <Position26>
+        <Filename Value="../../Source/MBF.SAMCD.SPI.pas"/>
+        <Caret Line="72" Column="75" TopLine="36"/>
+      </Position26>
+      <Position27>
+        <Filename Value="../../Source/MBF.SAMCD.SPI.pas"/>
+        <Caret Line="185" Column="26" TopLine="54"/>
+      </Position27>
+      <Position28>
+        <Filename Value="../../Source/MBF.SAMCD.SPI.pas"/>
+        <Caret Line="113" Column="8" TopLine="93"/>
+      </Position28>
+      <Position29>
+        <Filename Value="../../Source/MBF.SAMCD.SPI.pas"/>
+        <Caret Line="144" TopLine="114"/>
+      </Position29>
+    </JumpHistory>
+  </ProjectOptions>
+  <CompilerOptions>
+    <Version Value="11"/>
+    <Target>
+      <Filename Value="SPIDemo"/>
+    </Target>
+    <SearchPaths>
+      <IncludeFiles Value="../../Source;$(ProjOutDir)"/>
+      <OtherUnitFiles Value="../../Source"/>
+      <UnitOutputDirectory Value="lib/$(TargetCPU)-$(TargetOS)"/>
+    </SearchPaths>
+    <Parsing>
+      <SyntaxOptions>
+        <UseAnsiStrings Value="False"/>
+      </SyntaxOptions>
+    </Parsing>
+    <CodeGeneration>
+      <HeapSize Value="8192"/>
+      <StackSize Value="8192"/>
+      <TargetCPU Value="arm"/>
+      <TargetOS Value="embedded"/>
+    </CodeGeneration>
+    <Linking>
+      <Debugging>
+        <DebugInfoType Value="dsDwarf2"/>
+        <UseLineInfoUnit Value="False"/>
+      </Debugging>
+    </Linking>
+    <Other>
+      <CustomOptions Value="-Cparmv6m
+-XParm-none-eabi-
+-Wpsamd20xpro
+-dsamd20xpro"/>
+    </Other>
+  </CompilerOptions>
+</CONFIG>

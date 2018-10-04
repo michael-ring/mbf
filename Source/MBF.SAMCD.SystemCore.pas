@@ -2,6 +2,8 @@ unit MBF.SAMCD.SystemCore;
 {
   This file is part of Pascal Microcontroller Board Framework (MBF)
   Copyright (c) 2015 -  Michael Ring
+  Copyright (c) 2018 -  Alfred Glänzer
+
   based on Pascal eXtended Library (PXL)
   Copyright (c) 2000 - 2015  Yuriy Kotsarenko
 
@@ -552,10 +554,10 @@ begin
 
     if (aClockType = TClockType.RC_FPLL) OR (aClockType = TClockType.XTAL32_FPLL) then
     begin
-      ClearBit(SYSCTRL.DPLLCTRLA,1);//disable DPLL
+      //TODO ClearBit(SYSCTRL.DPLLCTRLA,1);//disable DPLL
       //while (GetBit(SYSCTRL.DPLLSTATUS,2)) do begin end;
 
-      SYSCTRL.DPLLRATIO:=(PllFactFra shl 16) + PllFactInt;
+      //TODO SYSCTRL.DPLLRATIO:=(PllFactFra shl 16) + PllFactInt;
 
       if (aClockType = TClockType.RC_FPLL) then
       begin
@@ -576,7 +578,7 @@ begin
         //Configure FDPLL reference clock
         //This is the input clock for the FDPLL
         GCLK.CLKCTRL:=(
-          GCLK_CLKCTRL_ID_FDPLL OR  // Target is FDPLL
+          //TODO GCLK_CLKCTRL_ID_FDPLL OR  // Target is FDPLL
           (GCLK_CLKCTRL_GEN_Msk AND ((PLLREFCLOCK) shl GCLK_CLKCTRL_GEN_Pos)) OR     // Select generator 3 as source.
           //((0) shl GCLK_CLKCTRL_WRTLOCK_Pos) OR // The generic clock and the associated generic clock generator and division factor are locked */
           GCLK_CLKCTRL_CLKEN);
@@ -585,20 +587,20 @@ begin
 
       if (aClockType = TClockType.RC_FPLL) then
       begin
-        SYSCTRL.DPLLCTRLB:=
-          SYSCTRL_DPLLCTRLB_LBYPASS OR  // CLK_DPLL0 output clock is always on, and not dependent on frequency lock
-          (SYSCTRL_DPLLCTRLB_REFCLK_Msk AND ((2) shl SYSCTRL_DPLLCTRLB_REFCLK_Pos)) //GENCLK clock reference
-        ;
+        //TODO SYSCTRL.DPLLCTRLB:=
+        //  SYSCTRL_DPLLCTRLB_LBYPASS OR  // CLK_DPLL0 output clock is always on, and not dependent on frequency lock
+        //  (SYSCTRL_DPLLCTRLB_REFCLK_Msk AND ((2) shl SYSCTRL_DPLLCTRLB_REFCLK_Pos)) //GENCLK clock reference
+        //;
       end;
       if (aClockType = TClockType.XTAL32_FPLL) then
       begin
-        SYSCTRL.DPLLCTRLB:=
-          SYSCTRL_DPLLCTRLB_LBYPASS OR  // CLK_DPLL0 output clock is always on, and not dependent on frequency lock
-          (SYSCTRL_DPLLCTRLB_REFCLK_Msk AND ((0) shl SYSCTRL_DPLLCTRLB_REFCLK_Pos)) //XOSC32K clock reference
-        ;
+        //TODO SYSCTRL.DPLLCTRLB:=
+        //  SYSCTRL_DPLLCTRLB_LBYPASS OR  // CLK_DPLL0 output clock is always on, and not dependent on frequency lock
+        //  (SYSCTRL_DPLLCTRLB_REFCLK_Msk AND ((0) shl SYSCTRL_DPLLCTRLB_REFCLK_Pos)) //XOSC32K clock reference
+        //;
       end;
 
-      SetBit(SYSCTRL.DPLLCTRLA,1);//enable FDPLL
+      //TODO SetBit(SYSCTRL.DPLLCTRLA,1);//enable FDPLL
 
       // Switch generic clock 0 to the FDPLL
       GCLK.GENCTRL:=
@@ -640,9 +642,9 @@ begin
     //Switch off FDPLL if it is not in use anymore
     if (NOT ((aClockType = TClockType.RC_FPLL) OR (aClockType = TClockType.XTAL32_FPLL))) then
     begin
-      if GetBit(SYSCTRL.DPLLCTRLA,1) then
+      //TODO if GetBit(SYSCTRL.DPLLCTRLA,1) then
       begin
-        ClearBit(SYSCTRL.DPLLCTRLA,1);
+        //TODO ClearBit(SYSCTRL.DPLLCTRLA,1);
       end;
     end;
 
