@@ -591,6 +591,10 @@
 {$if defined(has_sercom5)} {$define has_uart5} {$define has_i2c5} {$define has_spi5} {$endif}
 {$if defined(has_sercom6)} {$define has_uart6} {$define has_i2c6} {$define has_spi6} {$endif}
 
+{$if defined(SAMD10) or defined(SAMD11) or defined(SAMD21)}
+{$define has_fdpll}
+{$endif}
+
 {$if defined(SAMD10) or defined(SAMD11) or defined(SAMD20) or defined(SAMD21)}
   {$define SAMD}
   {$define CortexM0}

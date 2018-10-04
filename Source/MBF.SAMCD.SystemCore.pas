@@ -39,7 +39,7 @@ var
   FCPUFrequency : longWord = ResetCPUFrequency;
 
 type
-  TClockType = (RC,XTAL32_PLL,RC_PLL,XTAL32_FPLL,RC_FPLL);
+  TClockType = (RC,XTAL32_PLL,RC_PLL{$ifdef has_fdpll},XTAL32_FPLL,RC_FPLL{$endif has_fdpll});
 
   TSAMCDSystemCore = record helper for TSystemCore
   type
@@ -311,8 +311,10 @@ begin
     GEN0_divider:=1;
     OSC8M_divider:=1;
 
+
     // Fractional PLL (FDPLL96M) can output between 48MHz and 96MHz
     // Fractional PLL (FDPLL96M) wants an input of between 32kHz and 2000kHz
+    {$ifdef has_fdpll}
     if (aClockType = TClockType.XTAL32_FPLL) OR (aClockType = TClockType.RC_FPLL) then
     begin
       if Value<48000000 then
@@ -345,6 +347,7 @@ begin
         GCLKGEN0InputFrequency:=1000000*(PllFactInt+1) + ((1000000*PllFactFra) DIV 32);
       end;
     end;
+    {$endif has_fdpll}
 
     // Normal PLL (DFLL48M) can only output 48MHz
     // Normal PLL (DFLL48M) wants an input of between 0.7kHz and 33kHz (optimum:32.768kHz)
@@ -408,7 +411,7 @@ begin
     PutValue(NVMCTRL.CTRLB,NVMCTRL_CTRLB_RWS_Msk,WaitStates,NVMCTRL_CTRLB_RWS_Pos);
 
     // Set OSC8M_prescaler
-    if (aClockType = TClockType.RC) OR (aClockType = TClockType.RC_PLL)  OR (aClockType = TClockType.RC_FPLL) then
+    if (aClockType = TClockType.RC) OR (aClockType = TClockType.RC_PLL) {$ifdef has_fdpll}OR (aClockType = TClockType.RC_FPLL){$endif has_fdpll} then
     begin
       OSC8M_prescaler:=0;
       while (OSC8M_divider>1) do
@@ -422,7 +425,7 @@ begin
       //See reset code above: after a reset, the system NEEDS to be clocked by OSC8M !!!
     end;
 
-    if (aClockType = TClockType.XTAL32_PLL) OR (aClockType = TClockType.XTAL32_FPLL) then
+    if (aClockType = TClockType.XTAL32_PLL){$ifdef has_fdpll} OR (aClockType = TClockType.XTAL32_FPLL){$endif has_fdpll} then
     begin
       //Set the 32.768 khz external crystal oscillator
       SYSCTRL.XOSC32K:=((SYSCTRL_XOSC32K_STARTUP_Msk AND ((5) shl SYSCTRL_XOSC32K_STARTUP_Pos)) OR SYSCTRL_XOSC32K_XTALEN OR SYSCTRL_XOSC32K_EN32K);
@@ -549,7 +552,7 @@ begin
       WaitGLK;
     end;
 
-
+    {$ifdef has_fdpll}
     if (aClockType = TClockType.RC_FPLL) OR (aClockType = TClockType.XTAL32_FPLL) then
     begin
       ClearBit(SYSCTRL.DPLLCTRLA,1);//disable DPLL
@@ -608,10 +611,10 @@ begin
         GCLK_GENCTRL_GENEN; // Enable this generic clock generator
       WaitGLK;
     end;
-
+    {$endif has_fdpll}
 
     //Switch off XTAL32 if it is not in use anymore
-    if (NOT ((aClockType = TClockType.XTAL32_PLL) OR (aClockType = TClockType.XTAL32_FPLL))) then
+    if (NOT ((aClockType = TClockType.XTAL32_PLL){$ifdef has_fdpll} OR (aClockType = TClockType.XTAL32_FPLL){$endif has_fdpll})) then
     begin
       if GetBit(SYSCTRL.XOSC32K,SYSCTRL_XOSC32K_ENABLE_Pos) then
       begin
@@ -621,7 +624,7 @@ begin
     end;
 
     //Switch off OSC8M if it is not in use anymore
-    if (NOT ((aClockType = TClockType.RC) OR (aClockType = TClockType.RC_PLL)  OR (aClockType = TClockType.RC_FPLL))) then
+    if (NOT ((aClockType = TClockType.RC) OR (aClockType = TClockType.RC_PLL){$ifdef has_fdpll} OR (aClockType = TClockType.RC_FPLL){$endif has_fdpll})) then
     begin
       ClearBit(SYSCTRL.OSC8M,SYSCTRL_OSC8M_ENABLE_Pos);
       while (GetBit(SYSCTRL.OSC8M,SYSCTRL_OSC8M_ENABLE_Pos)) do begin end;
@@ -638,6 +641,7 @@ begin
     end;
 
     //Switch off FDPLL if it is not in use anymore
+    {$ifdef has_fdpll}
     if (NOT ((aClockType = TClockType.RC_FPLL) OR (aClockType = TClockType.XTAL32_FPLL))) then
     begin
       if GetBit(SYSCTRL.DPLLCTRLA,1) then
@@ -645,6 +649,7 @@ begin
         ClearBit(SYSCTRL.DPLLCTRLA,1);
       end;
     end;
+    {$endif has_fdpll}
 
     //Now that all system clocks are configured, we can set CPU and APBx BUS clocks.
     //There values are normally the one present after Reset.
