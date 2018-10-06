@@ -2,8 +2,6 @@ unit MBF.SAMCD.SystemCore;
 {
   This file is part of Pascal Microcontroller Board Framework (MBF)
   Copyright (c) 2015 -  Michael Ring
-  Copyright (c) 2018 -  Alfred Glänzer
-
   based on Pascal eXtended Library (PXL)
   Copyright (c) 2000 - 2015  Yuriy Kotsarenko
 
@@ -392,7 +390,9 @@ begin
     //Make a software reset of the clock system.
     //We need the OSC8M, because this clock is used after a reset
     //So, enable OSC8M oscillator
+    ClearBit(SYSCTRL.OSC8M,SYSCTRL_OSC8M_ONDEMAND_Pos);
     SetBit(SYSCTRL.OSC8M,SYSCTRL_OSC8M_ENABLE_Pos);
+    while (NOT GetBit(SYSCTRL.OSC8M,SYSCTRL_OSC8M_ENABLE_Pos)) do begin end;
     //Perform reset
     SetBit(GCLK.CTRL,GCLK_CTRL_SWRST_Pos);
     while GetBit(GCLK.CTRL,GCLK_CTRL_SWRST_Pos) do begin end; // Wait for synchronization
@@ -557,10 +557,10 @@ begin
     {$ifdef has_fdpll}
     if (aClockType = TClockType.RC_FPLL) OR (aClockType = TClockType.XTAL32_FPLL) then
     begin
-      //TODO ClearBit(SYSCTRL.DPLLCTRLA,1);//disable DPLL
-      //while (GetBit(SYSCTRL.DPLLSTATUS,2)) do begin end;
+      SYSCTRL.DPLLCTRLA:=0;//disable DPLL
+      while (GetBit(SYSCTRL.DPLLSTATUS,SYSCTRL_DPLLSTATUS_ENABLE_Pos)) do begin end;
 
-      //TODO SYSCTRL.DPLLRATIO:=(PllFactFra shl 16) + PllFactInt;
+      SYSCTRL.DPLLRATIO:=(PllFactFra shl 16) + PllFactInt;
 
       if (aClockType = TClockType.RC_FPLL) then
       begin
@@ -581,7 +581,7 @@ begin
         //Configure FDPLL reference clock
         //This is the input clock for the FDPLL
         GCLK.CLKCTRL:=(
-          //TODO GCLK_CLKCTRL_ID_FDPLL OR  // Target is FDPLL
+          GCLK_CLKCTRL_ID_FDPLL OR  // Target is FDPLL
           (GCLK_CLKCTRL_GEN_Msk AND ((PLLREFCLOCK) shl GCLK_CLKCTRL_GEN_Pos)) OR     // Select generator 3 as source.
           //((0) shl GCLK_CLKCTRL_WRTLOCK_Pos) OR // The generic clock and the associated generic clock generator and division factor are locked */
           GCLK_CLKCTRL_CLKEN);
@@ -590,20 +590,22 @@ begin
 
       if (aClockType = TClockType.RC_FPLL) then
       begin
-        //TODO SYSCTRL.DPLLCTRLB:=
-        //  SYSCTRL_DPLLCTRLB_LBYPASS OR  // CLK_DPLL0 output clock is always on, and not dependent on frequency lock
-        //  (SYSCTRL_DPLLCTRLB_REFCLK_Msk AND ((2) shl SYSCTRL_DPLLCTRLB_REFCLK_Pos)) //GENCLK clock reference
-        //;
+        SYSCTRL.DPLLCTRLB:=
+          SYSCTRL_DPLLCTRLB_LBYPASS OR  // CLK_DPLL0 output clock is always on, and not dependent on frequency lock
+          (SYSCTRL_DPLLCTRLB_REFCLK_Msk AND ((2) shl SYSCTRL_DPLLCTRLB_REFCLK_Pos)) //GENCLK clock reference
+        ;
       end;
       if (aClockType = TClockType.XTAL32_FPLL) then
       begin
-        //TODO SYSCTRL.DPLLCTRLB:=
-        //  SYSCTRL_DPLLCTRLB_LBYPASS OR  // CLK_DPLL0 output clock is always on, and not dependent on frequency lock
-        //  (SYSCTRL_DPLLCTRLB_REFCLK_Msk AND ((0) shl SYSCTRL_DPLLCTRLB_REFCLK_Pos)) //XOSC32K clock reference
-        //;
+        SYSCTRL.DPLLCTRLB:=
+          SYSCTRL_DPLLCTRLB_LBYPASS OR  // CLK_DPLL0 output clock is always on, and not dependent on frequency lock
+          (SYSCTRL_DPLLCTRLB_REFCLK_Msk AND ((0) shl SYSCTRL_DPLLCTRLB_REFCLK_Pos)) //XOSC32K clock reference
+        ;
       end;
 
-      //TODO SetBit(SYSCTRL.DPLLCTRLA,1);//enable FDPLL
+      SYSCTRL.DPLLCTRLA:=SYSCTRL_DPLLCTRLA_ENABLE;//enable FDPLL
+      while (NOT GetBit(SYSCTRL.DPLLSTATUS,SYSCTRL_DPLLSTATUS_ENABLE_Pos)) do begin end;
+      while (NOT GetBit(SYSCTRL.DPLLSTATUS,SYSCTRL_DPLLSTATUS_CLKRDY_Pos)) do begin end;
 
       // Switch generic clock 0 to the FDPLL
       GCLK.GENCTRL:=
@@ -646,9 +648,10 @@ begin
     {$ifdef has_fdpll}
     if (NOT ((aClockType = TClockType.RC_FPLL) OR (aClockType = TClockType.XTAL32_FPLL))) then
     begin
-      //TODO if GetBit(SYSCTRL.DPLLCTRLA,1) then
+      if GetBit(SYSCTRL.DPLLCTRLA,SYSCTRL_DPLLCTRLA_ENABLE_Pos) then
       begin
-        //TODO ClearBit(SYSCTRL.DPLLCTRLA,1);
+        ClearBit(SYSCTRL.DPLLCTRLA,SYSCTRL_DPLLCTRLA_ENABLE_Pos);
+        while (GetBit(SYSCTRL.DPLLSTATUS,SYSCTRL_DPLLSTATUS_ENABLE_Pos)) do begin end;
       end;
     end;
     {$endif has_fdpll}

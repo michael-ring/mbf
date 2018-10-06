@@ -37,10 +37,6 @@ begin
   // Default Initialization is 8MHz SPI Clock, Master and 8-Bit Mode
   SPI.Initialize(TSPIMOSIPins.D11_SPI,TSPIMISOPins.D12_SPI,TSPISCLKPins.D13_SPI,TSPINSSPins.D10_SPI);
 
-  //SPI.Frequency := 8000000;
-  //SPI.BitsPerWord := TSPIBitsPerWord.Eight;
-  //SPI.Mode := TSPIMode.Master;
-
   // Now define which Pins to use for the choosen SPI
   //SPI.Initialize;
   //SPI.MISOPin := TSPIMISOPins.D12_SPI;
@@ -48,10 +44,12 @@ begin
   //SPI.SCLKPin := TSPISCLKPins.D13_SPI;
   //SPI.NSSPin  :=  TSPINSSPins.D10_SPI;
 
+  //SPI.Baudrate := 8000000;
+  //SPI.BitsPerWord := TSPIBitsPerWord.Eight;
+  //SPI.Mode := TSPIMode.Master;
+
   // For this demo we need to switch to 16Bit Mode
   // We drive a small 8x8 LED Module that is driven by a MAX7219 Chip
-
-  SPI.BitsPerWord := TSPIBitsPerWord.Sixteen;
 
   SPI.WriteWord($0900); //Do not decode bits
   SPI.WriteWord($0a05); //Brightness of LED's
@@ -67,7 +65,7 @@ begin
     for i := 1 to 8 do
       SPI.WriteWord((i shl 8) + $ff);
     SystemCore.Delay(1000);
-    SPI.Write(PatternA);
+    SPI.WriteWord(PatternA);
     SystemCore.Delay(1000);
   until 1=0
 end.

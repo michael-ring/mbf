@@ -1,125 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CONFIG>
   <ProjectOptions>
-    <Version Value="11"/>
     <General>
-      <Flags>
-        <LRSInOutputDirectory Value="False"/>
-      </Flags>
-      <MainUnit Value="0"/>
       <UseAppBundle Value="False"/>
     </General>
     <BuildModes Count="1">
       <Item1 Name="default" Default="True"/>
     </BuildModes>
-    <PublishOptions>
-      <Version Value="2"/>
-    </PublishOptions>
-    <RunParams>
-      <FormatVersion Value="2"/>
-      <Modes Count="1">
-        <Mode0 Name="default"/>
-      </Modes>
-    </RunParams>
-    <Units Count="2">
+    <Units Count="1">
       <Unit0>
         <Filename Value="Blinky.lpr"/>
         <IsPartOfProject Value="True"/>
         <IsVisibleTab Value="True"/>
-        <CursorPos Y="33"/>
-        <UsageCount Value="20"/>
         <Loaded Value="True"/>
-        <LoadedDesigner Value="True"/>
       </Unit0>
-      <Unit1>
-        <Filename Value="../../Source/MBF.SystemCore.pas"/>
-        <EditorIndex Value="1"/>
-        <TopLine Value="321"/>
-        <CursorPos Y="347"/>
-        <UsageCount Value="10"/>
-        <Loaded Value="True"/>
-      </Unit1>
     </Units>
-    <JumpHistory Count="19" HistoryIndex="18">
-      <Position1>
-        <Filename Value="Blinky.lpr"/>
-      </Position1>
-      <Position2>
-        <Filename Value="Blinky.lpr"/>
-        <Caret Line="33"/>
-      </Position2>
-      <Position3>
-        <Filename Value="Blinky.lpr"/>
-        <Caret Line="34"/>
-      </Position3>
-      <Position4>
-        <Filename Value="Blinky.lpr"/>
-        <Caret Line="35"/>
-      </Position4>
-      <Position5>
-        <Filename Value="Blinky.lpr"/>
-        <Caret Line="36"/>
-      </Position5>
-      <Position6>
-        <Filename Value="Blinky.lpr"/>
-        <Caret Line="37"/>
-      </Position6>
-      <Position7>
-        <Filename Value="Blinky.lpr"/>
-        <Caret Line="33"/>
-      </Position7>
-      <Position8>
-        <Filename Value="Blinky.lpr"/>
-        <Caret Line="34"/>
-      </Position8>
-      <Position9>
-        <Filename Value="../../Source/MBF.SystemCore.pas"/>
-        <Caret Line="340" TopLine="321"/>
-      </Position9>
-      <Position10>
-        <Filename Value="../../Source/MBF.SystemCore.pas"/>
-        <Caret Line="342" TopLine="321"/>
-      </Position10>
-      <Position11>
-        <Filename Value="../../Source/MBF.SystemCore.pas"/>
-        <Caret Line="346" TopLine="321"/>
-      </Position11>
-      <Position12>
-        <Filename Value="../../Source/MBF.SystemCore.pas"/>
-        <Caret Line="347" TopLine="321"/>
-      </Position12>
-      <Position13>
-        <Filename Value="../../Source/MBF.SystemCore.pas"/>
-        <Caret Line="350" TopLine="321"/>
-      </Position13>
-      <Position14>
-        <Filename Value="../../Source/MBF.SystemCore.pas"/>
-        <Caret Line="347" TopLine="321"/>
-      </Position14>
-      <Position15>
-        <Filename Value="Blinky.lpr"/>
-        <Caret Line="33"/>
-      </Position15>
-      <Position16>
-        <Filename Value="Blinky.lpr"/>
-        <Caret Line="34"/>
-      </Position16>
-      <Position17>
-        <Filename Value="Blinky.lpr"/>
-        <Caret Line="35"/>
-      </Position17>
-      <Position18>
-        <Filename Value="Blinky.lpr"/>
-        <Caret Line="36"/>
-      </Position18>
-      <Position19>
-        <Filename Value="Blinky.lpr"/>
-        <Caret Line="37"/>
-      </Position19>
-    </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>
-    <Version Value="11"/>
     <Target>
       <Filename Value="Blinky"/>
     </Target>
@@ -128,11 +25,6 @@
       <OtherUnitFiles Value="../../Source"/>
       <UnitOutputDirectory Value="lib/$(TargetCPU)-$(TargetOS)"/>
     </SearchPaths>
-    <Parsing>
-      <SyntaxOptions>
-        <UseAnsiStrings Value="False"/>
-      </SyntaxOptions>
-    </Parsing>
     <CodeGeneration>
       <HeapSize Value="8192"/>
       <StackSize Value="8192"/>
@@ -141,6 +33,7 @@
     </CodeGeneration>
     <Linking>
       <Debugging>
+        <GenerateDebugInfo Value="True"/>
         <DebugInfoType Value="dsDwarf2"/>
         <UseLineInfoUnit Value="False"/>
       </Debugging>
@@ -149,18 +42,8 @@
       <CustomOptions Value="-Cparmv7em
 -XParm-none-eabi-
 -Wpnucleof401re
--dnucleof401re"/>
+-dnucleof401re
+      "/>
     </Other>
   </CompilerOptions>
-  <Debugging>
-    <BreakPoints Count="1">
-      <Item1>
-        <Kind Value="bpkSource"/>
-        <WatchScope Value="wpsLocal"/>
-        <WatchKind Value="wpkWrite"/>
-        <Source Value="Blinky.lpr"/>
-        <Line Value="33"/>
-      </Item1>
-    </BreakPoints>
-  </Debugging>
 </CONFIG>

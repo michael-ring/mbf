@@ -35,7 +35,6 @@ type
     procedure Reset;
     procedure Enable;
     procedure Disable;
-    procedure SyncWait;
   end;
 
 implementation
@@ -130,12 +129,11 @@ procedure TSerCom.Reset;
 begin
   // Reset is on the same spot for every configuration, so just choose one : usart
   SetBit(USART.CTRLA,SERCOM_SWRST_Pos);
-  while (GetBit(USART.CTRLA,SERCOM_SWRST_Pos)) do begin end;
   // All syncbusy registers are at offset $1C, so just choose one ... usart ... ;-)
   {$ifdef samd20}
-  while ((USART.STATUS AND (1 shl 15))>0) do begin end;
+  WaitBitCleared(USART.STATUS,15);
   {$else}
-  while ((USART.SYNCBUSY AND $1)>0) do begin end;
+  WaitBitCleared(USART.SYNCBUSY,0);
   {$endif}
 end;
 
@@ -145,9 +143,9 @@ begin
   SetBit(USART.CTRLA,SERCOM_ENABLE_Pos);
   // All syncbusy registers are at offset $1C, so just choose one ... usart ... ;-)
   {$ifdef samd20}
-  while ((USART.STATUS AND (1 shl 15))>0) do begin end;
+  WaitBitCleared(USART.STATUS,15);
   {$else}
-  while ((USART.SYNCBUSY AND $2)>0) do begin end;
+  WaitBitCleared(USART.SYNCBUSY,1);
   {$endif}
 end;
 
@@ -156,19 +154,9 @@ begin
   ClearBit(USART.CTRLA,SERCOM_ENABLE_Pos);
   // All syncbusy registers are at offset $1C, so just choose one ... usart ... ;-)
   {$ifdef samd20}
-  while ((USART.STATUS AND (1 shl 15))>0) do begin end;
+  WaitBitCleared(USART.STATUS,15);
   {$else}
-  while ((USART.SYNCBUSY AND $2)>0) do begin end;
-  {$endif}
-end;
-
-procedure TSerCom.SyncWait;
-begin
-  // All syncbusy registers are at offset $1C, so just choose one ... usart ... ;-)
-  {$ifdef samd20}
-  while ((USART.STATUS AND (1 shl 15))>0) do begin end;
-  {$else}
-  while ((USART.SYNCBUSY AND $4)>0) do begin end;
+  WaitBitCleared(USART.SYNCBUSY,1);
   {$endif}
 end;
 

@@ -161,21 +161,31 @@ type
     Sixteen=1
   );
 
-    TSPIRegistersHelper = record helper for TSPI_Registers
+  TSPIOperatingMode = (
+    Slave=%0,
+    Master=%1
+  );
+
+  TSPIRegistersHelper = record helper for TSPI_Registers
   protected
     function FindDividerValue(const Baudrate: Cardinal) : Cardinal;
-    function GetFrequency: Cardinal;
-    procedure SetFrequency(const Value: Cardinal);
+    function GetBaudrate: Cardinal;
+    procedure SetBaudrate(const Value: Cardinal);
     function GetBitsPerWord: TSPIBitsPerWord;
     procedure SetBitsPerWord(const Value: TSPIBitsPerWord);
     function GetMode: TSPIMode;
     procedure SetMode(const Value: TSPIMode);
     //function GetNssMode: TSPINssMode;
     //procedure SetNssMode(const Value : TSPINssMode);
+    procedure SetNSSPinLow(const SoftNSSPin : TPinIdentifier);
+    procedure SetNSSPinHigh(const SoftNSSPin : TPinIdentifier);
     procedure SetMOSIPin(const Value : TSPIMOSIPins);
     procedure SetMISOPin(const Value : TSPIMISOPins);
     procedure SetSCLKPin(const Value : TSPISCLKPins);
     procedure SetNSSPin( const Value : TSPINSSPins);
+    function GetOperatingMode: TSPIOperatingMode;
+    procedure SetOperatingMode(const aSPIOperatingMode: TSPIOperatingMode);
+
   public
     procedure Initialize;
     procedure Initialize(const AMosiPin : TSPIMOSIPins;
@@ -183,50 +193,29 @@ type
                          const ASCLKPin : TSPISCLKPins;
                          const ANSSPin  : TSPINSSPins); overload;
 
-    { Reads specified number of bytes to buffer and returns actual number of bytes read. }
-    function Read(const Buffer: Pointer; const BufferSize: Cardinal;
-                  const SoftNSSPin : TPinIdentifier = TNativePin.None): Cardinal;
+    function ReadByte(var aReadByte: byte; const Timeout : integer=-1; const SoftNSSPin : TPinIdentifier = TNativePin.None):boolean;
+    function ReadWord(var aReadWord: word; const Timeout : integer=-1; const SoftNSSPin : TPinIdentifier = TNativePin.None):boolean;
+    function ReadByte(var aReadBuffer: array of byte; aReadCount : integer=-1; const Timeout : integer=-1; const SoftNSSPin : TPinIdentifier = TNativePin.None):boolean;
+    function ReadWord(var aReadBuffer: array of word; aReadCount : integer=-1; const Timeout : integer=-1; const SoftNSSPin : TPinIdentifier = TNativePin.None):boolean;
 
-    function Write(const Buffer: Pointer; const BufferSize: Cardinal;
-                  const SoftNSSPin : TPinIdentifier = TNativePin.None): Cardinal;
+    function WriteByte(const aWriteByte: byte; const Timeout : integer=-1; const SoftNSSPin : TPinIdentifier = TNativePin.None) : boolean;
+    function WriteWord(const aWriteWord: word; const Timeout : integer=-1; const SoftNSSPin : TPinIdentifier = TNativePin.None) : boolean;
+    function WriteByte(const aWriteBuffer: array of byte; aWriteCount : integer=-1; const Timeout : integer=-1; const SoftNSSPin : TPinIdentifier = TNativePin.None) : boolean;
+    function WriteWord(const aWriteBuffer: array of word; aWriteCount : integer=-1; const Timeout : integer=-1; const SoftNSSPin : TPinIdentifier = TNativePin.None) : boolean;
 
-    { Writes specified number of words from buffer. }
-    procedure Write(const WriteBuffer: array of word; WriteCount : longWord = -1; const SoftNSSPin : TPinIdentifier = TNativePin.None);
-
-    { Transfers data through SPI port asynchronously - that is, reading and writing at the same time.
-      @param(ReadBuffer Pointer to data buffer where the data will be read from. If this parameter is set to @nil,
-        then no reading will be done.)
-      @param(WriteBuffer Pointer to data buffer where the data will be written to. If this parameter is set to @nil,
-        then no writing will be done.)
-      @param(BufferSize The size of read and write buffers in bytes.)
-      @param(optional GPIO Pin that is configured as an Output. This allows the use of Soft-SPI when Hardware SPI is not suitable)
-      @returns(Number of bytes that were actually transferred.) }
-    function Transfer(const ReadBuffer, WriteBuffer: Pointer; const BufferSize: Cardinal;
-                      const SoftNSSPin : TPinIdentifier = TNativePin.None): Cardinal;
-
-    { Transfers data through SPI port asynchronously - that is, reading and writing at the same time.
-      @param(Buffer Pointer to data buffer where the data will be read from and at the same time written to,
-        overwriting its contents.)
-      @param(BufferSize The size of buffer in bytes.)
-      @returns(Number of bytes that were actually transferred.) }
-    function Transfer(const Buffer: Pointer; const BufferSize: Cardinal;
-                      const SoftNSSPin : TPinIdentifier = TNativePin.None): Cardinal;
-
-    { Transfers data through SPI port asynchronously - that is, reading and writing at the same time.
-      @param(Value  Word sized Data Value that weill get sent over SPI When in 8 Bit Mode then 2 bytes will be transfered)
-      @param(optional GPIO Pin that is configured as an Output. This allows the use of Soft-SPI when Hardware SPI is not suitable)
-      @returns(Word Data that was received. When in 8 Bit Mode then 2 bytes will be combined in 1 word) }
-    function TransferWord(const Value : word; const SoftNSSPin : TPinIdentifier = TNativePin.None): word;
-
+    function TransferByte(const aWriteByte : byte; var aReadByte : byte; const Timeout : integer=-1; const SoftNSSPin : TPinIdentifier = TNativePin.None) : boolean;
+    function TransferWord(const aWriteWord: word; var aReadWord : word; const Timeout : integer=-1; const SoftNSSPin : TPinIdentifier = TNativePin.None) : boolean;
+    function TransferByte(const aWriteBuffer: array of byte; var aReadBuffer : array of byte; aTransferCount : integer=-1; const Timeout : integer=-1; const SoftNSSPin : TPinIdentifier = TNativePin.None) : boolean;
+    function TransferWord(const aWriteBuffer: array of word; var aReadBuffer : array of word; aTransferCount : integer=-1; const Timeout : integer=-1; const SoftNSSPin : TPinIdentifier = TNativePin.None) : boolean;
     //property NssMode : TSPINssMode  read GetNssMode write SetNssMode;
     property MOSIPin : TSPIMOSIPins write setMOSIPin;
     property MISOPin : TSPIMISOPins write setMISOPin;
     property SCLKPin : TSPISCLKPins write setSCLKPin;
     property NSSPin  : TSPINSSPins  write setNSSPin;
-    property Frequency : Cardinal read getFrequency write setFrequency;
+    property Baudrate : Cardinal read getBaudrate write setBaudrate;
     property Mode : TSPIMode read getMode write setMode;
-    property BitsPerWord : TSPIBitsPerWord read getBitsPerWord write setBitsPerWord;
-  end;
+    //property BitsPerWord : TSPIBitsPerWord read getBitsPerWord write setBitsPerWord;
+    property OperatingMode : TSPIOperatingMode read getOperatingMode write setOperatingMode;  end;
 
   {$IF DEFINED(HAS_ARDUINOPINS)}
   var
@@ -341,7 +330,7 @@ begin
       break;
 end;
 
-function TSPIRegistersHelper.GetFrequency: Cardinal;
+function TSPIRegistersHelper.GetBaudrate: Cardinal;
 var
   BaseFrequency : Cardinal;
 begin
@@ -356,7 +345,7 @@ begin
   Result := BaseFrequency shr (((Self.CR1 shr 3) and %111)+1);
 end;
 
-procedure TSPIRegistersHelper.SetFrequency(const Value: Cardinal);
+procedure TSPIRegistersHelper.SetBaudrate(const Value: Cardinal);
 var
   Divider : longWord;
 begin
@@ -379,18 +368,55 @@ begin
   Result := TSPIMode(Self.CR1 and %11);
 end;
 
+procedure TSPIRegistersHelper.SetOperatingMode(const aSPIOperatingMode: TSPIOperatingMode);
+begin
+  //TODO
+end;
+
+function TSPIRegistersHelper.GetOperatingMode: TSPIOperatingMode;
+begin
+  //TODO
+end;
+
 procedure TSPIRegistersHelper.SetMode(const Value: TSPIMode);
 begin
   Self.CR1 := Self.CR1 and (not (%11 shl 0)) or longWord(Value);
 end;
 
-function TSPIRegistersHelper.TransferWord(const Value : Word;
-                  const SoftNSSPin : TPinIdentifier = TNativePin.None): word;
+procedure TSPIRegistersHelper.SetNSSPinHigh(const SoftNSSPin : TPinIdentifier);
 var
-  tmpPin,_NSSPin : TPinIdentifier;
-  CR1 : longWord;
+  _NSSPin : longWord;
 begin
-  // This is a hack that is only necessary because on Nucleo boards the Pin D10 is not mapped to Hardware-NSS Pin
+  _NSSPin := integer(SoftNSSPin);
+  if _NSSPin = TNativePin.None then
+  begin
+    case longWord(@Self) of
+      SPI1_BASE : _NSSPin := NSSPins[1];
+      SPI2_BASE : _NSSPin := NSSPins[2];
+      SPI3_BASE : _NSSPin := NSSPins[3];
+      {$ifdef has_spi4}SPI4_BASE : _NSSPin := NSSPins[4];{$endif}
+      {$ifdef has_spi5}SPI5_BASE : _NSSPin := NSSPins[5];{$endif}
+      {$ifdef has_spi6}SPI6_BASE : _NSSPin := NSSPins[6];{$endif}
+    end;
+  end;
+
+  //Take the NSS Pin High in software Mode (end transfer)
+  if _NSSPin < ALT0 then
+  begin
+    if _NSSPin > TNativePin.None then
+      GPIO.PinValue[_NSSPin] := 1;
+    // Switch to Software Mode
+    //self.CR1 := self.CR1 or (1 shl 9) or (1 shl 8);
+  end;
+  //else
+    //Disable Software Mode
+  //  self.CR1 := self.CR1 and (not (1 shl 8));
+end;
+
+procedure TSPIRegistersHelper.SetNSSPinLow(const SoftNSSPin : TPinIdentifier);
+var
+  _NSSPin : TPinIdentifier;
+begin
   _NSSPin := SoftNSSPin;
   if _NSSPin = TNativePin.None then
   begin
@@ -415,82 +441,36 @@ begin
   else
     //Disable Software Mode
     self.CR1 := self.CR1 and (not (1 shl 8));
-
-
-  // Enable SPI, this also sets NSS Pin Low in Hardware Mode
-  self.CR1 := self.CR1 or (1 shl 6);
-
-  //wait for TXE to go high (no more data to shift out)
-  while self.SR and (1 shl 1) = 0 do
-    ;
-
-  //read data from rx buffer if available and discard it
-  if self.SR and (1 shl 0) = 1 then
-    Result := self.DR;
-
-  //Put Data into Send Register
-  self.DR := Value;
-
-  // RXNE Wait until data is completely shifted in
-  while self.SR and (1 shl 0) = 0 do
-    ;
-
-  // TXE Wait until data is completely shifted in
-  while self.SR and (1 shl 1) = 0 do
-    ;
-
-  // TXE Wait until data is completely shifted in
-  while self.SR and (1 shl 7) <> 0 do
-    ;
-
-  // Now read the result back from Data Register
-  Result := self.DR;
-
-  // Take NSS High again in Software Mode (end of Transfer)
-  if _NSSPin < ALT0 then
-    if (_NSSPin > TNativePin.None) and (_NSSPin < ALT0) then
-      GPIO.PinValue[_NSSPin] := 0;
-
-  // Disable SPI, this also sets NSS Pin High in Hardware Mode
-  self.CR1 := self.CR1 and (not (1 shl 6));
 end;
 
-procedure TSPIRegistersHelper.Write(const WriteBuffer: array of word; WriteCount : longWord = -1; const SoftNSSPin : TPinIdentifier = TNativePin.None);
-var
-  tmpPin, _NSSPin : TPinIdentifier;
-  dummy : word;
-  i : longWord;
+function TSPIRegistersHelper.ReadByte(var aReadByte: byte; const Timeout : integer=-1; const SoftNSSPin : TPinIdentifier = TNativePin.None):boolean;
 begin
-  if WriteCount = -1 then
-    WriteCount := High(WriteBuffer)
-  else
-    WriteCount := WriteCount + Low(WriteBuffer);
+  //TODO
+end;
 
-  // This is a hack that is only necessary because on Nucleo boards the Pin D10 is not mapped to Hardware-NSS Pin
-  _NSSPin := SoftNSSPin;
+function TSPIRegistersHelper.ReadWord(var aReadWord: word; const Timeout : integer=-1; const SoftNSSPin : TPinIdentifier = TNativePin.None):boolean;
+begin
+  //TODO
+end;
 
-  if _NSSPin = TNativePin.None then
-  begin
-    case longWord(@Self) of
-      SPI1_BASE : _NSSPin := NSSPins[1];
-      SPI2_BASE : _NSSPin := NSSPins[2];
-      SPI3_BASE : _NSSPin := NSSPins[3];
-      {$ifdef has_spi4}SPI4_BASE : _NSSPin := NSSPins[4];{$endif}
-      {$ifdef has_spi5}SPI5_BASE : _NSSPin := NSSPins[5];{$endif}
-      {$ifdef has_spi6}SPI6_BASE : _NSSPin := NSSPins[6];{$endif}
-    end;
-  end;
+function TSPIRegistersHelper.ReadByte(var aReadBuffer: array of byte; aReadCount : integer=-1; const Timeout : integer=-1; const SoftNSSPin : TPinIdentifier = TNativePin.None):boolean;
+begin
+  //TODO
+end;
 
-  //Take the NSS Pin Low in software Mode (start transfer)
-  if _NSSPin < ALT0 then
-    // Switch to Software Mode as either no pin is selected or a GPIO Pin
-    self.CR1 := self.CR1 or (1 shl 9) or (1 shl 8)
-  else
-    //Disable Software Mode
-    self.CR1 := self.CR1 and (not (1 shl 8));
+function TSPIRegistersHelper.ReadWord(var aReadBuffer: array of word; aReadCount : integer=-1; const Timeout : integer=-1; const SoftNSSPin : TPinIdentifier = TNativePin.None):boolean;
+begin
+  //TODO
+end;
 
-  //transfer in 16 bits
-  setBitsPerWord(TSPIBitsPerWord.Sixteen);
+function TSPIRegistersHelper.WriteByte(const aWriteByte: byte; const Timeout : integer=-1; const SoftNSSPin : TPinIdentifier = TNativePin.None) : boolean;
+var
+  Dummy : byte;
+begin
+  SetNSSPinLow(SoftNSSPin);
+  //transfer in 8 bits
+  setBitsPerWord(TSPIBitsPerWord.Eight);
+
   // Enable SPI, this also sets NSS Pin Low in Hardware Mode
   self.CR1 := self.CR1 or (1 shl 6);
 
@@ -502,12 +482,57 @@ begin
   if self.SR and (1 shl 0) = 1 then
     Dummy := self.DR;
 
-  for i := Low(Writebuffer) to WriteCount do
+  // TXE Wait until data is completely shifted in
+  while self.SR and (1 shl 1) = 0 do
+    ;
+  self.DR := aWriteByte;
+
+  // RXNE Wait until data is completely shifted in
+  while self.SR and (1 shl 0) = 0 do
+   ;
+
+    // TXE Wait until data is completely shifted in
+    //while self.SR and (1 shl 1) = 0 do
+    //  ;
+
+    // TXE Wait until data is completely shifted in
+    //while self.SR and (1 shl 7) <> 0 do
+    //  ;
+
+  setNSSPinHigh(SoftNSSPin);
+
+  // Disable SPI, this also sets NSS Pin High in Hardware Mode
+  self.CR1 := self.CR1 and (not (1 shl 6));
+end;
+
+
+function TSPIRegistersHelper.WriteByte(const aWriteBuffer: array of byte; aWriteCount : integer=-1; const Timeout : integer=-1; const SoftNSSPin : TPinIdentifier = TNativePin.None) : boolean;
+var
+  tmpPin, _NSSPin : TPinIdentifier;
+  dummy : byte;
+  i : longWord;
+begin
+  if aWriteCount = -1 then
+    aWriteCount := High(aWriteBuffer) - Low(aWriteBuffer);
+
+  SetNSSPinLow(SoftNSSPin);
+  //transfer in 16 bits
+  setBitsPerWord(TSPIBitsPerWord.Eight);
+  // Enable SPI, this also sets NSS Pin Low in Hardware Mode
+  self.CR1 := self.CR1 or (1 shl 6);
+
+  //wait for TXE to go high (no more data to shift out)
+  while self.SR and (1 shl 1) = 0 do
+    ;
+
+  //read data from rx buffer if available and discard it
+  if self.SR and (1 shl 0) = 1 then
+    Dummy := self.DR;
+
+  for i := Low(aWritebuffer) to Low(aWritebuffer)+aWriteCount do
   begin
-    if (_NSSPin > TNativePin.None) and (_NSSPin < ALT0) then
-      GPIO.PinValue[_NSSPin] := 0;
-    dummy := WriteBuffer[i];
-    self.DR := WriteBuffer[i];
+    dummy := aWriteBuffer[i];
+    self.DR := aWriteBuffer[i];
 
     // RXNE Wait until data is completely shifted in
     //while self.SR and (1 shl 0) = 0 do
@@ -522,46 +547,20 @@ begin
     //  ;
 
     Dummy := self.DR;
-
-    if (_NSSPin > TNativePin.None) and (_NSSPin < ALT0) then
-      GPIO.PinValue[_NSSPin] := 1;
   end;
+  SetNSSPinHigh(SoftNSSPin);
 
   // Disable SPI, this also sets NSS Pin High in Hardware Mode
   self.CR1 := self.CR1 and (not (1 shl 6));
 end;
 
-function TSPIRegistersHelper.Transfer(const ReadBuffer, WriteBuffer: Pointer; const BufferSize: Cardinal;
-                  const SoftNSSPin : TPinIdentifier = TNativePin.None): Cardinal;
+function TSPIRegistersHelper.WriteWord(const aWriteWord: word; const Timeout : integer=-1; const SoftNSSPin : TPinIdentifier = TNativePin.None) : boolean;
 var
-  ReadBytes,WriteBytes : cardinal;
-  tmpPin, _NSSPin : TPinIdentifier;
+  Dummy : word;
 begin
-  ReadBytes := 0;
-  WriteBytes := 0;
-
-  // This is a hack that is only necessary because on Nucleo boards the Pin D10 is not mapped to Hardware-NSS Pin
-  _NSSPin := SoftNSSPin;
-
-  if _NSSPin = TNativePin.None then
-  begin
-    case longWord(@Self) of
-      SPI1_BASE : _NSSPin := NSSPins[1];
-      SPI2_BASE : _NSSPin := NSSPins[2];
-      SPI3_BASE : _NSSPin := NSSPins[3];
-      {$ifdef has_spi4}SPI4_BASE : _NSSPin := NSSPins[4];{$endif}
-      {$ifdef has_spi5}SPI5_BASE : _NSSPin := NSSPins[5];{$endif}
-      {$ifdef has_spi6}SPI6_BASE : _NSSPin := NSSPins[6];{$endif}
-    end;
-  end;
-
-  //Take the NSS Pin Low in software Mode (start transfer)
-  if _NSSPin < ALT0 then
-    // Switch to Software Mode as either no pin is selected or a GPIO Pin
-    self.CR1 := self.CR1 or (1 shl 9) or (1 shl 8)
-  else
-    //Disable Software Mode
-    self.CR1 := self.CR1 and (not (1 shl 8));
+  SetNSSPinLow(SoftNSSPin);
+  //transfer in 8 bits
+  setBitsPerWord(TSPIBitsPerWord.Sixteen);
 
   // Enable SPI, this also sets NSS Pin Low in Hardware Mode
   self.CR1 := self.CR1 or (1 shl 6);
@@ -572,32 +571,159 @@ begin
 
   //read data from rx buffer if available and discard it
   if self.SR and (1 shl 0) = 1 then
-    Result := self.DR;
+    Dummy := self.DR;
 
-  if (_NSSPin > TNativePin.None) and (_NSSPin < ALT0) then
-    GPIO.PinValue[_NSSPin] := 0;
+  // TXE Wait until data is completely shifted in
+  while self.SR and (1 shl 1) = 0 do
+    ;
+  self.DR := aWriteWord;
 
-  while ((ReadBuffer <> nil) and (ReadBytes < BufferSize)) or ((WriteBuffer <> nil) and (WriteBytes < BufferSize)) do
+  // RXNE Wait until data is completely shifted in
+  while self.SR and (1 shl 0) = 0 do
+   ;
+
+    // TXE Wait until data is completely shifted in
+    //while self.SR and (1 shl 1) = 0 do
+    //  ;
+
+    // TXE Wait until data is completely shifted in
+    //while self.SR and (1 shl 7) <> 0 do
+    //  ;
+
+  setNSSPinHigh(SoftNSSPin);
+
+  // Disable SPI, this also sets NSS Pin High in Hardware Mode
+  self.CR1 := self.CR1 and (not (1 shl 6));
+end;
+
+
+function TSPIRegistersHelper.WriteWord(const aWriteBuffer: array of word; aWriteCount : integer=-1; const Timeout : integer=-1; const SoftNSSPin : TPinIdentifier = TNativePin.None) : boolean;
+var
+  tmpPin, _NSSPin : TPinIdentifier;
+  dummy : word;
+  i : longWord;
+begin
+  if aWriteCount = -1 then
+    aWriteCount := High(aWriteBuffer) - Low(aWriteBuffer);
+
+  SetNSSPinLow(SoftNSSPin);
+  //transfer in 16 bits
+  setBitsPerWord(TSPIBitsPerWord.Sixteen);
+  // Enable SPI, this also sets NSS Pin Low in Hardware Mode
+  self.CR1 := self.CR1 or (1 shl 6);
+
+  //wait for TXE to go high (no more data to shift out)
+  while self.SR and (1 shl 1) = 0 do
+    ;
+
+  //read data from rx buffer if available and discard it
+  if self.SR and (1 shl 0) = 1 then
+    Dummy := self.DR;
+
+  for i := Low(aWritebuffer) to Low(aWritebuffer)+aWriteCount do
+  begin
+    dummy := aWriteBuffer[i];
+    self.DR := aWriteBuffer[i];
+
+    // RXNE Wait until data is completely shifted in
+    //while self.SR and (1 shl 0) = 0 do
+    //  ;
+
+    // TXE Wait until data is completely shifted in
+    while self.SR and (1 shl 1) = 0 do
+      ;
+
+    // TXE Wait until data is completely shifted in
+    //while self.SR and (1 shl 7) <> 0 do
+    //  ;
+
+    Dummy := self.DR;
+  end;
+  SetNSSPinHigh(SoftNSSPin);
+
+  // Disable SPI, this also sets NSS Pin High in Hardware Mode
+  self.CR1 := self.CR1 and (not (1 shl 6));
+end;
+
+function TSPIRegistersHelper.TransferByte(const aWriteByte : Byte; var aReadByte : Byte; const Timeout : integer = -1;
+                  const SoftNSSPin : TPinIdentifier = TNativePin.None): boolean;
+begin
+  //TODO Handle Timeout
+  // This is a hack that is only necessary because on Nucleo boards the Pin D10 is not mapped to Hardware-NSS Pin
+  SetNSSPinLow(SoftNSSPin);
+    //transfer in 8 bits
+  setBitsPerWord(TSPIBitsPerWord.Eight);
+
+
+  // Enable SPI, this also sets NSS Pin Low in Hardware Mode
+  self.CR1 := self.CR1 or (1 shl 6);
+
+  //wait for TXE to go high (no more data to shift out)
+  while self.SR and (1 shl 1) = 0 do
+    ;
+
+  //read data from rx buffer if available and discard it
+  if self.SR and (1 shl 0) = 1 then
+    aReadByte := self.DR;
+
+  //Put Data into Send Register
+  self.DR := aWriteByte;
+
+  // RXNE Wait until data is completely shifted in
+  while self.SR and (1 shl 0) = 0 do
+    ;
+
+  // TXE Wait until data is completely shifted in
+  while self.SR and (1 shl 1) = 0 do
+    ;
+
+  // TXE Wait until data is completely shifted in
+  while self.SR and (1 shl 7) <> 0 do
+    ;
+
+  // Now read the result back from Data Register
+  aReadByte := self.DR;
+
+  // Take NSS High again in Software Mode (end of Transfer)
+  SetNssPinHigh(SoftNSSPin);
+  // Disable SPI, this also sets NSS Pin High in Hardware Mode
+  self.CR1 := self.CR1 and (not (1 shl 6));
+end;
+
+function TSPIRegistersHelper.TransferByte(const aWriteBuffer: array of byte; var aReadBuffer : array of byte; aTransferCount : integer=-1; const Timeout : integer=-1; const SoftNSSPin : TPinIdentifier = TNativePin.None) : boolean;
+var
+  Dummy : byte;
+  i : integer;
+begin
+  if Low(aReadBuffer) <> Low(aWriteBuffer) then
+    Halt;
+  //TODO This does not compile?????!!!!!?????
+  //if length(aReadBuffer) < length(aWriteBuffer) then
+  //  setLength(aReadBuffer,length(aWriteBuffer));
+  if aTransferCount = -1 then
+    aTransferCount := High(aWriteBuffer) - Low(aWriteBuffer);
+  SetNSSPinLow(SoftNSSPin);
+
+  //transfer in 8 bits
+  setBitsPerWord(TSPIBitsPerWord.Eight);
+
+  // Enable SPI, this also sets NSS Pin Low in Hardware Mode
+  self.CR1 := self.CR1 or (1 shl 6);
+
+  //wait for TXE to go high (no more data to shift out)
+  while self.SR and (1 shl 1) = 0 do
+    ;
+
+  //read data from rx buffer if available and discard it
+  if self.SR and (1 shl 0) = 1 then
+    Dummy := self.DR;
+
+  for i := Low(aWritebuffer) to Low(aWritebuffer)+aTransferCount do
   begin
     // TXE Wait until data is completely shifted in
     while self.SR and (1 shl 1) = 0 do
       ;
-    if WriteBuffer <> nil then
-    begin
-      if getBitsPerWord = TSPIBitsPerWord.Sixteen then
-      begin
-        self.DR := PWord(PByte(WriteBuffer) + WriteBytes)^;
-        Inc(WriteBytes);
-        Inc(WriteBytes);
-      end
-      else
-      begin
-        self.DR := PByte(PByte(WriteBuffer) + WriteBytes)^;
-        Inc(WriteBytes);
-      end;
-    end
-    else
-      self.DR := $ff; //We need to send dummy data to be able to receive
+    self.DR := aWriteBuffer[i];
 
     // RXNE Wait until data is completely shifted in
     while self.SR and (1 shl 0) = 0 do
@@ -611,38 +737,121 @@ begin
     //while self.SR and (1 shl 7) <> 0 do
     //  ;
 
-    Result := self.DR;
-
-    if ReadBuffer <> nil then
-    begin // Get data from Read FIFOs.
-      if (ReadBytes < BufferSize) and ((ReadBuffer <> WriteBuffer) or (ReadBytes < WriteBytes)) then
-      begin
-        if getBitsPerWord = TSPIBitsPerWord.Sixteen then
-        begin
-          PWord(PByte(ReadBuffer) + ReadBytes)^ := result;
-          Inc(WriteBytes);
-          Inc(WriteBytes);
-        end
-        else
-        begin
-          PByte(PByte(ReadBuffer) + ReadBytes)^ := result;
-          Inc(ReadBytes);
-        end;
-      end;
-    end;
+    aReadBuffer[i] := self.DR;
 
   end;
 
-  if (_NSSPin > TNativePin.None) and (_NSSPin < ALT0) then
-  GPIO.PinValue[_NSSPin] := 1;
+  setNSSPinHigh(SoftNSSPin);
 
   // Disable SPI, this also sets NSS Pin High in Hardware Mode
   self.CR1 := self.CR1 and (not (1 shl 6));
-  if WriteBytes > ReadBytes then
-    Result := WriteBytes
-  else
-    Result := ReadBytes;
 end;
+
+function TSPIRegistersHelper.TransferWord(const aWriteWord : Word; var aReadWord : Word; const Timeout : integer = -1;
+                  const SoftNSSPin : TPinIdentifier = TNativePin.None): boolean;
+var
+  tmpPin,_NSSPin : TPinIdentifier;
+  CR1 : longWord;
+begin
+  //TODO Handle Timeout
+  // This is a hack that is only necessary because on Nucleo boards the Pin D10 is not mapped to Hardware-NSS Pin
+  SetNSSPinLow(SoftNSSPin);
+
+  //transfer in 16 bits
+  setBitsPerWord(TSPIBitsPerWord.Sixteen);
+
+  // Enable SPI, this also sets NSS Pin Low in Hardware Mode
+  self.CR1 := self.CR1 or (1 shl 6);
+
+  //wait for TXE to go high (no more data to shift out)
+  while self.SR and (1 shl 1) = 0 do
+    ;
+
+  //read data from rx buffer if available and discard it
+  if self.SR and (1 shl 0) = 1 then
+    aReadWord := self.DR;
+
+  //Put Data into Send Register
+  self.DR := aWriteWord;
+
+  // RXNE Wait until data is completely shifted in
+  while self.SR and (1 shl 0) = 0 do
+    ;
+
+  // TXE Wait until data is completely shifted in
+  while self.SR and (1 shl 1) = 0 do
+    ;
+
+  // TXE Wait until data is completely shifted in
+  while self.SR and (1 shl 7) <> 0 do
+    ;
+
+  // Now read the result back from Data Register
+  aReadWord := self.DR;
+
+  // Take NSS High again in Software Mode (end of Transfer)
+  SetNssPinHigh(SoftNSSPin);
+  // Disable SPI, this also sets NSS Pin High in Hardware Mode
+  self.CR1 := self.CR1 and (not (1 shl 6));
+end;
+
+function TSPIRegistersHelper.TransferWord(const aWriteBuffer: array of word; var aReadBuffer : array of word; aTransferCount : integer=-1; const Timeout : integer=-1; const SoftNSSPin : TPinIdentifier = TNativePin.None) : boolean;
+var
+  Dummy : byte;
+  i : integer;
+begin
+  if Low(aReadBuffer) <> Low(aWriteBuffer) then
+    Halt;
+  //TODO This does not compile?????!!!!!?????
+  //if length(aReadBuffer) < length(aWriteBuffer) then
+  //  setLength(aReadBuffer,length(aWriteBuffer));
+  if aTransferCount = -1 then
+    aTransferCount := High(aWriteBuffer) - Low(aWriteBuffer);
+  SetNSSPinLow(SoftNSSPin);
+
+  //transfer in 16 bits
+  setBitsPerWord(TSPIBitsPerWord.Sixteen);
+
+  // Enable SPI, this also sets NSS Pin Low in Hardware Mode
+  self.CR1 := self.CR1 or (1 shl 6);
+
+  //wait for TXE to go high (no more data to shift out)
+  while self.SR and (1 shl 1) = 0 do
+    ;
+
+  //read data from rx buffer if available and discard it
+  if self.SR and (1 shl 0) = 1 then
+    Dummy := self.DR;
+
+  for i := Low(aWritebuffer) to Low(aWritebuffer)+aTransferCount do
+  begin
+    // TXE Wait until data is completely shifted in
+    while self.SR and (1 shl 1) = 0 do
+      ;
+    self.DR := aWriteBuffer[i];
+
+    // RXNE Wait until data is completely shifted in
+    while self.SR and (1 shl 0) = 0 do
+      ;
+
+    // TXE Wait until data is completely shifted in
+    //while self.SR and (1 shl 1) = 0 do
+    //  ;
+
+    // TXE Wait until data is completely shifted in
+    //while self.SR and (1 shl 7) <> 0 do
+    //  ;
+
+    aReadBuffer[i] := self.DR;
+
+  end;
+
+  setNSSPinHigh(SoftNSSPin);
+
+  // Disable SPI, this also sets NSS Pin High in Hardware Mode
+  self.CR1 := self.CR1 and (not (1 shl 6));
+end;
+
 
 procedure TSPIRegistersHelper.SetMOSIPin(const value : TSPIMOSIPins);
 begin
@@ -678,24 +887,6 @@ begin
       {$ifdef has_spi5}SPI5_BASE : NSSPins[5] := longInt(value);{$endif}
       {$ifdef has_spi6}SPI6_BASE : NSSPins[6] := longInt(value);{$endif}
   end;
-end;
-
-function TSPIRegistersHelper.Read(const Buffer: Pointer; const BufferSize: Cardinal;
-                                  const SoftNSSPin : TPinIdentifier = TNativePin.None): Cardinal;
-begin
-  Result := Transfer(Buffer, nil, BufferSize, SoftNSSPin);
-end;
-
-function TSPIRegistersHelper.Write(const Buffer: Pointer; const BufferSize: Cardinal;
-                                  const SoftNSSPin : TPinIdentifier = TNativePin.None): Cardinal;
-begin
-  Result := Transfer(nil,Buffer, BufferSize, SoftNSSPin);
-end;
-
-function TSPIRegistersHelper.Transfer(const Buffer: Pointer; const BufferSize: Cardinal;
-                                      const SoftNSSPin : TPinIdentifier = TNativePin.None): Cardinal;
-begin
-  Result := Transfer(Buffer, Buffer, BufferSize, SoftNSSPin);
 end;
 
 end.

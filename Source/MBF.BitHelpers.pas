@@ -31,6 +31,14 @@ procedure ClearBit(var Value: byte; const Index: Byte);
 procedure SetBit(var Value: byte; const Index: Byte);
 function GetBit(const Value: byte; const Index: Byte): Boolean;
 
+function WaitBitSet(var Value : byte;const Index: Byte; const TimeOut : integer=-1):boolean;
+function WaitBitSet(var Value : word;const Index: Byte; const TimeOut : integer=-1):boolean;
+function WaitBitSet(var Value : longWord;const Index: Byte; const TimeOut : integer=-1):boolean;
+
+function WaitBitCleared(var Value : byte;    const Index: Byte; const TimeOut : integer=-1):boolean;
+function WaitBitCleared(var Value : word;    const Index: Byte; const TimeOut : integer=-1):boolean;
+function WaitBitCleared(var Value : longWord;const Index: Byte; const TimeOut : integer=-1):boolean;
+
 procedure PutValue(var Value: longword; const Mask:longword; const Data:longword; const Position: Byte);
 procedure PutValue(var Value: word; const Mask:word; const Data:word; const Position: Byte);
 procedure PutValue(var Value: byte; const Mask:byte; const Data:byte; const Position: Byte);
@@ -197,6 +205,48 @@ begin
   Result := (byte(Value shr Index) and byte(1)) = 1;
 end;
 {$endif}
+
+function WaitBitSet(var Value : byte;const Index: Byte; const TimeOut : integer=-1):boolean; inline;
+begin
+  while Value and (1 shl Index) = 0 do
+    ;
+  Result := true;
+end;
+
+function WaitBitSet(var Value : Word;const Index: Byte; const TimeOut : integer=-1):boolean; inline;
+begin
+  while Value and (1 shl Index) = 0 do
+    ;
+  Result := true;
+end;
+
+function WaitBitSet(var Value : longWord;const Index: Byte; const TimeOut : integer=-1):boolean; inline;
+begin
+  while Value and (1 shl Index) = 0 do
+    ;
+  Result := true;
+end;
+
+function WaitBitCleared(var Value : byte;const Index: Byte; const TimeOut : integer=-1):boolean; inline;
+begin
+  while Value and (1 shl Index) <> 0 do
+    ;
+  Result := true;
+end;
+
+function WaitBitCleared(var Value : word;const Index: Byte; const TimeOut : integer=-1):boolean; inline;
+begin
+  while Value and (1 shl Index) <> 0 do
+    ;
+  Result := true;
+end;
+
+function WaitBitCleared(var Value : longWord;const Index: Byte; const TimeOut : integer=-1):boolean; inline;
+begin
+  while Value and (1 shl Index) <> 0 do
+    ;
+  Result := true;
+end;
 
 procedure PutValue(var Value: longword; const Mask:longword; const Data:longword; const Position: Byte);
 {$ifdef useassembler}

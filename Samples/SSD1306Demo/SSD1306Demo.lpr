@@ -22,8 +22,8 @@ uses
   MBF.__CONTROLLERTYPE__.GPIO,
   MBF.__CONTROLLERTYPE__.SPI,
   MBF.Displays.SSD1306,
-  MBF.Displays.CustomDisplay,
-  MBF.Fonts.Hack12x16;
+  MBF.Displays.CustomDisplay;
+  //MBF.Fonts.Hack12x16;
 
 var
   Display: TSSD1306;
@@ -37,9 +37,17 @@ begin
 
   // Initialize the GPIO subsystem
   GPIO.Initialize;
-  SPI.Initialize(TSPIMOSIPins.D11_SPI,TSPIMISOPINS.D12_SPI,TSPISCLKPINS.D13_SPI,TSPINSSPins.D10_SPI);
-  SPI.Frequency:= 8000000;
 
+  //Connect the Display the following way:
+  // D8 -> RST
+  // D9 -> DC
+  // D10 -> CS
+  // D11 -> D1
+  // D13 -> D0
+
+  SPI.Initialize(TSPIMOSIPins.D11_SPI,TSPIMISOPINS.D12_SPI,TSPISCLKPINS.D13_SPI,TSPINSSPins.D10_SPI);
+
+  //Remeber to properly set the Screensize of your Display!
   Display.Initialize(SPI,TArduinopin.D9,TArduinopin.D8,ScreenSize128x64x1);
   Display.Reset;
   Display.InitSequence;

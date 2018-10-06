@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CONFIG>
+  <ProjectOptions>
+    <Version Value="11"/>
+    <General>
+      <Flags>
+        <LRSInOutputDirectory Value="False"/>
+      </Flags>
+      <MainUnit Value="0"/>
+      <UseAppBundle Value="False"/>
+    </General>
+    <BuildModes Count="1">
+      <Item1 Name="default" Default="True"/>
+    </BuildModes>
+    <PublishOptions>
+      <Version Value="2"/>
+    </PublishOptions>
+    <RunParams>
+      <FormatVersion Value="2"/>
+      <Modes Count="1">
+        <Mode0 Name="default"/>
+      </Modes>
+    </RunParams>
+    <Units Count="3">
+      <Unit0>
+        <Filename Value="I2CDemo.lpr"/>
+        <IsPartOfProject Value="True"/>
+        <CursorPos X="27" Y="21"/>
+        <UsageCount Value="20"/>
+        <Loaded Value="True"/>
+        <LoadedDesigner Value="True"/>
+      </Unit0>
+      <Unit1>
+        <Filename Value="../../Source/MBF.SAMCD.I2C.pas"/>
+        <EditorIndex Value="1"/>
+        <TopLine Value="348"/>
+        <CursorPos Y="365"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
+      </Unit1>
+      <Unit2>
+        <Filename Value="../../Source/MBF.SAMCD.I2C.inc"/>
+        <IsVisibleTab Value="True"/>
+        <EditorIndex Value="2"/>
+        <TopLine Value="38"/>
+        <CursorPos X="5" Y="73"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
+      </Unit2>
+    </Units>
+    <JumpHistory Count="15" HistoryIndex="14">
+      <Position1>
+        <Filename Value="../../Source/MBF.SAMCD.I2C.pas"/>
+        <Caret Line="37" Column="22" TopLine="22"/>
+      </Position1>
+      <Position2>
+        <Filename Value="../../Source/MBF.SAMCD.I2C.pas"/>
+        <Caret Line="140" Column="29" TopLine="101"/>
+      </Position2>
+      <Position3>
+        <Filename Value="../../Source/MBF.SAMCD.I2C.pas"/>
+        <Caret Line="196" Column="29" TopLine="156"/>
+      </Position3>
+      <Position4>
+        <Filename Value="../../Source/MBF.SAMCD.I2C.pas"/>
+        <Caret Line="224" Column="30" TopLine="179"/>
+      </Position4>
+      <Position5>
+        <Filename Value="../../Source/MBF.SAMCD.I2C.pas"/>
+        <Caret Line="237" Column="30" TopLine="209"/>
+      </Position5>
+      <Position6>
+        <Filename Value="../../Source/MBF.SAMCD.I2C.pas"/>
+        <Caret Line="285" Column="29" TopLine="243"/>
+      </Position6>
+      <Position7>
+        <Filename Value="../../Source/MBF.SAMCD.I2C.pas"/>
+        <Caret Line="343" Column="29" TopLine="310"/>
+      </Position7>
+      <Position8>
+        <Filename Value="../../Source/MBF.SAMCD.I2C.pas"/>
+        <Caret Line="390" Column="29" TopLine="358"/>
+      </Position8>
+      <Position9>
+        <Filename Value="../../Source/MBF.SAMCD.I2C.pas"/>
+        <Caret Line="427" Column="29" TopLine="399"/>
+      </Position9>
+      <Position10>
+        <Filename Value="../../Source/MBF.SAMCD.I2C.pas"/>
+        <Caret Line="459" Column="29" TopLine="420"/>
+      </Position10>
+      <Position11>
+        <Filename Value="../../Source/MBF.SAMCD.I2C.pas"/>
+        <Caret Line="215" TopLine="191"/>
+      </Position11>
+      <Position12>
+        <Filename Value="../../Source/MBF.SAMCD.I2C.pas"/>
+        <Caret Line="255" TopLine="210"/>
+      </Position12>
+      <Position13>
+        <Filename Value="../../Source/MBF.SAMCD.I2C.pas"/>
+        <Caret Line="318" Column="41" TopLine="316"/>
+      </Position13>
+      <Position14>
+        <Filename Value="../../Source/MBF.SAMCD.I2C.pas"/>
+        <Caret Line="365" TopLine="348"/>
+      </Position14>
+      <Position15>
+        <Filename Value="../../Source/MBF.SAMCD.I2C.inc"/>
+        <Caret Line="16" Column="5"/>
+      </Position15>
+    </JumpHistory>
+  </ProjectOptions>
+  <CompilerOptions>
+    <Version Value="11"/>
+    <Target>
+      <Filename Value="I2CDemo"/>
+    </Target>
+    <SearchPaths>
+      <IncludeFiles Value="../../Source;$(ProjOutDir)"/>
+      <OtherUnitFiles Value="../../Source"/>
+      <UnitOutputDirectory Value="lib/$(TargetCPU)-$(TargetOS)"/>
+    </SearchPaths>
+    <Parsing>
+      <SyntaxOptions>
+        <UseAnsiStrings Value="False"/>
+      </SyntaxOptions>
+    </Parsing>
+    <CodeGeneration>
+      <HeapSize Value="8192"/>
+      <StackSize Value="8192"/>
+      <TargetCPU Value="arm"/>
+      <TargetOS Value="embedded"/>
+    </CodeGeneration>
+    <Linking>
+      <Debugging>
+        <DebugInfoType Value="dsDwarf2"/>
+        <UseLineInfoUnit Value="False"/>
+      </Debugging>
+    </Linking>
+    <Other>
+      <CustomOptions Value="-Cparmv6m
+-XParm-none-eabi-
+-Wpsamd20xpro
+-dsamd20xpro"/>
+    </Other>
+  </CompilerOptions>
+</CONFIG>

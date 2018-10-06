@@ -2,6 +2,8 @@ unit MBF.SAMCD.GPIO;
 {
   This file is part of Pascal Microcontroller Board Framework (MBF)
   Copyright (c) 2015 -  Michael Ring
+  Copyright (c) 2018 -  Alfred Glänzer
+
   based on Pascal eXtended Library (PXL)
   Copyright (c) 2000 - 2015  Yuriy Kotsarenko
 
@@ -40,6 +42,7 @@ const
   Pad3=$130000;
 
 type
+  TPinLevel=(Low=0,High=1);
   TPinValue=0..1;
   TPinIdentifier=-1..160;
   TPinMode = (Off,Input,Output,Analog);
@@ -351,13 +354,17 @@ type
     procedure SetPinValue(const Pin: TPinIdentifier; const Value: TPinValue);
     procedure TogglePinValue(const Pin: TPinIdentifier);
 
+    function  GetPinLevel(const Pin: TPinIdentifier): TPinLevel;
+    procedure SetPinLevel(const Pin: TPinIdentifier; const Value: TPinLevel);
     procedure SetPinLevelHigh(const Pin: TPinIdentifier);
     procedure SetPinLevelLow(const Pin: TPinIdentifier);
+    procedure TogglePinLevel(const Pin: TPinIdentifier);
 
     property  PinMux[const Pin: TPinIdentifier]      : TPinMux   write SetPinMux;
     property  PinMode[const Pin : TPinIdentifier]    : TPinMode  read GetPinMode  write SetPinMode;
     property  PinDrive[const Pin : TPinIdentifier]   : TPinDrive read GetPinDrive write SetPinDrive;
     property  PinValue[const Pin : TPinIdentifier]   : TPinValue read GetPinValue write SetPinValue;
+    property  PinLevel[const Pin : TPinIdentifier]   : TPinLevel read GetPinLevel write SetPinLevel;
   end;
 
 var
@@ -489,6 +496,24 @@ begin
   PGPIOPort^.OUTTGL:=GPIOMask;
 end;
 
+function TGPIO_Registers.GetPinLevel(const Pin: TPinIdentifier): TPinLevel;
+begin
+  GetPinPortMask(Pin);
+  result:=TPinLevel.Low;
+  if GetBit(PGPIOPort^.&IN,GPIOPinNo) then result:=TPinLevel.High;
+end;
+
+procedure TGPIO_Registers.SetPinLevel(const Pin: TPinIdentifier; const Value: TPinLevel);
+begin
+  GetPinPortMask(Pin);
+  case (Value) of
+    TPinLevel.Low:
+      PGPIOPort^.OUTCLR:=GPIOMask;
+    else
+      PGPIOPort^.OUTSET:=GPIOMask;
+  end;
+end;
+
 procedure TGPIO_Registers.SetPinLevelHigh(const Pin: TPinIdentifier);
 begin
   SetPinValue(Pin,1);
@@ -497,6 +522,13 @@ procedure TGPIO_Registers.SetPinLevelLow(const Pin: TPinIdentifier);
 begin
   SetPinValue(Pin,0);
 end;
+
+procedure TGPIO_Registers.TogglePinLevel(const Pin: TPinIdentifier);
+begin
+  GetPinPortMask(Pin);
+  PGPIOPort^.OUTTGL:=GPIOMask;
+end;
+
 
 function TGPIO_Registers.GetPinDrive(const Pin: TPinIdentifier): TPinDrive;
 var
