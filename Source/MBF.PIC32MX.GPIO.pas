@@ -75,6 +75,7 @@ type
 {$endregion}
 
 type
+  TPinLevel=(Low=0,High=1);
   TPinValue=0..1;
   TPinIdentifier=-1..167;
   TPinMode = (Input=%00, Output=%01, Analog=%11, AF0=$10, AF1=$11);
@@ -109,14 +110,18 @@ type
     procedure Initialize;
     function  GetPinValue(const Pin: TPinIdentifier): TPinValue;
     procedure SetPinValue(const Pin: TPinIdentifier; const Value: TPinValue);
-    procedure SetPinValueHigh(const Pin: TPinIdentifier);
-    procedure SetPinValueLow(const Pin: TPinIdentifier);
+    function  GetPinLevel(const Pin: TPinIdentifier): TPinLevel;
+    procedure SetPinLevel(const Pin: TPinIdentifier; const Value: TPinLevel);
+    procedure SetPinLevelHigh(const Pin: TPinIdentifier);
+    procedure SetPinLevelLow(const Pin: TPinIdentifier);
     procedure TogglePinValue(const Pin: TPinIdentifier);
+    procedure TogglePinLevel(const Pin: TPinIdentifier);
 
     property PinMode[const Pin : TPinIdentifier]: TPinMode read getPinMode write setPinMode;
     property PinDrive[const Pin : TPinIdentifier] : TPinDrive read getPinDrive write setPinDrive;
     property PinOutputMode[const Pin : TPinIdentifier] : TPinOutputMode read getPinOutputMode write setPinOutputMode;
     property PinValue[const Pin : TPinIdentifier] : TPinValue read getPinValue write setPinValue;
+    property PinLevel[const Pin : TPinIdentifier] : TPinLevel read getPinLevel write setPinLevel;
   end;
 
 var
@@ -269,17 +274,38 @@ begin
     GPIOMem[Pin shr 4]^.LATCLR := 1 shl (Pin and $0f)
 end;
 
-procedure TGPIO.SetPinValueHigh(const Pin: TPinIdentifier);
+function TGPIO.GetPinLevel(const Pin: TPinIdentifier): TPinLevel;
+begin
+  if GPIOMem[Pin shr 4]^.PORT and (1 shl (Pin and $0f)) <> 0 then
+    Result := TPinLevel.High
+  else
+    Result := TPinLevel.Low;
+end;
+
+procedure TGPIO.SetPinLevel(const Pin: TPinIdentifier; const Value: TPinLevel);
+begin
+  if Value = TPinLevel.High then
+    GPIOMem[Pin shr 4]^.LATSET := 1 shl (Pin and $0f)
+  else
+    GPIOMem[Pin shr 4]^.LATCLR := 1 shl (Pin and $0f)
+end;
+
+procedure TGPIO.SetPinLevelHigh(const Pin: TPinIdentifier);
 begin
   GPIOMem[Pin shr 4]^.LATSET := 1 shl (Pin and $0f)
 end;
 
-procedure TGPIO.SetPinValueLow(const Pin: TPinIdentifier);
+procedure TGPIO.SetPinLevelLow(const Pin: TPinIdentifier);
 begin
   GPIOMem[Pin shr 4]^.LATCLR := 1 shl (Pin and $0f)
 end;
 
 procedure TGPIO.TogglePinValue(const Pin: TPinIdentifier);
+begin
+  GPIOMem[Pin shr 4]^.LATINV := 1 shl (Pin and $0f)
+end;
+
+procedure TGPIO.TogglePinLevel(const Pin: TPinIdentifier);
 begin
   GPIOMem[Pin shr 4]^.LATINV := 1 shl (Pin and $0f)
 end;

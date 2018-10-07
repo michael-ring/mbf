@@ -489,7 +489,7 @@ type
   {$if defined(samc20) or defined(samc21) or defined(samd11d14am) or defined(samd20) or defined(samd21)}
     ,PA11_UART0_PAD3 = MuxC or Pad3 or TNativePin.PA11
   {$endif}
-  {$if defined(SAMD10XMINI) or defined(SAMD11XPRO)} or defined(ARDUINOZERO)
+  {$if defined(SAMD10XMINI) or defined(SAMD11XPRO) or defined(ARDUINOZERO)}
     ,D0_UART = MuxC or Pad3 or TNativePin.PA11
   {$endif}
   {$if defined(samc20) or defined(samc21) or defined(samd20) or defined(samd21)}

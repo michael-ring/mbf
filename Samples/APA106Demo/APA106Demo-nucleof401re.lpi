@@ -1,208 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CONFIG>
   <ProjectOptions>
-    <Version Value="11"/>
     <General>
-      <Flags>
-        <LRSInOutputDirectory Value="False"/>
-      </Flags>
-      <MainUnit Value="0"/>
       <UseAppBundle Value="False"/>
     </General>
     <BuildModes Count="1">
       <Item1 Name="default" Default="True"/>
     </BuildModes>
-    <PublishOptions>
-      <Version Value="2"/>
-    </PublishOptions>
-    <RunParams>
-      <FormatVersion Value="2"/>
-      <Modes Count="1">
-        <Mode0 Name="default"/>
-      </Modes>
-    </RunParams>
-    <Units Count="7">
+    <Units Count="1">
       <Unit0>
         <Filename Value="APA106Demo.lpr"/>
         <IsPartOfProject Value="True"/>
-        <TopLine Value="7"/>
-        <CursorPos X="39" Y="40"/>
-        <UsageCount Value="125"/>
-        <Loaded Value="True"/>
-        <LoadedDesigner Value="True"/>
-      </Unit0>
-      <Unit1>
-        <Filename Value="../../Source/MBF.Devices.APA106.pas"/>
-        <EditorIndex Value="1"/>
-        <CursorPos X="29" Y="102"/>
-        <UsageCount Value="63"/>
-        <Loaded Value="True"/>
-      </Unit1>
-      <Unit2>
-        <Filename Value="../../Source/MBF.Types.pas"/>
-        <EditorIndex Value="6"/>
-        <UsageCount Value="63"/>
-        <Loaded Value="True"/>
-      </Unit2>
-      <Unit3>
-        <Filename Value="../../Source/MBF.STM32F4.GPIO.pas"/>
-        <UnitName Value="mbf.stm32f4.gpio"/>
-        <EditorIndex Value="5"/>
-        <TopLine Value="287"/>
-        <CursorPos X="23" Y="127"/>
-        <UsageCount Value="60"/>
-        <Loaded Value="True"/>
-      </Unit3>
-      <Unit4>
-        <Filename Value="../../Source/MBF.STM32F4.SPI.pas"/>
-        <UnitName Value="mbf.stm32f4.spi"/>
         <IsVisibleTab Value="True"/>
-        <EditorIndex Value="2"/>
-        <TopLine Value="112"/>
-        <CursorPos X="72" Y="126"/>
-        <UsageCount Value="58"/>
         <Loaded Value="True"/>
-      </Unit4>
-      <Unit5>
-        <Filename Value="../../Source/MBF.STM32F4.DMA.pas"/>
-        <UnitName Value="mbf.stm32f4.dma"/>
-        <EditorIndex Value="3"/>
-        <UsageCount Value="28"/>
-        <Loaded Value="True"/>
-      </Unit5>
-      <Unit6>
-        <Filename Value="../../../fpc-arm/rtl/embedded/arm/stm32f401xe.pp"/>
-        <EditorIndex Value="4"/>
-        <TopLine Value="595"/>
-        <CursorPos X="66" Y="604"/>
-        <UsageCount Value="28"/>
-        <Loaded Value="True"/>
-      </Unit6>
+      </Unit0>
     </Units>
-    <JumpHistory Count="30" HistoryIndex="29">
-      <Position1>
-        <Filename Value="APA106Demo.lpr"/>
-        <Caret Line="36" Column="108" TopLine="8"/>
-      </Position1>
-      <Position2>
-        <Filename Value="../../Source/MBF.STM32F4.SPI.pas"/>
-        <Caret Line="433" Column="151" TopLine="420"/>
-      </Position2>
-      <Position3>
-        <Filename Value="../../Source/MBF.STM32F4.SPI.pas"/>
-        <Caret Line="169" Column="54" TopLine="149"/>
-      </Position3>
-      <Position4>
-        <Filename Value="../../Source/MBF.STM32F4.SPI.pas"/>
-        <Caret Line="168" Column="15" TopLine="148"/>
-      </Position4>
-      <Position5>
-        <Filename Value="../../Source/MBF.STM32F4.SPI.pas"/>
-        <Caret Line="504" TopLine="480"/>
-      </Position5>
-      <Position6>
-        <Filename Value="../../Source/MBF.STM32F4.SPI.pas"/>
-        <Caret Line="476" Column="10" TopLine="457"/>
-      </Position6>
-      <Position7>
-        <Filename Value="../../Source/MBF.STM32F4.SPI.pas"/>
-        <Caret Line="436" Column="16" TopLine="415"/>
-      </Position7>
-      <Position8>
-        <Filename Value="../../Source/MBF.STM32F4.SPI.pas"/>
-        <Caret Line="483" Column="30" TopLine="463"/>
-      </Position8>
-      <Position9>
-        <Filename Value="../../Source/MBF.STM32F4.SPI.pas"/>
-        <Caret Line="653" TopLine="621"/>
-      </Position9>
-      <Position10>
-        <Filename Value="../../Source/MBF.STM32F4.SPI.pas"/>
-        <Caret Line="20" Column="18"/>
-      </Position10>
-      <Position11>
-        <Filename Value="../../../fpc-arm/rtl/embedded/arm/stm32f401xe.pp"/>
-      </Position11>
-      <Position12>
-        <Filename Value="../../../fpc-arm/rtl/embedded/arm/stm32f401xe.pp"/>
-        <Caret Line="69" Column="45" TopLine="36"/>
-      </Position12>
-      <Position13>
-        <Filename Value="../../../fpc-arm/rtl/embedded/arm/stm32f401xe.pp"/>
-        <Caret Line="70" Column="45" TopLine="37"/>
-      </Position13>
-      <Position14>
-        <Filename Value="../../../fpc-arm/rtl/embedded/arm/stm32f401xe.pp"/>
-        <Caret Line="71" Column="45" TopLine="38"/>
-      </Position14>
-      <Position15>
-        <Filename Value="../../../fpc-arm/rtl/embedded/arm/stm32f401xe.pp"/>
-        <Caret Line="72" Column="45" TopLine="39"/>
-      </Position15>
-      <Position16>
-        <Filename Value="../../../fpc-arm/rtl/embedded/arm/stm32f401xe.pp"/>
-        <Caret Line="73" Column="45" TopLine="40"/>
-      </Position16>
-      <Position17>
-        <Filename Value="../../../fpc-arm/rtl/embedded/arm/stm32f401xe.pp"/>
-        <Caret Line="74" Column="45" TopLine="41"/>
-      </Position17>
-      <Position18>
-        <Filename Value="../../../fpc-arm/rtl/embedded/arm/stm32f401xe.pp"/>
-        <Caret Line="75" Column="45" TopLine="42"/>
-      </Position18>
-      <Position19>
-        <Filename Value="../../../fpc-arm/rtl/embedded/arm/stm32f401xe.pp"/>
-        <Caret Line="96" Column="45" TopLine="63"/>
-      </Position19>
-      <Position20>
-        <Filename Value="../../../fpc-arm/rtl/embedded/arm/stm32f401xe.pp"/>
-        <Caret Line="100" Column="45" TopLine="67"/>
-      </Position20>
-      <Position21>
-        <Filename Value="../../../fpc-arm/rtl/embedded/arm/stm32f401xe.pp"/>
-        <Caret Line="101" Column="45" TopLine="68"/>
-      </Position21>
-      <Position22>
-        <Filename Value="../../../fpc-arm/rtl/embedded/arm/stm32f401xe.pp"/>
-        <Caret Line="102" Column="45" TopLine="69"/>
-      </Position22>
-      <Position23>
-        <Filename Value="../../../fpc-arm/rtl/embedded/arm/stm32f401xe.pp"/>
-        <Caret Line="103" Column="45" TopLine="70"/>
-      </Position23>
-      <Position24>
-        <Filename Value="../../../fpc-arm/rtl/embedded/arm/stm32f401xe.pp"/>
-        <Caret Line="104" Column="45" TopLine="71"/>
-      </Position24>
-      <Position25>
-        <Filename Value="../../../fpc-arm/rtl/embedded/arm/stm32f401xe.pp"/>
-        <Caret Line="106" Column="45" TopLine="73"/>
-      </Position25>
-      <Position26>
-        <Filename Value="../../../fpc-arm/rtl/embedded/arm/stm32f401xe.pp"/>
-        <Caret Line="107" Column="45" TopLine="74"/>
-      </Position26>
-      <Position27>
-        <Filename Value="../../../fpc-arm/rtl/embedded/arm/stm32f401xe.pp"/>
-        <Caret Line="108" Column="45" TopLine="75"/>
-      </Position27>
-      <Position28>
-        <Filename Value="../../../fpc-arm/rtl/embedded/arm/stm32f401xe.pp"/>
-        <Caret Line="160" Column="7" TopLine="127"/>
-      </Position28>
-      <Position29>
-        <Filename Value="../../../fpc-arm/rtl/embedded/arm/stm32f401xe.pp"/>
-        <Caret Line="602" Column="35" TopLine="584"/>
-      </Position29>
-      <Position30>
-        <Filename Value="../../Source/MBF.STM32F4.SPI.pas"/>
-        <Caret Line="128" Column="79" TopLine="103"/>
-      </Position30>
-    </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>
-    <Version Value="11"/>
     <Target>
       <Filename Value="APA106Demo"/>
     </Target>
@@ -211,11 +25,6 @@
       <OtherUnitFiles Value="../../Source"/>
       <UnitOutputDirectory Value="lib/$(TargetCPU)-$(TargetOS)"/>
     </SearchPaths>
-    <Parsing>
-      <SyntaxOptions>
-        <UseAnsiStrings Value="False"/>
-      </SyntaxOptions>
-    </Parsing>
     <CodeGeneration>
       <HeapSize Value="8192"/>
       <StackSize Value="8192"/>
@@ -224,6 +33,7 @@
     </CodeGeneration>
     <Linking>
       <Debugging>
+        <GenerateDebugInfo Value="True"/>
         <DebugInfoType Value="dsDwarf2"/>
         <UseLineInfoUnit Value="False"/>
       </Debugging>
@@ -232,7 +42,8 @@
       <CustomOptions Value="-Cparmv7em
 -XParm-none-eabi-
 -Wpnucleof401re
--dnucleof401re"/>
+-dnucleof401re
+      "/>
     </Other>
   </CompilerOptions>
 </CONFIG>

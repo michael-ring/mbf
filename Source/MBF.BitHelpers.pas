@@ -1,4 +1,19 @@
 unit MBF.BitHelpers;
+{
+  This file is part of Pascal Microcontroller Board Framework (MBF)
+  Copyright (c) 2015 -  Michael Ring
+  Copyright (c) 2018 -  Alfred Glänzer
+
+  based on Pascal eXtended Library (PXL)
+  Copyright (c) 2000 - 2015  Yuriy Kotsarenko
+
+  This program is free software: you can redistribute it and/or modify it under the terms of the FPC modified GNU
+  Library General Public License for more
+
+  This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied
+  warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the FPC modified GNU Library General Public
+  License for more details.
+}  
 
 interface
 
@@ -15,6 +30,14 @@ function GetBit(const Value: word; const Index: Byte): Boolean;
 procedure ClearBit(var Value: byte; const Index: Byte);
 procedure SetBit(var Value: byte; const Index: Byte);
 function GetBit(const Value: byte; const Index: Byte): Boolean;
+
+function WaitBitSet(var Value : byte;const Index: Byte; const TimeOut : integer=-1):boolean;
+function WaitBitSet(var Value : word;const Index: Byte; const TimeOut : integer=-1):boolean;
+function WaitBitSet(var Value : longWord;const Index: Byte; const TimeOut : integer=-1):boolean;
+
+function WaitBitCleared(var Value : byte;    const Index: Byte; const TimeOut : integer=-1):boolean;
+function WaitBitCleared(var Value : word;    const Index: Byte; const TimeOut : integer=-1):boolean;
+function WaitBitCleared(var Value : longWord;const Index: Byte; const TimeOut : integer=-1):boolean;
 
 procedure PutValue(var Value: longword; const Mask:longword; const Data:longword; const Position: Byte);
 procedure PutValue(var Value: word; const Mask:word; const Data:word; const Position: Byte);
@@ -182,6 +205,48 @@ begin
   Result := (byte(Value shr Index) and byte(1)) = 1;
 end;
 {$endif}
+
+function WaitBitSet(var Value : byte;const Index: Byte; const TimeOut : integer=-1):boolean; inline;
+begin
+  while Value and (1 shl Index) = 0 do
+    ;
+  Result := true;
+end;
+
+function WaitBitSet(var Value : Word;const Index: Byte; const TimeOut : integer=-1):boolean; inline;
+begin
+  while Value and (1 shl Index) = 0 do
+    ;
+  Result := true;
+end;
+
+function WaitBitSet(var Value : longWord;const Index: Byte; const TimeOut : integer=-1):boolean; inline;
+begin
+  while Value and (1 shl Index) = 0 do
+    ;
+  Result := true;
+end;
+
+function WaitBitCleared(var Value : byte;const Index: Byte; const TimeOut : integer=-1):boolean; inline;
+begin
+  while Value and (1 shl Index) <> 0 do
+    ;
+  Result := true;
+end;
+
+function WaitBitCleared(var Value : word;const Index: Byte; const TimeOut : integer=-1):boolean; inline;
+begin
+  while Value and (1 shl Index) <> 0 do
+    ;
+  Result := true;
+end;
+
+function WaitBitCleared(var Value : longWord;const Index: Byte; const TimeOut : integer=-1):boolean; inline;
+begin
+  while Value and (1 shl Index) <> 0 do
+    ;
+  Result := true;
+end;
 
 procedure PutValue(var Value: longword; const Mask:longword; const Data:longword; const Position: Byte);
 {$ifdef useassembler}

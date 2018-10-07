@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CONFIG>
+  <ProjectOptions>
+    <Version Value="11"/>
+    <General>
+      <Flags>
+        <LRSInOutputDirectory Value="False"/>
+      </Flags>
+      <MainUnit Value="0"/>
+      <UseAppBundle Value="False"/>
+    </General>
+    <BuildModes Count="1">
+      <Item1 Name="default" Default="True"/>
+    </BuildModes>
+    <PublishOptions>
+      <Version Value="2"/>
+    </PublishOptions>
+    <RunParams>
+      <FormatVersion Value="2"/>
+      <Modes Count="1">
+        <Mode0 Name="default"/>
+      </Modes>
+    </RunParams>
+    <Units Count="3">
+      <Unit0>
+        <Filename Value="SPIDemo.lpr"/>
+        <IsPartOfProject Value="True"/>
+        <CursorPos X="27" Y="21"/>
+        <UsageCount Value="21"/>
+        <Loaded Value="True"/>
+        <LoadedDesigner Value="True"/>
+      </Unit0>
+      <Unit1>
+        <Filename Value="../../Source/MBF.SAMCD.SPI.inc"/>
+        <IsVisibleTab Value="True"/>
+        <EditorIndex Value="2"/>
+        <TopLine Value="1028"/>
+        <CursorPos X="5" Y="1051"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
+      </Unit1>
+      <Unit2>
+        <Filename Value="../../Source/MBF.SAMCD.SPI.pas"/>
+        <EditorIndex Value="1"/>
+        <TopLine Value="92"/>
+        <CursorPos X="73" Y="122"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
+      </Unit2>
+    </Units>
+    <JumpHistory Count="16" HistoryIndex="15">
+      <Position1>
+        <Filename Value="SPIDemo.lpr"/>
+      </Position1>
+      <Position2>
+        <Filename Value="../../Source/MBF.SAMCD.SPI.inc"/>
+        <Caret Line="7" Column="5"/>
+      </Position2>
+      <Position3>
+        <Filename Value="../../Source/MBF.SAMCD.SPI.inc"/>
+        <Caret Line="292" Column="5" TopLine="269"/>
+      </Position3>
+      <Position4>
+        <Filename Value="../../Source/MBF.SAMCD.SPI.inc"/>
+        <Caret Line="670" Column="5" TopLine="647"/>
+      </Position4>
+      <Position5>
+        <Filename Value="../../Source/MBF.SAMCD.SPI.inc"/>
+        <Caret Line="1042" Column="28" TopLine="1025"/>
+      </Position5>
+      <Position6>
+        <Filename Value="../../Source/MBF.SAMCD.SPI.inc"/>
+        <Caret Line="1206" Column="27" TopLine="1168"/>
+      </Position6>
+      <Position7>
+        <Filename Value="../../Source/MBF.SAMCD.SPI.inc"/>
+        <Caret Line="543" Column="27" TopLine="520"/>
+      </Position7>
+      <Position8>
+        <Filename Value="../../Source/MBF.SAMCD.SPI.inc"/>
+        <Caret Line="813" Column="27" TopLine="775"/>
+      </Position8>
+      <Position9>
+        <Filename Value="../../Source/MBF.SAMCD.SPI.inc"/>
+        <Caret Line="1210" Column="17" TopLine="1168"/>
+      </Position9>
+      <Position10>
+        <Filename Value="../../Source/MBF.SAMCD.SPI.inc"/>
+        <Caret Line="7" Column="5"/>
+      </Position10>
+      <Position11>
+        <Filename Value="../../Source/MBF.SAMCD.SPI.inc"/>
+        <Caret Line="292" Column="5" TopLine="269"/>
+      </Position11>
+      <Position12>
+        <Filename Value="../../Source/MBF.SAMCD.SPI.inc"/>
+        <Caret Line="670" Column="5" TopLine="647"/>
+      </Position12>
+      <Position13>
+        <Filename Value="../../Source/MBF.SAMCD.SPI.inc"/>
+        <Caret Line="1048" Column="5" TopLine="1025"/>
+      </Position13>
+      <Position14>
+        <Filename Value="../../Source/MBF.SAMCD.SPI.inc"/>
+        <Caret Line="7" Column="5"/>
+      </Position14>
+      <Position15>
+        <Filename Value="../../Source/MBF.SAMCD.SPI.inc"/>
+        <Caret Line="292" Column="5" TopLine="272"/>
+      </Position15>
+      <Position16>
+        <Filename Value="../../Source/MBF.SAMCD.SPI.inc"/>
+        <Caret Line="673" Column="5" TopLine="650"/>
+      </Position16>
+    </JumpHistory>
+  </ProjectOptions>
+  <CompilerOptions>
+    <Version Value="11"/>
+    <Target>
+      <Filename Value="SPIDemo"/>
+    </Target>
+    <SearchPaths>
+      <IncludeFiles Value="../../Source;$(ProjOutDir)"/>
+      <OtherUnitFiles Value="../../Source"/>
+      <UnitOutputDirectory Value="lib/$(TargetCPU)-$(TargetOS)"/>
+    </SearchPaths>
+    <Parsing>
+      <SyntaxOptions>
+        <UseAnsiStrings Value="False"/>
+      </SyntaxOptions>
+    </Parsing>
+    <CodeGeneration>
+      <HeapSize Value="8192"/>
+      <StackSize Value="8192"/>
+      <TargetCPU Value="arm"/>
+      <TargetOS Value="embedded"/>
+    </CodeGeneration>
+    <Linking>
+      <Debugging>
+        <DebugInfoType Value="dsDwarf2"/>
+        <UseLineInfoUnit Value="False"/>
+      </Debugging>
+    </Linking>
+    <Other>
+      <CustomOptions Value="-Cparmv6m
+-XParm-none-eabi-
+-Wpsamd20xpro
+-dsamd20xpro"/>
+    </Other>
+  </CompilerOptions>
+</CONFIG>

@@ -34,6 +34,7 @@
     <Linking>
       <Debugging>
         <GenerateDebugInfo Value="True"/>
+        <DebugInfoType Value="dsDwarf2"/>
         <UseLineInfoUnit Value="False"/>
       </Debugging>
     </Linking>

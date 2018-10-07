@@ -37,7 +37,7 @@ begin
   GPIO.PinValue[TArduinoPin.D9] := 1;
 
   SPI.Initialize(TSPIMOSIPins.D11_SPI,TSPIMISOPINS.D12_SPI,TSPISCLKPINS.D13_SPI,TSPINSSPins.D10_SPI);
-  SPI.Frequency:= 8000000;
+  SPI.Baudrate := 8000000;
 
   UC1610.Initialize(SPI,TArduinopin.D9,TArduinoPin.D8,TUC1610.LCD160x104);
   UC1610.InitSequence;

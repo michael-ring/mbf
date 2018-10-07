@@ -76,7 +76,7 @@ end;
     //procedure Initialize(var SPI : TSpi_Registers);
     procedure Initialize(var SPI : TSpi_Registers;const APinDC : TPinIdentifier;const APinRST : TPinIdentifier;AScreenInfo : TScreenInfo);
   end;
-
+  (*
   TCustomGPIODisplay = object(TCustomDisplay)
   var
     procedure Initialize(var GPIOPort : TGPIO_Registers;const APinDC,APinWR,APinRD,aPinCS,APinRST : TPinIdentifier;AScreenInfo : TScreenInfo);
@@ -87,7 +87,7 @@ end;
     procedure WriteData(const Values: array of Byte);
     procedure WriteDataWord(const Values : array of word);
   end;
-
+  *)
 implementation
 
 class operator TScreenInfo.= (a,b : TScreenInfo) : boolean;
@@ -121,7 +121,7 @@ begin
   GPIO.PinValue[APinDC] := 1;
   GPIO.PinValue[APinRST] := 1;
 end;
-
+(*
 procedure TCustomGPIODisplay.Initialize(var GPIOPort : TGPIO_Registers;const APinDC,APinWR,APinRD,aPinCS,APinRST : TPinIdentifier;AScreenInfo : TScreenInfo);
 begin
   FpGPIOPort := @GPIOPort;
@@ -147,7 +147,7 @@ begin
   GPIO.PinMode[FPinCS] := TPinMode.Output; //~CS
   GPIO.PinMode[FPinRST] := TPinMode.Output; //~Reset
 end;
-
+*)
 procedure TCustomDisplay.Reset;
 begin
   if FPinDC <> TNativePin.None then
@@ -175,29 +175,29 @@ end;
 procedure TCustomSPIDisplay.WriteCommand(const Value: Byte);
 begin
   GPIO.PinValue[FPinDC] := 0;
-  FpSPI^.Write(@Value, 1);
+  FpSPI^.WriteByte(Value, 1);
 end;
 
 procedure TCustomSPIDisplay.WriteCommand(const Values: array of Byte);
 begin
   GPIO.PinValue[FPinDC] := 0;
   if Length(Values) > 0 then
-    FpSPI^.Write(@Values[0], Length(Values));
+    FpSPI^.WriteByte(Values);
 end;
 
 procedure TCustomSPIDisplay.WriteData(const Value: Byte);
 begin
   GPIO.PinValue[FPinDC] := 1;
-  FpSPI^.Write(@Value, 1);
+  FpSPI^.WriteByte(Value);
 end;
 
 procedure TCustomSPIDisplay.WriteData(const Values: array of Byte);
 begin
   GPIO.PinValue[FPinDC] := 1;
   if Length(Values) > 0 then
-    FpSPI^.Write(@Values[0], Length(Values));
+    FpSPI^.WriteByte(Values);
 end;
-
+(*
 procedure TCustomGPIODisplay.WriteCommand(const Value: Byte);
 begin
   GPIO.SetPinLevelHigh(FPinRD);
@@ -295,7 +295,7 @@ begin
     GPIO.SetPinLevelHigh(FPinWR);
   end;
 end;
-
+*)
 procedure TCustomDisplay.setPinDC(const Value : TPinIdentifier);
 begin
   FPinDC := Value;

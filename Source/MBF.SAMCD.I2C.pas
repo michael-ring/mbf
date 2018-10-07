@@ -2,6 +2,8 @@ unit MBF.SAMCD.I2C;
 {
   This file is part of Pascal Microcontroller Board Framework (MBF)
   Copyright (c) 2015 -  Michael Ring
+  Copyright (c) 2018 -  Alfred Glänzer
+
   based on Pascal eXtended Library (PXL)
   Copyright (c) 2000 - 2015  Yuriy Kotsarenko
 
@@ -20,10 +22,19 @@ interface
 
 uses
   MBF.SAMCD.Helpers,
+  MBF.SAMCD.GPIO,
   MBF.SAMCD.SerCom;
 
+//I2C includes are complex and automagically created, so include them to keep Sourcecode clean
+{$include MBF.SAMCD.I2C.inc}
+
 type
-  TI2C_Registers = record
+  I2COperatingMode = (Slave=0, Master=1);
+  I2CAddressSize = (SevenBits=0, TenBits=1);
+
+type
+  TI2C_Registers = TSercomI2CM_Registers;
+  TI2CRegistersHelper = record helper for TI2C_Registers
   //PAD[0] Digital I/O SDA
   //PAD[1] Digital I/O SCL
   //PAD[2] Digital I/O SDA_OUT (4-wire)
@@ -49,18 +60,16 @@ type
     T_RISE=215; // In ns; depends on the board/pull-up-resistors
     SPEED100KHZ=100;
   strict private
-    FSerCom:TSerCom;
-    procedure SetPort(aPort:TPortIdentifier);
     function GetBaud(const Value: Cardinal):cardinal;
     function isMasterWIRE:boolean;
-    function isSlaveWIRE:boolean;
+    //TODO function isSlaveWIRE:boolean;
     function isBusIdleWIRE:boolean;
     function isBusOwnerWIRE:boolean;
-    function isDataReadyWIRE:boolean;
-    function isStopDetectedWIRE:boolean;
-    function isRestartDetectedWIRE:boolean;
-    function isAddressMatch:boolean;
-    function isMasterReadOperationWIRE:boolean;
+    //TODO function isDataReadyWIRE:boolean;
+    //TODO function isStopDetectedWIRE:boolean;
+    //TODO function isRestartDetectedWIRE:boolean;
+    //TODO function isAddressMatch:boolean;
+    //TODO function isMasterReadOperationWIRE:boolean;
     function isRXNackReceivedWIRE:boolean;
     function errorOnWIRE:boolean;
     function busErrorOnWIRE:boolean;
@@ -77,9 +86,11 @@ type
     function startTransmissionWIRE(const Address:byte;const aDirection:byte):boolean;
     function stopTransmissionWIRE:boolean;
     function sendDataMasterWIRE(data:byte):boolean;
-    function sendDataSlaveWIRE(data:byte):boolean;
+    //TODO function sendDataSlaveWIRE(data:byte):boolean;
   public
-    procedure initMasterWIRE(const aPort:TPortIdentifier;const Speed:cardinal=SPEED100KHZ);
+    //TODO procedure Initialize;
+    procedure Initialize(const ASDAPin : TI2CSDAPins;
+                         const ASCLPin  : TI2CSCLPins); overload;
     function Read(const Address:byte; const buffer: pointer; const length: byte; const stopBit: boolean):byte;
     function Write(const Address:byte; const buffer: pointer; const length: integer; const stopBit: boolean):boolean;
     function ReadByte(const Address:byte; out aByte:byte):boolean;
@@ -88,120 +99,157 @@ type
     function WriteLongWord(const Address:byte; const aLongWord:longword):boolean;
   end;
 
+ var
+  {$if defined(has_i2c0)}I2C0 : TSercomI2cm_Registers absolute SERCOM0_BASE;{$endif}
+  {$if defined(has_i2c1)}I2C1 : TSercomI2cm_Registers absolute SERCOM1_BASE;{$endif}
+  {$if defined(has_i2c2)}I2C2 : TSercomI2cm_Registers absolute SERCOM2_BASE;{$endif}
+  {$if defined(has_i2c3)}I2C3 : TSercomI2cm_Registers absolute SERCOM3_BASE;{$endif}
+  {$if defined(has_i2c4)}I2C4 : TSercomI2cm_Registers absolute SERCOM4_BASE;{$endif}
+  {$if defined(has_i2c5)}I2C5 : TSercomI2cm_Registers absolute SERCOM5_BASE;{$endif}
+  {$if defined(has_i2c6)}I2C6 : TSercomI2cm_Registers absolute SERCOM6_BASE;{$endif}
+
+  {$if defined(SAMC21XPRO)  }I2C : TSercomI2cm_Registers absolute SERCOM2_BASE;{$endif}
+  {$if defined(SAMD10XMINI) }I2C : TSercomI2cm_Registers absolute SERCOM0_BASE;{$endif}
+  {$if defined(SAMD11XPRO)  }I2C : TSercomI2cm_Registers absolute SERCOM_BASE;{$endif}
+  {$if defined(SAMD20XPRO)  }I2C : TSercomI2cm_Registers absolute SERCOM0_BASE;{$endif}
+  {$if defined(SAMD21XPRO)  }I2C : TSercomI2cm_Registers absolute SERCOM0_BASE;{$endif}
+  {$if defined(ARDUINOZERO) }I2C : TSercomI2cm_Registers absolute SERCOM3_BASE;{$endif}
+
 implementation
 
 uses
   MBF.BitHelpers,
   MBF.SAMCD.SystemCore;
 
-function TI2C_Registers.isMasterWIRE:boolean;
+function TI2CRegistersHelper.isMasterWIRE:boolean;
 begin
-  result:=((FSerCom.PSerComRegisters^.I2CM.CTRLA AND SERCOM_MODE_Msk)=SERCOM_MODE_I2C_MASTER);
+  result:=((CTRLA AND SERCOM_MODE_Msk)=SERCOM_MODE_I2C_MASTER);
 end;
 
-function TI2C_Registers.isSlaveWIRE:boolean;
+//TODO
+//function TI2C_Registers.isSlaveWIRE:boolean;
+//begin
+//  result:=((CTRLA AND SERCOM_MODE_Msk)=SERCOM_MODE_I2C_SLAVE);
+//end;
+
+function TI2CRegistersHelper.isBusIdleWIRE:boolean;
 begin
-  result:=((FSerCom.PSerComRegisters^.I2CM.CTRLA AND SERCOM_MODE_Msk)=SERCOM_MODE_I2C_SLAVE);
+  result:=((STATUS AND SERCOM_I2CM_STATUS_BUSSTATE_Msk)=(TSercomWireBusState.WIRE_IDLE_STATE shl SERCOM_I2CM_STATUS_BUSSTATE_Pos));
 end;
 
-function TI2C_Registers.isBusIdleWIRE:boolean;
+function TI2CRegistersHelper.isBusOwnerWIRE:boolean;
 begin
-  result:=((FSerCom.PSerComRegisters^.I2CM.STATUS AND SERCOM_I2CM_STATUS_BUSSTATE_Msk)=(TSercomWireBusState.WIRE_IDLE_STATE shl SERCOM_I2CM_STATUS_BUSSTATE_Pos));
+  result:=((STATUS AND SERCOM_I2CM_STATUS_BUSSTATE_Msk)=(TSercomWireBusState.WIRE_OWNER_STATE shl SERCOM_I2CM_STATUS_BUSSTATE_Pos));
 end;
 
-function TI2C_Registers.isBusOwnerWIRE:boolean;
+//TODO
+//function TI2C_Registers.isDataReadyWIRE:boolean;
+//begin
+//  result:=GetBit(FSerCom.PSerComRegisters^.I2CS.INTFLAG,SERCOM_I2CS_INTFLAG_DRDY_Pos);
+//  result:=GetBit(INTFLAG,SERCOM_I2CS_INTFLAG_DRDY_Pos);
+//end;
+
+//TODO
+//function TI2C_Registers.isStopDetectedWIRE:boolean;
+//begin
+//  result:=GetBit(FSerCom.PSerComRegisters^.I2CS.INTFLAG,SERCOM_I2CS_INTFLAG_PREC_Pos)
+//  result:=GetBit(INTFLAG,SERCOM_I2CS_INTFLAG_PREC_Pos);
+//end;
+
+//function TI2C_Registers.isRestartDetectedWIRE:boolean;
+//begin
+//  result:=GetBit(FSerCom.PSerComRegisters^.I2CS.STATUS,SERCOM_I2CS_STATUS_SR_Pos)
+//  result:=GetBit(STATUS,SERCOM_I2CS_STATUS_SR_Pos);
+//end;
+
+//TODO
+//function TI2C_Registers.isAddressMatch:boolean;
+//begin
+//  result:=GetBit(FSerCom.PSerComRegisters^.I2CS.INTFLAG,SERCOM_I2CS_INTFLAG_AMATCH_Pos);
+//  result:=GetBit(INTFLAG,SERCOM_I2CS_INTFLAG_AMATCH_Pos);
+//end;
+
+//TODO
+//function TI2C_Registers.isMasterReadOperationWIRE:boolean;
+//begin
+//  result:=GetBit(FSerCom.PSerComRegisters^.I2CS.STATUS,SERCOM_I2CS_STATUS_DIR_Pos);
+//  result:=GetBit(STATUS,SERCOM_I2CS_STATUS_DIR_Pos);
+//end;
+
+function TI2CRegistersHelper.isRXNackReceivedWIRE:boolean;
 begin
-  result:=((FSerCom.PSerComRegisters^.I2CM.STATUS AND SERCOM_I2CM_STATUS_BUSSTATE_Msk)=(TSercomWireBusState.WIRE_OWNER_STATE shl SERCOM_I2CM_STATUS_BUSSTATE_Pos));
+  result:=GetBit(STATUS,SERCOM_I2CM_STATUS_RXNACK_Pos);
 end;
 
-function TI2C_Registers.isDataReadyWIRE:boolean;
+function TI2CRegistersHelper.errorOnWIRE:boolean;
 begin
-  result:=GetBit(FSerCom.PSerComRegisters^.I2CS.INTFLAG,SERCOM_I2CS_INTFLAG_DRDY_Pos);
-end;
-
-function TI2C_Registers.isStopDetectedWIRE:boolean;
-begin
-  result:=GetBit(FSerCom.PSerComRegisters^.I2CS.INTFLAG,SERCOM_I2CS_INTFLAG_PREC_Pos);
-end;
-
-function TI2C_Registers.isRestartDetectedWIRE:boolean;
-begin
-  result:=GetBit(FSerCom.PSerComRegisters^.I2CS.STATUS,SERCOM_I2CS_STATUS_SR_Pos);
-end;
-
-function TI2C_Registers.isAddressMatch:boolean;
-begin
-  result:=GetBit(FSerCom.PSerComRegisters^.I2CS.INTFLAG,SERCOM_I2CS_INTFLAG_AMATCH_Pos);
-end;
-
-function TI2C_Registers.isMasterReadOperationWIRE:boolean;
-begin
-  result:=GetBit(FSerCom.PSerComRegisters^.I2CS.STATUS,SERCOM_I2CS_STATUS_DIR_Pos);
-end;
-
-function TI2C_Registers.isRXNackReceivedWIRE:boolean;
-begin
-  result:=GetBit(FSerCom.PSerComRegisters^.I2CM.STATUS,SERCOM_I2CM_STATUS_RXNACK_Pos);
-end;
-
-function TI2C_Registers.errorOnWIRE:boolean;
-begin
-  result:=GetBit(FSerCom.PSerComRegisters^.I2CM.INTFLAG,SERCOM_I2CM_INTFLAG_ERROR_Pos);
+  result:=GetBit(INTFLAG,SERCOM_I2CM_INTFLAG_ERROR_Pos);
   // clear the error flag
-  SetBit(FSerCom.PSerComRegisters^.I2CM.INTFLAG,SERCOM_I2CM_INTFLAG_ERROR_Pos);
+  SetBit(INTFLAG,SERCOM_I2CM_INTFLAG_ERROR_Pos);
 end;
 
-function TI2C_Registers.busErrorOnWIRE:boolean;
+function TI2CRegistersHelper.busErrorOnWIRE:boolean;
 begin
-  result:=GetBit(FSerCom.PSerComRegisters^.I2CM.STATUS,SERCOM_I2CM_STATUS_BUSERR_Pos);
+  result:=GetBit(STATUS,SERCOM_I2CM_STATUS_BUSERR_Pos);
 end;
 
-function TI2C_Registers.busClockHoldWIRE:boolean;
+function TI2CRegistersHelper.busClockHoldWIRE:boolean;
 begin
-  result:=GetBit(FSerCom.PSerComRegisters^.I2CM.STATUS,SERCOM_I2CM_STATUS_CLKHOLD_Pos);
+  result:=GetBit(STATUS,SERCOM_I2CM_STATUS_CLKHOLD_Pos);
 end;
 
 
-function TI2C_Registers.availableWIRE:boolean;
+function TI2CRegistersHelper.availableWIRE:boolean;
 begin
-  result:=GetBit(FSerCom.PSerComRegisters^.I2CM.INTFLAG,SERCOM_I2CM_INTFLAG_SB_Pos);
+  result:=GetBit(INTFLAG,SERCOM_I2CM_INTFLAG_SB_Pos);
 end;
 
-function TI2C_Registers.availableMasterWIRE:boolean;
+function TI2CRegistersHelper.availableMasterWIRE:boolean;
 begin
-  result:=GetBit(FSerCom.PSerComRegisters^.I2CM.INTFLAG,SERCOM_I2CM_INTFLAG_MB_Pos);
+  result:=GetBit(INTFLAG,SERCOM_I2CM_INTFLAG_MB_Pos);
 end;
 
-function TI2C_Registers.readDataWIRE:byte;
+function TI2CRegistersHelper.readDataWIRE:byte;
 begin
-  FSerCom.SyncWait;
-  result:=FSerCom.PSerComRegisters^.I2CM.DATA;
+  {$if defined(SAMD20))}
+  WaitBitCleared(STATUS,10);
+  {$else}
+  WaitBitCleared(SYNCBUSY,2);
+  {$endif}
+  result:=DATA;
   while (NOT availableWIRE) do begin end;
 end;
 
-procedure TI2C_Registers.resetWIRE;
+procedure TI2CRegistersHelper.resetWIRE;
 begin
-  FSerCom.Reset;
+  TSerCom_Registers(Self).Reset;
 end;
 
-procedure TI2C_Registers.enableWIRE;
+procedure TI2CRegistersHelper.enableWIRE;
 begin
-  FSerCom.Enable;
+  TSerCom_Registers(Self).Enable;
   // Go (by force) from unknow busstate to idle
-  PutValue(FSerCom.PSerComRegisters^.I2CM.STATUS,SERCOM_I2CM_STATUS_BUSSTATE_Msk,TSercomWireBusState.WIRE_IDLE_STATE,SERCOM_I2CM_STATUS_BUSSTATE_Pos);
-  FSerCom.SyncWait;
+  PutValue(STATUS,SERCOM_I2CM_STATUS_BUSSTATE_Msk,TSercomWireBusState.WIRE_IDLE_STATE,SERCOM_I2CM_STATUS_BUSSTATE_Pos);
+  {$if defined(SAMD20))}
+  WaitBitCleared(STATUS,10);
+  {$else}
+  WaitBitCleared(SYNCBUSY,2);
+  {$endif}
 end;
 
-procedure TI2C_Registers.disableWIRE;
+procedure TI2CRegistersHelper.disableWIRE;
 begin
-  FSerCom.Disable;
+  TSerCom_Registers(Self).Disable;
 end;
 
-procedure TI2C_Registers.initMasterWIRE(const aPort:TPortIdentifier; const Speed:cardinal=SPEED100KHZ);
+procedure TI2CRegistersHelper.Initialize(const ASDAPin : TI2CSDAPins;
+                     const ASCLPin  : TI2CSCLPins); overload;
 var
-  baud,baudlow:cardinal;
+  speed,baud,baudlow:cardinal;
 begin
-  SetPort(aPort);
+  Speed := SPEED100KHZ;
+  TSerCom_Registers(Self).Initialize;
+  TSerCom_Registers(Self).SetCoreClockSource(GCLK_CLKCTRL_GEN_GCLK0); // use gclk0 at 48MHz
 
   //Enable Smart Mode: (N)ACK is sent when DATA.DATA is read)
   //Do not use smart mode (yet)
@@ -211,42 +259,41 @@ begin
   baudlow:=GetBaud(Speed);
   baud:=(baudlow DIV 2);
   baudlow:=baudlow-baud;
-  FSerCom.PSerComRegisters^.I2CM.BAUD:=(baudlow shl 8) OR baud;
-  FSerCom.SyncWait;
+  BAUD:=(baudlow shl 8) OR baud;
 
-  FSerCom.PSerComRegisters^.I2CM.CTRLA:=
+  CTRLA:=
      SERCOM_MODE_I2C_MASTER OR
      //SERCOM_I2CM_CTRLA_SCLSM OR //SCL stretch only after ACK bit.
      ((SERCOM_I2CM_CTRLA_SDAHOLD_Msk AND ((3) shl SERCOM_I2CM_CTRLA_SDAHOLD_Pos)));
-  FSerCom.SyncWait;
 
   enableWIRE;
 end;
 
-procedure TI2C_Registers.prepareNackBitWIRE;
+procedure TI2CRegistersHelper.prepareNackBitWIRE;
 begin
-  SetBit(FSerCom.PSerComRegisters^.I2CM.CTRLB,SERCOM_I2CM_CTRLB_ACKACT_Pos);
-  FSerCom.SyncWait;
+  SetBit(CTRLB,SERCOM_I2CM_CTRLB_ACKACT_Pos);
 end;
 
-procedure TI2C_Registers.prepareAckBitWIRE;
+procedure TI2CRegistersHelper.prepareAckBitWIRE;
 begin
-  ClearBit(FSerCom.PSerComRegisters^.I2CM.CTRLB,SERCOM_I2CM_CTRLB_ACKACT_Pos);
-  FSerCom.SyncWait;
+  ClearBit(CTRLB,SERCOM_I2CM_CTRLB_ACKACT_Pos);
 end;
 
-procedure TI2C_Registers.prepareCommandBitsWire(aCommand:byte);
+procedure TI2CRegistersHelper.prepareCommandBitsWire(aCommand:byte);
 begin
-  PutValue(FSerCom.PSerComRegisters^.I2CM.CTRLB,SERCOM_I2CM_CTRLB_CMD_Msk,aCommand,SERCOM_I2CM_CTRLB_CMD_Pos);
-  FSerCom.SyncWait;
+  PutValue(CTRLB,SERCOM_I2CM_CTRLB_CMD_Msk,aCommand,SERCOM_I2CM_CTRLB_CMD_Pos);
 end;
 
 
-function TI2C_Registers.startTransmissionWIRE(const Address:byte;const aDirection:byte):boolean;
+function TI2CRegistersHelper.startTransmissionWIRE(const Address:byte;const aDirection:byte):boolean;
 begin
   result:=false;
 
-  FSerCom.SyncWait;
+  {$if defined(SAMD20))}
+  WaitBitCleared(STATUS,10);
+  {$else}
+  WaitBitCleared(SYNCBUSY,2);
+  {$endif}
 
   // clear the error flag
   errorOnWIRE;
@@ -257,8 +304,12 @@ begin
   prepareAckBitWIRE;
 
   // Send start and address and R/W bit
-  FSerCom.PSerComRegisters^.I2CM.ADDR:=((Address shl 1) OR aDirection);
-  FSerCom.SyncWait;
+  ADDR:=((Address shl 1) OR aDirection);
+  {$if defined(SAMD20))}
+  WaitBitCleared(STATUS,10);
+  {$else}
+  WaitBitCleared(SYNCBUSY,2);
+  {$endif}
 
   if aDirection=I2C_TRANSFER_READ then
   begin
@@ -290,7 +341,7 @@ begin
   result:=true;
 end;
 
-function TI2C_Registers.stopTransmissionWIRE:boolean;
+function TI2CRegistersHelper.stopTransmissionWIRE:boolean;
 begin
   result:=false;
   if (availableMasterWIRE OR availableWIRE) then
@@ -300,13 +351,17 @@ begin
   end;
 end;
 
-function TI2C_Registers.sendDataMasterWIRE(data:byte):boolean;
+function TI2CRegistersHelper.sendDataMasterWIRE(data:byte):boolean;
 begin
   result:=false;
 
   //Send data
-  FSerCom.PSerComRegisters^.I2CM.DATA := data;
-  FSerCom.SyncWait;
+  DATA := data;
+  {$if defined(SAMD20))}
+  WaitBitCleared(STATUS,10);
+  {$else}
+  WaitBitCleared(SYNCBUSY,2);
+  {$endif}
 
   //Wait transmission successful
   while (NOT availableMasterWIRE) do
@@ -322,29 +377,23 @@ begin
   result:=true;
 end;
 
+(*
 function TI2C_Registers.sendDataSlaveWIRE(data:byte):boolean;
 begin
   result:=false;
 
   //Send data
   FSerCom.PSerComRegisters^.I2CS.DATA := data;
-  FSerCom.SyncWait;
+  TSerCom_Registers(Self).SyncWait;
 
   //Problems on line? nack received?
   if ((isRXNackReceivedWIRE) OR (NOT isDataReadyWIRE)) then exit;
 
   result:=true;
 end;
+*)
 
-
-procedure TI2C_Registers.SetPort(aPort:TPortIdentifier);
-begin
-  FSerCom.Initialize(aPort);
-  FSerCom.SetCoreClockSource(GCLK_CLKCTRL_GEN_GCLK0); // use gclk0 at 48MHz
-end;
-
-
-function TI2C_Registers.GetBaud(const Value: Cardinal):cardinal;
+function TI2CRegistersHelper.GetBaud(const Value: Cardinal):cardinal;
 var
   tmp_baud, correction:longword;
 begin
@@ -353,7 +402,7 @@ begin
    result:= tmp_baud-correction;
 end;
 
-function TI2C_Registers.Read(const Address:byte; const buffer: pointer; const length: byte; const stopBit: boolean):byte;
+function TI2CRegistersHelper.Read(const Address:byte; const buffer: pointer; const length: byte; const stopBit: boolean):byte;
 var
   i:byte;
 begin
@@ -385,12 +434,12 @@ begin
   result:=i;
 end;
 
-function TI2C_Registers.ReadByte(const Address:byte; out aByte:byte):boolean;
+function TI2CRegistersHelper.ReadByte(const Address:byte; out aByte:byte):boolean;
 begin
   result:=(Read(Address, @aByte, 1, true)=1);
 end;
 
-function TI2C_Registers.Write(const Address:byte; const buffer: pointer; const length: integer; const stopBit: boolean):boolean;
+function TI2CRegistersHelper.Write(const Address:byte; const buffer: pointer; const length: integer; const stopBit: boolean):boolean;
 var
   i:longword;
 begin
@@ -412,17 +461,17 @@ begin
   end;
 end;
 
-function TI2C_Registers.WriteByte(const Address:byte; const aByte:byte):boolean;
+function TI2CRegistersHelper.WriteByte(const Address:byte; const aByte:byte):boolean;
 begin
   result:=Write(Address, @aByte, 1,true);
 end;
 
-function TI2C_Registers.WriteWord(const Address:byte; const aWord:word):boolean;
+function TI2CRegistersHelper.WriteWord(const Address:byte; const aWord:word):boolean;
 begin
   result:=Write(Address, @aWord, SizeOf(aWord),true);
 end;
 
-function TI2C_Registers.WriteLongWord(const Address:byte; const aLongWord:longword):boolean;
+function TI2CRegistersHelper.WriteLongWord(const Address:byte; const aLongWord:longword):boolean;
 begin
   result:=Write(Address, @aLongWord, SizeOf(aLongWord),true);
 end;

@@ -65,7 +65,6 @@ begin
   MaxPixelCount := PixelCount;
   pFSPI := @SPI;
   pFSPI^.Initialize(MOSIPin, MISOPin, CLKPin, NSSPin);
-  pFSPI^.BitsPerWord := TSPIBitsPerWord.Sixteen;
   ZeroPattern := %0111000000000000;
   OnePattern  := %0111111000000000;
   FUseSPI := true;
@@ -103,7 +102,7 @@ begin
         Mask := Mask shr 1;
       end;
     end;
-    pFSPI^.Write(WriteBuffer, length(WriteBuffer));
+    pFSPI^.WriteWord(WriteBuffer, length(WriteBuffer));
   end
   else
   begin

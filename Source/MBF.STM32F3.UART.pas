@@ -113,7 +113,7 @@ type
   public
     procedure initialize;
     procedure initialize(const ARxPin : TUARTRXPins;
-                       const ATxPin : TUARTTXPins);
+                       const ATxPin : TUARTTXPins; const aBaudRate : longWord = 115200);
     procedure TearDown;
     procedure Flush;
 
@@ -204,9 +204,10 @@ uses
   MBF.STM32F3.SystemCore;
 
 procedure TUARTRegistersHelper.initialize(const ARxPin : TUARTRXPins;
-                       const ATxPin : TUARTTXPins);
+                       const ATxPin : TUARTTXPins; ABaudRate : longWord = 115200);
 begin
   Initialize;
+  SetBaudRate(ABaudRate);
   setRxPin(ARxPin);
   setTxPin(ATxPin);
 end;
