@@ -25,6 +25,9 @@ uses
   MBF.SAMCD.GPIO,
   MBF.SAMCD.SerCom;
 
+//We do not implement 9 Bits support in this code
+{$undefine has_spi_implementation_9bits}
+
 //SPI includes are complex and automagically created, so include them to keep Sourcecode clean
 {$include MBF.SAMCD.SPI.inc}
 const
@@ -40,7 +43,9 @@ type
 
   TSPIBitsPerWord = (
     Eight=0,
+    {$if defined(has_spi_implementation_9bits) }
     Nine=1,
+    {$endif}
     Sixteen=2
   );
 
@@ -60,9 +65,13 @@ type
     procedure SetNSSPinLow(const SoftNSSPin : TPinIdentifier);
     procedure SetNSSPinHigh(const SoftNSSPin : TPinIdentifier);
     procedure WriteSingleByte(aData:byte);
+    {$if defined(has_spi_implementation_9bits) }
     procedure WriteSingleWord(aData:word);
+    {$endif}
     function ReadSingleByte:byte;
+    {$if defined(has_spi_implementation_9bits) }
     function ReadSingleWord:word;
+    {$endif}
     function GetBaudrate: Cardinal;
     procedure SetBaudrate(const aFrequency: Cardinal);
     function GetBitsPerWord: TSPIBitsPerWord;
@@ -91,7 +100,10 @@ type
     property Baudrate : Cardinal read getBaudrate write setBaudrate;
     property Mode : TSPIMode read getMode write setMode;
     property OperatingMode : TSPIOperatingMode read getOperatingMode write setOperatingMode;
-    //property BitsPerWord : TSPIBitsPerWord read getBitsPerWord write setBitsPerWord;
+
+    {$if defined(has_spi_implementation_9bits) }
+    property BitsPerWord : TSPIBitsPerWord read getBitsPerWord write setBitsPerWord;
+    {$endif}
 
     function ReadByte(var aReadByte: byte; const Timeout : Cardinal=0; const SoftNSSPin : TPinIdentifier = TNativePin.None):boolean;
     function ReadWord(var aReadWord: word; const Timeout : Cardinal=0; const SoftNSSPin : TPinIdentifier = TNativePin.None):boolean;
@@ -248,6 +260,8 @@ begin
 end;
 
 procedure TSPIRegistersHelper.setNSSPin(const ANSSPin : TSPINSSPins);
+var
+  Index : longWord;
 begin
   if longInt(ANSSPin) >=MuxA then
   begin
@@ -261,22 +275,15 @@ begin
   end
   else
   begin
+    //The Pin we want to use is GPIO anyway (like on SAMC21's Arduino Pin)
     if longInt(ANSSPin) >= 0 then
     begin
       GPIO.PinMode[longWord(ANSSPin)] := TPinMode.Output;
       GPIO.SetPinLevelHigh(longWord(ANSSPin));
     end;
   end;
-
-  case longWord(@Self) of
-    {$ifdef has_spi0}SERCOM0_BASE : NSSPins[0] := integer(ANSSPin);{$endif}
-    {$ifdef has_spi1}SERCOM1_BASE : NSSPins[1] := integer(ANSSPin);{$endif}
-    {$ifdef has_spi2}SERCOM2_BASE : NSSPins[2] := integer(ANSSPin);{$endif}
-    {$ifdef has_spi3}SERCOM3_BASE : NSSPins[3] := integer(ANSSPin);{$endif}
-    {$ifdef has_spi4}SERCOM4_BASE : NSSPins[4] := integer(ANSSPin);{$endif}
-    {$ifdef has_spi5}SERCOM5_BASE : NSSPins[5] := integer(ANSSPin);{$endif}
-    {$ifdef has_spi6}SERCOM6_BASE : NSSPins[6] := integer(ANSSPin);{$endif}
-  end;
+  //Save away the configuration of thos Sercom Instance
+  NSSPins[(longWord(@Self) - SERCOM0_BASE) shr 10] := integer(ANSSPin);
 end;
 
 
@@ -302,12 +309,15 @@ begin
   WaitBitSet(INTFLAG,SERCOM_SPI_INTFLAG_TXC_Pos);
 end;
 
+// This procedure should only get used for native 9-Bit mode which we do not support by default
+{$if defined(has_spi_implementation_9bits) }
 procedure TSPIRegistersHelper.WriteSingleWord(aData:word);
 begin
   WaitBitSet(INTFLAG,SERCOM_SPI_INTFLAG_DRE_Pos);
   DATA := aData;
   WaitBitSet(INTFLAG,SERCOM_SPI_INTFLAG_TXC_Pos);
 end;
+{$endif}
 
 function TSPIRegistersHelper.ReadSingleByte:byte;
 begin
@@ -315,74 +325,66 @@ begin
   result:=DATA;
 end;
 
+// This procedure should only get used for native 9-Bit mode which we do not support by default
+{$if defined(has_spi_implementation_9bits) }
 function TSPIRegistersHelper.ReadSingleWord:word;
 begin
   WaitBitSet(INTFLAG,SERCOM_SPI_INTFLAG_RXC_Pos);
   result:=DATA;
 end;
+{$endif}
 
 procedure TSPIRegistersHelper.SetNSSPinLow(const SoftNSSPin : TPinIdentifier);
 var
   _NSSPin : TPinIdentifier;
 begin
-  _NSSPin := SoftNSSPin;
-  if _NSSPin = TNativePin.None then
+  //SAMD20 does not support Hardware Slave Select in Master Mode, so we need to mask out the extra data in the PinIdentifier
+  //_NSSPin := NSSPins[(longWord(@Self) - SERCOM0_BASE) shr 10]{$if defined(SAMD20)} and $ff{$endif};
+  //For now I have not yet figured out Hardware Slave Select at all, so make everything Software Slave Select
+  _NSSPin := NSSPins[(longWord(@Self) - SERCOM0_BASE) shr 10] and $ff;
+
+  if (SoftNSSPin = TNativePin.None) and (_NSSPin >=MuxA)  then
   begin
-    case longWord(@Self) of
-      {$ifdef has_spi0}SERCOM0_BASE : _NSSPin := NSSPins[0];{$endif}
-      {$ifdef has_spi1}SERCOM1_BASE : _NSSPin := NSSPins[1];{$endif}
-      {$ifdef has_spi2}SERCOM2_BASE : _NSSPin := NSSPins[2];{$endif}
-      {$ifdef has_spi3}SERCOM3_BASE : _NSSPin := NSSPins[3];{$endif}
-      {$ifdef has_spi4}SERCOM4_BASE : _NSSPin := NSSPins[4];{$endif}
-      {$ifdef has_spi5}SERCOM5_BASE : _NSSPin := NSSPins[5];{$endif}
-      {$ifdef has_spi6}SERCOM6_BASE : _NSSPin := NSSPins[6];{$endif}
-    end;
+    {$if not defined(SAMD20)}
+    //Turn Hardware NSS on
+    CTRLB := CTRLB or (1 shl 13);
+    WaitBitCleared(SYNCBUSY,2);
+    {$ENDIF}
+    exit;
   end;
-
-  //{$if defined(SAMD20)}
-    //SAMD20 does not support Hardware NSS, change the pin to SoftNSS)
-     _NSSPin := _NSSPin and $ff;
-  //{$endif}
-
-  //For SoftSPI we need to maually handle the SS Pin
-  if _NSSPin < MuxA then
+  if SoftNSSPin = TNativePin.None then
     GPIO.SetPinLevelLow(_NSSPin)
   else
-    begin
-      {$if not defined(SAMD20)}
-      //Turn Hardware NSS on
-      CTRLB := CTRLB or 1 shl 13;
-      WaitBitCleared(SYNCBUSY,2);
-      {$ENDIF}
-    end;
+    GPIO.SetPinLevelLow(SoftNSSPin);
 end;
 
 procedure TSPIRegistersHelper.SetNSSPinHigh(const SoftNSSPin : TPinIdentifier);
 var
   _NSSPin : TPinIdentifier;
 begin
-  _NSSPin := SoftNSSPin;
-  if _NSSPin = TNativePin.None then
+  //We have Hardware flow control active, bail out as fast as we can
+  if (CTRLB shr 13) and %1 = %1 then
+    exit;
+
+  // We explicitly want Soft-Slave Select, handle it quickly
+  if SoftNSSPin > TNativePin.None then
   begin
-    case longWord(@Self) of
-      {$ifdef has_spi0}SERCOM0_BASE : _NSSPin := NSSPins[0];{$endif}
-      {$ifdef has_spi1}SERCOM1_BASE : _NSSPin := NSSPins[1];{$endif}
-      {$ifdef has_spi2}SERCOM2_BASE : _NSSPin := NSSPins[2];{$endif}
-      {$ifdef has_spi3}SERCOM3_BASE : _NSSPin := NSSPins[3];{$endif}
-      {$ifdef has_spi4}SERCOM4_BASE : _NSSPin := NSSPins[4];{$endif}
-      {$ifdef has_spi5}SERCOM5_BASE : _NSSPin := NSSPins[5];{$endif}
-      {$ifdef has_spi6}SERCOM6_BASE : _NSSPin := NSSPins[6];{$endif}
-    end;
+    GPIO.SetPinLevelHigh(_NSSPin);
+    exit;
   end;
 
+  _NSSPin := NSSPins[(longWord(@Self) - SERCOM0_BASE) shr 10];
+
+  //TODO Hardware NSS not figured out yet, use Software NSS all the time
   //{$if defined(SAMD20)}
     //SAMD20 does not support Hardware NSS, change the pin to SoftNSS)
      _NSSPin := _NSSPin and $ff;
   //{$endif}
 
   //For SoftSPI we need to maually handle the SS Pin
-  if _NSSPin < MuxA then
-    GPIO.SetPinLevelHigh(_NSSPin)
+  //if _NSSPin < MuxA then
+  //Nothing special to check as we only can come here via Software Slave-Select
+    GPIO.SetPinLevelHigh(_NSSPin);
 end;
 
 function TSPIRegistersHelper.WriteByte(const aWriteByte: byte; const Timeout : Cardinal=0; const SoftNSSPin : TPinIdentifier = TNativePin.None) : boolean;
