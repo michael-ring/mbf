@@ -42,6 +42,7 @@ type
     PLLODIV   : longWord;
   end;
 
+
   TPIC32MXSystemCore = record helper for TSystemCore
   private
     //procedure ConfigureSystem;

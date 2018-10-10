@@ -123,10 +123,10 @@ case $BOARD_OR_CPU in
                  ARCHSVD=Cortex-M0.svd
                  DEVICESVD=ATSAMD21J18A.svd
                  ;;
-  pic32mx150f128b) ARCH=mipsel
+  chipkitlenny)  ARCH=mipsel
                  BINUTILS_PATH=mips-sde-elf-
                  SUBARCH=mips32r2
-                 DEVICE=pic32mx150f128b
+                 DEVICE=pic32mx270f256d
                  ARCHSVD=
                  DEVICESVD=
                  ;;
