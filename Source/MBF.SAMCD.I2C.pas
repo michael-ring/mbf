@@ -31,6 +31,10 @@ uses
 type
   I2COperatingMode = (Slave=0, Master=1);
   I2CAddressSize = (SevenBits=0, TenBits=1);
+  I2CBaudRates = (Standard100k=100000,Full400k=400000,Fast1M=1000000,High3M2=3200000);
+
+const
+  I2CDefaultBaudrate=I2CBaudRates.Standard100k;
 
 type
   TI2C_Registers = TSercomI2CM_Registers;
