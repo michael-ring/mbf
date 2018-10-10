@@ -113,8 +113,8 @@ type
   public
     procedure initialize;
     procedure initialize(const ARxPin : TUARTRXPins;
-                       const ATxPin : TUARTTXPins; const aBaudRate : longWord = 115200);
-    procedure TearDown;
+                       const ATxPin : TUARTTXPins);
+    procedure Disable;
     procedure Flush;
 
     { Reads data buffer from UART (serial) port.
@@ -124,7 +124,6 @@ type
         set to zero, then the function will block indefinitely, attempting to read until the specified number of
         bytes have been read.)
       @returns(Number of bytes that were actually read.) }
-    function ReadBuffer(const Buffer: Pointer; const BufferSize,TimeOut: Cardinal): Cardinal;
 
     { Writes data buffer to UART (serial) port.
       @param(Buffer Pointer to data buffer where the data will be read from.)
@@ -133,25 +132,21 @@ type
         is set to zero, then the function will block indefinitely, attempting to write until the specified number of
         bytes have been written.)
       @returns(Number of bytes that were actually written.) }
-    function WriteBuffer(const Buffer: Pointer; const BufferSize,TimeOut: Cardinal): Cardinal;
 
     { Attempts to read a byte from UART (serial) port. @code(Timeout) defines maximum time (in milliseconds) to wait
       while attempting to do so; if this parameter is set to zero, then the function will block indefinitely until the
       byte has been read. @True is returned when the operation was successful and @False when the byte could not be
       read. }
-    function ReadByte(out Value: Byte; const Timeout: Cardinal = 0): Boolean; inline;
 
     { Attempts to write a byte to UART (serial) port. @code(Timeout) defines maximum time (in milliseconds) to wait
       while attempting to do so; if this parameter is set to zero, then the function will block indefinitely until the
       byte has been written. @True is returned when the operation was successful and @False when the byte could not be
       written. }
-    function WriteByte(const Value: Byte; const Timeout: Cardinal = 0): Boolean; inline;
 
     { Attempts to write multiple bytes to UART (serial) port. @code(Timeout) defines maximum time (in milliseconds) to
       wait while attempting to do so; if this parameter is set to zero, then the function will block indefinitely,
       attempting to write until the specified bytes have been written. @True is returned when the operation was
       successful and @False when not all bytes could be written. }
-    function WriteBytes(const Values: array of Byte; const Timeout: Cardinal = 0): Boolean;
 
     { Reads string from UART (serial) port.
       @param(Text String that will hold the incoming data.)
@@ -162,6 +157,13 @@ type
         is set to zero, then the function will read only as much data as fits in readable FIFO buffers (or fail when
         such buffers are not supported).)
       @returns(Number of bytes that were actually read.) }
+
+    function ReadByte(var aReadByte: byte; const Timeout : Cardinal=0):boolean;
+    function ReadByte(var aReadBuffer: array of byte; aReadCount : integer=-1; const Timeout : Cardinal=0):boolean;
+
+    function WriteByte(const aWriteByte: byte; const Timeout : Cardinal=0) : boolean;
+    function WriteByte(const aWriteBuffer: array of byte; aWriteCount : integer=-1; const Timeout : Cardinal=0) : boolean;
+
     function ReadString(out Text: String; const MaxCharacters: Cardinal = 0;
       const Timeout: Cardinal = 0): Boolean;
 
@@ -204,10 +206,10 @@ uses
   MBF.STM32F3.SystemCore;
 
 procedure TUARTRegistersHelper.initialize(const ARxPin : TUARTRXPins;
-                       const ATxPin : TUARTTXPins; ABaudRate : longWord = 115200);
+                       const ATxPin : TUARTTXPins);
 begin
   Initialize;
-  SetBaudRate(ABaudRate);
+  SetBaudRate(DefaultUARTBaudrate);
   setRxPin(ARxPin);
   setTxPin(ATxPin);
 end;
@@ -222,7 +224,7 @@ begin
   GPIO.PinMode[longWord(Value) and $ff] := TPinMode((longWord(Value) shr 8));
 end;
 
-procedure TUARTRegistersHelper.TearDown;
+procedure TUARTRegistersHelper.Disable;
 begin
   case longWord(@Self) of
     USART1_BASE : RCC.APB2ENR := RCC.APB2ENR and not (1 shl 14);
@@ -352,7 +354,7 @@ begin
   //LPC_UART.IIR_FCR := $07;
 end;
 
-function TUARTRegistersHelper.ReadBuffer(const Buffer: Pointer; const BufferSize,TimeOut: Cardinal): Cardinal;
+function TUARTRegistersHelper.ReadBuffer(const aReadBuffer: Pointer; const aReadCount:integer; TimeOut: Cardinal=0): Cardinal;
 var
   StartTime : longWord;
 begin
@@ -381,7 +383,7 @@ begin
   end;
 end;
 
-function TUARTRegistersHelper.WriteBuffer(const Buffer: Pointer; const BufferSize, TimeOut: Cardinal): Cardinal;
+function TUARTRegistersHelper.WriteBuffer(const aWriteBuffer: Pointer; const aWriteCount:integer; TimeOut: Cardinal=0): Cardinal;
 var
   StartTime : longWord;
 begin
