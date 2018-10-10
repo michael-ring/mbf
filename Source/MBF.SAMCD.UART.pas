@@ -27,35 +27,41 @@ uses
 
 const
   DefaultUARTBaudrate=115200;
+  DefaultUARTTimeout = 10000;
 
   //UART includes are complex and automagically created, so include them to keep Sourcecode clean
   {$include MBF.SAMCD.UART.inc}
 
   TUARTBitsPerWord = (
-    Eight = %00,
-    Nine = %01,
-    Seven = %10
+    Eight = %000,
+    Nine  = %001,
+    Five  = %101,
+    Six   = %110,
+    Seven = %111
   );
 
   TUARTParity = (
-    None = %00,
-    Even = %10,
-    Odd  = %11
+    None = %00000,
+    Even = %00010,
+    Odd  = %00011
   );
 
   TUARTStopBits = (
-    One = %00,
-    ZeroDotFive = %01,
-    Two = %10,
-    OneDotFive = %11
+    One = %0,
+    Two = %1
   );
 
   TUARTClockSource = (
-    APB1orAPB2 = %00,
-    SYSCLK = %01,
-    LSE = %10,
-    HSI = %11
-  );
+    GCLKGEN0,
+    GCLKGEN1,
+    GCLKGEN2,
+    GCLKGEN3,
+    GCLKGEN4,
+    GCLKGEN5,
+    GCLKGEN6,
+    GCLKGEN7,
+    GCLKGEN8
+    );
 
 
 type
@@ -66,7 +72,6 @@ type
     BAUD_INT_MAX=8192;
     BAUD_FP_MAX=8;
   strict private
-    function  GetBaud(const Value: Cardinal):cardinal;
     function  GetBaud2(const Value: Cardinal):cardinal;
     function  GetBaudFrac(const Value: Cardinal):cardinal;
     function  GetBaudFrac2(const Value: Cardinal):cardinal;
@@ -88,21 +93,25 @@ type
   public
     procedure Initialize;
     procedure Initialize(const ARxPin : TUARTRXPins;
-                       const ATxPin : TUARTTXPins;const ABaudRate:longWord=115200);
+                       const ATxPin : TUARTTXPins);
+    procedure Enable;
+    function Disable : boolean;
     procedure Close;
 
-    function ReadByte(var aReadByte: byte; const Timeout : integer=-1):boolean;
+    function ReadByte(var aReadByte: byte; const Timeout : Cardinal=0):boolean; inline;
     function ReadByte(var aReadBuffer: array of byte; aReadCount : integer=-1; const Timeout : Cardinal=0):boolean;
 
-    function WriteByte(const aWriteByte: byte; const Timeout : longWord=0) : boolean;
+    function WriteByte(const aWriteByte: byte; const Timeout : Cardinal=0) : boolean;
     function WriteByte(const aWriteBuffer: array of byte; aWriteCount : integer= -1; const Timeout : Cardinal=0) : boolean;
 
     function ReadString(var aReadString: String; const aReadCount: Integer = -1;
       const Timeout: Cardinal = 0): Boolean;
+    function ReadString(var aReadString: String; const aDelimiter : char;
+      const Timeout: Cardinal = 0): Boolean;
     function WriteString(const aString: String; const Timeout: Cardinal = 0): Boolean;
 
     property BaudRate : Cardinal read getBaudRate write setBaudRate;
-    property BitsPerWord : TUARTBitsPerWord read getBitsPerWord write setBitsPerWord;
+    property BitsPerWord : TUARTBitsPerWord read getBitsPerWord; //write setBitsPerWord; We do currently not allow to set 9Bits
     property Parity : TUARTParity read getParity write setParity;
     property StopBits : TUARTStopBits read getStopBits write setStopBits;
     property RxPin : TUARTRxPins write setRxPin;
@@ -139,18 +148,6 @@ implementation
 uses
   MBF.BitHelpers,
   MBF.SAMCD.SystemCore;
-
-function TUARTRegistersHelper.GetBaud(const Value: Cardinal):cardinal;
-const
-  SHIFT=32;
-var
-  ratio,scale,temp1:uint64;
-begin
-  temp1 := ((uint64(USART_SAMPLE_NUM) * uint64(Value)) shl SHIFT);
-  ratio := temp1 DIV SystemCore.CPUFrequency;
-  scale := (uint64(1) shl SHIFT) - ratio;
-  result := ((65536 * scale) shr SHIFT);
-end;
 
 function TUARTRegistersHelper.GetBaud2(const Value: Cardinal):cardinal;
 var
@@ -193,6 +190,16 @@ begin
   result:=((baud AND $FFF) OR ((fp AND $7) shl 13));
 end;
 
+procedure TUARTRegistersHelper.Enable;
+begin
+  TSercom_Registers(Self).Enable;
+end;
+
+function TUARTRegistersHelper.Disable : boolean;
+begin
+  Result :=   TSercom_Registers(Self).Disable;
+end;
+
 procedure TUARTRegistersHelper.Initialize;
 begin
   TSercom_Registers(Self).Initialize;
@@ -205,7 +212,7 @@ begin
     SERCOM_USART_CTRLA_DORD OR // DWORD
     SERCOM_MODE_USART_INT_CLK;
 
-  BAUD:=GetBaud(DefaultUARTBaudrate);
+  SetBaudRate(DefaultUARTBaudrate);
 
   //Setting the CTRLB register
   CTRLB:=0;
@@ -214,28 +221,14 @@ begin
 end;
 
 procedure TUARTRegistersHelper.Initialize(const ARxPin : TUARTRXPins;
-                       const ATxPin : TUARTTXPins;const ABaudRate:longWord=115200);
+                       const ATxPin : TUARTTXPins);
 var
   aRXPO,aTXPO : longWord;
 begin
   Initialize;
-  //RX has 4 possible pads
-  aRXPO := (longword(ARxPin) shr 16) and %11;
-  //TX has only 2 possible Pads (PAD0 and PAD2) and the following Pad (PAD1 and PAD3) is reserved for Clock
-  //When PAD0 is used only PAD2 and PAD3 can be used for RX
-  //When PAD2 is used only PAD0 and PAD1 can be used for RX
-  aTXPO := (longWord(ATxPin) shr 17) and %1;
-
-  //Configure the provided Pins
-  //GPIO.PinMode[longWord(ARxPin) and $ff] :=  TPinMode.Input;
-  GPIO.PinMux[longWord(ARxPin) and $ff] := TPinMux((longWord(ARxPin) shr 8) and %111);
-  //GPIO.PinMode[longWord(ATxPin) and $ff] :=  TPinMode.Output;
-  GPIO.PinMux[longWord(ATxPin) and $ff] := TPinMux((longWord(ATxPin) shr 8) and %111);
-
-  CTRLA:=
-    CTRLA OR // DWORD
-    (SERCOM_USART_CTRLA_RXPO_Msk AND ((aRXPO) shl SERCOM_USART_CTRLA_RXPO_Pos)) OR
-    (SERCOM_USART_CTRLA_TXPO_Msk AND ((aTXPO) shl SERCOM_USART_CTRLA_TXPO_Pos));
+  SetRxPin(ARxPin);
+  SetTxPin(ATxPin);
+  Enable;
 end;
 
 procedure TUARTRegistersHelper.Close;
@@ -245,62 +238,96 @@ end;
 
 function TUARTRegistersHelper.GetBaudRate: Cardinal;
 begin
-  //TODO
+  Result := (uint64(SystemCore.CPUFrequency)*(65536-BAUD)) shr 4 shr 16 //Divide by 16, Divide by 65536
 end;
 
 procedure TUARTRegistersHelper.SetBaudRate(const Value: Cardinal);
+const
+  SHIFT=32;
+var
+  ratio,scale,temp1:uint64;
 begin
-  //TODO
+  Disable;
+  temp1 := ((uint64(USART_SAMPLE_NUM) * uint64(Value)) shl SHIFT);
+  ratio := temp1 DIV SystemCore.CPUFrequency;
+  scale := (uint64(1) shl SHIFT) - ratio;
+  BAUD := ((65536 * scale) shr SHIFT);
 end;
+
 
 function TUARTRegistersHelper.GetBitsPerWord: TUARTBitsPerWord;
 begin
-  //TODO
+  Result := TUARTBitsPerWord(CTRLB and %111);
 end;
 
 procedure TUARTRegistersHelper.SetBitsPerWord(const Value: TUARTBitsPerWord);
 begin
-  //TODO
+  Disable;
+  CTRLB := (CTRLB and (not %111)) or longWord(Value);
 end;
 
 function TUARTRegistersHelper.GetParity: TUARTParity;
 begin
-  //TODO
+  if not odd(CTRLA shr 24) then
+    Result := TUARTParity.None
+  else
+    if not odd(CTRLB shr 13) then
+      Result := TUARTParity.Even
+    else
+      Result := TUARTParity.Odd;
 end;
 
 procedure TUARTRegistersHelper.SetParity(const Value: TUARTParity);
 begin
-  //TODO
+  Disable;
+  CTRLA := (CTRLA and ((not %1111) shl 24)) or ((longWord(Value) shr 1) shl 24);
+  CTRLB := CTRLB and (not (%1 shl 13)) or ((longWord(Value) and %1) shl 13);
 end;
 
 function TUARTRegistersHelper.GetStopBits: TUARTStopBits;
 begin
-  //TODO
+  Result := TUARTStopBits((CTRLB shr 6) and %1);
 end;
 
 procedure TUARTRegistersHelper.SetStopBits(const Value: TUARTStopBits);
 begin
-  //TODO
+  Disable;
+  CTRLB := CTRLB and (not (%1 shl 6)) or (longWord(Value) shl 6);
 end;
 
 procedure TUARTRegistersHelper.SetRxPin(const Value : TUARTRXPins);
+var
+  aRXPO : longWord;
 begin
-  //TODO
+  Disable;
+  aRXPO := (longword(Value) shr 16) and %11;
+  GPIO.PinMux[longWord(Value) and $ff] := TPinMux((longWord(Value) shr 8) and %111);
+  CTRLA:= CTRLA OR (SERCOM_USART_CTRLA_RXPO_Msk AND ((aRXPO) shl SERCOM_USART_CTRLA_RXPO_Pos));
 end;
 
 procedure TUARTRegistersHelper.SetTxPin(const Value : TUARTTXPins);
+var
+  aTXPO : longWord;
 begin
-  //TODO
+  Disable;
+  //TX has only 2 possible Pads (PAD0 and PAD2) and the following Pad (PAD1 and PAD3) is reserved for Clock
+  //When PAD0 is used only PAD2 and PAD3 can be used for RX
+  //When PAD2 is used only PAD0 and PAD1 can be used for RX
+  aTXPO := (longWord(Value) shr 17) and %1;
+
+  GPIO.PinMux[longWord(Value) and $ff] := TPinMux((longWord(Value) shr 8) and %111);
+
+  CTRLA:= CTRLA or (SERCOM_USART_CTRLA_TXPO_Msk AND ((aTXPO) shl SERCOM_USART_CTRLA_TXPO_Pos));
 end;
 
 procedure TUARTRegistersHelper.SetClockSource(const Value : TUARTClockSource);
 begin
-  //TODO
+  //TODO First allow other Clocks than GCLK0 for UART
 end;
 
 function TUARTRegistersHelper.GetClockSource : TUARTClockSource;
 begin
-  //TODO
+  //TODO First allow other Clocks than GCLK0 for UART
 end;
 
 function TUARTRegistersHelper.WriteByte(const aWriteByte: Byte; const Timeout: Cardinal = 0): Boolean; inline;
@@ -333,16 +360,26 @@ begin
   result:=true;
 end;
 
-
-function TUARTRegistersHelper.ReadByte(var aReadByte: byte; const Timeout : integer=-1):boolean; inline;
+function TUARTRegistersHelper.ReadByte(var aReadByte: byte; const Timeout: Cardinal = 0):boolean; inline;
+var
+  EndTime : longWord;
 begin
-  while (NOT RXC_Ready) do begin end;
+  result := false;
+  if Timeout = 0 then
+    EndTime := SystemCore.GetTickCount + DefaultUARTTimeout
+  else
+    EndTime := SystemCore.GetTickCount + TimeOut;
+  repeat
+    if GetBit(INTFLAG,SERCOM_USART_INTFLAG_RXC_Pos) then
+    begin
+      aReadByte := DATA;
+      result:=true;
+      exit;
+    end;
+  until (SystemCore.GetTickCount > EndTime); ;
   //check errors
   //if (sercom->USART.STATUS.bit.PERR || sercom->USART.STATUS.bit.FERR || sercom->USART.STATUS.bit.BUFOVF)
   //		/* Set the error flag */
-  aReadByte:=DATA;
-  //while (NOT TX_Ready) do begin end;
-  result:=true;
 end;
 
 function TUARTRegistersHelper.ReadByte(var aReadBuffer: array of byte; aReadCount : integer=-1; const Timeout : Cardinal=0):boolean;
@@ -352,8 +389,56 @@ end;
 
 function TUARTRegistersHelper.ReadString(var aReadString: String; const aReadCount: Integer = -1;
   const Timeout: Cardinal = 0): Boolean;
+var
+  EndTime : longWord;
+  DataRead : byte;
 begin
-  //TODO
+  Result := false;
+  aReadString := '';
+  //Default timeout is 10 Seconds
+  if Timeout = 0 then
+    EndTime := SystemCore.GetTickCount + DefaultUARTTimeout
+  else
+    EndTime := SystemCore.GetTickCount + TimeOut;
+  repeat
+    if GetBit(INTFLAG,SERCOM_USART_INTFLAG_RXC_Pos) then
+    begin
+      DataRead := DATA;
+      aReadString := aReadString + Char(DataRead);
+      if ((aReadCount <> -1) and (length(aReadString) >= aReadCount)) then
+      begin
+        result := true;
+        exit;
+      end;
+    end;
+  until (SystemCore.GetTickCount > EndTime);
+end;
+
+function TUARTRegistersHelper.ReadString(var aReadString: String; const aDelimiter : char;
+  const Timeout: Cardinal = 0): Boolean;
+var
+  EndTime : longWord;
+  DataRead : byte;
+begin
+  Result := false;
+  aReadString := '';
+  //Default timeout is 10 Seconds
+  if Timeout = 0 then
+    EndTime := SystemCore.GetTickCount + DefaultUARTTimeout
+  else
+    EndTime := SystemCore.GetTickCount + TimeOut;
+  repeat
+    if GetBit(INTFLAG,SERCOM_USART_INTFLAG_RXC_Pos) then
+    begin
+      DataRead := DATA;
+      if DataRead = byte(aDelimiter) then
+      begin
+        result := true;
+        exit;
+      end;
+      aReadString := aReadString + Char(DataRead);
+    end;
+  until (SystemCore.GetTickCount > EndTime);
 end;
 
 function TUARTRegistersHelper.TX_Ready:boolean;

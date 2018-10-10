@@ -34,7 +34,7 @@ type
     procedure SetCoreClockSource(aClockSource:longword);
     procedure Reset;
     procedure Enable;
-    procedure Disable;
+    function Disable : boolean;
   end;
 
 implementation
@@ -149,8 +149,10 @@ begin
   {$endif}
 end;
 
-procedure TSerCom.Disable;
+function TSerCom.Disable : boolean;
 begin
+  //Result returns the current enable state of the SerCom
+  Result := GetBit(USART.CTRLA,SERCOM_ENABLE_Pos);
   ClearBit(USART.CTRLA,SERCOM_ENABLE_Pos);
   // All syncbusy registers are at offset $1C, so just choose one ... usart ... ;-)
   {$ifdef samd20}

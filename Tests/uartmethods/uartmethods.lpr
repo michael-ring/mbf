@@ -52,7 +52,6 @@ begin
   UART.TxPin := TUARTTxPins.D1_UART;
 
   UART.Initialize(TUARTRxPins.D0_UART,TUARTTxPins.D1_UART);
-  UART.Initialize(TUARTRxPins.D0_UART,TUARTTxPins.D1_UART,115200);
   UART.Baudrate := DefaultUARTBaudrate;
   UART.Parity := TUARTParity.None;
   UART.StopBits := TUARTStopBits.One;
