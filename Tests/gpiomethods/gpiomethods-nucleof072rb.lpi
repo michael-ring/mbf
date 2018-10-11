@@ -9,7 +9,7 @@
     </BuildModes>
     <Units Count="1">
       <Unit0>
-        <Filename Value="uartmethods.lpr"/>
+        <Filename Value="gpiomethods.lpr"/>
         <IsPartOfProject Value="True"/>
         <IsVisibleTab Value="True"/>
         <Loaded Value="True"/>
@@ -18,7 +18,7 @@
   </ProjectOptions>
   <CompilerOptions>
     <Target>
-      <Filename Value="uartmethods"/>
+      <Filename Value="gpiomethods"/>
     </Target>
     <SearchPaths>
       <IncludeFiles Value="../../Source;$(ProjOutDir)"/>
@@ -39,10 +39,10 @@
       </Debugging>
     </Linking>
     <Other>
-      <CustomOptions Value="-Cparmv7em
+      <CustomOptions Value="-Cparmv6m
 -XParm-none-eabi-
--Wpnucleof303k8
--dnucleof303k8
+-Wpnucleof072rb
+-dnucleof072rb
       "/>
     </Other>
   </CompilerOptions>
