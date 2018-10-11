@@ -26,6 +26,7 @@ type
 
 const
   DefaultUARTBaudrate=115200;
+  DefaultUARTTimeout=10000;
 type
     TUARTRXPins = (
     {$if defined(has_USART2) and defined(has_gpioa)  }   PA15_USART2 = ALT3 or TNativePin.PA15 {$endif}
@@ -118,64 +119,22 @@ type
     procedure initialize;
     procedure initialize(const ARxPin : TUARTRXPins;
                        const ATxPin : TUARTTXPins);
-    procedure TearDown;
-    procedure Flush;
+    procedure Disable;
 
-    { Reads data buffer from UART (serial) port.
-      @param(Buffer Pointer to data buffer where the data will be written to.)
-      @param(BufferSize Number of bytes to read.)
-      @param(Timeout Maximum time (in milliseconds) to wait while attempting to read the buffer. If this parameter is
-        set to zero, then the function will block indefinitely, attempting to read until the specified number of
-        bytes have been read.)
-      @returns(Number of bytes that were actually read.) }
-    function ReadBuffer(const Buffer: Pointer; const BufferSize,TimeOut: Cardinal): Cardinal;
+    function ReadBuffer(aReadBuffer: Pointer; aReadCount : integer; TimeOut: Cardinal=0): Cardinal;
+    function WriteBuffer(const aWriteBuffer: Pointer; aWriteCount : integer; TimeOut: Cardinal=0): Cardinal;
 
-    { Writes data buffer to UART (serial) port.
-      @param(Buffer Pointer to data buffer where the data will be read from.)
-      @param(BufferSize Number of bytes to write.)
-      @param(Timeout Maximum time (in milliseconds) to wait while attempting to write the buffer. If this parameter
-        is set to zero, then the function will block indefinitely, attempting to write until the specified number of
-        bytes have been written.)
-      @returns(Number of bytes that were actually written.) }
-    function WriteBuffer(const Buffer: Pointer; const BufferSize,TimeOut: Cardinal): Cardinal;
+    function ReadByte(var aReadByte: byte; const Timeout : Cardinal=0):boolean;
+    function ReadByte(var aReadBuffer: array of byte; aReadCount : integer=-1; const Timeout : Cardinal=0):boolean;
 
-    { Attempts to read a byte from UART (serial) port. @code(Timeout) defines maximum time (in milliseconds) to wait
-      while attempting to do so; if this parameter is set to zero, then the function will block indefinitely until the
-      byte has been read. @True is returned when the operation was successful and @False when the byte could not be
-      read. }
-    function ReadByte(out Value: Byte; const Timeout: Cardinal = 0): Boolean; inline;
+    function WriteByte(const aWriteByte: byte; const Timeout : Cardinal=0) : boolean;
+    function WriteByte(const aWriteBuffer: array of byte; aWriteCount : integer=-1; const Timeout : Cardinal=0) : boolean;
 
-    { Attempts to write a byte to UART (serial) port. @code(Timeout) defines maximum time (in milliseconds) to wait
-      while attempting to do so; if this parameter is set to zero, then the function will block indefinitely until the
-      byte has been written. @True is returned when the operation was successful and @False when the byte could not be
-      written. }
-    function WriteByte(const Value: Byte; const Timeout: Cardinal = 0): Boolean; inline;
-
-    { Attempts to write multiple bytes to UART (serial) port. @code(Timeout) defines maximum time (in milliseconds) to
-      wait while attempting to do so; if this parameter is set to zero, then the function will block indefinitely,
-      attempting to write until the specified bytes have been written. @True is returned when the operation was
-      successful and @False when not all bytes could be written. }
-    function WriteBytes(const Values: array of Byte; const Timeout: Cardinal = 0): Boolean;
-
-    { Reads string from UART (serial) port.
-      @param(Text String that will hold the incoming data.)
-      @param(MaxCharacters Maximum number of characters to read. Once this number of characters has been read, the
-        function immediately returns, even if there is more data to read. When this parameter is set to zero, then
-        the function will continue to read the data, depending on value of @code(Timeout).)
-      @param(Timeout Maximum time (in milliseconds) to wait while attempting to read the buffer. If this parameter
-        is set to zero, then the function will read only as much data as fits in readable FIFO buffers (or fail when
-        such buffers are not supported).)
-      @returns(Number of bytes that were actually read.) }
-    function ReadString(out Text: String; const MaxCharacters: Cardinal = 0;
+    function ReadString(var aReadString: String; aReadCount: Integer = -1;
       const Timeout: Cardinal = 0): Boolean;
-
-    { Writes string to UART (serial) port.
-        @param(Text String that should be sent.)
-        @param(Timeout Maximum time (in milliseconds) to wait while attempting to write the buffer. If this parameter
-          is set to zero, then the function will write only what fits in writable FIFO buffers (or fail when such
-          buffers are not supported).)
-        @returns(Number of bytes that were actually read.) }
-    function WriteString(const Text: String; const Timeout: Cardinal = 0): Boolean;
+    function ReadString(var aReadString: String; const aDelimiter : char;
+      const Timeout: Cardinal = 0): Boolean;
+    function WriteString(const aWriteString: String; const Timeout: cardinal = 0): Boolean;
 
     property BaudRate : Cardinal read getBaudRate write setBaudRate;
     property BitsPerWord : TUARTBitsPerWord read getBitsPerWord write setBitsPerWord;
@@ -227,7 +186,7 @@ begin
   GPIO.PinMode[longWord(Value) and $ff] := TPinMode((longWord(Value) shr 8));
 end;
 
-procedure TUARTRegistersHelper.TearDown;
+procedure TUARTRegistersHelper.Disable;
 begin
   case longWord(@Self) of
     USART1_BASE : RCC.APB2ENR := RCC.APB2ENR and not (1 shl 14);
@@ -350,121 +309,256 @@ begin
   //Nothing to do here
 end;
 
-procedure TUARTRegistersHelper.Flush;
-begin
-  //LPC_UART.IIR_FCR := $07;
-end;
-
-function TUARTRegistersHelper.ReadBuffer(const Buffer: Pointer; const BufferSize,TimeOut: Cardinal): Cardinal;
+function TUARTRegistersHelper.ReadBuffer(aReadBuffer: Pointer; aReadCount : integer; TimeOut: Cardinal=0): longWord;
 var
-  StartTime : longWord;
+  EndTime : longWord;
 begin
   Result := 0;
-  StartTime := SystemCore.GetTickCount;
+  if Timeout = 0 then
+    EndTime := SystemCore.GetTickCount + DefaultUARTTimeout
+  else
+    EndTime := SystemCore.GetTickCount + TimeOut;
 
-  while (Result < BufferSize) do
+  while (Result < aReadCount) do
   begin
-    //RXNE
     while self.ISR and (1 shl 5) = 0 do
     begin
-      if TimeOut <> 0 then
-      begin
-        if SystemCore.TicksInBetween(StartTime,SystemCore.GetTickCount) > TimeOut then
-          Exit;
-      end;
+      if SystemCore.GetTickCount > EndTime then
+        Exit;
     end;
-    if (GetBitsPerWord = TUARTBitsPerWord.Eight) or (GetBitsPerWord = TUARTBitsPerWord.Seven) then
-      PByte(PByte(Buffer) + Result)^ := self.RDR
+    if GetBitsPerWord = TUARTBitsPerWord.Eight then
+      PByte(PByte(aReadBuffer) + Result)^ := self.RDR
     else
     begin
-      PWord(PByte(Buffer) + Result)^ := self.RDR;
+      PWord(PByte(aReadBuffer) + Result)^ := self.RDR;
       inc(Result);
     end;
     Inc(Result);
   end;
 end;
 
-function TUARTRegistersHelper.WriteBuffer(const Buffer: Pointer; const BufferSize, TimeOut: Cardinal): Cardinal;
+function TUARTRegistersHelper.WriteBuffer(const aWriteBuffer: Pointer; aWriteCount : Integer; TimeOut: Cardinal=0): Cardinal;
 var
-  StartTime : longWord;
+  EndTime : longWord;
 begin
   Result := 0;
-  StartTime := SystemCore.GetTickCount;
+  if Timeout = 0 then
+    EndTime := SystemCore.GetTickCount + DefaultUARTTimeout
+  else
+    EndTime := SystemCore.GetTickCount + TimeOut;
 
-  while Result < BufferSize do
+  while Result < aWriteCount do
   begin
     //TXE
     while self.ISR and (1 shl 7) = 0 do
     begin
-      if TimeOut <> 0 then
-      begin
-        if SystemCore.TicksInBetween(StartTime,SystemCore.GetTickCount) > TimeOut then
-          Exit;
-      end;
+      if SystemCore.GetTickCount > EndTime then
+        Exit;
     end;
-    if (GetBitsPerWord = TUARTBitsPerWord.Eight)  or (GetBitsPerWord = TUARTBitsPerWord.Seven)then
-      self.TDR := PByte(pByte(Buffer) + Result)^
+    if GetBitsPerWord = TUARTBitsPerWord.Eight then
+      self.RDR := PByte(pByte(aWriteBuffer) + Result)^
     else
     begin
       inc(Result);
-      self.TDR := pword(pword(Buffer) + Result)^
+      self.RDR := pword(pword(WriteBuffer) + Result)^
     end;
     Inc(Result);
   end;
-  //TXE
-  while self.ISR and (1 shl 7) = 0 do
-  begin
-    if TimeOut <> 0 then
-    begin
-      if SystemCore.TicksInBetween(StartTime,SystemCore.GetTickCount) > TimeOut then
-        Exit;
-    end;
-  end;
 end;
 
-function TUARTRegistersHelper.ReadByte(out Value: Byte; const Timeout: Cardinal): Boolean;
-begin
-  Result := ReadBuffer(@Value, SizeOf(Byte), Timeout) = SizeOf(Byte);
-end;
-
-function TUARTRegistersHelper.WriteByte(const Value: Byte; const Timeout: Cardinal): Boolean;
-begin
-  Result := WriteBuffer(@Value, SizeOf(Byte), Timeout) = SizeOf(Byte);
-end;
-
-function TUARTRegistersHelper.WriteBytes(const Values: array of Byte; const Timeout: Cardinal): Boolean;
-begin
-  if Length(Values) > 0 then
-    Result := WriteBuffer(@Values[0], Length(Values), Timeout) = Cardinal(Length(Values))
-  else
-    Result := False;
-end;
-
-function TUARTRegistersHelper.ReadString(out Text: String; const MaxCharacters: Cardinal = 0;
-  const Timeout: Cardinal = 0): Boolean;
+function TUARTRegistersHelper.ReadByte(var aReadByte: byte; const Timeout : Cardinal=0):boolean;
 var
-  Count,i : longWord;
-  Data : array[0..255] of byte;
+  EndTime : longWord;
 begin
-  Text := '';
   Result := false;
-  Count := ReadBuffer(@Data,SizeOf(Data),MaxCharacters);
-  if count > 0 then
-  begin
-    for i := 0 to count-1 do
-      Text := Text + char(Data[i]);
-    Result := true;
-  end;
+  //Default timeout is 10 Seconds
+  if Timeout = 0 then
+    EndTime := SystemCore.GetTickCount + DefaultUARTTimeout
+  else
+    EndTime := SystemCore.GetTickCount + TimeOut;
+
+  repeat
+    if self.ISR and (1 shl 5) <> 0 then
+    begin
+      aReadByte := RDR;
+      result := true;
+      exit;
+    end;
+  until (SystemCore.GetTickCount > EndTime);
 end;
 
-function TUARTRegistersHelper.WriteString(const Text: String; const Timeout: Cardinal = 0): Boolean;
+function TUARTRegistersHelper.ReadByte(var aReadBuffer: array of byte; aReadCount : integer=-1; const Timeout : Cardinal=0):boolean;
 var
+  EndTime : longWord;
+  DataRead : byte;
+  i : integer;
+begin
+  Result := false;
+  //Default timeout is 10 Seconds
+  if Timeout = 0 then
+    EndTime := SystemCore.GetTickCount + DefaultUARTTimeout
+  else
+    EndTime := SystemCore.GetTickCount + TimeOut;
+
+  i := Low(aReadBuffer);
+  repeat
+    if self.ISR and (1 shl 5) <> 0 then
+    begin
+      aReadBuffer[i] := RDR;
+      inc(i);
+      if i > high(aReadBuffer) then
+      begin
+        result := true;
+        exit;
+      end;
+    end;
+  until (SystemCore.GetTickCount > EndTime);
+  //TODO: SetLength does not work
+  //if result = false then
+    //setLength(aReadBuffer,i-1-Low(aReadBuffer));
+end;
+
+function TUARTRegistersHelper.WriteByte(const aWriteByte: byte; const Timeout : Cardinal=0) : boolean;
+var
+  EndTime : longWord;
+  DataRead : byte;
   i : longWord;
 begin
-  for i := 1 to length(Text) do
-    WriteByte(byte(Text[i]),TimeOut);
-  //WriteBuffer(@Text[1],length(Text),TimeOut);
-  result := true;
+  Result := false;
+  //Default timeout is 10 Seconds
+  if Timeout = 0 then
+    EndTime := SystemCore.GetTickCount + DefaultUARTTimeout
+  else
+    EndTime := SystemCore.GetTickCount + TimeOut;
+
+  repeat
+    //Wait for TXE (Transmit Data Register Empty) to go high
+    if self.ISR and (1 shl 7) <> 0 then
+    begin
+      RDR := aWriteByte;
+      result := true;
+      exit;
+    end;
+  until (SystemCore.GetTickCount > EndTime);
+end;
+
+
+function TUARTRegistersHelper.WriteByte(const aWriteBuffer: array of byte; aWriteCount : integer=-1; const Timeout : Cardinal=0) : boolean;
+var
+  EndTime : longWord;
+  DataRead : byte;
+  i : longWord;
+begin
+  Result := false;
+  //Default timeout is 10 Seconds
+  if Timeout = 0 then
+    EndTime := SystemCore.GetTickCount + DefaultUARTTimeout
+  else
+    EndTime := SystemCore.GetTickCount + TimeOut;
+
+  i := low(aWriteBuffer);
+  begin
+    repeat
+      //Wait for TXE (Transmit Data Register Empty) to go high
+      if self.ISR and (1 shl 7) <> 0 then
+      begin
+        RDR := aWriteBuffer[i];
+        inc(i);
+        if i > high(aWriteBuffer) then
+        begin
+          result := true;
+          exit;
+        end;
+      end;
+    until (SystemCore.GetTickCount > EndTime);
+  end;
+end;
+
+function TUARTRegistersHelper.ReadString(var aReadString: String; aReadCount: integer = -1;
+  const Timeout: Cardinal = 0): Boolean;
+var
+  EndTime : longWord;
+  i : integer;
+begin
+  Result := false;
+  aReadString := '';
+  //Default timeout is 10 Seconds
+  if Timeout = 0 then
+    EndTime := SystemCore.GetTickCount + DefaultUARTTimeout
+  else
+    EndTime := SystemCore.GetTickCount + TimeOut;
+  i := 1;
+  repeat
+    if self.ISR and (1 shl 5) <> 0 then
+    begin
+      aReadString := aReadString + char(RDR);
+      inc(i);
+      if i >aReadCount then
+      begin
+        result := true;
+        exit;
+      end;
+    end;
+  until (SystemCore.GetTickCount > EndTime);
+end;
+
+function TUARTRegistersHelper.ReadString(var aReadString: String; const aDelimiter: char;
+  const Timeout: Cardinal = 0): Boolean;
+var
+  EndTime : longWord;
+  charRead : char;
+begin
+  Result := false;
+  aReadString := '';
+  //Default timeout is 10 Seconds
+  if Timeout = 0 then
+    EndTime := SystemCore.GetTickCount + DefaultUARTTimeout
+  else
+    EndTime := SystemCore.GetTickCount + TimeOut;
+
+  repeat
+    if self.ISR and (1 shl 5) <> 0 then
+    begin
+      charRead := char(RDR);
+      aReadString := aReadString + charread;
+      if charRead = aDelimiter then
+      begin
+        result := true;
+        exit;
+      end;
+    end;
+  until (SystemCore.GetTickCount > EndTime);
+end;
+
+function TUARTRegistersHelper.WriteString(const aWriteString: String; const Timeout: Cardinal = 0): Boolean;
+var
+  EndTime : longWord;
+  DataRead : byte;
+  i : longWord;
+begin
+  Result := false;
+  //Default timeout is 10 Seconds
+  if Timeout = 0 then
+    EndTime := SystemCore.GetTickCount + DefaultUARTTimeout
+  else
+    EndTime := SystemCore.GetTickCount + TimeOut;
+
+  i := 1;
+  begin
+    repeat
+      //Wait for TXE (Transmit Data Register Empty) to go high
+      if self.ISR and (1 shl 7) <> 0 then
+      begin
+        RDR := byte(aWriteString[i]);
+        inc(i);
+        if i > length(aWriteString) then
+        begin
+          result := true;
+          exit;
+        end;
+      end;
+    until (SystemCore.GetTickCount > EndTime);
+  end;
 end;
 
 procedure TUARTRegistersHelper.SetClockSource(const Value : TUARTClockSource);

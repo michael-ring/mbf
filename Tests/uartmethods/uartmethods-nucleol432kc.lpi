@@ -1,22 +1,49 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CONFIG>
   <ProjectOptions>
+    <Version Value="11"/>
     <General>
+      <Flags>
+        <LRSInOutputDirectory Value="False"/>
+      </Flags>
+      <MainUnit Value="0"/>
       <UseAppBundle Value="False"/>
     </General>
     <BuildModes Count="1">
       <Item1 Name="default" Default="True"/>
     </BuildModes>
-    <Units Count="1">
+    <PublishOptions>
+      <Version Value="2"/>
+    </PublishOptions>
+    <RunParams>
+      <FormatVersion Value="2"/>
+      <Modes Count="1">
+        <Mode0 Name="default"/>
+      </Modes>
+    </RunParams>
+    <Units Count="2">
       <Unit0>
         <Filename Value="uartmethods.lpr"/>
         <IsPartOfProject Value="True"/>
-        <IsVisibleTab Value="True"/>
+        <CursorPos X="28" Y="21"/>
+        <UsageCount Value="20"/>
         <Loaded Value="True"/>
+        <LoadedDesigner Value="True"/>
       </Unit0>
+      <Unit1>
+        <Filename Value="../../Source/MBF.STM32L4.UART.pas"/>
+        <IsVisibleTab Value="True"/>
+        <EditorIndex Value="1"/>
+        <TopLine Value="517"/>
+        <CursorPos Y="563"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
+      </Unit1>
     </Units>
+    <JumpHistory HistoryIndex="-1"/>
   </ProjectOptions>
   <CompilerOptions>
+    <Version Value="11"/>
     <Target>
       <Filename Value="uartmethods"/>
     </Target>
@@ -25,6 +52,11 @@
       <OtherUnitFiles Value="../../Source"/>
       <UnitOutputDirectory Value="lib/$(TargetCPU)-$(TargetOS)"/>
     </SearchPaths>
+    <Parsing>
+      <SyntaxOptions>
+        <UseAnsiStrings Value="False"/>
+      </SyntaxOptions>
+    </Parsing>
     <CodeGeneration>
       <HeapSize Value="8192"/>
       <StackSize Value="8192"/>
@@ -33,17 +65,15 @@
     </CodeGeneration>
     <Linking>
       <Debugging>
-        <GenerateDebugInfo Value="True"/>
         <DebugInfoType Value="dsDwarf2"/>
         <UseLineInfoUnit Value="False"/>
       </Debugging>
     </Linking>
     <Other>
-      <CustomOptions Value="-Cparmv7m
+      <CustomOptions Value="-Cparmv7em
 -XParm-none-eabi-
--Wpnucleof103rb
--dnucleof103rb
-      "/>
+-Wpnucleol432kc
+-dnucleol432kc"/>
     </Other>
   </CompilerOptions>
 </CONFIG>
