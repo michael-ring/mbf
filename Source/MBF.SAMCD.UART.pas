@@ -98,6 +98,9 @@ type
     function Disable : boolean;
     procedure Close;
 
+    function ReadBuffer(aReadBuffer: Pointer; aReadCount : integer; TimeOut: Cardinal=0): Cardinal;
+    function WriteBuffer(const aWriteBuffer: Pointer; aWriteCount : integer; TimeOut: Cardinal=0): Cardinal;
+
     function ReadByte(var aReadByte: byte; const Timeout : Cardinal=0):boolean; inline;
     function ReadByte(var aReadBuffer: array of byte; aReadCount : integer=-1; const Timeout : Cardinal=0):boolean;
 
@@ -328,6 +331,68 @@ end;
 function TUARTRegistersHelper.GetClockSource : TUARTClockSource;
 begin
   //TODO First allow other Clocks than GCLK0 for UART
+end;
+
+function TUARTRegistersHelper.ReadBuffer(aReadBuffer: Pointer; aReadCount : integer; TimeOut: Cardinal=0): longWord;
+var
+  EndTime : longWord;
+begin
+  Result := 0;
+  if Timeout = 0 then
+    EndTime := SystemCore.GetTickCount + DefaultUARTTimeout
+  else
+    EndTime := SystemCore.GetTickCount + TimeOut;
+
+  while (Result < aReadCount) do
+  begin
+    if not GetBit(INTFLAG,SERCOM_USART_INTFLAG_RXC_Pos) then
+    begin
+      if SystemCore.GetTickCount > EndTime then
+        Exit;
+    end;
+    if GetBitsPerWord = TUARTBitsPerWord.Eight then
+      PByte(PByte(aReadBuffer) + Result)^ := self.DATA
+    else
+    begin
+      PWord(PByte(aReadBuffer) + Result)^ := self.DATA;
+      inc(Result);
+    end;
+    Inc(Result);
+  end;
+end;
+
+function TUARTRegistersHelper.WriteBuffer(const aWriteBuffer: Pointer; aWriteCount : Integer; TimeOut: Cardinal=0): Cardinal;
+var
+  EndTime : longWord;
+begin
+  Result := 0;
+  if Timeout = 0 then
+    EndTime := SystemCore.GetTickCount + DefaultUARTTimeout
+  else
+    EndTime := SystemCore.GetTickCount + TimeOut;
+
+  while Result < aWriteCount do
+  begin
+    //TXE
+    while NOT DRE_Ready do
+    begin
+      if SystemCore.GetTickCount > EndTime then
+        Exit;
+    end;
+    if GetBitsPerWord = TUARTBitsPerWord.Eight then
+      DATA := PByte(pByte(aWriteBuffer) + Result)^
+    else
+    begin
+      inc(Result);
+      DATA := pword(pword(WriteBuffer) + Result)^
+    end;
+    Inc(Result);
+    while NOT TX_Ready do
+    begin
+      if SystemCore.GetTickCount > EndTime then
+        Exit;
+    end;
+  end;
 end;
 
 function TUARTRegistersHelper.WriteByte(const aWriteByte: Byte; const Timeout: Cardinal = 0): Boolean; inline;

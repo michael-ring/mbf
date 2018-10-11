@@ -26,9 +26,12 @@ var
   aUARTStopBits : TUARTStopBits;
   dummyByte : Byte;
   dummyWord : Word;
+  dummyString : String;
   dummyByteArray : array[0..1] of byte;
   dummyWordArray : array[0..1] of word;
   success : boolean;
+  count,MaxLength : Integer;
+  Delimiter : char;
 begin
   // Initialize the Board and the SystemTimer
   SystemCore.Initialize;
@@ -57,19 +60,27 @@ begin
   UART.StopBits := TUARTStopBits.One;
 
   // Read without Timeout
-  success := UART.WriteByte(dummyByte);
-  success := UART.WriteByte(dummyByteArray);
+  count := UART.ReadBuffer(@dummyByteArray,length(dummyByteArray));
+  success := UART.ReadByte(dummyByte);
+  success := UART.ReadByte(dummyByteArray);
+  success := UART.ReadString(DummyString,MaxLength);
+  success := UART.ReadString(DummyString,Delimiter);
   
-  // Read with Timeout
-  success := UART.WriteByte(dummyByte,1000);
-  success := UART.WriteByte(dummyByteArray,1000);
+  // Read  with Timeout
+  success := UART.ReadByte(dummyByte,1000);
+  success := UART.ReadByte(dummyByteArray,1000);
+  success := UART.ReadString(dummyString,MaxLength,1000);
+  success := UART.ReadString(dummyString,Delimiter,1000);
   
   // Write without Timeout
   success := UART.WriteByte(dummyByte);
   success := UART.WriteByte(dummyByteArray);
+  success := UART.WriteString(dummyString);
   
   // Write with Timeout
   success := UART.WriteByte(dummyByte,1000);
   success := UART.WriteByte(dummyByteArray,1000);
+  success := UART.WriteString(dummyString,1000);
+
 end.  
 
