@@ -1,4 +1,4 @@
-unit MBF.STM32F3.UART;
+unit MBF.STM32F0.UART;
 {
   This file is part of Pascal Microcontroller Board Framework (MBF)
   Copyright (c) 2015 -  Michael Ring
@@ -12,12 +12,12 @@ unit MBF.STM32F3.UART;
   warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the FPC modified GNU Library General Public
   License for more details.
 }
-{< ST Micro F3xx board series functions. }
+{< ST Micro F0xx board series functions. }
 interface
 {$INCLUDE MBF.Config.inc}
 
 uses
-  MBF.STM32F3.GPIO;
+  MBF.STM32F0.GPIO;
 
 type
   TUART_Registers = TUSART_Registers;
@@ -96,7 +96,7 @@ type
   );
 
   TUARTClockSource = (
-    APB1orAPB2 = %00,
+    PCLK = %00,
     SYSCLK = %01,
     LSE = %10,
     HSI = %11
@@ -217,7 +217,7 @@ var
 
 implementation
 uses
-  MBF.STM32F3.SystemCore;
+  MBF.STM32F0.SystemCore;
 
 function TUARTRegistersHelper.GetClockSource : TUARTClockSource;
 begin
@@ -300,8 +300,7 @@ var
   ClockFreq : longWord;
 begin
   case GetClockSource of
-    TUARTClockSource.APB1orAPB2 : if longWord(@self) = USART1_BASE then ClockFreq := SystemCore.GetAPB2PeripheralClockFrequency
-                                                    else ClockFreq := SystemCore.GetAPB1PeripheralClockFrequency;
+    TUARTClockSource.PCLK : ClockFreq := SystemCore.GetAPB1PeripheralClockFrequency;
     TUARTClockSource.HSI : ClockFreq := HSIClockFrequency;
     TUARTClockSource.LSE : ClockFreq := XTALRTCFreq;
     TUARTClockSource.SYSCLK : ClockFreq := SystemCore.GetSYSCLKFrequency;
@@ -329,8 +328,7 @@ begin
     end;
 
     case GetClockSource of
-      TUARTClockSource.APB1orAPB2 : if longWord(@self) = USART1_BASE then ClockFreq := SystemCore.GetAPB2PeripheralClockFrequency
-                                                    else ClockFreq := SystemCore.GetAPB1PeripheralClockFrequency;
+      TUARTClockSource.PCLK : ClockFreq := SystemCore.GetAPB1PeripheralClockFrequency;
       TUARTClockSource.HSI : ClockFreq := HSIClockFrequency;
       TUARTClockSource.LSE : ClockFreq := XTALRTCFreq;
       TUARTClockSource.SYSCLK : ClockFreq := SystemCore.GetSYSCLKFrequency;

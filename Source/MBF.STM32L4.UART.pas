@@ -32,10 +32,10 @@ type
     {$if defined(has_USART2) and defined(has_gpioa)  }   PA15_USART2 = ALT3 or TNativePin.PA15 {$endif}
     {$if defined(has_USART2) and defined(has_gpioa)  },   PA3_USART2 = ALT7 or TNativePin.PA3  {$endif}
     {$if defined(HAS_ARDUINOMINIPINS)                },   DEBUG_UART = ALT7 or TNativePin.PA3  {$endif}
-    {$if defined(HAS_ARDUINOPINS)                    },      D0_UART = ALT7 or TNativePin.PA3  {$endif}
-    {$if defined(HAS_ARDUINOPINS)                    },   DEBUG_UART = ALT7 or TNativePin.PA3  {$endif}
     {$if defined(has_USART1) and defined(has_gpioa)  },  PA10_USART1 = ALT7 or TNativePin.PA10 {$endif}
     {$if defined(HAS_ARDUINOMINIPINS)                },      D0_UART = ALT7 or TNativePin.PA10 {$endif}
+    {$if defined(HAS_ARDUINOPINS)                    },      D0_UART = ALT7 or TNativePin.PA10 {$endif}
+    {$if defined(HAS_ARDUINOPINS)                    },   DEBUG_UART = ALT7 or TNativePin.PA10 {$endif}
     {$if defined(has_USART1) and defined(has_gpiob)  },   PB7_USART1 = ALT7 or TNativePin.PB7  {$endif}
     {$if defined(has_USART3) and defined(has_gpiob)  },  PB11_USART3 = ALT7 or TNativePin.PB11 {$endif}
     {$if defined(has_USART3) and defined(has_gpioc)  },   PC5_USART3 = ALT7 or TNativePin.PC5  {$endif}
@@ -54,10 +54,10 @@ type
   TUARTTXPins = (
     {$if defined(has_USART2) and defined(has_gpioa)  }    PA2_USART2 = ALT7 or TNativePin.PA2  {$endif}
     {$if defined(HAS_ARDUINOMINIPINS)                },   DEBUG_UART = ALT7 or TNativePin.PA2  {$endif}
-    {$if defined(HAS_ARDUINOPINS)                    },      D1_UART = ALT7 or TNativePin.PA2  {$endif}
-    {$if defined(HAS_ARDUINOPINS)                    },   DEBUG_UART = ALT7 or TNativePin.PA2  {$endif}
     {$if defined(has_USART1) and defined(has_gpioa)  },   PA9_USART1 = ALT7 or TNativePin.PA9  {$endif}
     {$if defined(HAS_ARDUINOMINIPINS)                },      D1_UART = ALT7 or TNativePin.PA9  {$endif}
+    {$if defined(HAS_ARDUINOPINS)                    },      D1_UART = ALT7 or TNativePin.PA9  {$endif}
+    {$if defined(HAS_ARDUINOPINS)                    },   DEBUG_UART = ALT7 or TNativePin.PA9  {$endif}
     {$if defined(has_USART1) and defined(has_gpiob)  },   PB6_USART1 = ALT7 or TNativePin.PB6  {$endif}
     {$if defined(has_USART3) and defined(has_gpiob)  },  PB10_USART3 = ALT7 or TNativePin.PB10 {$endif}
     {$if defined(has_USART3) and defined(has_gpioc)  },   PC4_USART3 = ALT7 or TNativePin.PC4  {$endif}
@@ -103,13 +103,13 @@ type
 
   TUARTRegistersHelper = record helper for TUART_Registers
   private
-    function GetBaudRate: Cardinal;
+    function  GetBaudRate: Cardinal;
     procedure SetBaudRate(const Value: Cardinal);
-    function GetBitsPerWord: TUARTBitsPerWord;
+    function  GetBitsPerWord: TUARTBitsPerWord;
     procedure SetBitsPerWord(const Value: TUARTBitsPerWord);
-    function GetParity: TUARTParity;
+    function  GetParity: TUARTParity;
     procedure SetParity(const Value: TUARTParity);
-    function GetStopBits: TUARTStopBits;
+    function  GetStopBits: TUARTStopBits;
     procedure SetStopBits(const Value: TUARTStopBits);
     procedure SetRxPin(const Value : TUARTRXPins);
     procedure SetTxPin(const Value : TUARTTXPins);
@@ -119,7 +119,8 @@ type
     procedure initialize;
     procedure initialize(const ARxPin : TUARTRXPins;
                        const ATxPin : TUARTTXPins);
-    procedure Disable;
+    function Disable : boolean;
+    procedure Enable;
 
     function ReadBuffer(aReadBuffer: Pointer; aReadCount : integer; TimeOut: Cardinal=0): Cardinal;
     function WriteBuffer(const aWriteBuffer: Pointer; aWriteCount : integer; TimeOut: Cardinal=0): Cardinal;
@@ -157,8 +158,8 @@ var
 {$IF DEFINED(HAS_ARDUINOPINS)}
   {$IF DEFINED(nucleo)}
 var
-  UART : TUART_Registers absolute USART2_BASE;
-  DEBUG_UART : TUART_Registers absolute USART2_BASE;
+  UART : TUART_Registers absolute USART1_BASE;
+  DEBUG_UART : TUART_Registers absolute USART1_BASE;
   {$ELSE}
     {$ERROR This Device has Arduinopins defined but is not yet known to MBF.STM32.UART}
   {$ENDIF}
@@ -168,45 +169,35 @@ implementation
 uses
   MBF.STM32L4.SystemCore;
 
-procedure TUARTRegistersHelper.initialize(const ARxPin : TUARTRXPins;
-                       const ATxPin : TUARTTXPins);
+function TUARTRegistersHelper.GetClockSource : TUARTClockSource;
 begin
-  Initialize;
-  setRxPin(ARxPin);
-  setTxPin(ATxPin);
+  case longWord(@self) of
+    USART1_BASE : Result :=  TUARTClockSource((RCC.CCIPR shr 0) and %11);
+    USART2_BASE : Result :=  TUARTClockSource((RCC.CCIPR shr 2) and %11);
+    {$ifdef has_uart3}Result :=  TUARTClockSource((RCC.CCIPR shr 4) and %11){$endif}
+    {$ifdef has_uart4}Result :=  TUARTClockSource((RCC.CCIPR shr 6) and %11);{$endif}
+  end;
 end;
 
-procedure TUARTRegistersHelper.SetRxPin(const Value : TUARTRXPins);
+procedure TUARTRegistersHelper.SetClockSource(const Value : TUARTClockSource);
 begin
-  GPIO.PinMode[longWord(Value) and $ff] := TPinMode((longWord(Value) shr 8));
-end;
-
-procedure TUARTRegistersHelper.SetTxPin(const Value : TUARTTXPins);
-begin
-  GPIO.PinMode[longWord(Value) and $ff] := TPinMode((longWord(Value) shr 8));
-end;
-
-procedure TUARTRegistersHelper.Disable;
-begin
-  case longWord(@Self) of
-    USART1_BASE : RCC.APB2ENR := RCC.APB2ENR and not (1 shl 14);
-    USART2_BASE : RCC.APB1ENR1 := RCC.APB1ENR1 and not (1 shl 17);
-    {$ifdef has_uart3}USART3_BASE : RCC.APB1ENR1 := RCC.APB1ENR1 and not (1 shl 18);{$endif}
-    {$ifdef has_uart4}UART4_BASE  : RCC.APB1ENR1 := RCC.APB1ENR1 and not (1 shl 19);{$endif}
-    {$ifdef has_uart5}UART5_BASE  : RCC.APB1ENR1 := RCC.APB1ENR1 and not (1 shl 20);{$endif}
+  case longWord(@self) of
+    USART1_BASE : RCC.CCIPR := RCC.CCIPR and (not %11 shl 0) or (longWord(Value) shl 0);
+    USART2_BASE : RCC.CCIPR := RCC.CCIPR and (not %11 shl 2) or (longWord(Value) shl 2);
+    {$ifdef has_uart3}RCC.CCIPR := RCC.CCIPR and (not %11 shl 4) or (longWord(Value) shl 4){$endif}
+    {$ifdef has_uart4}RCC.CCIPR := RCC.CCIPR and (not %11 shl 6) or (longWord(Value) shl 6){$endif}
   end;
 end;
 
 procedure TUARTRegistersHelper.Initialize;
 begin
   case longWord(@Self) of
-    USART1_BASE : RCC.APB2ENR  := RCC.APB2ENR or (1 shl 14);
+    USART1_BASE : RCC.APB2ENR := RCC.APB2ENR or (1 shl 14);
     USART2_BASE : RCC.APB1ENR1 := RCC.APB1ENR1 or (1 shl 17);
     {$ifdef has_uart3}USART3_BASE : RCC.APB1ENR1 := RCC.APB1ENR1 or (1 shl 18);{$endif}
-    {$ifdef has_uart4} UART4_BASE : RCC.APB1ENR1 := RCC.APB1ENR1 or (1 shl 19);{$endif}
-    {$ifdef has_uart5} UART5_BASE : RCC.APB1ENR1 := RCC.APB1ENR1 or (1 shl 20);{$endif}
+    {$ifdef has_uart4}UART4_BASE : RCC.APB1ENR1 := RCC.APB1ENR1 or (1 shl 19);{$endif}
+    {$ifdef has_lpuart1}LPUART1_BASE : RCC.APB1ENR2 := RCC.APB1ENR2 or (1 shl 0);{$endif}
   end;
-
   // First, load Reset Value, this also turns off the UART
   // Create the basic config for all n81 use cases
   self.CR1:= 0;
@@ -219,11 +210,40 @@ begin
 
   setClockSource(TUARTClockSource.APB2);
 
-  setBaudRate(DefaultUARTBaudRate);
-  // UE Enable UART
-  self.CR1 := self.CR1 or (1 shl 0);
   // RE TE Enable both receiver and sender
   self.CR1 := self.CR1 or (1 shl 2) or (1 shl 3);
+end;
+
+procedure TUARTRegistersHelper.initialize(const ARxPin : TUARTRXPins;
+                       const ATxPin : TUARTTXPins);
+begin
+  Initialize;
+  SetBaudRate(DefaultUARTBaudrate);
+  setRxPin(ARxPin);
+  setTxPin(ATxPin);
+  Enable;
+end;
+
+procedure TUARTRegistersHelper.SetRxPin(const Value : TUARTRXPins);
+begin
+  GPIO.PinMode[longWord(Value) and $ff] := TPinMode((longWord(Value) shr 8));
+end;
+
+procedure TUARTRegistersHelper.SetTxPin(const Value : TUARTTXPins);
+begin
+  GPIO.PinMode[longWord(Value) and $ff] := TPinMode((longWord(Value) shr 8));
+end;
+
+function TUARTRegistersHelper.Disable : boolean;
+begin
+  //Save the initial state of UART
+  result := (CR1 or %1) <> 0;
+  CR1 := CR1 and (not %1);
+end;
+
+procedure TUARTRegistersHelper.Enable;
+begin
+  CR1 := CR1 or %1;
 end;
 
 function TUARTRegistersHelper.GetBaudRate: Cardinal;
@@ -238,7 +258,7 @@ begin
   end;
 
   //OVER8
-  if self.CR1 and not(1 shl 15) = 0 then
+  if self.CR1 and (1 shl 15) = 0 then
   begin
     Result := ClockFreq div self.BRR
   end
@@ -252,15 +272,11 @@ end;
 procedure TUARTRegistersHelper.SetBaudRate(const Value: Cardinal);
 var
   ClockFreq,Mantissa,Fraction : longWord;
-  reactivate : boolean = false;
+  ReEnable : boolean = false;
 begin
     // set Baudrate
     // UE disable Serial interface
-    if self.CR1 and (1 shl 0) = 1 then
-    begin
-      self.CR1 := self.CR1 and not(1 shl 0);
-      reactivate := true;
-    end;
+    ReEnable := Disable;
 
     case GetClockSource of
       TUARTClockSource.APB2 : ClockFreq := SystemCore.GetAPB2PeripheralClockFrequency;
@@ -269,12 +285,12 @@ begin
       TUARTClockSource.SYSCLK : ClockFreq := SystemCore.GetSYSCLKFrequency;
     end;
     //OVER8
-    if self.CR1 and not(1 shl 15) = 0 then
+    if self.CR1 and (1 shl 15) = 0 then
       SELF.BRR := ClockFreq div Value
     else
       Self.BRR := ((2*ClockFreq div Value) and not %1111) or (((2*ClockFreq div Value) and %1111) shr 1);
-    if reactivate = true then
-      self.CR1 := self.CR1 or (1 shl 0);
+    if ReEnable then
+      Enable;
 end;
 
 function TUARTRegistersHelper.GetBitsPerWord: TUARTBitsPerWord;
@@ -283,9 +299,14 @@ begin
 end;
 
 procedure TUARTRegistersHelper.SetBitsPerWord(const Value: TUARTBitsPerWord);
+var
+  ReEnable : boolean;
 begin
+  ReEnable := Disable;
   Self.CR1 := Self.CR1 and (not ((1 shl 28) or (1 shl 12)) or ((longWord(Value) and %10) shl (28-1))
                        or ((longWord(Value) and %1) shl 12));
+  if ReEnable then
+    Enable;
 end;
 
 function TUARTRegistersHelper.GetParity: TUARTParity;
@@ -294,8 +315,13 @@ begin
 end;
 
 procedure TUARTRegistersHelper.SetParity(const Value: TUARTParity);
+var
+  ReEnable : boolean;
 begin
+  ReEnable := Disable;
   Self.CR1 := Self.CR1 and (not (%11 shl 9)) or (longWord(Value) shl 9);
+  if ReEnable then
+    Enable;
 end;
 
 function TUARTRegistersHelper.GetStopBits: TUARTStopBits;
@@ -304,9 +330,13 @@ begin
 end;
 
 procedure TUARTRegistersHelper.SetStopBits(const Value: TUARTStopBits);
+var
+  ReEnable : boolean;
 begin
+  ReEnable := Disable;
   Self.CR2 := Self.CR2  and (not (%11 shl 12)) or (longWord(Value) shl 12);
-  //Nothing to do here
+  if ReEnable then
+    Enable;
 end;
 
 function TUARTRegistersHelper.ReadBuffer(aReadBuffer: Pointer; aReadCount : integer; TimeOut: Cardinal=0): longWord;
@@ -356,14 +386,19 @@ begin
         Exit;
     end;
     if GetBitsPerWord = TUARTBitsPerWord.Eight then
-      self.RDR := PByte(pByte(aWriteBuffer) + Result)^
+      self.TDR := PByte(pByte(aWriteBuffer) + Result)^
     else
     begin
       inc(Result);
-      self.RDR := pword(pword(WriteBuffer) + Result)^
+      self.TDR := pword(pword(WriteBuffer) + Result)^
     end;
     Inc(Result);
   end;
+  repeat
+    //Wait for TC (Transmission Complete) Bit Set
+    if self.ISR and (1 shl 6) <> 0 then
+      exit;
+  until (SystemCore.GetTickCount > EndTime);
 end;
 
 function TUARTRegistersHelper.ReadByte(var aReadByte: byte; const Timeout : Cardinal=0):boolean;
@@ -435,10 +470,15 @@ begin
     //Wait for TXE (Transmit Data Register Empty) to go high
     if self.ISR and (1 shl 7) <> 0 then
     begin
-      RDR := aWriteByte;
+      TDR := aWriteByte;
       result := true;
       exit;
     end;
+  until (SystemCore.GetTickCount > EndTime);
+  repeat
+    //Wait for TC (Transmission Complete) Bit Set
+    if self.ISR and (1 shl 6) <> 0 then
+      exit;
   until (SystemCore.GetTickCount > EndTime);
 end;
 
@@ -462,7 +502,7 @@ begin
       //Wait for TXE (Transmit Data Register Empty) to go high
       if self.ISR and (1 shl 7) <> 0 then
       begin
-        RDR := aWriteBuffer[i];
+        TDR := aWriteBuffer[i];
         inc(i);
         if i > high(aWriteBuffer) then
         begin
@@ -470,6 +510,11 @@ begin
           exit;
         end;
       end;
+    until (SystemCore.GetTickCount > EndTime);
+    repeat
+      //Wait for TC (Transmission Complete) Bit Set
+      if self.ISR and (1 shl 6) <> 0 then
+        exit;
     until (SystemCore.GetTickCount > EndTime);
   end;
 end;
@@ -549,7 +594,7 @@ begin
       //Wait for TXE (Transmit Data Register Empty) to go high
       if self.ISR and (1 shl 7) <> 0 then
       begin
-        RDR := byte(aWriteString[i]);
+        TDR := byte(aWriteString[i]);
         inc(i);
         if i > length(aWriteString) then
         begin
@@ -558,30 +603,14 @@ begin
         end;
       end;
     until (SystemCore.GetTickCount > EndTime);
-  end;
-end;
-
-procedure TUARTRegistersHelper.SetClockSource(const Value : TUARTClockSource);
-begin
-  case longWord(@self) of
-    USART1_BASE : RCC.CCIPR := RCC.CCIPR and (not %11 shl 0) or (longWord(Value) shl 0);
-    USART2_BASE : RCC.CCIPR := RCC.CCIPR and (not %11 shl 2) or (longWord(Value) shl 2);
-    {$ifdef has_uart3}RCC.CCIPR := RCC.CCIPR and (not %11 shl 4) or (longWord(Value) shl 4){$endif}
-    {$ifdef has_uart4}RCC.CCIPR := RCC.CCIPR and (not %11 shl 6) or (longWord(Value) shl 6){$endif}
-  end;
-end;
-
-function TUARTRegistersHelper.GetClockSource : TUARTClockSource;
-begin
-  case longWord(@self) of
-    USART1_BASE : Result :=  TUARTClockSource((RCC.CCIPR shr 0) and %11);
-    USART2_BASE : Result :=  TUARTClockSource((RCC.CCIPR shr 2) and %11);
-    {$ifdef has_uart3}Result :=  TUARTClockSource((RCC.CCIPR shr 4) and %11){$endif}
-    {$ifdef has_uart4}Result :=  TUARTClockSource((RCC.CCIPR shr 6) and %11);{$endif}
+    repeat
+      //Wait for TC (Transmission Complete) Bit Set
+      if self.ISR and (1 shl 6) <> 0 then
+        exit;
+    until (SystemCore.GetTickCount > EndTime);
   end;
 end;
 
 {$ENDREGION}
 
 end.
-

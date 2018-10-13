@@ -29,7 +29,7 @@ var
   dummyString : String;
   dummyByteArray : array[0..1] of byte;
   dummyWordArray : array[0..1] of word;
-  success : boolean;
+  WasEnabled,success : boolean;
   count,MaxLength : Integer;
   Delimiter : char;
 begin
@@ -53,6 +53,8 @@ begin
   UART.Initialize;
   UART.RxPin := TUARTRxPins.D0_UART;
   UART.TxPin := TUARTTxPins.D1_UART;
+  WasEnabled := UART.Disable;
+  UART.Enable;
 
   UART.Initialize(TUARTRxPins.D0_UART,TUARTTxPins.D1_UART);
   UART.Baudrate := DefaultUARTBaudrate;

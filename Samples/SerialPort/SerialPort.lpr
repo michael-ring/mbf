@@ -52,7 +52,6 @@ begin
   //So using DEBUG_UART will make sure that you always have output through the to the On-Board JTAG Debugger Chip
 
   DEBUG_UART.Initialize(TUARTRXPins.DEBUG_UART,TUARTTXPins.DEBUG_UART); //Use this when UART Pins are not passed to the STLink/JLink like on Nucleo-L476
-  DEBUG_UART.Enable;
   repeat
     DEBUG_UART.WriteString('Hello World!'+#13+#10);
     DEBUG_UART.WriteString('Exact Baudrate: '+ DEBUG_UART.BaudRate.toString);
