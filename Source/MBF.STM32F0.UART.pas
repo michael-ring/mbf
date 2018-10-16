@@ -29,52 +29,66 @@ const
   DefaultUARTTimeout=10000;
 type
   TUARTRXPins = (
-    {$if defined(has_UART4 ) and defined(has_gpioc) } PC11_UART4  = ALT5 or TNativePin.PC11 {$endif}
-    {$if defined(has_UART4 ) and defined(has_gpioc) },{$endif}
-    {$if defined(has_UART5 ) and defined(has_gpiod) }  PD2_UART5  = ALT5 or TNativePin.PD2  {$endif}
-    {$if defined(has_UART5 ) and defined(has_gpiod) },{$endif}
-    {$if defined(has_USART2) and defined(has_gpioa) }  PA3_USART2 = ALT7 or TNativePin.PA3  {$endif}
-    {$if defined(has_USART1) and defined(has_gpioa) },PA10_USART1 = ALT7 or TNativePin.PA10 {$endif}
-    {$if defined(HAS_ARDUINOMINIPINS)               },  D0_UART   = ALT7 or TNativePin.PA10 {$endif}
-    {$if defined(HAS_ARDUINOMINIPINS)               },  DEBUG_UART= ALT7 or TNativePin.PA10 {$endif}
-    {$if defined(HAS_ARDUINOPINS)                   },  D0_UART   = ALT7 or TNativePin.PA10 {$endif}
-    {$if defined(HAS_ARDUINOPINS)                   },  DEBUG_UART= ALT7 or TNativePin.PA10 {$endif}
-    {$if defined(has_USART2) and defined(has_gpioa) },PA15_USART2 = ALT7 or TNativePin.PA15 {$endif}
-    {$if defined(has_USART2) and defined(has_gpiob) }, PB4_USART2 = ALT7 or TNativePin.PB4  {$endif}
-    {$if defined(has_USART1) and defined(has_gpiob) }, PB7_USART1 = ALT7 or TNativePin.PB7  {$endif}
-    {$if defined(has_USART3) and defined(has_gpiob) }, PB8_USART3 = ALT7 or TNativePin.PB8  {$endif}
-    {$if defined(has_USART3) and defined(has_gpiob) }, PB9_USART3 = ALT7 or TNativePin.PB9  {$endif}
-    {$if defined(has_USART3) and defined(has_gpiob) },PB11_USART3 = ALT7 or TNativePin.PB11 {$endif}
-    {$if defined(has_USART1) and defined(has_gpioc) }, PC5_USART1 = ALT7 or TNativePin.PC5  {$endif}
-    {$if defined(has_USART3) and defined(has_gpioc) },PC11_USART3 = ALT7 or TNativePin.PC11 {$endif}
-    {$if defined(has_USART2) and defined(has_gpiod) }, PD6_USART2 = ALT7 or TNativePin.PD6  {$endif}
-    {$if defined(has_USART3) and defined(has_gpiod) }, PD9_USART3 = ALT7 or TNativePin.PD9  {$endif}
-    {$if defined(has_USART1) and defined(has_gpioe) }, PE1_USART1 = ALT7 or TNativePin.PE1  {$endif}
-    {$if defined(has_USART3) and defined(has_gpioe) },PE15_USART3 = ALT7 or TNativePin.PE15 {$endif}  );
-
+    {$if defined(has_USART1) and defined(has_gpiob) }   PB7_USART1 = ALT0 or TNativePin.PB7  {$endif}
+    {$if defined(has_USART4) and defined(has_gpioc) }, PC11_USART4 = ALT0 or TNativePin.PC11 {$endif}
+    {$if defined(has_USART2) and defined(has_gpiod) },  PD6_USART2 = ALT0 or TNativePin.PD6  {$endif}
+    {$if defined(has_USART3) and defined(has_gpiod) },  PD9_USART3 = ALT0 or TNativePin.PD9  {$endif}
+    {$if defined(has_USART8) and defined(has_gpiod) }, PD14_USART8 = ALT0 or TNativePin.PD14 {$endif}
+    {$if defined(has_USART1) and defined(has_gpioa) },  PA3_USART1 = ALT1 or TNativePin.PA3  {$endif}
+    {$if defined(has_USART1) and defined(has_gpioa) },  D0_UART    = ALT1 or TNativePin.PA3  {$endif}
+    {$if defined(has_USART1) and defined(has_gpioa) },  DEBUG_UART = ALT1 or TNativePin.PA3  {$endif}
+    {$if defined(has_USART2) and defined(has_gpioa) },  PA3_USART2 = ALT1 or TNativePin.PA3  {$endif}
+    {$if defined(has_USART1) and defined(has_gpioa) }, PA10_USART1 = ALT1 or TNativePin.PA10 {$endif}
+    {$if defined(has_USART1) and defined(has_gpioa) }, PA15_USART1 = ALT1 or TNativePin.PA15 {$endif}
+    {$if defined(has_USART2) and defined(has_gpioa) }, PA15_USART2 = ALT1 or TNativePin.PA15 {$endif}
+    {$if defined(has_USART7) and defined(has_gpioc) },  PC1_USART7 = ALT1 or TNativePin.PC1  {$endif}
+    {$if defined(has_USART3) and defined(has_gpioc) },  PC5_USART3 = ALT1 or TNativePin.PC5  {$endif}
+    {$if defined(has_USART7) and defined(has_gpioc) },  PC7_USART7 = ALT1 or TNativePin.PC7  {$endif}
+    {$if defined(has_USART8) and defined(has_gpioc) },  PC9_USART8 = ALT1 or TNativePin.PC9  {$endif}
+    {$if defined(has_USART3) and defined(has_gpioc) }, PC11_USART3 = ALT1 or TNativePin.PC11 {$endif}
+    {$if defined(has_USART4) and defined(has_gpioe) },  PE9_USART4 = ALT1 or TNativePin.PE9  {$endif}
+    {$if defined(has_USART5) and defined(has_gpioe) }, PE11_USART5 = ALT1 or TNativePin.PE11 {$endif}
+    {$if defined(has_USART7) and defined(has_gpiof) },  PF3_USART7 = ALT1 or TNativePin.PF3  {$endif}
+    {$if defined(has_USART6) and defined(has_gpiof) }, PF10_USART6 = ALT1 or TNativePin.PF10 {$endif}
+    {$if defined(has_USART6) and defined(has_gpioc) },  PC1_USART6 = ALT2 or TNativePin.PC1  {$endif}
+    {$if defined(has_USART8) and defined(has_gpioc) },  PC3_USART8 = ALT2 or TNativePin.PC3  {$endif}
+    {$if defined(has_USART5) and defined(has_gpiod) },  PD2_USART5 = ALT2 or TNativePin.PD2  {$endif}
+    {$if defined(has_USART4) and defined(has_gpioa) },  PA1_USART4 = ALT4 or TNativePin.PA1  {$endif}
+    {$if defined(has_USART5) and defined(has_gpiob) },  PB4_USART5 = ALT4 or TNativePin.PB4  {$endif}
+    {$if defined(has_USART3) and defined(has_gpiob) }, PB11_USART3 = ALT4 or TNativePin.PB11 {$endif}
+    {$if defined(has_USART6) and defined(has_gpioa) },  PA5_USART6 = ALT5 or TNativePin.PA5  {$endif}
+  );
   TUARTTXPins = (
-    {$if defined(has_UART4 ) and defined(has_gpioc) } PC10_UART4  = ALT5 or TNativePin.PC10 {$endif}
-    {$if defined(has_UART4 ) and defined(has_gpioc) },{$endif}
-    {$if defined(has_UART5 ) and defined(has_gpioc) } PC12_UART5  = ALT5 or TNativePin.PC12 {$endif}
-    {$if defined(has_UART5 ) and defined(has_gpiod) },{$endif}
-    {$if defined(has_USART2) and defined(has_gpioa) }  PA2_USART2 = ALT7 or TNativePin.PA2  {$endif}
-    {$if defined(has_USART1) and defined(has_gpioa) }, PA9_USART1 = ALT7 or TNativePin.PA9  {$endif}
-    {$if defined(HAS_ARDUINOMINIPINS)               },  D1_UART   = ALT7 or TNativePin.PA9  {$endif}
-    {$if defined(HAS_ARDUINOMINIPINS)               },  DEBUG_UART   = ALT7 or TNativePin.PA9  {$endif}
-    {$if defined(HAS_ARDUINOPINS)                   },  D1_UART   = ALT7 or TNativePin.PA9  {$endif}
-    {$if defined(HAS_ARDUINOPINS)                   },  DEBUG_UART   = ALT7 or TNativePin.PA9  {$endif}
-    {$if defined(has_USART2) and defined(has_gpioa) },PA14_USART2 = ALT7 or TNativePin.PA14 {$endif}
-    {$if defined(has_USART2) and defined(has_gpiob) }, PB3_USART2 = ALT7 or TNativePin.PB3  {$endif}
-    {$if defined(has_USART1) and defined(has_gpiob) }, PB6_USART1 = ALT7 or TNativePin.PB6  {$endif}
-    {$if defined(has_USART3) and defined(has_gpiob) }, PB8_USART3 = ALT7 or TNativePin.PB8  {$endif}
-    {$if defined(has_USART3) and defined(has_gpiob) }, PB9_USART3 = ALT7 or TNativePin.PB9  {$endif}
-    {$if defined(has_USART3) and defined(has_gpiob) },PB10_USART3 = ALT7 or TNativePin.PB10 {$endif}
-    {$if defined(has_USART1) and defined(has_gpioc) }, PC4_USART1 = ALT7 or TNativePin.PC4  {$endif}
-    {$if defined(has_USART3) and defined(has_gpioc) },PC10_USART3 = ALT7 or TNativePin.PC10 {$endif}
-    {$if defined(has_USART2) and defined(has_gpiod) }, PD5_USART2 = ALT7 or TNativePin.PD5  {$endif}
-    {$if defined(has_USART3) and defined(has_gpiod) }, PD8_USART3 = ALT7 or TNativePin.PD8  {$endif}
-    {$if defined(has_USART1) and defined(has_gpioe) }, PE0_USART1 = ALT7 or TNativePin.PE0  {$endif}  );
-{$ENDREGION}
+    {$if defined(has_USART1) and defined(has_gpiob) }   PB6_USART1 = ALT0 or TNativePin.PB6  {$endif}
+    {$if defined(has_USART4) and defined(has_gpioc) }, PC10_USART4 = ALT0 or TNativePin.PC10 {$endif}
+    {$if defined(has_USART2) and defined(has_gpiod) },  PD5_USART2 = ALT0 or TNativePin.PD5  {$endif}
+    {$if defined(has_USART3) and defined(has_gpiod) },  PD8_USART3 = ALT0 or TNativePin.PD8  {$endif}
+    {$if defined(has_USART8) and defined(has_gpiod) }, PD13_USART8 = ALT0 or TNativePin.PD13 {$endif}
+    {$if defined(has_USART1) and defined(has_gpioa) },  PA2_USART1 = ALT1 or TNativePin.PA2  {$endif}
+    {$if defined(has_USART1) and defined(has_gpioa) },  D1_UART    = ALT1 or TNativePin.PA2  {$endif}
+    {$if defined(has_USART1) and defined(has_gpioa) },  DEBUG_UART = ALT1 or TNativePin.PA2  {$endif}
+    {$if defined(has_USART2) and defined(has_gpioa) },  PA2_USART2 = ALT1 or TNativePin.PA2  {$endif}
+    {$if defined(has_USART1) and defined(has_gpioa) },  PA9_USART1 = ALT1 or TNativePin.PA9  {$endif}
+    {$if defined(has_USART1) and defined(has_gpioa) }, PA14_USART1 = ALT1 or TNativePin.PA14 {$endif}
+    {$if defined(has_USART2) and defined(has_gpioa) }, PA14_USART2 = ALT1 or TNativePin.PA14 {$endif}
+    {$if defined(has_USART7) and defined(has_gpioc) },  PC0_USART7 = ALT1 or TNativePin.PC0  {$endif}
+    {$if defined(has_USART3) and defined(has_gpioc) },  PC4_USART3 = ALT1 or TNativePin.PC4  {$endif}
+    {$if defined(has_USART7) and defined(has_gpioc) },  PC6_USART7 = ALT1 or TNativePin.PC6  {$endif}
+    {$if defined(has_USART8) and defined(has_gpioc) },  PC8_USART8 = ALT1 or TNativePin.PC8  {$endif}
+    {$if defined(has_USART3) and defined(has_gpioc) }, PC10_USART3 = ALT1 or TNativePin.PC10 {$endif}
+    {$if defined(has_USART4) and defined(has_gpioe) },  PE8_USART4 = ALT1 or TNativePin.PE8  {$endif}
+    {$if defined(has_USART5) and defined(has_gpioe) }, PE10_USART5 = ALT1 or TNativePin.PE10 {$endif}
+    {$if defined(has_USART7) and defined(has_gpiof) },  PF2_USART7 = ALT1 or TNativePin.PF2  {$endif}
+    {$if defined(has_USART6) and defined(has_gpiof) },  PF9_USART6 = ALT1 or TNativePin.PF9  {$endif}
+    {$if defined(has_USART6) and defined(has_gpioc) },  PC0_USART6 = ALT2 or TNativePin.PC0  {$endif}
+    {$if defined(has_USART8) and defined(has_gpioc) },  PC2_USART8 = ALT2 or TNativePin.PC2  {$endif}
+    {$if defined(has_USART5) and defined(has_gpioc) }, PC12_USART5 = ALT2 or TNativePin.PC12 {$endif}
+    {$if defined(has_USART4) and defined(has_gpioa) },  PA0_USART4 = ALT4 or TNativePin.PA0  {$endif}
+    {$if defined(has_USART5) and defined(has_gpiob) },  PB3_USART5 = ALT4 or TNativePin.PB3  {$endif}
+    {$if defined(has_USART3) and defined(has_gpiob) }, PB10_USART3 = ALT4 or TNativePin.PB10 {$endif}
+    {$if defined(has_USART6) and defined(has_gpioa) },  PA4_USART6 = ALT5 or TNativePin.PA4  {$endif}
+  );
+  {$ENDREGION}
 
   TUARTBitsPerWord = (
     Eight = %00,

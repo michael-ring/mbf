@@ -175,32 +175,32 @@ procedure OLED_C_command(const reg_index : byte; const reg_value : byte);
 begin
   //Select index addr
   GPIO.SetPinLevelLow(DC);
-  SPI.TransferWord(reg_index);
+  SPI.WriteWord(reg_index);
   //Write data to reg
   GPIO.SetPinLevelHigh(DC);
-  SPI.TransferWord(reg_value);
+  SPI.WriteWord(reg_value);
 end;
 
 //Send data to OLED C display
 procedure OLED_C_data(const data_value : byte);
 begin
   GPIO.SetPinLevelHigh(DC);
-  SPI.TransferWord(data_value);
+  SPI.WriteWord(data_value);
 end;
 
 //Send 16 bit data to OLED C display
 procedure OLED_C_data16(const data_value : word);
 begin
   GPIO.SetPinLevelHigh(DC);
-  SPI.TransferWord(data_value shr 8);
-  SPI.TransferWord(data_value and $ff);
+  SPI.WriteWord(data_value shr 8);
+  SPI.WriteWord(data_value and $ff);
 end;
 
 //Sekvence before writing data to memory
 procedure DDRAM_access;
 begin
   GPIO.SetPinLevelLow(DC);
-  SPI.TransferWord($08);
+  SPI.WriteWord($08);
 end;
 
 // Init sequence for 96x96 OLED color module

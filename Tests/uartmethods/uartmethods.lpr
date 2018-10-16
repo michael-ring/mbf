@@ -53,6 +53,8 @@ begin
   UART.Initialize;
   UART.RxPin := TUARTRxPins.D0_UART;
   UART.TxPin := TUARTTxPins.D1_UART;
+  UART.RxPin := TUARTRxPins.DEBUG_UART;
+  UART.TxPin := TUARTTxPins.DEBUG_UART;
   WasEnabled := UART.Disable;
   UART.Enable;
 

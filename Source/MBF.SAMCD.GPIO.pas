@@ -405,9 +405,9 @@ begin
   begin
     aMuxIndex:=(GPIOPinNo shr 1);
     if ((GPIOPinNo AND 1) = 1) then
-      PutValue(PGPIOPort^.PMUX[aMuxIndex],PORT_PMUX_PMUXO_Msk,Ord(Value),PORT_PMUX_PMUXO_Pos)
+      SetBitsMasked(PGPIOPort^.PMUX[aMuxIndex],Ord(Value),PORT_PMUX_PMUXO_Msk,PORT_PMUX_PMUXO_Pos)
     else
-      PutValue(PGPIOPort^.PMUX[aMuxIndex],PORT_PMUX_PMUXE_Msk,Ord(Value),PORT_PMUX_PMUXE_Pos);
+      SetBitsMasked(PGPIOPort^.PMUX[aMuxIndex],Ord(Value),PORT_PMUX_PMUXE_Msk,PORT_PMUX_PMUXE_Pos);
     SetBit(aPINCFG^,PORT_PINCFG_PMUXEN_Pos);
   end;
 end;
@@ -417,13 +417,14 @@ function TGPIO_Registers.GetPinMode(const Pin: TPinIdentifier): TPinMode;
 begin
   GetPinPortMask(Pin);
   result:=TPinMode.Off;
-  if GetBit(PGPIOPort^.DIR,GPIOPinNo) then
+  if GetBit(PGPIOPort^.DIR,GPIOPinNo) = 1 then
   begin
     result:=TPinMode.Output;
   end
   else
   begin
-    if GetBit(PGPIOPort^.PINCFG[GPIOPinNo],PORT_PINCFG_INEN_Pos) then result:=TPinMode.Input;
+    if GetBit(PGPIOPort^.PINCFG[GPIOPinNo],PORT_PINCFG_INEN_Pos)=1 then
+      result:=TPinMode.Input;
   end;
 end;
 
@@ -472,7 +473,7 @@ function TGPIO_Registers.GetPinValue(const Pin: TPinIdentifier): TPinValue;
 begin
   GetPinPortMask(Pin);
   result:=0;
-  if GetBit(PGPIOPort^.&IN,GPIOPinNo) then result:=1;
+  if GetBit(PGPIOPort^.&IN,GPIOPinNo) = 1 then result:=1;
 end;
 
 procedure TGPIO_Registers.SetPinValue(const Pin: TPinIdentifier; const Value: TPinValue);
@@ -500,7 +501,7 @@ function TGPIO_Registers.GetPinLevel(const Pin: TPinIdentifier): TPinLevel;
 begin
   GetPinPortMask(Pin);
   result:=TPinLevel.Low;
-  if GetBit(PGPIOPort^.&IN,GPIOPinNo) then result:=TPinLevel.High;
+  if GetBit(PGPIOPort^.&IN,GPIOPinNo) = 1 then result:=TPinLevel.High;
 end;
 
 procedure TGPIO_Registers.SetPinLevel(const Pin: TPinIdentifier; const Value: TPinLevel);
@@ -538,15 +539,15 @@ begin
   aPINCFG:=@PGPIOPort^.PINCFG[GPIOPinNo];
 
   result:=TPinDrive.None;
-  if (NOT GetBit(PGPIOPort^.DIR,GPIOPinNo)) then
+  if GetBit(PGPIOPort^.DIR,GPIOPinNo)=0 then
   begin
-    if GetBit(aPINCFG^,PORT_PINCFG_PULLEN_Pos) then
+    if GetBit(aPINCFG^,PORT_PINCFG_PULLEN_Pos)=1 then
     begin
-      if (NOT GetBit(PGPIOPort^.OUT,GPIOPinNo)) then
+      if GetBit(PGPIOPort^.OUT,GPIOPinNo) = 0 then
         result:=TPinDrive.PullDown
       else
         result:=TPinDrive.PullUp;
-      if GetBit(aPINCFG^,PORT_PINCFG_DRVSTR_Pos) then
+      if GetBit(aPINCFG^,PORT_PINCFG_DRVSTR_Pos)=1 then
       begin
         if result=TPinDrive.PullDown then result:=TPinDrive.StrongPullDown;
         if result=TPinDrive.PullUp then result:=TPinDrive.StrongPullUp;

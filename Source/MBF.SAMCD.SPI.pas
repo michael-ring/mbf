@@ -31,7 +31,7 @@ uses
 //SPI includes are complex and automagically created, so include them to keep Sourcecode clean
 {$include MBF.SAMCD.SPI.inc}
 const
-  DefaultSPIFrequency=100000;
+  DefaultSPIBaudrate=100000;
 
 type
   TSPIMode = (
@@ -160,7 +160,7 @@ begin
   //Set 8-Bit Mode and Enable Receiver
   CTRLB := (longWord(TSPIBitsPerWord.Eight) shl 0) or (%1 shl 17);
 
-  setBaudrate(DefaultSPIFrequency);
+  setBaudrate(DefaultSPIBaudrate);
 
   for i := low(NSSPins) to high(NSSPins) do
     NSSPins[i] := -1;
@@ -227,9 +227,9 @@ begin
   //Clear Enable Bit
   CTRLA := CTRLA and (not %10);
   {$IF DEFINED(SAMD20)}
-  WaitBitCleared(STATUS,15);
+  WaitBitIsCleared(STATUS,15);
   {$ELSE}
-  WaitBitCleared(SYNCBUSY,1);
+  WaitBitIsCleared(SYNCBUSY,1);
   {$ENDIF}
 end;
 
@@ -238,9 +238,9 @@ begin
   //TODO check if making this local saves some CPU cycles
   CTRLA := CTRLA or %10;
   {$IF DEFINED(SAMD20)}
-  WaitBitCleared(STATUS,15);
+  WaitBitIsCleared(STATUS,15);
   {$ELSE}
-  WaitBitCleared(SYNCBUSY,1);
+  WaitBitIsCleared(SYNCBUSY,1);
   {$ENDIF}
 end;
 
@@ -289,24 +289,24 @@ end;
 
 function TSPIRegistersHelper.TXC_Ready:boolean; inline;
 begin
-  result:=GetBit(INTFLAG,SERCOM_SPI_INTFLAG_TXC_Pos);
+  result:=GetBit(INTFLAG,SERCOM_SPI_INTFLAG_TXC_Pos)=1;
 end;
 
 function TSPIRegistersHelper.DRE_Ready:boolean; inline;
 begin
-  result:=GetBit(INTFLAG,SERCOM_SPI_INTFLAG_DRE_Pos);
+  result:=GetBit(INTFLAG,SERCOM_SPI_INTFLAG_DRE_Pos)=1;
 end;
 
 function TSPIRegistersHelper.RXC_Ready:boolean;
 begin
-  result:=GetBit(INTFLAG,SERCOM_SPI_INTFLAG_RXC_Pos);
+  result:=GetBit(INTFLAG,SERCOM_SPI_INTFLAG_RXC_Pos)=1;
 end;
 
 procedure TSPIRegistersHelper.WriteSingleByte(aData:byte);
 begin
-  WaitBitSet(INTFLAG,SERCOM_SPI_INTFLAG_DRE_Pos);
+  WaitBitIsSet(INTFLAG,SERCOM_SPI_INTFLAG_DRE_Pos);
   DATA := aData;
-  WaitBitSet(INTFLAG,SERCOM_SPI_INTFLAG_TXC_Pos);
+  WaitBitIsSet(INTFLAG,SERCOM_SPI_INTFLAG_TXC_Pos);
 end;
 
 // This procedure should only get used for native 9-Bit mode which we do not support by default
@@ -321,7 +321,7 @@ end;
 
 function TSPIRegistersHelper.ReadSingleByte:byte;
 begin
-  WaitBitSet(INTFLAG,SERCOM_SPI_INTFLAG_RXC_Pos);
+  WaitBitIsSet(INTFLAG,SERCOM_SPI_INTFLAG_RXC_Pos);
   result:=DATA;
 end;
 
@@ -348,7 +348,7 @@ begin
     {$if not defined(SAMD20)}
     //Turn Hardware NSS on
     CTRLB := CTRLB or (1 shl 13);
-    WaitBitCleared(SYNCBUSY,2);
+    WaitBitIsCleared(SYNCBUSY,2);
     {$ENDIF}
     exit;
   end;
@@ -392,7 +392,9 @@ begin
   //TODO implement Timeout
   Enable;
   SetNSSPinLow(SoftNSSPin);
-  WriteSingleByte(aWriteByte);
+  WaitBitIsSet(INTFLAG,SERCOM_SPI_INTFLAG_DRE_Pos);
+  DATA := aWriteByte;
+  WaitBitIsSet(INTFLAG,SERCOM_SPI_INTFLAG_TXC_Pos);
   SetNSSPinHigh(SoftNSSPin);
   Disable;
 end;
@@ -402,8 +404,11 @@ begin
   //TODO implement Timeout
   Enable;
   SetNSSPinLow(SoftNSSPin);
-  writeSingleByte(aWriteWord and $ff);
-  writeSingleByte((aWriteWord shr 8) and $ff);
+  WaitBitIsSet(INTFLAG,SERCOM_SPI_INTFLAG_DRE_Pos);
+  DATA := (aWriteWord shr 8) and $ff;
+  WaitBitIsSet(INTFLAG,SERCOM_SPI_INTFLAG_DRE_Pos);
+  DATA := aWriteWord and $ff;
+  WaitBitIsSet(INTFLAG,SERCOM_SPI_INTFLAG_TXC_Pos);
   SetNSSPinHigh(SoftNSSPin);
   Disable;
 end;
@@ -414,9 +419,14 @@ var
 begin
   //TODO implement Timeout and WriteCount
   Enable;
-  SetNSSPinLow(SoftNSSPin);
-  for i:=low(aWriteBuffer) to high(aWriteBuffer) do WriteSingleByte(aWriteBuffer[i]);
-  SetNSSPinHigh(SoftNSSPin);
+  for i:=low(aWriteBuffer) to high(aWriteBuffer) do
+  begin
+    SetNSSPinLow(SoftNSSPin);
+    WaitBitIsSet(INTFLAG,SERCOM_SPI_INTFLAG_DRE_Pos);
+    DATA := aWriteBuffer[i];
+    WaitBitIsSet(INTFLAG,SERCOM_SPI_INTFLAG_TXC_Pos);
+    SetNSSPinHigh(SoftNSSPin);
+  end;
   Disable;
 end;
 
@@ -426,13 +436,16 @@ var
 begin
   //TODO implement Timeout and WriteCount
   Enable;
-  SetNSSPinLow(SoftNSSPin);
   for i:=low(aWriteBuffer) to high(aWriteBuffer) do
   begin
-    writeSingleByte(aWriteBuffer[i] and $ff);
-    writeSingleByte((aWriteBuffer[i] shr 8) and $ff);
+    SetNSSPinLow(SoftNSSPin);
+    WaitBitIsSet(INTFLAG,SERCOM_SPI_INTFLAG_DRE_Pos);
+    DATA := (aWriteBuffer[i] shr 8) and $ff;
+    WaitBitIsSet(INTFLAG,SERCOM_SPI_INTFLAG_DRE_Pos);
+    DATA := aWriteBuffer[i] and $ff;
+    WaitBitIsSet(INTFLAG,SERCOM_SPI_INTFLAG_TXC_Pos);
+    SetNSSPinHigh(SoftNSSPin);
   end;
-  SetNSSPinHigh(SoftNSSPin);
   Disable;
 end;
 

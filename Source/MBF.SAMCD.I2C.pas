@@ -29,12 +29,12 @@ uses
 {$include MBF.SAMCD.I2C.inc}
 
 type
-  I2COperatingMode = (Slave=0, Master=1);
-  I2CAddressSize = (SevenBits=0, TenBits=1);
-  I2CBaudRates = (Standard100k=100000,Full400k=400000,Fast1M=1000000,High3M2=3200000);
+  TI2COperatingMode = (Slave=0, Master=1);
+  TI2CAddressSize = (SevenBits=0, TenBits=1);
+  TI2CBaudRates = (Standard100k=100000,Full400k=400000,Fast1M=1000000,High3M2=3200000);
 
 const
-  I2CDefaultBaudrate=I2CBaudRates.Standard100k;
+  I2CDefaultBaudrate=TI2CBaudRates.Standard100k;
 
 type
   TI2C_Registers = TSercomI2CM_Registers;
@@ -92,7 +92,7 @@ type
     function sendDataMasterWIRE(data:byte):boolean;
     //TODO function sendDataSlaveWIRE(data:byte):boolean;
   public
-    //TODO procedure Initialize;
+    procedure Initialize;
     procedure Initialize(const ASDAPin : TI2CSDAPins;
                          const ASCLPin  : TI2CSCLPins); overload;
     function Read(const Address:byte; const buffer: pointer; const length: byte; const stopBit: boolean):byte;
@@ -182,43 +182,43 @@ end;
 
 function TI2CRegistersHelper.isRXNackReceivedWIRE:boolean;
 begin
-  result:=GetBit(STATUS,SERCOM_I2CM_STATUS_RXNACK_Pos);
+  result:=GetBit(STATUS,SERCOM_I2CM_STATUS_RXNACK_Pos)=1;
 end;
 
 function TI2CRegistersHelper.errorOnWIRE:boolean;
 begin
-  result:=GetBit(INTFLAG,SERCOM_I2CM_INTFLAG_ERROR_Pos);
+  result:=GetBit(INTFLAG,SERCOM_I2CM_INTFLAG_ERROR_Pos)=1;
   // clear the error flag
   SetBit(INTFLAG,SERCOM_I2CM_INTFLAG_ERROR_Pos);
 end;
 
 function TI2CRegistersHelper.busErrorOnWIRE:boolean;
 begin
-  result:=GetBit(STATUS,SERCOM_I2CM_STATUS_BUSERR_Pos);
+  result:=GetBit(STATUS,SERCOM_I2CM_STATUS_BUSERR_Pos)=1;
 end;
 
 function TI2CRegistersHelper.busClockHoldWIRE:boolean;
 begin
-  result:=GetBit(STATUS,SERCOM_I2CM_STATUS_CLKHOLD_Pos);
+  result:=GetBit(STATUS,SERCOM_I2CM_STATUS_CLKHOLD_Pos)=1;
 end;
 
 
 function TI2CRegistersHelper.availableWIRE:boolean;
 begin
-  result:=GetBit(INTFLAG,SERCOM_I2CM_INTFLAG_SB_Pos);
+  result:=GetBit(INTFLAG,SERCOM_I2CM_INTFLAG_SB_Pos)=1;
 end;
 
 function TI2CRegistersHelper.availableMasterWIRE:boolean;
 begin
-  result:=GetBit(INTFLAG,SERCOM_I2CM_INTFLAG_MB_Pos);
+  result:=GetBit(INTFLAG,SERCOM_I2CM_INTFLAG_MB_Pos)=1;
 end;
 
 function TI2CRegistersHelper.readDataWIRE:byte;
 begin
   {$if defined(SAMD20))}
-  WaitBitCleared(STATUS,10);
+  WaitBitIsCleared(STATUS,10);
   {$else}
-  WaitBitCleared(SYNCBUSY,2);
+  WaitBitIsCleared(SYNCBUSY,2);
   {$endif}
   result:=DATA;
   while (NOT availableWIRE) do begin end;
@@ -233,17 +233,22 @@ procedure TI2CRegistersHelper.enableWIRE;
 begin
   TSerCom_Registers(Self).Enable;
   // Go (by force) from unknow busstate to idle
-  PutValue(STATUS,SERCOM_I2CM_STATUS_BUSSTATE_Msk,TSercomWireBusState.WIRE_IDLE_STATE,SERCOM_I2CM_STATUS_BUSSTATE_Pos);
+  SetBitsMasked(STATUS,TSercomWireBusState.WIRE_IDLE_STATE,SERCOM_I2CM_STATUS_BUSSTATE_Msk,SERCOM_I2CM_STATUS_BUSSTATE_Pos);
   {$if defined(SAMD20))}
-  WaitBitCleared(STATUS,10);
+  WaitBitIsCleared(STATUS,10);
   {$else}
-  WaitBitCleared(SYNCBUSY,2);
+  WaitBitIsCleared(SYNCBUSY,2);
   {$endif}
 end;
 
 procedure TI2CRegistersHelper.disableWIRE;
 begin
   TSerCom_Registers(Self).Disable;
+end;
+
+procedure TI2CRegistersHelper.Initialize;
+begin
+  //TODO
 end;
 
 procedure TI2CRegistersHelper.Initialize(const ASDAPin : TI2CSDAPins;
@@ -285,7 +290,7 @@ end;
 
 procedure TI2CRegistersHelper.prepareCommandBitsWire(aCommand:byte);
 begin
-  PutValue(CTRLB,SERCOM_I2CM_CTRLB_CMD_Msk,aCommand,SERCOM_I2CM_CTRLB_CMD_Pos);
+  SetBitsMasked(CTRLB,aCommand,SERCOM_I2CM_CTRLB_CMD_Msk,SERCOM_I2CM_CTRLB_CMD_Pos);
 end;
 
 
@@ -294,9 +299,9 @@ begin
   result:=false;
 
   {$if defined(SAMD20))}
-  WaitBitCleared(STATUS,10);
+  WaitBitIsCleared(STATUS,10);
   {$else}
-  WaitBitCleared(SYNCBUSY,2);
+  WaitBitIsCleared(SYNCBUSY,2);
   {$endif}
 
   // clear the error flag
@@ -310,9 +315,9 @@ begin
   // Send start and address and R/W bit
   ADDR:=((Address shl 1) OR aDirection);
   {$if defined(SAMD20))}
-  WaitBitCleared(STATUS,10);
+  WaitBitIsCleared(STATUS,10);
   {$else}
-  WaitBitCleared(SYNCBUSY,2);
+  WaitBitIsCleared(SYNCBUSY,2);
   {$endif}
 
   if aDirection=I2C_TRANSFER_READ then
@@ -362,9 +367,9 @@ begin
   //Send data
   DATA := data;
   {$if defined(SAMD20))}
-  WaitBitCleared(STATUS,10);
+  WaitBitIsCleared(STATUS,10);
   {$else}
-  WaitBitCleared(SYNCBUSY,2);
+  WaitBitIsCleared(SYNCBUSY,2);
   {$endif}
 
   //Wait transmission successful

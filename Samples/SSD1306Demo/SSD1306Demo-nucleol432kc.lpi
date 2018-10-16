@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CONFIG>
+  <ProjectOptions>
+    <General>
+      <UseAppBundle Value="False"/>
+    </General>
+    <BuildModes Count="1">
+      <Item1 Name="default" Default="True"/>
+    </BuildModes>
+    <Units Count="1">
+      <Unit0>
+        <Filename Value="SSD1306Demo.lpr"/>
+        <IsPartOfProject Value="True"/>
+        <IsVisibleTab Value="True"/>
+        <Loaded Value="True"/>
+      </Unit0>
+    </Units>
+  </ProjectOptions>
+  <CompilerOptions>
+    <Target>
+      <Filename Value="SSD1306Demo"/>
+    </Target>
+    <SearchPaths>
+      <IncludeFiles Value="../../Source;$(ProjOutDir)"/>
+      <OtherUnitFiles Value="../../Source"/>
+      <UnitOutputDirectory Value="lib/$(TargetCPU)-$(TargetOS)"/>
+    </SearchPaths>
+    <CodeGeneration>
+      <HeapSize Value="8192"/>
+      <StackSize Value="8192"/>
+      <TargetCPU Value="arm"/>
+      <TargetOS Value="embedded"/>
+    </CodeGeneration>
+    <Linking>
+      <Debugging>
+        <GenerateDebugInfo Value="True"/>
+        <DebugInfoType Value="dsDwarf2"/>
+        <UseLineInfoUnit Value="False"/>
+      </Debugging>
+    </Linking>
+    <Other>
+      <CustomOptions Value="-Cparmv7em
+-XParm-none-eabi-
+-Wpnucleol432kc
+-dnucleol432kc
+      "/>
+    </Other>
+  </CompilerOptions>
+</CONFIG>

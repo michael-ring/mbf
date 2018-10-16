@@ -52,15 +52,7 @@ const
   );
 
   TUARTClockSource = (
-    GCLKGEN0,
-    GCLKGEN1,
-    GCLKGEN2,
-    GCLKGEN3,
-    GCLKGEN4,
-    GCLKGEN5,
-    GCLKGEN6,
-    GCLKGEN7,
-    GCLKGEN8
+    GCLK_ID_CORE
     );
 
 
@@ -78,25 +70,25 @@ type
     function  TX_Ready:boolean;
     function  DRE_Ready:boolean;
     function  RXC_Ready:boolean;
-    function GetBaudRate: Cardinal;
+
+    function  GetBaudRate: Cardinal;
     procedure SetBaudRate(const Value: Cardinal);
-    function GetBitsPerWord: TUARTBitsPerWord;
+    function  GetBitsPerWord: TUARTBitsPerWord;
     procedure SetBitsPerWord(const Value: TUARTBitsPerWord);
-    function GetParity: TUARTParity;
+    function  GetParity: TUARTParity;
     procedure SetParity(const Value: TUARTParity);
-    function GetStopBits: TUARTStopBits;
+    function  GetStopBits: TUARTStopBits;
     procedure SetStopBits(const Value: TUARTStopBits);
     procedure SetRxPin(const Value : TUARTRXPins);
     procedure SetTxPin(const Value : TUARTTXPins);
     procedure SetClockSource(const Value : TUARTClockSource);
-    function GetClockSource : TUARTClockSource;
+    function  GetClockSource : TUARTClockSource;
   public
     procedure Initialize;
     procedure Initialize(const ARxPin : TUARTRXPins;
                        const ATxPin : TUARTTXPins);
-    procedure Enable;
     function Disable : boolean;
-    procedure Close;
+    procedure Enable;
 
     function ReadBuffer(aReadBuffer: Pointer; aReadCount : integer; TimeOut: Cardinal=0): Cardinal;
     function WriteBuffer(const aWriteBuffer: Pointer; aWriteCount : integer; TimeOut: Cardinal=0): Cardinal;
@@ -107,11 +99,11 @@ type
     function WriteByte(const aWriteByte: byte; const Timeout : Cardinal=0) : boolean;
     function WriteByte(const aWriteBuffer: array of byte; aWriteCount : integer= -1; const Timeout : Cardinal=0) : boolean;
 
-    function ReadString(var aReadString: String; const aReadCount: Integer = -1;
+    function ReadString(var aReadString: String; aReadCount: Integer = -1;
       const Timeout: Cardinal = 0): Boolean;
     function ReadString(var aReadString: String; const aDelimiter : char;
       const Timeout: Cardinal = 0): Boolean;
-    function WriteString(const aString: String; const Timeout: Cardinal = 0): Boolean;
+    function WriteString(const aWriteString: String; const Timeout: Cardinal = 0): Boolean;
 
     property BaudRate : Cardinal read getBaudRate write setBaudRate;
     property BitsPerWord : TUARTBitsPerWord read getBitsPerWord; //write setBitsPerWord; We do currently not allow to set 9Bits
@@ -193,14 +185,30 @@ begin
   result:=((baud AND $FFF) OR ((fp AND $7) shl 13));
 end;
 
-procedure TUARTRegistersHelper.Enable;
+function TUARTRegistersHelper.TX_Ready:boolean;
 begin
-  TSercom_Registers(Self).Enable;
+  result:=GetBit(INTFLAG,SERCOM_USART_INTFLAG_TXC_Pos)=1;
 end;
 
-function TUARTRegistersHelper.Disable : boolean;
+function TUARTRegistersHelper.DRE_Ready:boolean;
 begin
-  Result :=   TSercom_Registers(Self).Disable;
+  result:=GetBit(INTFLAG,SERCOM_USART_INTFLAG_DRE_Pos)=1;
+end;
+
+function TUARTRegistersHelper.RXC_Ready:boolean;
+begin
+  result:=GetBit(INTFLAG,SERCOM_USART_INTFLAG_RXC_Pos)=1;
+end;
+
+function TUARTRegistersHelper.GetClockSource : TUARTClockSource;
+begin
+  //TODO First allow other Clocks than GCLK0 for UART
+  Result := TUARTClockSource.GCLK_ID_CORE;
+end;
+
+procedure TUARTRegistersHelper.SetClockSource(const Value : TUARTClockSource);
+begin
+  //TODO First allow other Clocks than GCLK0 for UART
 end;
 
 procedure TUARTRegistersHelper.Initialize;
@@ -215,8 +223,6 @@ begin
     SERCOM_USART_CTRLA_DORD OR // DWORD
     SERCOM_MODE_USART_INT_CLK;
 
-  SetBaudRate(DefaultUARTBaudrate);
-
   //Setting the CTRLB register
   CTRLB:=0;
   SetBit(CTRLB,SERCOM_USART_CTRLB_RXEN_Pos); //RX_EN
@@ -229,14 +235,20 @@ var
   aRXPO,aTXPO : longWord;
 begin
   Initialize;
+  SetBaudRate(DefaultUARTBaudrate);
   SetRxPin(ARxPin);
   SetTxPin(ATxPin);
   Enable;
 end;
 
-procedure TUARTRegistersHelper.Close;
+procedure TUARTRegistersHelper.Enable;
 begin
-  TSercom_Registers(Self).Close;
+  TSercom_Registers(Self).Enable;
+end;
+
+function TUARTRegistersHelper.Disable : boolean;
+begin
+  Result :=  TSercom_Registers(Self).Disable;
 end;
 
 function TUARTRegistersHelper.GetBaudRate: Cardinal;
@@ -249,14 +261,16 @@ const
   SHIFT=32;
 var
   ratio,scale,temp1:uint64;
+  ReEnable : boolean;
 begin
-  Disable;
+  ReEnable := Disable;
   temp1 := ((uint64(USART_SAMPLE_NUM) * uint64(Value)) shl SHIFT);
   ratio := temp1 DIV SystemCore.CPUFrequency;
   scale := (uint64(1) shl SHIFT) - ratio;
   BAUD := ((65536 * scale) shr SHIFT);
+  if ReEnable then
+    Enable;
 end;
-
 
 function TUARTRegistersHelper.GetBitsPerWord: TUARTBitsPerWord;
 begin
@@ -264,9 +278,13 @@ begin
 end;
 
 procedure TUARTRegistersHelper.SetBitsPerWord(const Value: TUARTBitsPerWord);
+var
+  ReEnable : boolean;
 begin
-  Disable;
+  ReEnable := Disable;
   CTRLB := (CTRLB and (not %111)) or longWord(Value);
+  if ReEnable then
+    Enable;
 end;
 
 function TUARTRegistersHelper.GetParity: TUARTParity;
@@ -281,10 +299,14 @@ begin
 end;
 
 procedure TUARTRegistersHelper.SetParity(const Value: TUARTParity);
+var
+  ReEnable : boolean;
 begin
-  Disable;
+  ReEnable := Disable;
   CTRLA := (CTRLA and ((not %1111) shl 24)) or ((longWord(Value) shr 1) shl 24);
   CTRLB := CTRLB and (not (%1 shl 13)) or ((longWord(Value) and %1) shl 13);
+  if ReEnable then
+    Enable;
 end;
 
 function TUARTRegistersHelper.GetStopBits: TUARTStopBits;
@@ -293,26 +315,35 @@ begin
 end;
 
 procedure TUARTRegistersHelper.SetStopBits(const Value: TUARTStopBits);
+var
+  ReEnable : boolean;
 begin
-  Disable;
+  ReEnable := Disable;
   CTRLB := CTRLB and (not (%1 shl 6)) or (longWord(Value) shl 6);
+  if ReEnable then
+    Enable;
 end;
 
 procedure TUARTRegistersHelper.SetRxPin(const Value : TUARTRXPins);
 var
   aRXPO : longWord;
+  ReEnable : boolean;
 begin
-  Disable;
+  ReEnable := Disable;
   aRXPO := (longword(Value) shr 16) and %11;
   GPIO.PinMux[longWord(Value) and $ff] := TPinMux((longWord(Value) shr 8) and %111);
   CTRLA:= CTRLA OR (SERCOM_USART_CTRLA_RXPO_Msk AND ((aRXPO) shl SERCOM_USART_CTRLA_RXPO_Pos));
+  if ReEnable then
+    Enable;
 end;
 
 procedure TUARTRegistersHelper.SetTxPin(const Value : TUARTTXPins);
 var
   aTXPO : longWord;
+var
+  ReEnable : boolean;
 begin
-  Disable;
+  ReEnable := Disable;
   //TX has only 2 possible Pads (PAD0 and PAD2) and the following Pad (PAD1 and PAD3) is reserved for Clock
   //When PAD0 is used only PAD2 and PAD3 can be used for RX
   //When PAD2 is used only PAD0 and PAD1 can be used for RX
@@ -321,16 +352,8 @@ begin
   GPIO.PinMux[longWord(Value) and $ff] := TPinMux((longWord(Value) shr 8) and %111);
 
   CTRLA:= CTRLA or (SERCOM_USART_CTRLA_TXPO_Msk AND ((aTXPO) shl SERCOM_USART_CTRLA_TXPO_Pos));
-end;
-
-procedure TUARTRegistersHelper.SetClockSource(const Value : TUARTClockSource);
-begin
-  //TODO First allow other Clocks than GCLK0 for UART
-end;
-
-function TUARTRegistersHelper.GetClockSource : TUARTClockSource;
-begin
-  //TODO First allow other Clocks than GCLK0 for UART
+  if ReEnable then
+    Enable;
 end;
 
 function TUARTRegistersHelper.ReadBuffer(aReadBuffer: Pointer; aReadCount : integer; TimeOut: Cardinal=0): longWord;
@@ -345,7 +368,7 @@ begin
 
   while (Result < aReadCount) do
   begin
-    if not GetBit(INTFLAG,SERCOM_USART_INTFLAG_RXC_Pos) then
+    if GetBit(INTFLAG,SERCOM_USART_INTFLAG_RXC_Pos) = 0then
     begin
       if SystemCore.GetTickCount > EndTime then
         Exit;
@@ -395,36 +418,6 @@ begin
   end;
 end;
 
-function TUARTRegistersHelper.WriteByte(const aWriteByte: Byte; const Timeout: Cardinal = 0): Boolean; inline;
-begin
-  while (NOT DRE_Ready) do begin end;
-  DATA:=aWriteByte;
-  while (NOT TX_Ready) do begin end;
-  result:=true;
-end;
-
-function TUARTRegistersHelper.WriteByte(const aWriteBuffer: array of Byte; aWriteCount : integer=-1; const Timeout: Cardinal = 0): Boolean;
-var
-  i : longWord;
-begin
-  if aWriteCount = -1 then
-    aWriteCount := High(aWriteBuffer)-Low(aWriteBuffer);
-  for i := low(aWriteBuffer) to low(aWriteBuffer)+aWriteCount do
-    Result := WriteByte(aWriteBuffer[i],Timeout);
-end;
-
-function TUARTRegistersHelper.WriteString(const aString: String; const Timeout: Cardinal = 0): Boolean;
-var
-  i:byte;
-begin
-  result:=false;
-  for i:=1 to Length(aString) do
-  begin
-    if (NOT WriteByte(Ord(aString[i]))) then exit;
-  end;
-  result:=true;
-end;
-
 function TUARTRegistersHelper.ReadByte(var aReadByte: byte; const Timeout: Cardinal = 0):boolean; inline;
 var
   EndTime : longWord;
@@ -435,7 +428,7 @@ begin
   else
     EndTime := SystemCore.GetTickCount + TimeOut;
   repeat
-    if GetBit(INTFLAG,SERCOM_USART_INTFLAG_RXC_Pos) then
+    if GetBit(INTFLAG,SERCOM_USART_INTFLAG_RXC_Pos) = 1 then
     begin
       aReadByte := DATA;
       result:=true;
@@ -448,15 +441,104 @@ begin
 end;
 
 function TUARTRegistersHelper.ReadByte(var aReadBuffer: array of byte; aReadCount : integer=-1; const Timeout : Cardinal=0):boolean;
-begin
-  //TODO
-end;
-
-function TUARTRegistersHelper.ReadString(var aReadString: String; const aReadCount: Integer = -1;
-  const Timeout: Cardinal = 0): Boolean;
 var
   EndTime : longWord;
   DataRead : byte;
+  i : integer;
+begin
+  Result := false;
+  //Default timeout is 10 Seconds
+  if Timeout = 0 then
+    EndTime := SystemCore.GetTickCount + DefaultUARTTimeout
+  else
+    EndTime := SystemCore.GetTickCount + TimeOut;
+
+  i := Low(aReadBuffer);
+  repeat
+    if GetBit(INTFLAG,SERCOM_USART_INTFLAG_RXC_Pos) = 1 then
+    begin
+      aReadBuffer[i] := DATA;
+      inc(i);
+      if i > high(aReadBuffer) then
+      begin
+        result := true;
+        exit;
+      end;
+    end;
+  until (SystemCore.GetTickCount > EndTime);
+  //TODO: SetLength does not work
+  //if result = false then
+    //setLength(aReadBuffer,i-1-Low(aReadBuffer));
+end;
+
+function TUARTRegistersHelper.WriteByte(const aWriteByte: byte; const Timeout : Cardinal=0) : boolean;
+var
+  EndTime : longWord;
+  DataRead : byte;
+  i : longWord;
+begin
+  Result := false;
+  //Default timeout is 10 Seconds
+  if Timeout = 0 then
+    EndTime := SystemCore.GetTickCount + DefaultUARTTimeout
+  else
+    EndTime := SystemCore.GetTickCount + TimeOut;
+
+  repeat
+    if DRE_Ready then
+    begin
+      DATA := aWriteByte;
+      result := true;
+      exit;
+    end;
+  until (SystemCore.GetTickCount > EndTime);
+
+  repeat
+    if TX_Ready then
+      exit;
+  until  (SystemCore.GetTickCount > EndTime);
+end;
+
+function TUARTRegistersHelper.WriteByte(const aWriteBuffer: array of byte; aWriteCount : integer=-1; const Timeout : Cardinal=0) : boolean;
+var
+  EndTime : longWord;
+  DataRead : byte;
+  i : longWord;
+begin
+  Result := false;
+  //Default timeout is 10 Seconds
+  if Timeout = 0 then
+    EndTime := SystemCore.GetTickCount + DefaultUARTTimeout
+  else
+    EndTime := SystemCore.GetTickCount + TimeOut;
+
+  i := low(aWriteBuffer);
+  begin
+    repeat
+      //Wait for TXE (Transmit Data Register Empty) to go high
+      if DRE_Ready then
+      begin
+        DATA := aWriteBuffer[i];
+        inc(i);
+        if i > high(aWriteBuffer) then
+        begin
+          result := true;
+          exit;
+        end;
+      end;
+    until (SystemCore.GetTickCount > EndTime);
+  end;
+  repeat
+    if TX_Ready then
+      exit;
+  until  (SystemCore.GetTickCount > EndTime);
+end;
+
+function TUARTRegistersHelper.ReadString(var aReadString: String; aReadCount: integer = -1;
+  const Timeout: Cardinal = 0): Boolean;
+var
+  EndTime : longWord;
+  i : integer;
 begin
   Result := false;
   aReadString := '';
@@ -465,12 +547,13 @@ begin
     EndTime := SystemCore.GetTickCount + DefaultUARTTimeout
   else
     EndTime := SystemCore.GetTickCount + TimeOut;
+  i := 1;
   repeat
-    if GetBit(INTFLAG,SERCOM_USART_INTFLAG_RXC_Pos) then
+    if GetBit(INTFLAG,SERCOM_USART_INTFLAG_RXC_Pos) = 1 then
     begin
-      DataRead := DATA;
-      aReadString := aReadString + Char(DataRead);
-      if ((aReadCount <> -1) and (length(aReadString) >= aReadCount)) then
+      aReadString := aReadString + char(DATA);
+      inc(i);
+      if i >aReadCount then
       begin
         result := true;
         exit;
@@ -479,11 +562,11 @@ begin
   until (SystemCore.GetTickCount > EndTime);
 end;
 
-function TUARTRegistersHelper.ReadString(var aReadString: String; const aDelimiter : char;
+function TUARTRegistersHelper.ReadString(var aReadString: String; const aDelimiter: char;
   const Timeout: Cardinal = 0): Boolean;
 var
   EndTime : longWord;
-  DataRead : byte;
+  charRead : char;
 begin
   Result := false;
   aReadString := '';
@@ -492,33 +575,53 @@ begin
     EndTime := SystemCore.GetTickCount + DefaultUARTTimeout
   else
     EndTime := SystemCore.GetTickCount + TimeOut;
+
   repeat
-    if GetBit(INTFLAG,SERCOM_USART_INTFLAG_RXC_Pos) then
+    if GetBit(INTFLAG,SERCOM_USART_INTFLAG_RXC_Pos) = 1 then
     begin
-      DataRead := DATA;
-      if DataRead = byte(aDelimiter) then
+      charRead := char(DATA);
+      aReadString := aReadString + charread;
+      if charRead = aDelimiter then
       begin
         result := true;
         exit;
       end;
-      aReadString := aReadString + Char(DataRead);
     end;
   until (SystemCore.GetTickCount > EndTime);
 end;
 
-function TUARTRegistersHelper.TX_Ready:boolean;
+function TUARTRegistersHelper.WriteString(const aWriteString: String; const Timeout: Cardinal = 0): Boolean;
+var
+  EndTime : longWord;
+  DataRead : byte;
+  i : longWord;
 begin
-  result:=GetBit(INTFLAG,SERCOM_USART_INTFLAG_TXC_Pos);
-end;
+  Result := false;
+  //Default timeout is 10 Seconds
+  if Timeout = 0 then
+    EndTime := SystemCore.GetTickCount + DefaultUARTTimeout
+  else
+    EndTime := SystemCore.GetTickCount + TimeOut;
 
-function TUARTRegistersHelper.DRE_Ready:boolean;
-begin
-  result:=GetBit(INTFLAG,SERCOM_USART_INTFLAG_DRE_Pos);
-end;
-
-function TUARTRegistersHelper.RXC_Ready:boolean;
-begin
-  result:=GetBit(INTFLAG,SERCOM_USART_INTFLAG_RXC_Pos);
+  i := 1;
+  begin
+    repeat
+      if DRE_Ready then
+      begin
+        DATA := byte(aWriteString[i]);
+        inc(i);
+        if i > length(aWriteString) then
+        begin
+          result := true;
+          exit;
+        end;
+      end;
+    until (SystemCore.GetTickCount > EndTime);
+  end;
+  repeat
+    if TX_Ready then
+      exit;
+  until  (SystemCore.GetTickCount > EndTime);
 end;
 
 end.
