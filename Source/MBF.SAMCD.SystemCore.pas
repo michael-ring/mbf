@@ -289,7 +289,7 @@ begin
       OSC32KCTRL.XOSC32K:=((OSC32KCTRL_XOSC32K_STARTUP_Msk AND ((5) shl OSC32KCTRL_XOSC32K_STARTUP_Pos)) OR OSC32KCTRL_XOSC32K_XTALEN OR OSC32KCTRL_XOSC32K_EN32K OR OSC32KCTRL_XOSC32K_ENABLE);
 
       //Wait for the crystal oscillator to start up
-      waitBitIsSet(OSC32KCTRL.STATUS,OSC32KCTRL_STATUS_XOSC32KRDY_Pos); // Wait for synchronization
+      WaitBitIsSet(OSC32KCTRL.STATUS,OSC32KCTRL_STATUS_XOSC32KRDY_Pos); // Wait for synchronization
     end;
 
     if (aClockType = TClockType.RC_PLL) OR (aClockType = TClockType.XTAL32_PLL) then
@@ -692,7 +692,7 @@ begin
     //Switch off XTAL32 if it is not in use anymore
     if (NOT ((aClockType = TClockType.XTAL32_PLL){$ifdef has_fdpll} OR (aClockType = TClockType.XTAL32_FPLL){$endif has_fdpll})) then
     begin
-      if GetBit(SYSCTRL.XOSC32K,SYSCTRL_XOSC32K_ENABLE_Pos) = 1 then
+      if GetBit(SYSCTRL.XOSC32K,SYSCTRL_XOSC32K_ENABLE_Pos)=1 then
       begin
         ClearBit(SYSCTRL.XOSC32K,SYSCTRL_XOSC32K_ENABLE_Pos);
         WaitBitIsCleared(SYSCTRL.XOSC32K,SYSCTRL_XOSC32K_ENABLE_Pos);
@@ -767,3 +767,4 @@ end;
 
 begin
 end.
+
