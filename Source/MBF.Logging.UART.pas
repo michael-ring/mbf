@@ -33,7 +33,7 @@ procedure TUART_Logger.Initialize(var aDebugUart : TUART_Registers; aUARTRXPin :
 begin
   pDebugUart := @aDebugUart;
   GPIO.Initialize;
-  pDebugUart^.Initialize(TUARTRXPins.DEBUG_UART,TUARTTXPins.DEBUG_UART);
+  pDebugUart^.Initialize(aUARTRXPin,aUARTTXPin);
 end;
 
 begin
