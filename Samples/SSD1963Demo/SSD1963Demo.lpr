@@ -23,7 +23,8 @@ uses
   MBF.Fonts.DroidSansMono36x48_antialiased,
   MBF.__CONTROLLERTYPE__.SystemCore,
   MBF.__CONTROLLERTYPE__.GPIO,
-  MBF.Displays.SSD1963,MBF.Displays.CustomDisplay;
+  MBF.Displays.SSD1963,
+  MBF.Displays.CustomDisplay;
 
 var
   Display : TSSD1963;

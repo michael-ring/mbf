@@ -1,4 +1,4 @@
-program US2066Demo;
+program HD44780Demo;
 {
   This file is part of Pascal Microcontroller Board Framework (MBF)
   Copyright (c) 2015 -  Michael Ring

@@ -34,7 +34,7 @@ type
     procedure SetCoreClockSource(aClockSource:longword);
     procedure Reset;
     procedure Enable;
-    procedure Disable;
+    function Disable : boolean;
   end;
 
 implementation
@@ -131,9 +131,9 @@ begin
   SetBit(USART.CTRLA,SERCOM_SWRST_Pos);
   // All syncbusy registers are at offset $1C, so just choose one ... usart ... ;-)
   {$ifdef samd20}
-  WaitBitCleared(USART.STATUS,15);
+  WaitBitIsCleared(USART.STATUS,15);
   {$else}
-  WaitBitCleared(USART.SYNCBUSY,0);
+  WaitBitIsCleared(USART.SYNCBUSY,0);
   {$endif}
 end;
 
@@ -143,20 +143,22 @@ begin
   SetBit(USART.CTRLA,SERCOM_ENABLE_Pos);
   // All syncbusy registers are at offset $1C, so just choose one ... usart ... ;-)
   {$ifdef samd20}
-  WaitBitCleared(USART.STATUS,15);
+  WaitBitIsCleared(USART.STATUS,15);
   {$else}
-  WaitBitCleared(USART.SYNCBUSY,1);
+  WaitBitIsCleared(USART.SYNCBUSY,1);
   {$endif}
 end;
 
-procedure TSerCom.Disable;
+function TSerCom.Disable : boolean;
 begin
+  //Result returns the current enable state of the SerCom
+  Result := GetBit(USART.CTRLA,SERCOM_ENABLE_Pos) = 1;
   ClearBit(USART.CTRLA,SERCOM_ENABLE_Pos);
   // All syncbusy registers are at offset $1C, so just choose one ... usart ... ;-)
   {$ifdef samd20}
-  WaitBitCleared(USART.STATUS,15);
+  WaitBitIsCleared(USART.STATUS,15);
   {$else}
-  WaitBitCleared(USART.SYNCBUSY,1);
+  WaitBitIsCleared(USART.SYNCBUSY,1);
   {$endif}
 end;
 

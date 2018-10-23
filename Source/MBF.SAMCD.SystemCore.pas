@@ -109,7 +109,7 @@ procedure TSAMCDSystemCore.ConfigureSystem;
 begin
   {$ifdef SAMD}
   //Run at 8MHz
-  PutValue(SysCtrl.OSC8M,SYSCTRL_OSC8M_PRESC_Msk,DefaultPrescaler,SYSCTRL_OSC8M_PRESC_Pos);
+  SetBitsMasked(SysCtrl.OSC8M,DefaultPrescaler,SYSCTRL_OSC8M_PRESC_Msk,SYSCTRL_OSC8M_PRESC_Pos);
   //Enable clock
   SetBit(SysCtrl.OSC8M,SYSCTRL_OSC8M_ENABLE_Pos);
 
@@ -249,7 +249,7 @@ begin
     while (OSCCTRL.OSC48MSYNCBUSY>0) do begin end;                         // Wait until synced
     //Perform reset
     SetBit(GCLK.CTRLA,GCLK_CTRL_SWRST_Pos);
-    while GetBit(GCLK.CTRLA,GCLK_CTRL_SWRST_Pos) do begin end; // Wait for synchronization
+    WaitBitIsCleared(GCLK.CTRLA,GCLK_CTRL_SWRST_Pos); // Wait for synchronization
     //System now runs on OSC48M at 8MHz.
 
     // Set waitstates
@@ -289,7 +289,7 @@ begin
       OSC32KCTRL.XOSC32K:=((OSC32KCTRL_XOSC32K_STARTUP_Msk AND ((5) shl OSC32KCTRL_XOSC32K_STARTUP_Pos)) OR OSC32KCTRL_XOSC32K_XTALEN OR OSC32KCTRL_XOSC32K_EN32K OR OSC32KCTRL_XOSC32K_ENABLE);
 
       //Wait for the crystal oscillator to start up
-      while (NOT GetBit(OSC32KCTRL.STATUS,OSC32KCTRL_STATUS_XOSC32KRDY_Pos)) do begin end; // Wait for synchronization
+      WaitBitIsSet(OSC32KCTRL.STATUS,OSC32KCTRL_STATUS_XOSC32KRDY_Pos); // Wait for synchronization
     end;
 
     if (aClockType = TClockType.RC_PLL) OR (aClockType = TClockType.XTAL32_PLL) then
@@ -318,8 +318,8 @@ begin
       SetBit(OSCCTRL.DPLLCTRLA,1);//enable DPLL
       WaitDPLLSync;
 
-      while (NOT GetBit(OSCCTRL.DPLLSTATUS,0)) do begin end;//DPLLSTATUS_LOCK
-      while (NOT GetBit(OSCCTRL.DPLLSTATUS,1)) do begin end;//DPLLSTATUS_CLKRDY
+      WaitBitIsSet(OSCCTRL.DPLLSTATUS,0);//DPLLSTATUS_LOCK
+      WaitBitIsSet(OSCCTRL.DPLLSTATUS,1);//DPLLSTATUS_CLKRDY
 
       // Default setting for GEN0
       GCLK.GENCTRL[0] :=
@@ -361,11 +361,11 @@ const
   PLLREFCLOCK=3;
 procedure WaitGLK;
 begin
-  while GetBit(GCLK.STATUS,GCLK_STATUS_SYNCBUSY_Pos) do begin end; // Wait for synchronization
+  WaitBitIsCleared(GCLK.STATUS,GCLK_STATUS_SYNCBUSY_Pos); // Wait for synchronization
 end;
 procedure WaitDFLLRDY;
 begin
-  while (NOT GetBit(SYSCTRL.PCLKSR,SYSCTRL_PCLKSR_DFLLRDY_Pos)) do begin end; // Wait for synchronization
+  WaitBitIsSet(SYSCTRL.PCLKSR,SYSCTRL_PCLKSR_DFLLRDY_Pos); // Wait for synchronization
 end;
 var
   ValidPLLFrequency:longword;
@@ -466,13 +466,13 @@ begin
     //Make a software reset of the clock system.
     //We need the OSC8M, because this clock is used after a reset
     //So, enable OSC8M oscillator
-    PutValue(SysCtrl.OSC8M,SYSCTRL_OSC8M_PRESC_Msk,DefaultPrescaler,SYSCTRL_OSC8M_PRESC_Pos);
+    SetBitsMasked(SysCtrl.OSC8M,DefaultPrescaler,SYSCTRL_OSC8M_PRESC_Msk,SYSCTRL_OSC8M_PRESC_Pos);
     ClearBit(SYSCTRL.OSC8M,SYSCTRL_OSC8M_ONDEMAND_Pos);
     SetBit(SYSCTRL.OSC8M,SYSCTRL_OSC8M_ENABLE_Pos);
-    while (NOT GetBit(SYSCTRL.OSC8M,SYSCTRL_OSC8M_ENABLE_Pos)) do begin end;
+    WaitBitIsSet(SYSCTRL.OSC8M,SYSCTRL_OSC8M_ENABLE_Pos);
     //Perform reset
     SetBit(GCLK.CTRL,GCLK_CTRL_SWRST_Pos);
-    while GetBit(GCLK.CTRL,GCLK_CTRL_SWRST_Pos) do begin end; // Wait for synchronization
+    WaitBitIsCleared(GCLK.CTRL,GCLK_CTRL_SWRST_Pos); // Wait for synchronization
     WaitGLK;
     //System now runs on OSC8M at 8MHz.
 
@@ -488,7 +488,7 @@ begin
     if (FCPUFrequency>=42000000)  then Inc(WaitStates);
     if (FCPUFrequency>=48000000)  then Inc(WaitStates);
     //Set waitstates in an early stage
-    PutValue(NVMCTRL.CTRLB,NVMCTRL_CTRLB_RWS_Msk,WaitStates,NVMCTRL_CTRLB_RWS_Pos);
+    SetBitsMasked(NVMCTRL.CTRLB,WaitStates,NVMCTRL_CTRLB_RWS_Msk,NVMCTRL_CTRLB_RWS_Pos);
 
     // Set OSC8M_prescaler
     if (aClockType = TClockType.RC) OR (aClockType = TClockType.RC_PLL) {$ifdef has_fdpll}OR (aClockType = TClockType.RC_FPLL){$endif has_fdpll} then
@@ -500,7 +500,7 @@ begin
         OSC8M_divider:=(OSC8M_divider shr 1);
       end;
       //Set OSC8M prescaler
-      PutValue(SysCtrl.OSC8M,SYSCTRL_OSC8M_PRESC_Msk,OSC8M_prescaler,SYSCTRL_OSC8M_PRESC_Pos);
+      SetBitsMasked(SysCtrl.OSC8M,OSC8M_prescaler,SYSCTRL_OSC8M_PRESC_Msk,SYSCTRL_OSC8M_PRESC_Pos);
       //No need to enable OSC8M: it is already enabled !
       //See reset code above: after a reset, the system NEEDS to be clocked by OSC8M !!!
     end;
@@ -513,7 +513,7 @@ begin
       //Separate call, as described in chapter 15.6.3
       SetBit(SYSCTRL.XOSC32K,SYSCTRL_XOSC32K_ENABLE_Pos);
       //Wait for the crystal oscillator to start up
-      while (NOT GetBit(SysCtrl.PCLKSR,SYSCTRL_PCLKSR_XOSC32KRDY_Pos)) do begin end;
+      WaitBitIsSet(SysCtrl.PCLKSR,SYSCTRL_PCLKSR_XOSC32KRDY_Pos);
     end;
 
     // Finalize OSC8M settings for GCLK0 for clocktype RC
@@ -588,9 +588,9 @@ begin
       if (coarse = $3f) then coarse := $1f;
       fine := ReadCal(NVM_DFLL48M_FINE_CAL_POS,NVM_DFLL48M_FINE_CAL_SIZE);
       if (fine = $3ff) then coarse := $1ff;
-      PutValue(SysCtrl.DFLLVAL,SYSCTRL_DFLLVAL_COARSE_Msk,coarse,SYSCTRL_DFLLVAL_COARSE_Pos);
+      SetBitsMasked(SysCtrl.DFLLVAL,coarse,SYSCTRL_DFLLVAL_COARSE_Msk,SYSCTRL_DFLLVAL_COARSE_Pos);
       WaitDFLLRDY;
-      PutValue(SysCtrl.DFLLVAL,SYSCTRL_DFLLVAL_FINE_Msk,fine,SYSCTRL_DFLLVAL_FINE_Pos);
+      SetBitsMasked(SysCtrl.DFLLVAL,fine,SYSCTRL_DFLLVAL_FINE_Msk,SYSCTRL_DFLLVAL_FINE_Pos);
       WaitDFLLRDY;
 
       // 7. Change the multiplication factor.
@@ -616,9 +616,9 @@ begin
       WaitDFLLRDY;
 
       // Wait for the coarse locks.
-      while (NOT GetBit(SysCtrl.PCLKSR,SYSCTRL_PCLKSR_DFLLLCKC_Pos)) do begin end;
+      WaitBitIsSet(SysCtrl.PCLKSR,SYSCTRL_PCLKSR_DFLLLCKC_Pos);
       // 11. Wait for the fine locks.
-      while (NOT GetBit(SysCtrl.PCLKSR,SYSCTRL_PCLKSR_DFLLLCKF_Pos)) do begin end;
+      WaitBitIsSet(SysCtrl.PCLKSR,SYSCTRL_PCLKSR_DFLLLCKF_Pos);
 
       // Switch generic clock 0 to the DFLL
       GCLK.GENCTRL:=
@@ -633,7 +633,7 @@ begin
     if (aClockType = TClockType.RC_FPLL) OR (aClockType = TClockType.XTAL32_FPLL) then
     begin
       SYSCTRL.DPLLCTRLA:=0;//disable DPLL
-      while (GetBit(SYSCTRL.DPLLSTATUS,SYSCTRL_DPLLSTATUS_ENABLE_Pos)) do begin end;
+      WaitBitIsCleared(SYSCTRL.DPLLSTATUS,SYSCTRL_DPLLSTATUS_ENABLE_Pos);
 
       SYSCTRL.DPLLRATIO:=(PllFactFra shl 16) + PllFactInt;
 
@@ -676,8 +676,8 @@ begin
       end;
 
       SYSCTRL.DPLLCTRLA:=SYSCTRL_DPLLCTRLA_ENABLE;//enable FDPLL
-      while (NOT GetBit(SYSCTRL.DPLLSTATUS,SYSCTRL_DPLLSTATUS_ENABLE_Pos)) do begin end;
-      while (NOT GetBit(SYSCTRL.DPLLSTATUS,SYSCTRL_DPLLSTATUS_CLKRDY_Pos)) do begin end;
+      WaitBitIsSet(SYSCTRL.DPLLSTATUS,SYSCTRL_DPLLSTATUS_ENABLE_Pos);
+      WaitBitIsSet(SYSCTRL.DPLLSTATUS,SYSCTRL_DPLLSTATUS_CLKRDY_Pos);
 
       // Switch generic clock 0 to the FDPLL
       GCLK.GENCTRL:=
@@ -692,10 +692,10 @@ begin
     //Switch off XTAL32 if it is not in use anymore
     if (NOT ((aClockType = TClockType.XTAL32_PLL){$ifdef has_fdpll} OR (aClockType = TClockType.XTAL32_FPLL){$endif has_fdpll})) then
     begin
-      if GetBit(SYSCTRL.XOSC32K,SYSCTRL_XOSC32K_ENABLE_Pos) then
+      if GetBit(SYSCTRL.XOSC32K,SYSCTRL_XOSC32K_ENABLE_Pos)=1 then
       begin
         ClearBit(SYSCTRL.XOSC32K,SYSCTRL_XOSC32K_ENABLE_Pos);
-        while (GetBit(SYSCTRL.XOSC32K,SYSCTRL_XOSC32K_ENABLE_Pos)) do begin end;
+        WaitBitIsCleared(SYSCTRL.XOSC32K,SYSCTRL_XOSC32K_ENABLE_Pos);
       end;
     end;
 
@@ -703,13 +703,13 @@ begin
     if (NOT ((aClockType = TClockType.RC) OR (aClockType = TClockType.RC_PLL){$ifdef has_fdpll} OR (aClockType = TClockType.RC_FPLL){$endif has_fdpll})) then
     begin
       ClearBit(SYSCTRL.OSC8M,SYSCTRL_OSC8M_ENABLE_Pos);
-      while (GetBit(SYSCTRL.OSC8M,SYSCTRL_OSC8M_ENABLE_Pos)) do begin end;
+      WaitBitIsCleared(SYSCTRL.OSC8M,SYSCTRL_OSC8M_ENABLE_Pos);
     end;
 
     //Switch off DFLL48 if it is not in use anymore
     if (NOT ((aClockType = TClockType.RC_PLL) OR (aClockType = TClockType.XTAL32_PLL))) then
     begin
-      if GetBit(SYSCTRL.DFLLCTRL,SYSCTRL_DFLLCTRL_ENABLE_Pos) then
+      if GetBit(SYSCTRL.DFLLCTRL,SYSCTRL_DFLLCTRL_ENABLE_Pos)=1 then
       begin
         ClearBit(SYSCTRL.DFLLCTRL,SYSCTRL_DFLLCTRL_ENABLE_Pos);
         WaitDFLLRDY;
@@ -720,10 +720,10 @@ begin
     {$ifdef has_fdpll}
     if (NOT ((aClockType = TClockType.RC_FPLL) OR (aClockType = TClockType.XTAL32_FPLL))) then
     begin
-      if GetBit(SYSCTRL.DPLLCTRLA,SYSCTRL_DPLLCTRLA_ENABLE_Pos) then
+      if GetBit(SYSCTRL.DPLLCTRLA,SYSCTRL_DPLLCTRLA_ENABLE_Pos) = 1 then
       begin
         ClearBit(SYSCTRL.DPLLCTRLA,SYSCTRL_DPLLCTRLA_ENABLE_Pos);
-        while (GetBit(SYSCTRL.DPLLSTATUS,SYSCTRL_DPLLSTATUS_ENABLE_Pos)) do begin end;
+        WaitBitIsCleared(SYSCTRL.DPLLSTATUS,SYSCTRL_DPLLSTATUS_ENABLE_Pos);
       end;
     end;
     {$endif has_fdpll}
@@ -759,7 +759,7 @@ begin
     aClockSource OR
     GCLK_CLKCTRL_CLKEN);
   // Wait for GCLK-synchronization
-  while (GetBit(GCLK.STATUS,GCLK_STATUS_SYNCBUSY_Pos)) do begin end;
+  WaitBitIsCleared(GCLK.STATUS,GCLK_STATUS_SYNCBUSY_Pos);
   {$endif}
 end;
 
@@ -767,3 +767,4 @@ end;
 
 begin
 end.
+

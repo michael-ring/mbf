@@ -1,5 +1,1 @@
-nucleof401re 	armv7em
-samc21xpro      armv6m
-samd10xmini     armv6m
-samd20xpro   	armv6m
-samd21xpro   	armv6m
+../Samples/devicelist

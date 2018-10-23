@@ -111,6 +111,9 @@ type
   {$if defined(SAMD10XMINI) or defined(SAMD11XPRO) or defined(ARDUINOZERO)}
     ,D1_UART = MuxC or Pad2 or TNativePin.PA10
   {$endif}
+  {$if defined(SAMD10XMINI) or defined(SAMD11XPRO)}
+    ,DEBUG_UART = MuxC or Pad2 or TNativePin.PA10
+  {$endif}
   {$if defined(samc20) or defined(samc21) or defined(samd20) or defined(samd21)}
     ,PA14_UART2_PAD2 = MuxC or Pad2 or TNativePin.PA14
   {$endif}
@@ -491,6 +494,9 @@ type
   {$endif}
   {$if defined(SAMD10XMINI) or defined(SAMD11XPRO) or defined(ARDUINOZERO)}
     ,D0_UART = MuxC or Pad3 or TNativePin.PA11
+  {$endif}
+  {$if defined(SAMD10XMINI) or defined(SAMD11XPRO)}
+    ,DEBUG_UART = MuxC or Pad3 or TNativePin.PA11
   {$endif}
   {$if defined(samc20) or defined(samc21) or defined(samd20) or defined(samd21)}
     ,PA15_UART2_PAD3 = MuxC or Pad3 or TNativePin.PA15

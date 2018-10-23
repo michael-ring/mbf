@@ -84,6 +84,7 @@ type
   TPinOutputSpeed = (Slow=%00, Medium=%01, High=%10, VeryHigh=%11);
 
 type
+  TGPIO_Registers = TPortRegisters;
   TGPIO = record
   private type
     pGPIORegisters = ^TGPIO_Registers;

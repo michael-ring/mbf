@@ -26,8 +26,8 @@
       <UnitOutputDirectory Value="lib/$(TargetCPU)-$(TargetOS)"/>
     </SearchPaths>
     <CodeGeneration>
-      <HeapSize Value="8192"/>
-      <StackSize Value="8192"/>
+      <HeapSize Value="%%HEAPSIZE%%"/>
+      <StackSize Value="%%STACKSIZE%%"/>
       <TargetCPU Value="%%ARCH%%"/>
       <TargetOS Value="embedded"/>
     </CodeGeneration>

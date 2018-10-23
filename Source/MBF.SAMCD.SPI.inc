@@ -771,6 +771,9 @@ type
   {$if defined(samc20) or defined(samc21) or defined(samd20) or defined(samd21)}
     ,PA17_SPI1_PAD1 = MuxC or Pad1 or TNativePin.PA17
   {$endif}
+  {$if defined(ARDUINOZERO)}
+    ,D13_SPI = MuxC or Pad1 or TNativePin.PA17
+  {$endif}
   {$if defined(samd10d) or defined(samd11d)}
     ,PA23_SPI1_PAD1 = MuxC or Pad1 or TNativePin.PA23
   {$endif}

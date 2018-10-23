@@ -21,7 +21,7 @@ uses
   MBF.__CONTROLLERTYPE__.SPI;
 
 const
-  PatternA : array[0..7] of word = ($01aa,$0255,$03aa,$0455,$05aa,$0655,$07aa,$0855);
+  Pattern : array[1..8] of word = ($01aa,$0255,$03aa,$0455,$05aa,$0655,$07aa,$0855);
 var
   i : longWord;
 begin
@@ -34,7 +34,7 @@ begin
   // This Initializes the default SPI for Arduino compatible Boards (connected to pins D10 to D13 on Arduino Header)
   // If the board is not Arduino compatible then you will have to use 'real' SPIs instead which are usually named SPI0, SPI1 ....
   // Also, if you plan to use more than one SPI you should always use 'real' SPI names to avoid accidentially using a SPI twice.
-  // Default Initialization is 8MHz SPI Clock, Master and 8-Bit Mode
+  // Default Initialization is 8MHz SPI Clock, Master and Mode0
   SPI.Initialize(TSPIMOSIPins.D11_SPI,TSPIMISOPins.D12_SPI,TSPISCLKPins.D13_SPI,TSPINSSPins.D10_SPI);
 
   // Now define which Pins to use for the choosen SPI
@@ -45,10 +45,9 @@ begin
   //SPI.NSSPin  :=  TSPINSSPins.D10_SPI;
 
   //SPI.Baudrate := 8000000;
-  //SPI.BitsPerWord := TSPIBitsPerWord.Eight;
-  //SPI.Mode := TSPIMode.Master;
+  //SPI.Mode := TSPIMode.Mode0;
+  //SPI.OperatingMode := TSPIOperatingMode.Master;
 
-  // For this demo we need to switch to 16Bit Mode
   // We drive a small 8x8 LED Module that is driven by a MAX7219 Chip
 
   SPI.WriteWord($0900); //Do not decode bits
@@ -65,7 +64,8 @@ begin
     for i := 1 to 8 do
       SPI.WriteWord((i shl 8) + $ff);
     SystemCore.Delay(1000);
-    SPI.WriteWord(PatternA);
+    for i := 1 to 8 do
+      SPI.WriteWord(Pattern[i]);
     SystemCore.Delay(1000);
   until 1=0
 end.
