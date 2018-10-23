@@ -71,18 +71,6 @@ var
 implementation
 
 uses
-{$IF DEFINED(CortexM0)}
-  cortexm0,
-{$ELSEIF DEFINED(CortexM3)}
-  cortexm3,
-{$ELSEIF DEFINED(CortexM4)}
-  cortexm4,
-{$ELSEIF DEFINED(CortexM7)}
-  cortexm7,
-{$ELSEIF DEFINED(Pic32)}
-{$ELSE}
-  {$ERROR Cortex Type not defined}
-{$ENDIF}
   MBF.SAMCD.Helpers,
   MBF.BitHelpers;
 
