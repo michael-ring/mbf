@@ -51,7 +51,7 @@ begin
   //But some Boards (like Nucleo-L476 or SAMD20-XPRO or SAMD21-XPRO) use another UART to interface to the On-Board JTAG Debugger Chip
   //So using DEBUG_UART will make sure that you always have output through the to the On-Board JTAG Debugger Chip
 
-  DEBUG_UART.Initialize(TUARTRXPins.DEBUG_UART,TUARTTXPins.DEBUG_UART); //Use this when UART Pins are not passed to the STLink/JLink like on Nucleo-L476
+  DEBUG_UART.Initialize(TUARTRXPins.DEBUG_UART,TUARTTXPins.DEBUG_UART);
   repeat
     DEBUG_UART.WriteString('Hello World!'+#13+#10);
     DEBUG_UART.WriteString('Exact Baudrate: '+ DEBUG_UART.BaudRate.toString);

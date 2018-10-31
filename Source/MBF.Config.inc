@@ -16,8 +16,8 @@
   configuration files). }
 {$DEFINE MBF_CONFIG}
 
-{.$HINTS ON}
-{.$WARNINGS ON}
+{$HINTS ON}
+{$WARNINGS ON}
 
 // Scoped Enums are a good thing
 {$SCOPEDENUMS ON}

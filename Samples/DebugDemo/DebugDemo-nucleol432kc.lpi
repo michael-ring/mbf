@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CONFIG>
+  <ProjectOptions>
+    <Version Value="11"/>
+    <General>
+      <Flags>
+        <LRSInOutputDirectory Value="False"/>
+      </Flags>
+      <MainUnit Value="0"/>
+      <UseAppBundle Value="False"/>
+    </General>
+    <BuildModes Count="1">
+      <Item1 Name="default" Default="True"/>
+    </BuildModes>
+    <PublishOptions>
+      <Version Value="2"/>
+    </PublishOptions>
+    <RunParams>
+      <FormatVersion Value="2"/>
+      <Modes Count="1">
+        <Mode0 Name="default"/>
+      </Modes>
+    </RunParams>
+    <Units Count="5">
+      <Unit0>
+        <Filename Value="DebugDemo.lpr"/>
+        <IsPartOfProject Value="True"/>
+        <TopLine Value="16"/>
+        <CursorPos X="28" Y="30"/>
+        <UsageCount Value="25"/>
+        <Loaded Value="True"/>
+        <LoadedDesigner Value="True"/>
+      </Unit0>
+      <Unit1>
+        <Filename Value="../../Source/mbf.logging.uart.pas"/>
+        <UnitName Value="MBF.Logging.UART"/>
+        <EditorIndex Value="2"/>
+        <CursorPos Y="3"/>
+        <UsageCount Value="12"/>
+        <Loaded Value="True"/>
+      </Unit1>
+      <Unit2>
+        <Filename Value="../../Source/MBF.Logging.pas"/>
+        <IsVisibleTab Value="True"/>
+        <EditorIndex Value="3"/>
+        <TopLine Value="15"/>
+        <CursorPos X="44" Y="31"/>
+        <UsageCount Value="12"/>
+        <Loaded Value="True"/>
+      </Unit2>
+      <Unit3>
+        <Filename Value="../../Source/MBF.STM32L4.UART.pas"/>
+        <EditorIndex Value="1"/>
+        <TopLine Value="24"/>
+        <UsageCount Value="11"/>
+        <Loaded Value="True"/>
+      </Unit3>
+      <Unit4>
+        <Filename Value="../../Source/MBF.TypeHelpers.pas"/>
+        <EditorIndex Value="4"/>
+        <TopLine Value="549"/>
+        <CursorPos X="15"/>
+        <UsageCount Value="11"/>
+        <Loaded Value="True"/>
+      </Unit4>
+    </Units>
+    <JumpHistory Count="19" HistoryIndex="18">
+      <Position1>
+        <Filename Value="DebugDemo.lpr"/>
+        <Caret Line="28" Column="3"/>
+      </Position1>
+      <Position2>
+        <Filename Value="DebugDemo.lpr"/>
+        <Caret Line="21" Column="14"/>
+      </Position2>
+      <Position3>
+        <Filename Value="../../Source/mbf.logging.uart.pas"/>
+        <Caret Line="5" Column="3"/>
+      </Position3>
+      <Position4>
+        <Filename Value="../../Source/MBF.Logging.pas"/>
+        <Caret Line="9" Column="35"/>
+      </Position4>
+      <Position5>
+        <Filename Value="../../Source/MBF.Logging.pas"/>
+        <Caret Line="31" Column="21"/>
+      </Position5>
+      <Position6>
+        <Filename Value="../../Source/mbf.logging.uart.pas"/>
+        <Caret Line="15" Column="10"/>
+      </Position6>
+      <Position7>
+        <Filename Value="../../Source/mbf.logging.uart.pas"/>
+        <Caret Line="9" Column="58"/>
+      </Position7>
+      <Position8>
+        <Filename Value="../../Source/MBF.Logging.pas"/>
+        <Caret Line="6" Column="41"/>
+      </Position8>
+      <Position9>
+        <Filename Value="../../Source/MBF.Logging.pas"/>
+        <Caret Line="46" Column="56"/>
+      </Position9>
+      <Position10>
+        <Filename Value="../../Source/MBF.Logging.pas"/>
+        <Caret Line="17" Column="35"/>
+      </Position10>
+      <Position11>
+        <Filename Value="DebugDemo.lpr"/>
+        <Caret Line="22" Column="37"/>
+      </Position11>
+      <Position12>
+        <Filename Value="../../Source/mbf.logging.uart.pas"/>
+        <Caret Line="37" Column="5"/>
+      </Position12>
+      <Position13>
+        <Filename Value="../../Source/mbf.logging.uart.pas"/>
+        <Caret Line="31" Column="4"/>
+      </Position13>
+      <Position14>
+        <Filename Value="../../Source/mbf.logging.uart.pas"/>
+        <Caret Line="37" Column="2"/>
+      </Position14>
+      <Position15>
+        <Filename Value="../../Source/mbf.logging.uart.pas"/>
+        <Caret Line="31" Column="18"/>
+      </Position15>
+      <Position16>
+        <Filename Value="../../Source/MBF.TypeHelpers.pas"/>
+        <Caret Column="15" TopLine="130"/>
+      </Position16>
+      <Position17>
+        <Filename Value="../../Source/MBF.Logging.pas"/>
+        <Caret Line="20" Column="18"/>
+      </Position17>
+      <Position18>
+        <Filename Value="../../Source/MBF.Logging.pas"/>
+        <Caret Line="32" Column="62"/>
+      </Position18>
+      <Position19>
+        <Filename Value="../../Source/MBF.Logging.pas"/>
+        <Caret Line="33" Column="48" TopLine="8"/>
+      </Position19>
+    </JumpHistory>
+  </ProjectOptions>
+  <CompilerOptions>
+    <Version Value="11"/>
+    <Target>
+      <Filename Value="DebugDemo"/>
+    </Target>
+    <SearchPaths>
+      <IncludeFiles Value="../../Source;$(ProjOutDir)"/>
+      <OtherUnitFiles Value="../../Source"/>
+      <UnitOutputDirectory Value="lib/$(TargetCPU)-$(TargetOS)"/>
+    </SearchPaths>
+    <Parsing>
+      <SyntaxOptions>
+        <UseAnsiStrings Value="False"/>
+      </SyntaxOptions>
+    </Parsing>
+    <CodeGeneration>
+      <HeapSize Value="8192"/>
+      <StackSize Value="8192"/>
+      <TargetCPU Value="arm"/>
+      <TargetOS Value="embedded"/>
+    </CodeGeneration>
+    <Linking>
+      <Debugging>
+        <DebugInfoType Value="dsDwarf2"/>
+        <UseLineInfoUnit Value="False"/>
+      </Debugging>
+    </Linking>
+    <Other>
+      <CustomOptions Value="-Cparmv7em
+-XParm-none-eabi-
+-Wpnucleol432kc
+-dnucleol432kc
+-dLOGGING"/>
+    </Other>
+  </CompilerOptions>
+</CONFIG>

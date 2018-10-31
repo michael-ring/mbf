@@ -1,4 +1,4 @@
-unit MBF.Debug.rtt;
+unit MBF.Logging.SeggerRTT;
 
 {$mode objfpc}{$H+}
 
