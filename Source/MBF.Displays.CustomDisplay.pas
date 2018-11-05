@@ -73,6 +73,7 @@ end;
     procedure WriteCommand(const Values: array of Byte);
     procedure WriteData(const value : byte);
     procedure WriteData(const Values: array of Byte);
+    procedure WriteBuffer(const aWriteBuffer: pointer; aWriteCount : integer);
     //procedure Initialize(var SPI : TSpi_Registers);
     procedure Initialize(var SPI : TSpi_Registers;const APinDC : TPinIdentifier;const APinRST : TPinIdentifier;AScreenInfo : TScreenInfo);
   end;
@@ -197,6 +198,14 @@ begin
   if Length(Values) > 0 then
     FpSPI^.WriteByte(Values);
 end;
+
+procedure TCustomSPIDisplay.WriteBuffer(const aWriteBuffer: pointer; aWriteCount : integer);
+begin
+  GPIO.PinValue[FPinDC] := 1;
+  if aWriteCount > 0 then
+    FpSPI^.WriteBuffer(aWriteBuffer,aWriteCount);
+end;
+
 (*
 procedure TCustomGPIODisplay.WriteCommand(const Value: Byte);
 begin
