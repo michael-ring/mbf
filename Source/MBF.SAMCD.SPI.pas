@@ -102,6 +102,8 @@ type
     function ReadWord(var aReadWord: word; const Timeout : longWord=0; const SoftNSSPin : TPinIdentifier = TNativePin.None):boolean;
     function ReadWord(var aReadBuffer: array of word; aReadCount : integer=-1; const Timeout : longWord=0; const SoftNSSPin : TPinIdentifier = TNativePin.None):boolean;
 
+    function WriteBuffer(const aWriteBuffer: pointer; aWriteCount : integer; const Timeout : longWord=0; const SoftNSSPin : TPinIdentifier = TNativePin.None) : boolean;
+
     function WriteByte(const aWriteByte: byte; const Timeout : longWord=0; const SoftNSSPin : TPinIdentifier = TNativePin.None) : boolean;
     function WriteByte(const aWriteBuffer: array of byte; aWriteCount : integer=-1; const Timeout : longWord=0; const SoftNSSPin : TPinIdentifier = TNativePin.None) : boolean;
     function WriteWord(const aWriteWord: word; const Timeout : longWord=0; const SoftNSSPin : TPinIdentifier = TNativePin.None) : boolean;
@@ -453,6 +455,53 @@ begin
   result:=DATA;
 end;
 {$endif}
+
+function TSPIRegistersHelper.WriteBuffer(const aWriteBuffer: pointer; aWriteCount : integer; const Timeout : longWord=0; const SoftNSSPin : TPinIdentifier = TNativePin.None) : boolean;
+var
+  i : longWord;
+  EndTime : longWord;
+begin
+  Result := true;
+
+  if aWriteCount<1 then exit(false);
+  if (NOT Assigned(aWriteBuffer)) then exit(false);
+
+  //Default timeout is 10 Seconds
+  if Timeout = 0 then
+    EndTime := SystemCore.GetTickCount + DefaultSPITimeout
+  else
+    EndTime := SystemCore.GetTickCount + TimeOut;
+
+  //Disable Receiver
+  ClearBit(CTRLB,17);
+
+  Enable;
+
+  SetNSSPinLow(SoftNSSPin);
+
+  for i := 0 to (aWriteCount-1) do
+  begin
+    if WaitBitIsSet(INTFLAG,SERCOM_SPI_INTFLAG_DRE_Pos,Endtime) = false then
+    begin
+      setNSSPinHigh(SoftNSSPin);
+      Disable;
+      exit(false);
+    end;
+    DATA := PByte(aWriteBuffer)[i];
+  end;
+  // TXE Wait until data is completely shifted out
+  if WaitBitIsSet(INTFLAG,SERCOM_SPI_INTFLAG_TXC_Pos,EndTime) = false then
+  begin
+    setNSSPinHigh(SoftNSSPin);
+    Disable;
+    exit(false);
+  end;
+
+  setNSSPinHigh(SoftNSSPin);
+  // Disable SPI, this also sets NSS Pin High in Hardware Mode
+  Disable;
+end;
+
 
 function TSPIRegistersHelper.WriteByte(const aWriteByte: byte; const Timeout : longWord=0; const SoftNSSPin : TPinIdentifier = TNativePin.None) : boolean;
 var
