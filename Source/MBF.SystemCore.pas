@@ -170,7 +170,7 @@ begin
   Inc(SysTickOverflow,TicksPerMilliSecond);
 end;
 {$elseif defined(CPUMIPS)}
-procedure SysTick_interrupt; interrupt; [public, alias: 'CORE_TIMER_VECTOR_interrupt'];
+procedure SysTick_interrupt; interrupt; [public, alias: 'CORE_TIMER_interrupt'];
 begin
   asm
     mfc0 $v1,$9,0
@@ -236,6 +236,9 @@ end;
 {$endif}
 
 procedure TSystemCore.ConfigureTimer;
+var
+  Comp,Comp2 : longWord;
+  Value,Value2 : longWord;
 begin
   TicksPerMillisecond := GetSysTickClockFrequency div 1000;
 {$if defined(CPUARM)}
@@ -246,12 +249,6 @@ begin
   SysTick.CTRL := 0;
   setCoreTimerComp(TicksPerMillisecond - 1);
   setCoreTimerValue(0);
-  {$ifdef samd10}
-  //SAMD10 errata
-  //The SYSTICK calibration value is incorrect. Errata reference: 14157
-  //The correct SYSTICK calibration value is 0x40000000
-  SysTick.Calib:=$40000000;
-  {$endif}
   SysTick.CTRL := %0111;
 {$elseif defined(CPUMIPS)}
   //Coretimer was set on Startup Code

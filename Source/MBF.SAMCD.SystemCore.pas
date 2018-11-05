@@ -118,6 +118,13 @@ begin
   DMAC->QOSCTRL.bit.WRBQOS = 2;
   {$endif has_usb}
 
+  {$ifdef samd10}
+  //SAMD10 errata
+  //The SYSTICK calibration value is incorrect. Errata reference: 14157
+  //The correct SYSTICK calibration value is 0x40000000
+  SysTick.Calib:=$40000000;
+  {$endif}
+
   {$endif samd}
 
   {$ifdef samc}

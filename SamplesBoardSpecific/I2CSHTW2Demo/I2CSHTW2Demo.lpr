@@ -1,4 +1,4 @@
-program I2CDemo;
+program I2CSHTW2Demo;
 {
   This file is part of Pascal Microcontroller Board Framework (MBF)
   Copyright (c) 2015 -  Michael Ring
