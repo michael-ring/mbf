@@ -65,6 +65,7 @@ type
     T_RISE=215; // In ns; depends on the board/pull-up-resistors
     SPEED100KHZ=100;
   strict private
+    procedure SyncWait;
     function GetBaud(const Value: Cardinal):cardinal;
     function isMasterWIRE:boolean;
     //TODO function isSlaveWIRE:boolean;
@@ -219,12 +220,8 @@ end;
 
 function TI2CRegistersHelper.readDataWIRE:byte;
 begin
-  {$if defined(SAMD20))}
-  WaitBitIsCleared(STATUS,10);
-  {$else}
-  WaitBitIsCleared(SYNCBUSY,2);
-  {$endif}
-  result:=DATA;
+  SyncWait;
+  result:=Self.DATA;
   while (NOT availableWIRE) do begin end;
 end;
 
@@ -238,11 +235,7 @@ begin
   TSerCom_Registers(Self).Enable;
   // Go (by force) from unknow busstate to idle
   SetBitsMasked(STATUS,TSercomWireBusState.WIRE_IDLE_STATE,SERCOM_I2CM_STATUS_BUSSTATE_Msk,SERCOM_I2CM_STATUS_BUSSTATE_Pos);
-  {$if defined(SAMD20))}
-  WaitBitIsCleared(STATUS,10);
-  {$else}
-  WaitBitIsCleared(SYNCBUSY,2);
-  {$endif}
+  SyncWait;
 end;
 
 procedure TI2CRegistersHelper.disableWIRE;
@@ -250,19 +243,33 @@ begin
   TSerCom_Registers(Self).Disable;
 end;
 
+procedure TI2CRegistersHelper.SyncWait;
+begin
+  {$if defined(SAMD20))}
+  WaitBitIsCleared(Self.STATUS,10);
+  {$else}
+  WaitBitIsCleared(Self.SYNCBUSY,2);
+  //while (Self.SYNCBUSY>0) do begin end;
+  {$endif}
+end;
+
 procedure TI2CRegistersHelper.Initialize;
 begin
-  //TODO
+  TSerCom_Registers(Self).Initialize;
+  TSerCom_Registers(Self).SetCoreClockSource(GCLK_CLKCTRL_GEN_GCLK0); // use gclk0 at 48MHz
 end;
 
 procedure TI2CRegistersHelper.Initialize(const ASDAPin : TI2CSDAPins;
-                     const ASCLPin  : TI2CSCLPins); overload;
+                     const ASCLPin  : TI2CSCLPins);
 var
   speed,baud,baudlow:cardinal;
 begin
+  Initialize;
+
+  GPIO.PinMux[longWord(ASDAPin) and $ff] := TPinMux((longWord(ASDAPin) shr 8) and %111);
+  GPIO.PinMux[longWord(ASCLPin) and $ff] := TPinMux((longWord(ASCLPin) shr 8) and %111);
+
   Speed := SPEED100KHZ;
-  TSerCom_Registers(Self).Initialize;
-  TSerCom_Registers(Self).SetCoreClockSource(GCLK_CLKCTRL_GEN_GCLK0); // use gclk0 at 48MHz
 
   //Enable Smart Mode: (N)ACK is sent when DATA.DATA is read)
   //Do not use smart mode (yet)
@@ -272,12 +279,14 @@ begin
   baudlow:=GetBaud(Speed);
   baud:=(baudlow DIV 2);
   baudlow:=baudlow-baud;
-  BAUD:=(baudlow shl 8) OR baud;
+  Self.BAUD:=(baudlow shl 8) OR baud;
+  SyncWait;
 
-  CTRLA:=
+  Self.CTRLA:=
      SERCOM_MODE_I2C_MASTER OR
      //SERCOM_I2CM_CTRLA_SCLSM OR //SCL stretch only after ACK bit.
      ((SERCOM_I2CM_CTRLA_SDAHOLD_Msk AND ((3) shl SERCOM_I2CM_CTRLA_SDAHOLD_Pos)));
+  SyncWait;
 
   enableWIRE;
 end;
@@ -302,11 +311,7 @@ function TI2CRegistersHelper.startTransmissionWIRE(const Address:byte;const aDir
 begin
   result:=false;
 
-  {$if defined(SAMD20))}
-  WaitBitIsCleared(STATUS,10);
-  {$else}
-  WaitBitIsCleared(SYNCBUSY,2);
-  {$endif}
+  SyncWait;
 
   // clear the error flag
   errorOnWIRE;
@@ -317,12 +322,8 @@ begin
   prepareAckBitWIRE;
 
   // Send start and address and R/W bit
-  ADDR:=((Address shl 1) OR aDirection);
-  {$if defined(SAMD20))}
-  WaitBitIsCleared(STATUS,10);
-  {$else}
-  WaitBitIsCleared(SYNCBUSY,2);
-  {$endif}
+  Self.ADDR:=((Address shl 1) OR aDirection);
+  SyncWait;
 
   if aDirection=I2C_TRANSFER_READ then
   begin
@@ -369,12 +370,9 @@ begin
   result:=false;
 
   //Send data
-  DATA := data;
-  {$if defined(SAMD20))}
-  WaitBitIsCleared(STATUS,10);
-  {$else}
-  WaitBitIsCleared(SYNCBUSY,2);
-  {$endif}
+  Self.DATA := data;
+
+  SyncWait;
 
   //Wait transmission successful
   while (NOT availableMasterWIRE) do
@@ -396,8 +394,8 @@ begin
   result:=false;
 
   //Send data
-  FSerCom.PSerComRegisters^.I2CS.DATA := data;
-  TSerCom_Registers(Self).SyncWait;
+  Self.DATA := data;
+  SyncWait;
 
   //Problems on line? nack received?
   if ((isRXNackReceivedWIRE) OR (NOT isDataReadyWIRE)) then exit;

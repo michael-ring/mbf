@@ -1,0 +1,1 @@
+../Samples/genlpi.sh
