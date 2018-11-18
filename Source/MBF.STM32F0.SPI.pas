@@ -119,6 +119,7 @@ type
     function ReadWord(var aReadBuffer: array of word; aReadCount : integer=-1; const Timeout : longWord=0; const SoftNSSPin : TPinIdentifier = TNativePin.None):boolean;
 
     function WriteByte(const aWriteByte: byte; const Timeout : longWord=0; const SoftNSSPin : TPinIdentifier = TNativePin.None) : boolean;
+    function WriteBuffer(pWriteBuffer: pByte; aWriteCount : longWord; const Timeout : longWord=0; const SoftNSSPin : TPinIdentifier = TNativePin.None) : boolean;
     function WriteByte(const aWriteBuffer: array of byte; aWriteCount : integer=-1; const Timeout : longWord=0; const SoftNSSPin : TPinIdentifier = TNativePin.None) : boolean;
     function WriteWord(const aWriteWord: word; const Timeout : longWord=0; const SoftNSSPin : TPinIdentifier = TNativePin.None) : boolean;
     function WriteWord(const aWriteBuffer: array of word; aWriteCount : integer=-1; const Timeout : longWord=0; const SoftNSSPin : TPinIdentifier = TNativePin.None) : boolean;
@@ -659,6 +660,60 @@ begin
   end;
 
   setNSSPinHigh(SoftNSSPin);
+
+  // Disable SPI, this also sets NSS Pin High in Hardware Mode
+  SetBitLevelLow(CR1,6);
+end;
+
+function TSPIRegistersHelper.WriteBuffer(pWriteBuffer: pByte; aWriteCount : longWord; const Timeout : longWord=0; const SoftNSSPin : TPinIdentifier = TNativePin.None) : boolean;
+var
+  dummy : byte;
+  i : longWord;
+  EndTime : longWord;
+begin
+  Result := true;
+  //Default timeout is 10 Seconds
+  if Timeout = 0 then
+    EndTime := SystemCore.GetTickCount + DefaultSPITimeout
+  else
+    EndTime := SystemCore.GetTickCount + TimeOut;
+
+  SetNSSPinLow(SoftNSSPin);
+  //transfer in 8 bits
+  setBitsPerWord(TSPIBitsPerWord.Eight);
+  // Enable SPI, this also sets NSS Pin Low in Hardware Mode
+  SetBitLevelHigh(CR1,6);
+
+  for i := 1 to aWriteCount do
+  begin
+    if WaitBitIsSet(SR,1,EndTime) = false then
+    begin
+      setNSSPinHigh(SoftNSSPin);
+      SetBitLevelLow(CR1,6);
+      exit(false);
+    end;
+    DR := pWriteBuffer^;
+
+    // RXNE Wait until data is completely shifted out
+    if WaitBitIsSet(SR,0,EndTime) = false then
+    begin
+      setNSSPinHigh(SoftNSSPin);
+      SetBitLevelLow(CR1,6);
+      exit(false);
+    end;
+    Dummy := DR;
+    inc(pWriteBuffer);
+  end;
+
+  // Wait for Busy Flag to get cleared
+  if WaitBitIsCleared(SR,7,EndTime) = false then
+  begin
+    setNSSPinHigh(SoftNSSPin);
+    SetBitLevelLow(CR1,6);
+    exit(false);
+  end;
+
+  SetNSSPinHigh(SoftNSSPin);
 
   // Disable SPI, this also sets NSS Pin High in Hardware Mode
   SetBitLevelLow(CR1,6);
