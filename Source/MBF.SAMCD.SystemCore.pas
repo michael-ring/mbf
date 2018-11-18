@@ -20,6 +20,9 @@ interface
 {$INCLUDE MBF.Config.inc}
 
 uses
+{$ifdef SAMD10}
+  CortexM0,
+{$endif}
   MBF.SystemCore;
 
 const
