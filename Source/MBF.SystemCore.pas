@@ -170,7 +170,7 @@ begin
   Inc(SysTickOverflow,TicksPerMilliSecond);
 end;
 {$elseif defined(CPUMIPS)}
-procedure SysTick_interrupt; interrupt; [public, alias: 'CORE_TIMER_VECTOR_interrupt'];
+procedure SysTick_interrupt; interrupt; [public, alias: 'CORE_TIMER_interrupt'];
 begin
   asm
     mfc0 $v1,$9,0
@@ -236,9 +236,6 @@ end;
 {$endif}
 
 procedure TSystemCore.ConfigureTimer;
-var
-  Comp,Comp2 : longWord;
-  Value,Value2 : longWord;
 begin
   TicksPerMillisecond := GetSysTickClockFrequency div 1000;
 {$if defined(CPUARM)}
