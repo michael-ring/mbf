@@ -21,6 +21,8 @@ uses
   MBF.__CONTROLLERTYPE__.UART,
   HeapMgr,
   MBF.TypeHelpers;
+var
+  CRLF : String = #13#10;
 begin
   // Initialize the Board and the SystemTimer
   SystemCore.Initialize;
@@ -53,11 +55,11 @@ begin
 
   DEBUG_UART.Initialize(TUARTRXPins.DEBUG_UART,TUARTTXPins.DEBUG_UART);
   repeat
-    DEBUG_UART.WriteString('Hello World!'+#13+#10);
-    DEBUG_UART.WriteString('Exact Baudrate: '+ DEBUG_UART.BaudRate.toString);
-    if (DEBUG_UART.Parity = TUARTParity.None) and (DEBUG_UART.BitsPerWord=TUARTBitsPerWord.Eight) and (DEBUG_UART.StopBits=TUARTStopBits.One) then
-      DEBUG_UART.WriteString(' No Parity Eight Bits, One StopBit');
-    DEBUG_UART.WriteString(#13+#10);
+    DEBUG_UART.WriteString('    Hello World!'+CRLF);
+    //DEBUG_UART.WriteString('Exact Baudrate: '+ DEBUG_UART.BaudRate.toString);
+    //if (DEBUG_UART.Parity = TUARTParity.None) and (DEBUG_UART.BitsPerWord=TUARTBitsPerWord.Eight) and (DEBUG_UART.StopBits=TUARTStopBits.One) then
+    //  DEBUG_UART.WriteString(' No Parity Eight Bits, One StopBit');
+    //DEBUG_UART.WriteString(CRLF);
     SystemCore.Delay(1000);
   until 1=0
 end.

@@ -19,14 +19,14 @@ var
 {$ENDIF}
 
 implementation
+var
+  CRLF : String = #13#10;
 
 {$IF DEFINED(LOGGING)}
 procedure TUART_Logger.LogString(const aLogString : String); [public, alias: 'MBF_LogString'];
-const
-  CRLF = #13#10;
 begin
   pDebugUART^.WriteString(aLogString);
-  //pDebugUART^.WriteString(CRLF);
+  pDebugUART^.WriteString(CRLF);
 end;
 
 procedure TUART_Logger.Initialize(var aDebugUart : TUART_Registers; aUARTRXPin : TUARTRXPins; aUARTTXPin : TUARTTXPins);
