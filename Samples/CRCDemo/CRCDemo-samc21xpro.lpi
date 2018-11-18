@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CONFIG>
+  <ProjectOptions>
+    <Version Value="11"/>
+    <General>
+      <Flags>
+        <LRSInOutputDirectory Value="False"/>
+      </Flags>
+      <MainUnit Value="0"/>
+      <UseAppBundle Value="False"/>
+    </General>
+    <BuildModes Count="1">
+      <Item1 Name="default" Default="True"/>
+    </BuildModes>
+    <PublishOptions>
+      <Version Value="2"/>
+    </PublishOptions>
+    <RunParams>
+      <FormatVersion Value="2"/>
+      <Modes Count="1">
+        <Mode0 Name="default"/>
+      </Modes>
+    </RunParams>
+    <Units Count="3">
+      <Unit0>
+        <Filename Value="CRCDemo.lpr"/>
+        <IsPartOfProject Value="True"/>
+        <CursorPos X="28" Y="21"/>
+        <UsageCount Value="22"/>
+        <Loaded Value="True"/>
+        <LoadedDesigner Value="True"/>
+      </Unit0>
+      <Unit1>
+        <Filename Value="../../Source/mbf.samcd.crc.pas"/>
+        <UnitName Value="MBF.SAMCD.CRC"/>
+        <IsVisibleTab Value="True"/>
+        <EditorIndex Value="1"/>
+        <TopLine Value="41"/>
+        <CursorPos X="31" Y="68"/>
+        <UsageCount Value="11"/>
+        <Loaded Value="True"/>
+      </Unit1>
+      <Unit2>
+        <Filename Value="../../Source/MBF.CRC.pas"/>
+        <EditorIndex Value="2"/>
+        <TopLine Value="344"/>
+        <CursorPos Y="378"/>
+        <UsageCount Value="11"/>
+        <Loaded Value="True"/>
+      </Unit2>
+    </Units>
+    <JumpHistory Count="13" HistoryIndex="12">
+      <Position1>
+        <Filename Value="../../Source/mbf.samcd.crc.pas"/>
+        <Caret Line="36" Column="21" TopLine="28"/>
+      </Position1>
+      <Position2>
+        <Filename Value="../../Source/mbf.samcd.crc.pas"/>
+        <Caret Line="29" Column="14" TopLine="31"/>
+      </Position2>
+      <Position3>
+        <Filename Value="../../Source/MBF.CRC.pas"/>
+        <Caret Line="263" Column="115" TopLine="244"/>
+      </Position3>
+      <Position4>
+        <Filename Value="../../Source/MBF.CRC.pas"/>
+        <Caret Line="264" TopLine="244"/>
+      </Position4>
+      <Position5>
+        <Filename Value="../../Source/MBF.CRC.pas"/>
+        <Caret Line="438" Column="24" TopLine="404"/>
+      </Position5>
+      <Position6>
+        <Filename Value="../../Source/mbf.samcd.crc.pas"/>
+        <Caret Line="24" Column="18" TopLine="10"/>
+      </Position6>
+      <Position7>
+        <Filename Value="../../Source/MBF.CRC.pas"/>
+        <Caret Line="241" Column="19" TopLine="221"/>
+      </Position7>
+      <Position8>
+        <Filename Value="../../Source/MBF.CRC.pas"/>
+        <Caret Line="279" Column="15" TopLine="259"/>
+      </Position8>
+      <Position9>
+        <Filename Value="../../Source/MBF.CRC.pas"/>
+        <Caret Line="37" Column="21"/>
+      </Position9>
+      <Position10>
+        <Filename Value="../../Source/MBF.CRC.pas"/>
+        <Caret Line="279" Column="26" TopLine="259"/>
+      </Position10>
+      <Position11>
+        <Filename Value="../../Source/mbf.samcd.crc.pas"/>
+        <Caret Line="31" Column="25"/>
+      </Position11>
+      <Position12>
+        <Filename Value="../../Source/mbf.samcd.crc.pas"/>
+        <Caret Line="53" Column="23" TopLine="14"/>
+      </Position12>
+      <Position13>
+        <Filename Value="../../Source/mbf.samcd.crc.pas"/>
+        <Caret Line="79" TopLine="39"/>
+      </Position13>
+    </JumpHistory>
+  </ProjectOptions>
+  <CompilerOptions>
+    <Version Value="11"/>
+    <Target>
+      <Filename Value="CRCDemo"/>
+    </Target>
+    <SearchPaths>
+      <IncludeFiles Value="../../Source;$(ProjOutDir)"/>
+      <OtherUnitFiles Value="../../Source"/>
+      <UnitOutputDirectory Value="lib/$(TargetCPU)-$(TargetOS)"/>
+    </SearchPaths>
+    <Parsing>
+      <SyntaxOptions>
+        <UseAnsiStrings Value="False"/>
+      </SyntaxOptions>
+    </Parsing>
+    <CodeGeneration>
+      <HeapSize Value="8192"/>
+      <StackSize Value="8192"/>
+      <TargetCPU Value="arm"/>
+      <TargetOS Value="embedded"/>
+    </CodeGeneration>
+    <Linking>
+      <Debugging>
+        <DebugInfoType Value="dsDwarf2"/>
+        <UseLineInfoUnit Value="False"/>
+      </Debugging>
+    </Linking>
+    <Other>
+      <CustomOptions Value="-Cparmv6m
+-XParm-none-eabi-
+-Wpsamc21xpro
+-dsamc21xpro"/>
+    </Other>
+  </CompilerOptions>
+</CONFIG>
