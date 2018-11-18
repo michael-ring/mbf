@@ -70,6 +70,20 @@ type
       A0 =TNativePin.PA0;  A1 =TNativePin.PA1;  A2 =TNativePin.PA4;   A3 =TNativePin.PB0;
       A4 =TNativePin.PB1;  A5 =TNativePin.PB0;
     end;
+  {$if defined(chipkitlenny)}
+  type
+    TArduinoPin = record
+    const
+      None=-1;
+      D0 =TNativePin.PC8;  D1 =TNativePin.PC9;  D2 =TNativePin.RB7;  D3 =TNativePin.PC4;
+      D4 =TNativePin.PC6;  D5 =TNativePin.PB5;  D6 =TNativePin.PC7;  D7 =TNativePin.PA3;
+      D8 =TNativePin.PC5;  D9 =TNativePin.PC3;  D10=TNativePin.PC1;  D11=TNativePin.PB13;
+      D12=TNativePin.PB1;  D13=TNativePin.PB14; D14=TNativePin.PB9;  D15=TNativePin.PB8;
+
+      A0 =TNativePin.PA1;  A1 =TNativePin.PB0;  A2 =TNativePin.PC0;  A3 =TNativePin.PC2;
+      A4 =TNativePin.PB2;  A5 =TNativePin.PB3;
+    end;
+    {$endif}
   {$endif}
 
 {$endregion}
@@ -78,27 +92,27 @@ type
   TPinLevel=(Low=0,High=1);
   TPinValue=0..1;
   TPinIdentifier=-1..167;
-  TPinMode = (Input=%00, Output=%01, Analog=%11, AF0=$10, AF1=$11);
+  TPinMode = (Input=%00, Output=%01, Analog=%11);
   TPinDrive = (None=%00,PullUp=%01,PullDown=%10);
   TPinOutputMode = (PushPull=0,OpenDrain=1);
   TPinOutputSpeed = (Slow=%00, Medium=%01, High=%10, VeryHigh=%11);
 
 type
-  TGPIO_Registers = TPortRegisters;
+  TGPIO_Registers = TPort_Registers;
   TGPIO = record
   private type
     pGPIORegisters = ^TGPIO_Registers;
   private const
     // Indexed mapping to GPIO registers.
-    GPIOMem: array[0..8] of pGPIORegisters = ({$ifdef has_gpioa}@GPIOA{$else}nil{$endif},
-                                              {$ifdef has_gpiob}@GPIOB{$else}nil{$endif},
-                                              {$ifdef has_gpioc}@GPIOC{$else}nil{$endif},
-                                              {$ifdef has_gpiod}@GPIOD{$else}nil{$endif},
-                                              {$ifdef has_gpioe}@GPIOE{$else}nil{$endif},
-                                              {$ifdef has_gpiof}@GPIOF{$else}nil{$endif},
-                                              {$ifdef has_gpiog}@GPIOG{$else}nil{$endif},
-                                              {$ifdef has_gpioh}@GPIOH{$else}nil{$endif},
-                                              {$ifdef has_gpioi}@GPIOI{$else}nil{$endif});
+    GPIOMem: array[0..8] of pGPIORegisters = ({$ifdef has_gpioa}@PORTA{$else}nil{$endif},
+                                              {$ifdef has_gpiob}@PORTB{$else}nil{$endif},
+                                              {$ifdef has_gpioc}@PORTC{$else}nil{$endif},
+                                              {$ifdef has_gpiod}@PORTD{$else}nil{$endif},
+                                              {$ifdef has_gpioe}@PORTE{$else}nil{$endif},
+                                              {$ifdef has_gpiof}@PORTF{$else}nil{$endif},
+                                              {$ifdef has_gpiog}@PORTG{$else}nil{$endif},
+                                              {$ifdef has_gpioh}@PORTH{$else}nil{$endif},
+                                              {$ifdef has_gpioi}@PORTI{$else}nil{$endif});
 
     function GetPinMode(const Pin: TPinIdentifier): TPinMode;
     procedure SetPinMode(const Pin: TPinIdentifier; const Value: TPinMode);
@@ -129,64 +143,15 @@ var
   GPIO : TGPIO;
 
 implementation
-
-const
-  PeripheralOutput : array [0..47] of pLongWord = (
-    @RCON.RPA0R,  @RCON.RPA1R,  @RCON.RPA2R,  @RCON.RPA3R,
-    @RCON.RPA4R,  nil,          nil,          nil,
-    @RCON.RPA8R,  @RCON.RPA9R,  nil,          nil,
-    nil,          nil,          nil,          nil,
-
-    @RCON.RPB0R,  @RCON.RPB1R,  @RCON.RPB2R,  @RCON.RPA3R,
-    @RCON.RPB4R,  @RCON.RPB5R,  @RCON.RPB6R,  @RCON.RPB7R,
-    @RCON.RPB8R,  @RCON.RPB9R,  @RCON.RPB10R, @RCON.RPB11R,
-    @RCON.RPB12R, @RCON.RPB13R, @RCON.RPB14R, @RCON.RPB15R,
-
-    @RCON.RPC0R,  @RCON.RPC1R,  @RCON.RPC2R,  @RCON.RPC3R,
-    @RCON.RPC4R,  @RCON.RPC5R,  @RCON.RPC6R,  @RCON.RPC7R,
-    @RCON.RPC8R,  @RCON.RPC9R,  nil,          nil,
-    nil,          nil,          nil,          nil
-  );
-
-const
-  PeripheralInputPins : array[0..3] of array[0..7] of TPinIdentifier = (
-  (
-    TNativePin.PA0,  TNativePin.PB3,  TNativePin.PB4,  TNativePin.PB15,
-    TNativePin.PB7,
-    {$if defined(GPIOC)}TNativePin.PC7,  TNativePin.PC0,  TNativePin.PC5
-    {$else}TNativePin.None, TNativePin.None,TNativePin.None{$endif}
-  ),
-  (
-    TNativePin.PA1,  TNativePin.PB5,  TNativePin.PB1,  TNativePin.PB11,
-    TNativePin.PB8,  TNativePin.PA8,
-    {$if defined(GPIOC)}TNativePin.PC8{$else}TNativePin.None{$endif},
-    TNativePin.PA9
-  ),
-  (
-    TNativePin.PA2,  TNativePin.PB6,  TNativePin.PA4,  TNativePin.PB13,
-    TNativePin.PB2,
-    {$if defined(GPIOC)}TNativePin.PC6,  TNativePin.PC1,  TNativePin.PC3
-    {$else}TNativePin.None, TNativePin.None,TNativePin.None{$endif}
-  ),
-  (
-    TNativePin.PA3,  TNativePin.PB14,  TNativePin.PB0,  TNativePin.PB10,
-    TNativePin.PB9,
-    {$if defined(GPIOC)}TNativePin.PC9,  TNativePin.PC2,  TNativePin.PC4
-    {$else}TNativePin.None, TNativePin.None,TNativePin.None{$endif}
-  ));
-
 procedure TGPIO.Initialize;
 begin
   // Nothing to do (yet) here
 end;
 
 function TGPIO.GetPinMode(const Pin: TPinIdentifier): TPinMode;
-type
-  TPeripheralArray = array[0..62] of LongWord;
 var
   GPIO,Bit : byte;
   i : byte;
-  pPeripheralInput : ^TPeripheralArray;
 begin
   GPIO := Pin shr 4;
   Bit := Pin and $0f;
@@ -198,13 +163,6 @@ begin
       0:     Result := TPinMode.Output;
       1:     Result := TPinMode.Input;
     end;
-
-    if PeripheralOutput[Pin]^ and %1111 <> 0 then
-      Result := TPinMode.AF0;
-    (* TODO
-    for i := 0 to 62 do
-      if pPeripheralInput(@RCOM.INT1R)^[i] <> 0 then
-    *)
   end;
 end;
 
@@ -251,11 +209,34 @@ begin
                              //Disable Pullup/Pulldown
                              GPIOMem[GPIO]^.CNPUCLR := BitMask;
                              GPIOMem[GPIO]^.CNPDCLR := BitMask;
-    end
-    else
+    end;
+(*    else
                          begin
-
-                         end;
+                           if (Value >= TPinMode.AF0) and (Value <= TPinMode.AF7) then
+                           begin
+                             //Enable Input Mode
+                             GPIOMem[GPIO]^.TRISSET := BitMask;
+                             //Disable Analog Mode
+                             GPIOMem[GPIO]^.ANSELCLR := BitMask;
+                             //Disable Pullup/Pulldown
+                             GPIOMem[GPIO]^.CNPUCLR := BitMask;
+                             GPIOMem[GPIO]^.CNPDCLR := BitMask;
+                             //Disable Open Collector Mode
+                             GPIOMem[GPIO]^.ODCCLR := BitMask;
+                           end;
+                           if (Value >= TPinMode.AF8) and (Value <= TPinMode.AF15) then
+                           begin
+                             //Enable Output Mode
+                             GPIOMem[GPIO]^.TRISCLR := BitMask;
+                             //Disable Analog Mode
+                             GPIOMem[GPIO]^.ANSELCLR := BitMask;
+                             //Disable Pullup/Pulldown
+                             GPIOMem[GPIO]^.CNPUCLR := BitMask;
+                             GPIOMem[GPIO]^.CNPDCLR := BitMask;
+                             //Disable Open Collector Mode
+                             GPIOMem[GPIO]^.ODCCLR := BitMask;
+                           end;
+                         end; *)
   end;
 end;
 

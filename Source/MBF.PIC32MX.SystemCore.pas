@@ -47,12 +47,13 @@ type
   private
     //procedure ConfigureSystem;
     function GetSysTickClockFrequency : Cardinal;
-    function GetSYSCLKFrequency: Cardinal;
     function getFrequencyParameters(aFrequency : longWord; aXTALFrequency : longWord = 0; aSYSCLOCK_MAX : longWord = MaxCPUFrequency):TOSCParameters;
   public
     procedure Initialize;
     procedure DisableJTAGInterface;
     procedure EnableJTAGInterface;
+    function GetSYSCLKFrequency: Cardinal;
+    function GetPBCLKFrequency: Cardinal;
     function GetCPUFrequency: Cardinal;
     procedure setCPUFrequency(const Value: Cardinal;XTALFrequency : longWord = 0);
     function getMaxCPUFrequency : Cardinal;
@@ -85,12 +86,12 @@ end;
 
 procedure TPIC32MXSystemCore.DisableJTAGInterface;
 begin
-  CFG.CFGCON := CFG.CFGCON and (not (%1 shl 3));
+  //CFG.CFGCON := CFG.CFGCON and (not (%1 shl 3));
 end;
 
 procedure TPIC32MXSystemCore.EnableJTAGInterface;
 begin
-  CFG.CFGCON := CFG.CFGCON or (%1 shl 3);
+  //CFG.CFGCON := CFG.CFGCON or (%1 shl 3);
 end;
 
 //procedure TPIC32MXSystemCore.ConfigureSystem;
@@ -130,6 +131,11 @@ begin
    7:   //Internal FRC Oscillator divided by FRC Bits
         Result := FRCClockFrequency div FRCDIV[(OSC.OSCCON shr 24) and %111];
   end;
+end;
+
+function TPIC32MXSystemCore.GetPBCLKFrequency : longWord;
+begin
+  Result := GetSysCLKFrequency shr ((OSC.OSCCON shr 19) and %11)
 end;
 
 function TPIC32MXSystemCore.getFrequencyParameters(aFrequency : longWord; aXTALFrequency : longWord = 0;aSYSCLOCK_MAX : longWord = MaxCPUFrequency):TOSCParameters;
