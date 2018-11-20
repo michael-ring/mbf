@@ -58,6 +58,7 @@ type
 
 
   {$if defined(has_arduinopins)}
+    {$if defined(xxxxx)}
   type
     TArduinoPin = record
     const
@@ -70,12 +71,13 @@ type
       A0 =TNativePin.PA0;  A1 =TNativePin.PA1;  A2 =TNativePin.PA4;   A3 =TNativePin.PB0;
       A4 =TNativePin.PB1;  A5 =TNativePin.PB0;
     end;
+    {$endif}
   {$if defined(chipkitlenny)}
   type
     TArduinoPin = record
     const
       None=-1;
-      D0 =TNativePin.PC8;  D1 =TNativePin.PC9;  D2 =TNativePin.RB7;  D3 =TNativePin.PC4;
+      D0 =TNativePin.PC8;  D1 =TNativePin.PC9;  D2 =TNativePin.PB7;  D3 =TNativePin.PC4;
       D4 =TNativePin.PC6;  D5 =TNativePin.PB5;  D6 =TNativePin.PC7;  D7 =TNativePin.PA3;
       D8 =TNativePin.PC5;  D9 =TNativePin.PC3;  D10=TNativePin.PC1;  D11=TNativePin.PB13;
       D12=TNativePin.PB1;  D13=TNativePin.PB14; D14=TNativePin.PB9;  D15=TNativePin.PB8;

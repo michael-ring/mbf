@@ -9,7 +9,7 @@
     </BuildModes>
     <Units Count="1">
       <Unit0>
-        <Filename Value="DebugDemo.lpr"/>
+        <Filename Value="SerialPort.lpr"/>
         <IsPartOfProject Value="True"/>
         <IsVisibleTab Value="True"/>
         <Loaded Value="True"/>
@@ -18,7 +18,7 @@
   </ProjectOptions>
   <CompilerOptions>
     <Target>
-      <Filename Value="DebugDemo"/>
+      <Filename Value="SerialPort"/>
     </Target>
     <SearchPaths>
       <IncludeFiles Value="../../Source;$(ProjOutDir)"/>
@@ -41,8 +41,8 @@
     <Other>
       <CustomOptions Value="-Cpmips32r2
 -XPmips-sde-elf-
--Wppic32mx150f128b
--dpic32mx150f128b
+-Wpchipkitlenny
+-dchipkitlenny
       "/>
     </Other>
   </CompilerOptions>

@@ -9,7 +9,6 @@ samd10xmini     armv6m		atsamd10d14		ATSAMD10D14A.svd
 samd20xpro   	armv6m		atsamd20j18		ATSAMD20J18.svd
 samd21xpro   	armv6m		atsamd21j18		ATSAMD21J18A.svd
 arduinozero	armv6m		atsamd21g18		ATSAMD21G18A.svd
-pic32mx150f128b mips32r2        pic32mx150f128b
 #freedom_k22f	armv7em		mk22fn512vlh12		
 #freedom_k64f	armv7em 	mk64fn1m0vll12
-#chipkitlenny	mips32r2	pic32mx270f256d
+chipkitlenny	mips32r2	pic32mx270f256d
