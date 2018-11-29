@@ -97,9 +97,9 @@ uses
 {$ENDIF}
 var
   SysTickCounter: TTickCounter = 0;
-  SysTickOverflow : TTickCounter = 0;
   TicksPerMillisecond : TTickCounter = 4000;
   {$if defined(CPUARM)}
+  SysTickOverflow : TTickCounter = 0;
   InternalSysTickOverflow : longWord;
   {$endif}
 

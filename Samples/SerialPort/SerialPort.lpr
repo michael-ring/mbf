@@ -55,11 +55,11 @@ begin
 
   DEBUG_UART.Initialize(TUARTRXPins.DEBUG_UART,TUARTTXPins.DEBUG_UART);
   repeat
-    DEBUG_UART.WriteString('    Hello World!'+CRLF);
-    //DEBUG_UART.WriteString('Exact Baudrate: '+ DEBUG_UART.BaudRate.toString);
-    //if (DEBUG_UART.Parity = TUARTParity.None) and (DEBUG_UART.BitsPerWord=TUARTBitsPerWord.Eight) and (DEBUG_UART.StopBits=TUARTStopBits.One) then
-    //  DEBUG_UART.WriteString(' No Parity Eight Bits, One StopBit');
-    //DEBUG_UART.WriteString(CRLF);
+    DEBUG_UART.WriteString('Hello World!'+CRLF);
+    //DEBUG_UART.WriteString('Exact Baudrate: '+ DEBUG_UART.BaudRate.toString+CRLF);
+    if (DEBUG_UART.Parity = TUARTParity.None) and (DEBUG_UART.BitsPerWord=TUARTBitsPerWord.Eight) and (DEBUG_UART.StopBits=TUARTStopBits.One) then
+      DEBUG_UART.WriteString(' No Parity Eight Bits, One StopBit'+CRLF);
+    DEBUG_UART.WriteString(CRLF);
     SystemCore.Delay(1000);
   until 1=0
 end.

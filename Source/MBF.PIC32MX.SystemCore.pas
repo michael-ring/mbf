@@ -63,6 +63,8 @@ var
   SystemCore : TSystemCore;
 
 implementation
+uses
+  MBF.BitHelpers;
 
 {$REGION 'TSystemCore'}
 
@@ -75,6 +77,12 @@ const
 procedure TPIC32MXSystemCore.Initialize;
 begin
   DisableJTAGInterface;
+  RegUnlock;
+  if GetCPUFrequency <= 24000000 then
+    SetBitsMasked(OSC.OSCCON,%00,%11,19)
+  else
+    SetBitsMasked(OSC.OSCCON,%01,%11,19);
+  RegLock;
   ConfigureTimer;
   ConfigureInterrupts;
 end;
@@ -142,7 +150,7 @@ function TPIC32MXSystemCore.getFrequencyParameters(aFrequency : longWord; aXTALF
 const
   PLLFREQMAX = 120000000;
 var
-  _FPLLIDIV,_PLLMULT,_PLLODIV,PLLFREQ,FREQ : longWord;
+  _PLLMULT,_PLLODIV,PLLFREQ,FREQ : longWord;
   PLLInputFrequency : longWord;
 begin
   result.FREQUENCY := 0;
@@ -237,6 +245,12 @@ begin
       OSC.OSCCONSET := %001 shl 8;
     end;
   end;
+
+  //Set some same defaults for Peripherals Clock
+  if Value <= 24000000 then
+    SetBitsMasked(OSC.OSCCON,%00,%11,19)
+  else
+    SetBitsMasked(OSC.OSCCON,%01,%11,19);
 
   //Enable Switching
   OSC.OSCCONSET := %1 shl 0;

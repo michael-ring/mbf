@@ -23,9 +23,19 @@
   {$define PIC32MX440F256H}
 {$endif}
 
-{$if defined(mypicduino) }
+{$if defined(picduino150) }
   {$define has_arduinopins}
   {$define PIC32MX150F128B}
+{$endif}
+
+{$if defined(picduino270) }
+  {$define has_arduinopins}
+  {$define PIC32MX270F256D}
+{$endif}
+
+{$if defined(picduino274) }
+  {$define has_arduinopins}
+  {$define PIC32MX274F256D}
 {$endif}
 
 {$if defined(chipkitlenny) }

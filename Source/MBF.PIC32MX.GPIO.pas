@@ -28,6 +28,14 @@ const
   ALT5=$1500;
   ALT6=$1600;
   ALT7=$1700;
+  ALT8=$1800;
+  ALT9=$1900;
+ ALT10=$1A00;
+ ALT11=$1B00;
+ ALT12=$1C00;
+ ALT13=$1D00;
+ ALT14=$1E00;
+ ALT15=$1F00;
 
 type
   TNativePin = record
@@ -72,6 +80,20 @@ type
       A4 =TNativePin.PB1;  A5 =TNativePin.PB0;
     end;
     {$endif}
+    {$if defined(pinguino)}
+    type
+      TArduinoPin = record
+      const
+        None=-1;
+        D0 =TNativePin.PD2;  D1 =TNativePin.PD3;  D2 =TNativePin.PD4;  D3 =TNativePin.PD5;
+        D4 =TNativePin.PD6;  D5 =TNativePin.PD7;  D6 =TNativePin.PD8;  D7 =TNativePin.PD11;
+        D8 =TNativePin.PB14; D9 =TNativePin.PB15; D10=TNativePin.PG9;  D11=TNativePin.PG8;
+        D12=TNativePin.PG7;  D13=TNativePin.PG6;
+
+        A0 =TNativePin.PB1;  A1 =TNativePin.PB2;  A2 =TNativePin.PB3;  A3 =TNativePin.PB4;
+        A4 =TNativePin.PD9;  A5 =TNativePin.PD10;
+      end;
+      {$endif}
   {$if defined(chipkitlenny)}
   type
     TArduinoPin = record
@@ -95,6 +117,7 @@ type
   TPinValue=0..1;
   TPinIdentifier=-1..167;
   TPinMode = (Input=%00, Output=%01, Analog=%11);
+  TPinAlternateMode = (ALT0=0,ALT1,ALT2,ALT3,ALT4,ALT5,ALT6,ALT7,ALT8,ALT9,ALT10,ALT11,ALT12,ALT13,ALT14,ALT15);
   TPinDrive = (None=%00,PullUp=%01,PullDown=%10);
   TPinOutputMode = (PushPull=0,OpenDrain=1);
   TPinOutputSpeed = (Slow=%00, Medium=%01, High=%10, VeryHigh=%11);
@@ -125,6 +148,7 @@ type
 
   public
     procedure Initialize;
+    procedure SetPPOS(const Pin: TPinIdentifier; const Value : TPinAlternateMode);
     function  GetPinValue(const Pin: TPinIdentifier): TPinValue;
     procedure SetPinValue(const Pin: TPinIdentifier; const Value: TPinValue);
     function  GetPinLevel(const Pin: TPinIdentifier): TPinLevel;
@@ -153,7 +177,6 @@ end;
 function TGPIO.GetPinMode(const Pin: TPinIdentifier): TPinMode;
 var
   GPIO,Bit : byte;
-  i : byte;
 begin
   GPIO := Pin shr 4;
   Bit := Pin and $0f;
@@ -166,6 +189,41 @@ begin
       1:     Result := TPinMode.Input;
     end;
   end;
+end;
+
+procedure TGPIO.SetPPOS(const Pin: TPinIdentifier; const Value: TPinAlternateMode);
+type
+  TPinArray = array[0..15] of longWord;
+  pTPinArray =  ^TPinArray;
+begin
+  {$if defined (has_gpioa)}
+  if (Pin >= TNativePin.PA0) and (Pin <= TNativePin.PA15) then
+    pTPinArray(@PPOS.RPA0R)^[Pin and %1111] := byte(Value);
+  {$endif}
+  {$if defined (has_gpiob)}
+  if (Pin >= TNativePin.PB0) and (Pin <= TNativePin.PB15) then
+    pTPinArray(@PPOS.RPB0R)^[Pin and %1111] := byte(Value);
+  {$endif}
+  {$if defined (has_gpioc)}
+  if (Pin >= TNativePin.PC0) and (Pin <= TNativePin.PC15) then
+    pTPinArray(@PPOS.RPC0R)^[Pin and %1111] := byte(Value);
+  {$endif}
+  {$if defined (has_gpiod)}
+  if (Pin >= TNativePin.PD0) and (Pin <= TNativePin.PD15) then
+    pTPinArray(@PPOS.RPD0R)^[Pin and %1111] := byte(Value);
+  {$endif}
+  {$if defined (has_gpioe)}
+  if (Pin >= TNativePin.PE0) and (Pin <= TNativePin.PE15) then
+    pTPinArray(@PPOS.RPE0R)^[Pin and %1111] := byte(Value);
+  {$endif}
+  {$if defined (has_gpiof)}
+  if (Pin >= TNativePin.PF0) and (Pin <= TNativePin.PF15) then
+    pTPinArray(@PPOS.RPF0R)^[Pin and %1111] := byte(Value);
+  {$endif}
+  {$if defined (has_gpiog)}
+  if (Pin >= TNativePin.PG0) and (Pin <= TNativePin.PG15) then
+    pTPinArray(@PPOS.RPG0R)^[Pin and %1111] := byte(Value);
+  {$endif}
 end;
 
 procedure TGPIO.SetPinMode(const Pin: TPinIdentifier; const Value: TPinMode);
@@ -311,25 +369,22 @@ begin
   GPIO := Pin shr 4;
   case Value of
     TPinDrive.None :     begin
-                           GPIOMem[Pin shr 4]^.CNPUCLR  := BitMask;
-                           GPIOMem[Pin shr 4]^.CNPUCLR  := BitMask;
+                           GPIOMem[GPIO]^.CNPUCLR  := BitMask;
+                           GPIOMem[GPIO]^.CNPUCLR  := BitMask;
     end;
     TPinDrive.PullUp :   begin
-                           GPIOMem[Pin shr 4]^.CNPUSET  := BitMask;
-                           GPIOMem[Pin shr 4]^.CNPUCLR  := BitMask;
+                           GPIOMem[GPIO]^.CNPUSET  := BitMask;
+                           GPIOMem[GPIO]^.CNPUCLR  := BitMask;
     end;
     TPinDrive.PullDown : begin
-                           GPIOMem[Pin shr 4]^.CNPUCLR  := BitMask;
-                           GPIOMem[Pin shr 4]^.CNPUSET  := BitMask;
+                           GPIOMem[GPIO]^.CNPUCLR  := BitMask;
+                           GPIOMem[GPIO]^.CNPUSET  := BitMask;
     end;
   end;
 end;
 
 function TGPIO.GetPinOutputMode(const Pin: TPinIdentifier): TPinOutputMode;
-var
-  GPIO : byte;
 begin
-  GPIO := Pin shr 4;
   if GPIOMem[Pin shr 4]^.ODC and (1 shl (Pin and $0f)) <> 0 then
     Result := TPinOutputMode.OpenDrain
   else
@@ -337,8 +392,6 @@ begin
 end;
 
 procedure TGPIO.SetPinOutputMode(const Pin: TPinIdentifier; const Value: TPinOutputMode);
-var
-  GPIO : byte;
 begin
   if Value = TPinOutputMode.OpenDrain then
     GPIOMem[Pin shr 4]^.ODCSET := 1 shl (Pin and $0f)
