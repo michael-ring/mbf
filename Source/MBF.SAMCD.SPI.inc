@@ -15,6 +15,9 @@ type
   {$if defined(samc20) or defined(samc21) or defined(samd20) or defined(samd21)}
     ,PA16_SPI1_PAD0 = MuxC or Pad0 or TNativePin.PA16
   {$endif}
+  {$if defined(ARDUINOZERO)}
+    ,D11_SPI = MuxC or Pad0 or TNativePin.PA16
+  {$endif}
   {$if defined(samd10d) or defined(samd11d)}
     ,PA22_SPI1_PAD0 = MuxC or Pad0 or TNativePin.PA22
   {$endif}
@@ -107,9 +110,6 @@ type
   {$endif}
   {$if defined(samd10d) or defined(samd11d)}
     ,PA16_SPI1_PAD2 = MuxC or Pad2 or TNativePin.PA16
-  {$endif}
-  {$if defined(ARDUINOZERO)}
-    ,D11_SPI = MuxC or Pad2 or TNativePin.PA16
   {$endif}
   {$if defined(samc20) or defined(samc21) or defined(samd20) or defined(samd21)}
     ,PA18_SPI1_PAD2 = MuxC or Pad2 or TNativePin.PA18

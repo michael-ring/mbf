@@ -24,7 +24,7 @@ type
   {$if defined(SAMC21XPRO)}
     ,D1_UART = MuxC or Pad0 or TNativePin.PA22
   {$endif}
-  {$if defined(SAMD21XPRO) or defined(ARDUINOZERO)}
+  {$if defined(SAMD21XPRO) }
     ,DEBUG_UART = MuxC or Pad0 or TNativePin.PA22
   {$endif}
   {$if defined(samd10) or defined(samd11)}
@@ -198,6 +198,9 @@ type
   {$if defined(samc20n) or defined(samc21g) or defined(samc21j) or defined(samc21n) or defined(samd20g) or defined(samd20j) or defined(samd21g15a) or defined(samd21g15b) or defined(samd21g16a) or defined(samd21g16b) or defined(samd21g17a) or defined(samd21g18a) or defined(samd21j)}
     ,PB22_UART5_PAD2 = MuxD or Pad2 or TNativePin.PB22
   {$endif}
+  {$if defined(ARDUINOZERO)}
+    ,DEBUG_UART = MuxD or Pad2 or TNativePin.PB22
+  {$endif}
   {$if defined(samc20n) or defined(samc21n)}
     ,PC24_UART4_PAD2 = MuxD or Pad2 or TNativePin.PC24
   {$endif}
@@ -318,7 +321,7 @@ type
   {$if defined(SAMC21XPRO)}
     ,D0_UART = MuxC or Pad1 or TNativePin.PA23
   {$endif}
-  {$if defined(SAMD21XPRO) or defined(ARDUINOZERO)}
+  {$if defined(SAMD21XPRO)}
     ,DEBUG_UART = MuxC or Pad1 or TNativePin.PA23
   {$endif}
   {$if defined(samd10) or defined(samd11)}
@@ -584,6 +587,9 @@ type
   {$endif}
   {$if defined(samc20n) or defined(samc21g) or defined(samc21j) or defined(samc21n) or defined(samd20g) or defined(samd20j) or defined(samd21g15a) or defined(samd21g15b) or defined(samd21g16a) or defined(samd21g16b) or defined(samd21g17a) or defined(samd21g18a) or defined(samd21j)}
     ,PB23_UART5_PAD3 = MuxD or Pad3 or TNativePin.PB23
+  {$endif}
+  {$if defined(ARDUINOZERO)}
+    ,DEBUG_UART = MuxD or Pad3 or TNativePin.PB23
   {$endif}
   {$if defined(samc20n) or defined(samc21n)}
     ,PC25_UART4_PAD3 = MuxD or Pad3 or TNativePin.PC25

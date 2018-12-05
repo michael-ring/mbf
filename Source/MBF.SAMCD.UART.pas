@@ -136,7 +136,7 @@ var
   {$if defined(SAMD11XPRO)  }DEBUG_UART : TSercomUsart_Registers absolute SERCOM4_BASE;{$endif}
   {$if defined(SAMD20XPRO)  }DEBUG_UART : TSercomUsart_Registers absolute SERCOM3_BASE;{$endif}
   {$if defined(SAMD21XPRO)  }DEBUG_UART : TSercomUsart_Registers absolute SERCOM3_BASE;{$endif}
-  {$if defined(ARDUINOZERO) }DEBUG_UART : TSercomUsart_Registers absolute SERCOM3_BASE;{$endif}
+  {$if defined(ARDUINOZERO) }DEBUG_UART : TSercomUsart_Registers absolute SERCOM5_BASE;{$endif}
 
 implementation
 
