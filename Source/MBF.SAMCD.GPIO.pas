@@ -103,8 +103,8 @@ type
     TArduinoPin = record
     const
       None=-1;
-      D0 = TNativePin.PA11;   D1 = TNativePin.PA10;   D2 = TNativePin.PA14;  D3 = TNativePin.PA9;
-      D4 = TNativePin.PA8;   D5 = TNativePin.PA15;  D6 = TNativePin.PA20;  D7 = TNativePin.PA21;
+      D0 = TNativePin.PA11;   D1 = TNativePin.PA10;   D2 = TNativePin.PA8;  D3 = TNativePin.PA9;
+      D4 = TNativePin.PA14;   D5 = TNativePin.PA15;  D6 = TNativePin.PA20;  D7 = TNativePin.PA21;
 
       D8 = TNativePin.PA6;   D9 = TNativePin.PA7;   D10= TNativePin.PA18;   D11= TNativePin.PA16;
       D12= TNativePin.PA19;   D13= TNativePin.PA17;   D14= TNativePin.PA22;   D15= TNativePin.PA23;
