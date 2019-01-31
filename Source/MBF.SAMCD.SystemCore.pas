@@ -64,7 +64,7 @@ type
     function getMaxCPUFrequency : Cardinal;
     procedure SetClockSourceTarget(aClockSource,aClockTarget:longword);
     function GetCPUFrequency: Cardinal;
-    procedure SetCPUFrequency(const Value: Cardinal; aClockType : TClockType = TClockType.RC);
+    procedure SetCPUFrequency(const Value: Cardinal; aClockType : TClockType = TClockType.RC_PLL);
     property CPUFrequency: Cardinal read GetCPUFrequency write SetCPUFrequency;
   end;
 
@@ -347,7 +347,7 @@ end;
 {$endif}
 
 {$ifdef samd}
-procedure TSAMCDSystemCore.SetCPUFrequency(const Value: Cardinal; aClockType : TClockType = TClockType.RC);
+procedure TSAMCDSystemCore.SetCPUFrequency(const Value: Cardinal; aClockType : TClockType = TClockType.RC_PLL);
 const
   PLLREFCLOCK=3;
 procedure WaitGLK;
