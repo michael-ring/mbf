@@ -41,8 +41,8 @@ type
   private
     function convertMicrosecondsToCoreTicks(MicroSeconds : TMicroSeconds) : TTickCounter;
     procedure setCoreTimerValue(value : longWord);
-    procedure setCoreTimerComp(value : longWord);
-    function getCoreTimerComp : longWord;
+    procedure setCoreTimerReloadCompare(value : longWord);
+    function getCoreTimerReloadCompare : longWord;
     function getCoreTimerValue: longWord;
   public
     {$IF DEFINED(CPUARM)}
@@ -100,16 +100,16 @@ var
   TicksPerMillisecond : TTickCounter = 4000;
   {$if defined(CPUARM)}
   SysTickOverflow : TTickCounter = 0;
-  InternalSysTickOverflow : longWord;
+  //InternalSysTickOverflow : longWord;
   {$endif}
 
   {$if defined(CPUARM)}
-  procedure TSystemCore.setCoreTimerComp(value : longWord);
+  procedure TSystemCore.setCoreTimerReloadCompare(value : longWord);
   begin
     SysTick.LOAD := value;
   end;
 
-  function TSystemCore.getCoreTimerComp : longWord;
+  function TSystemCore.getCoreTimerReloadCompare : longWord;
   begin
     Result := SysTick.Load;
   end;
@@ -117,17 +117,17 @@ var
   procedure TSystemCore.setCoreTimerValue(value : longWord);
   begin
     Systick.VAL := value;
-    InternalSysTickOverflow := 0;
+    SysTickOverflow := 0;
   end;
 
   function TSystemCore.getCoreTimerValue: longWord;
   begin
     //Create a full 32 Bit Countervalue on Arm to make it behave the same as MIPS for Microsecond Delays
-    Result := InternalSysTickOverflow + (not (SysTick.VAL) and $0fffffff);
+    Result := SysTickOverflow + (TicksPerMillisecond-SysTick.VAL);
   end;
 
   {$elseif defined(CPUMIPS)}
-  procedure TSystemCore.setCoreTimerComp(value : longWord); //assembler; nostackframe;
+  procedure TSystemCore.setCoreTimerReloadCompare(value : longWord); //assembler; nostackframe;
   begin
     asm
       mtc0 $a1,$11,0
@@ -135,7 +135,7 @@ var
     end ['a1'];
   end;
 
-  function TSystemCore.getCoreTimerComp : longWord; //assembler; nostackframe;
+  function TSystemCore.getCoreTimerReloadCompare : longWord; //assembler; nostackframe;
   begin
     asm
       mfc0 $v0,$11,0
@@ -244,7 +244,7 @@ begin
   if (TicksPerMillisecond<70) then TicksPerMillisecond:=70;
 
   SysTick.CTRL := 0;
-  setCoreTimerComp(TicksPerMillisecond - 1);
+  setCoreTimerReloadCompare(TicksPerMillisecond - 1);
   setCoreTimerValue(0);
   SysTick.CTRL := %0111;
 {$elseif defined(CPUMIPS)}
@@ -305,19 +305,21 @@ end;
 function TSystemCore.TicksInBetween(const InitTicks, EndTicks: TTickCounter): TTickCounter;
 begin
   Result := EndTicks - InitTicks;
-  if (not Result) < Result then
-    Result := not Result;
+  if longWord(not Result) < Result then
+    Result := longWord(not Result);
 end;
 
 procedure TSystemCore.MicroDelay(const Microseconds: TMicroseconds);
 var
   StartTicks : TTickCounter;
   TickCount : TTickCounter;
+  TickDiff : TTickCounter;
 begin
   StartTicks := GetCoreTimerValue;
   TickCount := convertMicroSecondsToCoreTicks(Microseconds);
   if (TickCount=0) then exit;
-  while TicksInBetween(StartTicks, GetCoreTimerValue) < TickCount do ;
+  while TicksInBetween(StartTicks,GetCoreTimerValue) < TickCount do
+    TickDiff := TicksInBetween(StartTicks,GetCoreTimerValue);
 end;
 
 procedure TSystemCore.BusyWait(const MilliSeconds: TMilliSeconds);
