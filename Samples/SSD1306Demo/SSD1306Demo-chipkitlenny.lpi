@@ -9,7 +9,7 @@
     </BuildModes>
     <Units Count="1">
       <Unit0>
-        <Filename Value="Blinky.lpr"/>
+        <Filename Value="SSD1306Demo.lpr"/>
         <IsPartOfProject Value="True"/>
         <IsVisibleTab Value="True"/>
         <Loaded Value="True"/>
@@ -18,7 +18,7 @@
   </ProjectOptions>
   <CompilerOptions>
     <Target>
-      <Filename Value="Blinky"/>
+      <Filename Value="SSD1306Demo"/>
     </Target>
     <SearchPaths>
       <IncludeFiles Value="../../Source;$(ProjOutDir)"/>

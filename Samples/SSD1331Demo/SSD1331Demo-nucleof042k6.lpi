@@ -9,7 +9,7 @@
     </BuildModes>
     <Units Count="1">
       <Unit0>
-        <Filename Value="Blinky.lpr"/>
+        <Filename Value="SSD1331Demo.lpr"/>
         <IsPartOfProject Value="True"/>
         <IsVisibleTab Value="True"/>
         <Loaded Value="True"/>
@@ -18,7 +18,7 @@
   </ProjectOptions>
   <CompilerOptions>
     <Target>
-      <Filename Value="Blinky"/>
+      <Filename Value="SSD1331Demo"/>
     </Target>
     <SearchPaths>
       <IncludeFiles Value="../../Source;$(ProjOutDir)"/>
@@ -26,9 +26,9 @@
       <UnitOutputDirectory Value="lib/$(TargetCPU)-$(TargetOS)"/>
     </SearchPaths>
     <CodeGeneration>
-      <HeapSize Value="8192"/>
-      <StackSize Value="8192"/>
-      <TargetCPU Value="mipsel"/>
+      <HeapSize Value="2048"/>
+      <StackSize Value="2048"/>
+      <TargetCPU Value="arm"/>
       <TargetOS Value="embedded"/>
     </CodeGeneration>
     <Linking>
@@ -39,10 +39,10 @@
       </Debugging>
     </Linking>
     <Other>
-      <CustomOptions Value="-Cpmips32r2
--XPmips-sde-elf-
--Wpchipkitlenny
--dchipkitlenny
+      <CustomOptions Value="-Cparmv6m
+-XParm-none-eabi-
+-Wpnucleof042k6
+-dnucleof042k6
       "/>
     </Other>
   </CompilerOptions>
