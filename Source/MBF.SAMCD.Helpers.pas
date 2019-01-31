@@ -73,7 +73,8 @@ const
 
 function ReadCal(Position,Size:byte):longword;
 begin
-  result:=(({%H-}plongword(NVMCTRL_OTP4+(Position DIV 32))^ shr (Position MOD 32)) AND (1 shl Size));
+  //result:=(({%H-}plongword(NVMCTRL_OTP4+(Position DIV 32))^ shr (Position MOD 32)) AND (1 shl Size));
+  result:=(({%H-}plongword(NVMCTRL_OTP4+((Position shr 5) shl 3))^ shr (Position MOD 32)) AND ((1 shl Size)-1));
 end;
 
 function DivCeiling(a,b:longint):longint;
