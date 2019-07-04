@@ -6,9 +6,11 @@ copy the patchfile you want to apply in your directory where fpc-trunk resides, 
 Example:
 
 cd <you-fpc-trunk-directory>
-patch -p1 <fpc-trunk-stm32l4.patch
+patch -p0 <fpc-trunk-stm32l4.patch
 
 Now rebuild fpc, have fun!
+
+IMPORTANT: It is not possible to apply all patches, you run in a high chance of issues with patching when you try to apply more than one patch.
 
 To make your experience perfect, edit your fpc.cfg file, change the following lines:
 ```shell
