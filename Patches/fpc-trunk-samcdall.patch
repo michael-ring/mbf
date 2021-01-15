@@ -1,7 +1,8 @@
-diff -Naur fpc-tmp2/compiler/arm/cpuinfo.pas fpc-tmp/compiler/arm/cpuinfo.pas
---- fpc-tmp2/compiler/arm/cpuinfo.pas	2018-09-10 23:25:34.000000000 +0200
-+++ fpc-tmp/compiler/arm/cpuinfo.pas	2018-09-10 23:11:29.000000000 +0200
-@@ -465,6 +465,92 @@
+Index: compiler/arm/cpuinfo.pas
+===================================================================
+--- compiler/arm/cpuinfo.pas	(revision 42324)
++++ compiler/arm/cpuinfo.pas	(working copy)
+@@ -482,6 +482,92 @@
        ct_mk64fx512vmd12,
  
        { Atmel }
@@ -94,7 +95,7 @@ diff -Naur fpc-tmp2/compiler/arm/cpuinfo.pas fpc-tmp/compiler/arm/cpuinfo.pas
        ct_sam3x8e,
        ct_arduino_due,
        ct_flip_n_click,
-@@ -979,6 +1065,93 @@
+@@ -996,6 +1082,93 @@
        (controllertypestr:'MK64FX512VMD12';controllerunitstr:'MK64F12'; cputype:cpu_armv7em; fputype:fpu_soft; flashbase:$00000000;      flashsize:$00080000;   srambase:$20000000; sramsize:$00020000),
  
        { Atmel }
@@ -188,10 +189,11 @@ diff -Naur fpc-tmp2/compiler/arm/cpuinfo.pas fpc-tmp/compiler/arm/cpuinfo.pas
        (controllertypestr:'ATSAM3X8E';     controllerunitstr:'SAM3X8E'; cputype:cpu_armv7m; fputype:fpu_soft; flashbase:$00080000; flashsize:$00040000; srambase:$20000000; sramsize:$00010000),
        (controllertypestr:'ARDUINO_DUE';   controllerunitstr:'SAM3X8E'; cputype:cpu_armv7m; fputype:fpu_soft; flashbase:$00080000; flashsize:$00040000; srambase:$20000000; sramsize:$00010000),
        (controllertypestr:'FLIP_N_CLICK';  controllerunitstr:'SAM3X8E'; cputype:cpu_armv7m; fputype:fpu_soft; flashbase:$00080000; flashsize:$00040000; srambase:$20000000; sramsize:$00010000),
-diff -Naur fpc-tmp2/compiler/systems/t_embed.pas fpc-tmp/compiler/systems/t_embed.pas
---- fpc-tmp2/compiler/systems/t_embed.pas	2018-09-10 23:25:34.000000000 +0200
-+++ fpc-tmp/compiler/systems/t_embed.pas	2018-09-10 23:09:35.000000000 +0200
-@@ -596,6 +596,92 @@
+Index: compiler/systems/t_embed.pas
+===================================================================
+--- compiler/systems/t_embed.pas	(revision 42324)
++++ compiler/systems/t_embed.pas	(working copy)
+@@ -603,6 +603,92 @@
        ct_freedom_k22f,
   
        { Atmel }
@@ -284,10 +286,11 @@ diff -Naur fpc-tmp2/compiler/systems/t_embed.pas fpc-tmp/compiler/systems/t_embe
        ct_sam3x8e,
        ct_arduino_due,
        ct_flip_n_click,
-diff -Naur fpc-tmp2/rtl/embedded/Makefile fpc-tmp/rtl/embedded/Makefile
---- fpc-tmp2/rtl/embedded/Makefile	2018-09-10 23:26:43.000000000 +0200
-+++ fpc-tmp/rtl/embedded/Makefile	2018-09-10 23:01:03.000000000 +0200
-@@ -375,6 +375,11 @@
+Index: rtl/embedded/Makefile
+===================================================================
+--- rtl/embedded/Makefile	(revision 42324)
++++ rtl/embedded/Makefile	(working copy)
+@@ -373,6 +373,11 @@
  endif
  ifeq ($(SUBARCH),armv6m)
  CPU_UNITS=lpc8xx lpc11xx lpc122x stm32f0xx nrf51 cortexm0
@@ -299,9 +302,10 @@ diff -Naur fpc-tmp2/rtl/embedded/Makefile fpc-tmp/rtl/embedded/Makefile
  CPU_UNITS_DEFINED=1
  endif
  ifeq ($(SUBARCH),armv7a)
-diff -Naur fpc-tmp2/rtl/embedded/Makefile.fpc fpc-tmp/rtl/embedded/Makefile.fpc
---- fpc-tmp2/rtl/embedded/Makefile.fpc	2018-09-10 23:26:43.000000000 +0200
-+++ fpc-tmp/rtl/embedded/Makefile.fpc	2018-09-10 23:01:12.000000000 +0200
+Index: rtl/embedded/Makefile.fpc
+===================================================================
+--- rtl/embedded/Makefile.fpc	(revision 42324)
++++ rtl/embedded/Makefile.fpc	(working copy)
 @@ -88,6 +88,11 @@
  endif
  ifeq ($(SUBARCH),armv6m)
@@ -314,9 +318,10 @@ diff -Naur fpc-tmp2/rtl/embedded/Makefile.fpc fpc-tmp/rtl/embedded/Makefile.fpc
  CPU_UNITS_DEFINED=1
  endif
  ifeq ($(SUBARCH),armv7a)
-diff -Naur fpc-tmp2/rtl/embedded/arm/samc21e15a.pp fpc-tmp/rtl/embedded/arm/samc21e15a.pp
---- fpc-tmp2/rtl/embedded/arm/samc21e15a.pp	1970-01-01 01:00:00.000000000 +0100
-+++ fpc-tmp/rtl/embedded/arm/samc21e15a.pp	2018-09-10 22:30:43.000000000 +0200
+Index: rtl/embedded/arm/samc21e15a.pp
+===================================================================
+--- rtl/embedded/arm/samc21e15a.pp	(nonexistent)
++++ rtl/embedded/arm/samc21e15a.pp	(working copy)
 @@ -0,0 +1,1125 @@
 +unit samc21e15a;
 +interface
@@ -1443,9 +1448,10 @@ diff -Naur fpc-tmp2/rtl/embedded/arm/samc21e15a.pp fpc-tmp/rtl/embedded/arm/samc
 +  .text
 +  end;
 +end.
-diff -Naur fpc-tmp2/rtl/embedded/arm/samc21e16a.pp fpc-tmp/rtl/embedded/arm/samc21e16a.pp
---- fpc-tmp2/rtl/embedded/arm/samc21e16a.pp	1970-01-01 01:00:00.000000000 +0100
-+++ fpc-tmp/rtl/embedded/arm/samc21e16a.pp	2018-09-10 22:30:45.000000000 +0200
+Index: rtl/embedded/arm/samc21e16a.pp
+===================================================================
+--- rtl/embedded/arm/samc21e16a.pp	(nonexistent)
++++ rtl/embedded/arm/samc21e16a.pp	(working copy)
 @@ -0,0 +1,1125 @@
 +unit samc21e16a;
 +interface
@@ -2572,9 +2578,10 @@ diff -Naur fpc-tmp2/rtl/embedded/arm/samc21e16a.pp fpc-tmp/rtl/embedded/arm/samc
 +  .text
 +  end;
 +end.
-diff -Naur fpc-tmp2/rtl/embedded/arm/samc21e17a.pp fpc-tmp/rtl/embedded/arm/samc21e17a.pp
---- fpc-tmp2/rtl/embedded/arm/samc21e17a.pp	1970-01-01 01:00:00.000000000 +0100
-+++ fpc-tmp/rtl/embedded/arm/samc21e17a.pp	2018-09-10 22:30:47.000000000 +0200
+Index: rtl/embedded/arm/samc21e17a.pp
+===================================================================
+--- rtl/embedded/arm/samc21e17a.pp	(nonexistent)
++++ rtl/embedded/arm/samc21e17a.pp	(working copy)
 @@ -0,0 +1,1125 @@
 +unit samc21e17a;
 +interface
@@ -3701,9 +3708,10 @@ diff -Naur fpc-tmp2/rtl/embedded/arm/samc21e17a.pp fpc-tmp/rtl/embedded/arm/samc
 +  .text
 +  end;
 +end.
-diff -Naur fpc-tmp2/rtl/embedded/arm/samc21e18a.pp fpc-tmp/rtl/embedded/arm/samc21e18a.pp
---- fpc-tmp2/rtl/embedded/arm/samc21e18a.pp	1970-01-01 01:00:00.000000000 +0100
-+++ fpc-tmp/rtl/embedded/arm/samc21e18a.pp	2018-09-10 22:30:50.000000000 +0200
+Index: rtl/embedded/arm/samc21e18a.pp
+===================================================================
+--- rtl/embedded/arm/samc21e18a.pp	(nonexistent)
++++ rtl/embedded/arm/samc21e18a.pp	(working copy)
 @@ -0,0 +1,1125 @@
 +unit samc21e18a;
 +interface
@@ -4830,9 +4838,10 @@ diff -Naur fpc-tmp2/rtl/embedded/arm/samc21e18a.pp fpc-tmp/rtl/embedded/arm/samc
 +  .text
 +  end;
 +end.
-diff -Naur fpc-tmp2/rtl/embedded/arm/samc21g15a.pp fpc-tmp/rtl/embedded/arm/samc21g15a.pp
---- fpc-tmp2/rtl/embedded/arm/samc21g15a.pp	1970-01-01 01:00:00.000000000 +0100
-+++ fpc-tmp/rtl/embedded/arm/samc21g15a.pp	2018-09-10 22:30:52.000000000 +0200
+Index: rtl/embedded/arm/samc21g15a.pp
+===================================================================
+--- rtl/embedded/arm/samc21g15a.pp	(nonexistent)
++++ rtl/embedded/arm/samc21g15a.pp	(working copy)
 @@ -0,0 +1,1143 @@
 +unit samc21g15a;
 +interface
@@ -5977,9 +5986,10 @@ diff -Naur fpc-tmp2/rtl/embedded/arm/samc21g15a.pp fpc-tmp/rtl/embedded/arm/samc
 +  .text
 +  end;
 +end.
-diff -Naur fpc-tmp2/rtl/embedded/arm/samc21g16a.pp fpc-tmp/rtl/embedded/arm/samc21g16a.pp
---- fpc-tmp2/rtl/embedded/arm/samc21g16a.pp	1970-01-01 01:00:00.000000000 +0100
-+++ fpc-tmp/rtl/embedded/arm/samc21g16a.pp	2018-09-10 22:30:54.000000000 +0200
+Index: rtl/embedded/arm/samc21g16a.pp
+===================================================================
+--- rtl/embedded/arm/samc21g16a.pp	(nonexistent)
++++ rtl/embedded/arm/samc21g16a.pp	(working copy)
 @@ -0,0 +1,1143 @@
 +unit samc21g16a;
 +interface
@@ -7124,9 +7134,10 @@ diff -Naur fpc-tmp2/rtl/embedded/arm/samc21g16a.pp fpc-tmp/rtl/embedded/arm/samc
 +  .text
 +  end;
 +end.
-diff -Naur fpc-tmp2/rtl/embedded/arm/samc21g17a.pp fpc-tmp/rtl/embedded/arm/samc21g17a.pp
---- fpc-tmp2/rtl/embedded/arm/samc21g17a.pp	1970-01-01 01:00:00.000000000 +0100
-+++ fpc-tmp/rtl/embedded/arm/samc21g17a.pp	2018-09-10 22:30:56.000000000 +0200
+Index: rtl/embedded/arm/samc21g17a.pp
+===================================================================
+--- rtl/embedded/arm/samc21g17a.pp	(nonexistent)
++++ rtl/embedded/arm/samc21g17a.pp	(working copy)
 @@ -0,0 +1,1143 @@
 +unit samc21g17a;
 +interface
@@ -8271,9 +8282,10 @@ diff -Naur fpc-tmp2/rtl/embedded/arm/samc21g17a.pp fpc-tmp/rtl/embedded/arm/samc
 +  .text
 +  end;
 +end.
-diff -Naur fpc-tmp2/rtl/embedded/arm/samc21g18a.pp fpc-tmp/rtl/embedded/arm/samc21g18a.pp
---- fpc-tmp2/rtl/embedded/arm/samc21g18a.pp	1970-01-01 01:00:00.000000000 +0100
-+++ fpc-tmp/rtl/embedded/arm/samc21g18a.pp	2018-09-10 22:30:58.000000000 +0200
+Index: rtl/embedded/arm/samc21g18a.pp
+===================================================================
+--- rtl/embedded/arm/samc21g18a.pp	(nonexistent)
++++ rtl/embedded/arm/samc21g18a.pp	(working copy)
 @@ -0,0 +1,1143 @@
 +unit samc21g18a;
 +interface
@@ -9418,9 +9430,10 @@ diff -Naur fpc-tmp2/rtl/embedded/arm/samc21g18a.pp fpc-tmp/rtl/embedded/arm/samc
 +  .text
 +  end;
 +end.
-diff -Naur fpc-tmp2/rtl/embedded/arm/samc21j15a.pp fpc-tmp/rtl/embedded/arm/samc21j15a.pp
---- fpc-tmp2/rtl/embedded/arm/samc21j15a.pp	1970-01-01 01:00:00.000000000 +0100
-+++ fpc-tmp/rtl/embedded/arm/samc21j15a.pp	2018-09-10 22:31:01.000000000 +0200
+Index: rtl/embedded/arm/samc21j15a.pp
+===================================================================
+--- rtl/embedded/arm/samc21j15a.pp	(nonexistent)
++++ rtl/embedded/arm/samc21j15a.pp	(working copy)
 @@ -0,0 +1,1143 @@
 +unit samc21j15a;
 +interface
@@ -10565,9 +10578,10 @@ diff -Naur fpc-tmp2/rtl/embedded/arm/samc21j15a.pp fpc-tmp/rtl/embedded/arm/samc
 +  .text
 +  end;
 +end.
-diff -Naur fpc-tmp2/rtl/embedded/arm/samc21j16a.pp fpc-tmp/rtl/embedded/arm/samc21j16a.pp
---- fpc-tmp2/rtl/embedded/arm/samc21j16a.pp	1970-01-01 01:00:00.000000000 +0100
-+++ fpc-tmp/rtl/embedded/arm/samc21j16a.pp	2018-09-10 22:31:03.000000000 +0200
+Index: rtl/embedded/arm/samc21j16a.pp
+===================================================================
+--- rtl/embedded/arm/samc21j16a.pp	(nonexistent)
++++ rtl/embedded/arm/samc21j16a.pp	(working copy)
 @@ -0,0 +1,1143 @@
 +unit samc21j16a;
 +interface
@@ -11712,9 +11726,10 @@ diff -Naur fpc-tmp2/rtl/embedded/arm/samc21j16a.pp fpc-tmp/rtl/embedded/arm/samc
 +  .text
 +  end;
 +end.
-diff -Naur fpc-tmp2/rtl/embedded/arm/samc21j17a.pp fpc-tmp/rtl/embedded/arm/samc21j17a.pp
---- fpc-tmp2/rtl/embedded/arm/samc21j17a.pp	1970-01-01 01:00:00.000000000 +0100
-+++ fpc-tmp/rtl/embedded/arm/samc21j17a.pp	2018-09-10 22:31:05.000000000 +0200
+Index: rtl/embedded/arm/samc21j17a.pp
+===================================================================
+--- rtl/embedded/arm/samc21j17a.pp	(nonexistent)
++++ rtl/embedded/arm/samc21j17a.pp	(working copy)
 @@ -0,0 +1,1143 @@
 +unit samc21j17a;
 +interface
@@ -12859,9 +12874,10 @@ diff -Naur fpc-tmp2/rtl/embedded/arm/samc21j17a.pp fpc-tmp/rtl/embedded/arm/samc
 +  .text
 +  end;
 +end.
-diff -Naur fpc-tmp2/rtl/embedded/arm/samc21j17au.pp fpc-tmp/rtl/embedded/arm/samc21j17au.pp
---- fpc-tmp2/rtl/embedded/arm/samc21j17au.pp	1970-01-01 01:00:00.000000000 +0100
-+++ fpc-tmp/rtl/embedded/arm/samc21j17au.pp	2018-09-10 22:31:08.000000000 +0200
+Index: rtl/embedded/arm/samc21j17au.pp
+===================================================================
+--- rtl/embedded/arm/samc21j17au.pp	(nonexistent)
++++ rtl/embedded/arm/samc21j17au.pp	(working copy)
 @@ -0,0 +1,1143 @@
 +unit samc21j17au;
 +interface
@@ -14006,9 +14022,10 @@ diff -Naur fpc-tmp2/rtl/embedded/arm/samc21j17au.pp fpc-tmp/rtl/embedded/arm/sam
 +  .text
 +  end;
 +end.
-diff -Naur fpc-tmp2/rtl/embedded/arm/samc21j18a.pp fpc-tmp/rtl/embedded/arm/samc21j18a.pp
---- fpc-tmp2/rtl/embedded/arm/samc21j18a.pp	1970-01-01 01:00:00.000000000 +0100
-+++ fpc-tmp/rtl/embedded/arm/samc21j18a.pp	2018-09-10 22:31:10.000000000 +0200
+Index: rtl/embedded/arm/samc21j18a.pp
+===================================================================
+--- rtl/embedded/arm/samc21j18a.pp	(nonexistent)
++++ rtl/embedded/arm/samc21j18a.pp	(working copy)
 @@ -0,0 +1,1143 @@
 +unit samc21j18a;
 +interface
@@ -15153,9 +15170,10 @@ diff -Naur fpc-tmp2/rtl/embedded/arm/samc21j18a.pp fpc-tmp/rtl/embedded/arm/samc
 +  .text
 +  end;
 +end.
-diff -Naur fpc-tmp2/rtl/embedded/arm/samc21j18au.pp fpc-tmp/rtl/embedded/arm/samc21j18au.pp
---- fpc-tmp2/rtl/embedded/arm/samc21j18au.pp	1970-01-01 01:00:00.000000000 +0100
-+++ fpc-tmp/rtl/embedded/arm/samc21j18au.pp	2018-09-10 22:31:12.000000000 +0200
+Index: rtl/embedded/arm/samc21j18au.pp
+===================================================================
+--- rtl/embedded/arm/samc21j18au.pp	(nonexistent)
++++ rtl/embedded/arm/samc21j18au.pp	(working copy)
 @@ -0,0 +1,1143 @@
 +unit samc21j18au;
 +interface
@@ -16300,9 +16318,10 @@ diff -Naur fpc-tmp2/rtl/embedded/arm/samc21j18au.pp fpc-tmp/rtl/embedded/arm/sam
 +  .text
 +  end;
 +end.
-diff -Naur fpc-tmp2/rtl/embedded/arm/samd10c13a.pp fpc-tmp/rtl/embedded/arm/samd10c13a.pp
---- fpc-tmp2/rtl/embedded/arm/samd10c13a.pp	1970-01-01 01:00:00.000000000 +0100
-+++ fpc-tmp/rtl/embedded/arm/samd10c13a.pp	2018-09-10 22:30:10.000000000 +0200
+Index: rtl/embedded/arm/samd10c13a.pp
+===================================================================
+--- rtl/embedded/arm/samd10c13a.pp	(nonexistent)
++++ rtl/embedded/arm/samd10c13a.pp	(working copy)
 @@ -0,0 +1,772 @@
 +unit samd10c13a;
 +interface
@@ -17076,9 +17095,10 @@ diff -Naur fpc-tmp2/rtl/embedded/arm/samd10c13a.pp fpc-tmp/rtl/embedded/arm/samd
 +  .text
 +  end;
 +end.
-diff -Naur fpc-tmp2/rtl/embedded/arm/samd10c14a.pp fpc-tmp/rtl/embedded/arm/samd10c14a.pp
---- fpc-tmp2/rtl/embedded/arm/samd10c14a.pp	1970-01-01 01:00:00.000000000 +0100
-+++ fpc-tmp/rtl/embedded/arm/samd10c14a.pp	2018-09-10 22:30:12.000000000 +0200
+Index: rtl/embedded/arm/samd10c14a.pp
+===================================================================
+--- rtl/embedded/arm/samd10c14a.pp	(nonexistent)
++++ rtl/embedded/arm/samd10c14a.pp	(working copy)
 @@ -0,0 +1,772 @@
 +unit samd10c14a;
 +interface
@@ -17852,9 +17872,10 @@ diff -Naur fpc-tmp2/rtl/embedded/arm/samd10c14a.pp fpc-tmp/rtl/embedded/arm/samd
 +  .text
 +  end;
 +end.
-diff -Naur fpc-tmp2/rtl/embedded/arm/samd10d13a.pp fpc-tmp/rtl/embedded/arm/samd10d13a.pp
---- fpc-tmp2/rtl/embedded/arm/samd10d13a.pp	1970-01-01 01:00:00.000000000 +0100
-+++ fpc-tmp/rtl/embedded/arm/samd10d13a.pp	2018-09-10 22:30:13.000000000 +0200
+Index: rtl/embedded/arm/samd10d13a.pp
+===================================================================
+--- rtl/embedded/arm/samd10d13a.pp	(nonexistent)
++++ rtl/embedded/arm/samd10d13a.pp	(working copy)
 @@ -0,0 +1,764 @@
 +unit samd10d13a;
 +interface
@@ -18620,9 +18641,10 @@ diff -Naur fpc-tmp2/rtl/embedded/arm/samd10d13a.pp fpc-tmp/rtl/embedded/arm/samd
 +  .text
 +  end;
 +end.
-diff -Naur fpc-tmp2/rtl/embedded/arm/samd10d14a.pp fpc-tmp/rtl/embedded/arm/samd10d14a.pp
---- fpc-tmp2/rtl/embedded/arm/samd10d14a.pp	1970-01-01 01:00:00.000000000 +0100
-+++ fpc-tmp/rtl/embedded/arm/samd10d14a.pp	2018-09-10 22:30:15.000000000 +0200
+Index: rtl/embedded/arm/samd10d14a.pp
+===================================================================
+--- rtl/embedded/arm/samd10d14a.pp	(nonexistent)
++++ rtl/embedded/arm/samd10d14a.pp	(working copy)
 @@ -0,0 +1,764 @@
 +unit samd10d14a;
 +interface
@@ -19388,9 +19410,10 @@ diff -Naur fpc-tmp2/rtl/embedded/arm/samd10d14a.pp fpc-tmp/rtl/embedded/arm/samd
 +  .text
 +  end;
 +end.
-diff -Naur fpc-tmp2/rtl/embedded/arm/samd11c13a.pp fpc-tmp/rtl/embedded/arm/samd11c13a.pp
---- fpc-tmp2/rtl/embedded/arm/samd11c13a.pp	1970-01-01 01:00:00.000000000 +0100
-+++ fpc-tmp/rtl/embedded/arm/samd11c13a.pp	2018-09-10 22:30:16.000000000 +0200
+Index: rtl/embedded/arm/samd11c13a.pp
+===================================================================
+--- rtl/embedded/arm/samd11c13a.pp	(nonexistent)
++++ rtl/embedded/arm/samd11c13a.pp	(working copy)
 @@ -0,0 +1,821 @@
 +unit samd11c13a;
 +interface
@@ -20213,9 +20236,10 @@ diff -Naur fpc-tmp2/rtl/embedded/arm/samd11c13a.pp fpc-tmp/rtl/embedded/arm/samd
 +  .text
 +  end;
 +end.
-diff -Naur fpc-tmp2/rtl/embedded/arm/samd11c14a.pp fpc-tmp/rtl/embedded/arm/samd11c14a.pp
---- fpc-tmp2/rtl/embedded/arm/samd11c14a.pp	1970-01-01 01:00:00.000000000 +0100
-+++ fpc-tmp/rtl/embedded/arm/samd11c14a.pp	2018-09-10 22:30:18.000000000 +0200
+Index: rtl/embedded/arm/samd11c14a.pp
+===================================================================
+--- rtl/embedded/arm/samd11c14a.pp	(nonexistent)
++++ rtl/embedded/arm/samd11c14a.pp	(working copy)
 @@ -0,0 +1,835 @@
 +unit samd11c14a;
 +interface
@@ -21052,9 +21076,10 @@ diff -Naur fpc-tmp2/rtl/embedded/arm/samd11c14a.pp fpc-tmp/rtl/embedded/arm/samd
 +  .text
 +  end;
 +end.
-diff -Naur fpc-tmp2/rtl/embedded/arm/samd11d14am.pp fpc-tmp/rtl/embedded/arm/samd11d14am.pp
---- fpc-tmp2/rtl/embedded/arm/samd11d14am.pp	1970-01-01 01:00:00.000000000 +0100
-+++ fpc-tmp/rtl/embedded/arm/samd11d14am.pp	2018-09-10 22:30:20.000000000 +0200
+Index: rtl/embedded/arm/samd11d14am.pp
+===================================================================
+--- rtl/embedded/arm/samd11d14am.pp	(nonexistent)
++++ rtl/embedded/arm/samd11d14am.pp	(working copy)
 @@ -0,0 +1,841 @@
 +unit samd11d14am;
 +interface
@@ -21897,9 +21922,10 @@ diff -Naur fpc-tmp2/rtl/embedded/arm/samd11d14am.pp fpc-tmp/rtl/embedded/arm/sam
 +  .text
 +  end;
 +end.
-diff -Naur fpc-tmp2/rtl/embedded/arm/samd11d14as.pp fpc-tmp/rtl/embedded/arm/samd11d14as.pp
---- fpc-tmp2/rtl/embedded/arm/samd11d14as.pp	1970-01-01 01:00:00.000000000 +0100
-+++ fpc-tmp/rtl/embedded/arm/samd11d14as.pp	2018-09-10 22:30:21.000000000 +0200
+Index: rtl/embedded/arm/samd11d14as.pp
+===================================================================
+--- rtl/embedded/arm/samd11d14as.pp	(nonexistent)
++++ rtl/embedded/arm/samd11d14as.pp	(working copy)
 @@ -0,0 +1,841 @@
 +unit samd11d14as;
 +interface
@@ -22742,9 +22768,10 @@ diff -Naur fpc-tmp2/rtl/embedded/arm/samd11d14as.pp fpc-tmp/rtl/embedded/arm/sam
 +  .text
 +  end;
 +end.
-diff -Naur fpc-tmp2/rtl/embedded/arm/samd20e14.pp fpc-tmp/rtl/embedded/arm/samd20e14.pp
---- fpc-tmp2/rtl/embedded/arm/samd20e14.pp	1970-01-01 01:00:00.000000000 +0100
-+++ fpc-tmp/rtl/embedded/arm/samd20e14.pp	2018-09-10 22:30:23.000000000 +0200
+Index: rtl/embedded/arm/samd20e14.pp
+===================================================================
+--- rtl/embedded/arm/samd20e14.pp	(nonexistent)
++++ rtl/embedded/arm/samd20e14.pp	(working copy)
 @@ -0,0 +1,661 @@
 +unit samd20e14;
 +interface
@@ -23407,9 +23434,10 @@ diff -Naur fpc-tmp2/rtl/embedded/arm/samd20e14.pp fpc-tmp/rtl/embedded/arm/samd2
 +  .text
 +  end;
 +end.
-diff -Naur fpc-tmp2/rtl/embedded/arm/samd20e15.pp fpc-tmp/rtl/embedded/arm/samd20e15.pp
---- fpc-tmp2/rtl/embedded/arm/samd20e15.pp	1970-01-01 01:00:00.000000000 +0100
-+++ fpc-tmp/rtl/embedded/arm/samd20e15.pp	2018-09-10 22:30:24.000000000 +0200
+Index: rtl/embedded/arm/samd20e15.pp
+===================================================================
+--- rtl/embedded/arm/samd20e15.pp	(nonexistent)
++++ rtl/embedded/arm/samd20e15.pp	(working copy)
 @@ -0,0 +1,661 @@
 +unit samd20e15;
 +interface
@@ -24072,9 +24100,10 @@ diff -Naur fpc-tmp2/rtl/embedded/arm/samd20e15.pp fpc-tmp/rtl/embedded/arm/samd2
 +  .text
 +  end;
 +end.
-diff -Naur fpc-tmp2/rtl/embedded/arm/samd20e16.pp fpc-tmp/rtl/embedded/arm/samd20e16.pp
---- fpc-tmp2/rtl/embedded/arm/samd20e16.pp	1970-01-01 01:00:00.000000000 +0100
-+++ fpc-tmp/rtl/embedded/arm/samd20e16.pp	2018-09-10 22:30:25.000000000 +0200
+Index: rtl/embedded/arm/samd20e16.pp
+===================================================================
+--- rtl/embedded/arm/samd20e16.pp	(nonexistent)
++++ rtl/embedded/arm/samd20e16.pp	(working copy)
 @@ -0,0 +1,661 @@
 +unit samd20e16;
 +interface
@@ -24737,9 +24766,10 @@ diff -Naur fpc-tmp2/rtl/embedded/arm/samd20e16.pp fpc-tmp/rtl/embedded/arm/samd2
 +  .text
 +  end;
 +end.
-diff -Naur fpc-tmp2/rtl/embedded/arm/samd20e17.pp fpc-tmp/rtl/embedded/arm/samd20e17.pp
---- fpc-tmp2/rtl/embedded/arm/samd20e17.pp	1970-01-01 01:00:00.000000000 +0100
-+++ fpc-tmp/rtl/embedded/arm/samd20e17.pp	2018-09-10 22:30:26.000000000 +0200
+Index: rtl/embedded/arm/samd20e17.pp
+===================================================================
+--- rtl/embedded/arm/samd20e17.pp	(nonexistent)
++++ rtl/embedded/arm/samd20e17.pp	(working copy)
 @@ -0,0 +1,661 @@
 +unit samd20e17;
 +interface
@@ -25402,9 +25432,10 @@ diff -Naur fpc-tmp2/rtl/embedded/arm/samd20e17.pp fpc-tmp/rtl/embedded/arm/samd2
 +  .text
 +  end;
 +end.
-diff -Naur fpc-tmp2/rtl/embedded/arm/samd20e18.pp fpc-tmp/rtl/embedded/arm/samd20e18.pp
---- fpc-tmp2/rtl/embedded/arm/samd20e18.pp	1970-01-01 01:00:00.000000000 +0100
-+++ fpc-tmp/rtl/embedded/arm/samd20e18.pp	2018-09-10 22:30:28.000000000 +0200
+Index: rtl/embedded/arm/samd20e18.pp
+===================================================================
+--- rtl/embedded/arm/samd20e18.pp	(nonexistent)
++++ rtl/embedded/arm/samd20e18.pp	(working copy)
 @@ -0,0 +1,661 @@
 +unit samd20e18;
 +interface
@@ -26067,9 +26098,10 @@ diff -Naur fpc-tmp2/rtl/embedded/arm/samd20e18.pp fpc-tmp/rtl/embedded/arm/samd2
 +  .text
 +  end;
 +end.
-diff -Naur fpc-tmp2/rtl/embedded/arm/samd20g14.pp fpc-tmp/rtl/embedded/arm/samd20g14.pp
---- fpc-tmp2/rtl/embedded/arm/samd20g14.pp	1970-01-01 01:00:00.000000000 +0100
-+++ fpc-tmp/rtl/embedded/arm/samd20g14.pp	2018-09-10 22:30:29.000000000 +0200
+Index: rtl/embedded/arm/samd20g14.pp
+===================================================================
+--- rtl/embedded/arm/samd20g14.pp	(nonexistent)
++++ rtl/embedded/arm/samd20g14.pp	(working copy)
 @@ -0,0 +1,673 @@
 +unit samd20g14;
 +interface
@@ -26744,9 +26776,10 @@ diff -Naur fpc-tmp2/rtl/embedded/arm/samd20g14.pp fpc-tmp/rtl/embedded/arm/samd2
 +  .text
 +  end;
 +end.
-diff -Naur fpc-tmp2/rtl/embedded/arm/samd20g15.pp fpc-tmp/rtl/embedded/arm/samd20g15.pp
---- fpc-tmp2/rtl/embedded/arm/samd20g15.pp	1970-01-01 01:00:00.000000000 +0100
-+++ fpc-tmp/rtl/embedded/arm/samd20g15.pp	2018-09-10 22:30:30.000000000 +0200
+Index: rtl/embedded/arm/samd20g15.pp
+===================================================================
+--- rtl/embedded/arm/samd20g15.pp	(nonexistent)
++++ rtl/embedded/arm/samd20g15.pp	(working copy)
 @@ -0,0 +1,673 @@
 +unit samd20g15;
 +interface
@@ -27421,9 +27454,10 @@ diff -Naur fpc-tmp2/rtl/embedded/arm/samd20g15.pp fpc-tmp/rtl/embedded/arm/samd2
 +  .text
 +  end;
 +end.
-diff -Naur fpc-tmp2/rtl/embedded/arm/samd20g16.pp fpc-tmp/rtl/embedded/arm/samd20g16.pp
---- fpc-tmp2/rtl/embedded/arm/samd20g16.pp	1970-01-01 01:00:00.000000000 +0100
-+++ fpc-tmp/rtl/embedded/arm/samd20g16.pp	2018-09-10 22:30:32.000000000 +0200
+Index: rtl/embedded/arm/samd20g16.pp
+===================================================================
+--- rtl/embedded/arm/samd20g16.pp	(nonexistent)
++++ rtl/embedded/arm/samd20g16.pp	(working copy)
 @@ -0,0 +1,673 @@
 +unit samd20g16;
 +interface
@@ -28098,9 +28132,10 @@ diff -Naur fpc-tmp2/rtl/embedded/arm/samd20g16.pp fpc-tmp/rtl/embedded/arm/samd2
 +  .text
 +  end;
 +end.
-diff -Naur fpc-tmp2/rtl/embedded/arm/samd20g17.pp fpc-tmp/rtl/embedded/arm/samd20g17.pp
---- fpc-tmp2/rtl/embedded/arm/samd20g17.pp	1970-01-01 01:00:00.000000000 +0100
-+++ fpc-tmp/rtl/embedded/arm/samd20g17.pp	2018-09-10 22:30:33.000000000 +0200
+Index: rtl/embedded/arm/samd20g17.pp
+===================================================================
+--- rtl/embedded/arm/samd20g17.pp	(nonexistent)
++++ rtl/embedded/arm/samd20g17.pp	(working copy)
 @@ -0,0 +1,673 @@
 +unit samd20g17;
 +interface
@@ -28775,9 +28810,10 @@ diff -Naur fpc-tmp2/rtl/embedded/arm/samd20g17.pp fpc-tmp/rtl/embedded/arm/samd2
 +  .text
 +  end;
 +end.
-diff -Naur fpc-tmp2/rtl/embedded/arm/samd20g18.pp fpc-tmp/rtl/embedded/arm/samd20g18.pp
---- fpc-tmp2/rtl/embedded/arm/samd20g18.pp	1970-01-01 01:00:00.000000000 +0100
-+++ fpc-tmp/rtl/embedded/arm/samd20g18.pp	2018-09-10 22:30:34.000000000 +0200
+Index: rtl/embedded/arm/samd20g18.pp
+===================================================================
+--- rtl/embedded/arm/samd20g18.pp	(nonexistent)
++++ rtl/embedded/arm/samd20g18.pp	(working copy)
 @@ -0,0 +1,673 @@
 +unit samd20g18;
 +interface
@@ -29452,9 +29488,10 @@ diff -Naur fpc-tmp2/rtl/embedded/arm/samd20g18.pp fpc-tmp/rtl/embedded/arm/samd2
 +  .text
 +  end;
 +end.
-diff -Naur fpc-tmp2/rtl/embedded/arm/samd20j14.pp fpc-tmp/rtl/embedded/arm/samd20j14.pp
---- fpc-tmp2/rtl/embedded/arm/samd20j14.pp	1970-01-01 01:00:00.000000000 +0100
-+++ fpc-tmp/rtl/embedded/arm/samd20j14.pp	2018-09-10 22:30:35.000000000 +0200
+Index: rtl/embedded/arm/samd20j14.pp
+===================================================================
+--- rtl/embedded/arm/samd20j14.pp	(nonexistent)
++++ rtl/embedded/arm/samd20j14.pp	(working copy)
 @@ -0,0 +1,685 @@
 +unit samd20j14;
 +interface
@@ -30141,9 +30178,10 @@ diff -Naur fpc-tmp2/rtl/embedded/arm/samd20j14.pp fpc-tmp/rtl/embedded/arm/samd2
 +  .text
 +  end;
 +end.
-diff -Naur fpc-tmp2/rtl/embedded/arm/samd20j15.pp fpc-tmp/rtl/embedded/arm/samd20j15.pp
---- fpc-tmp2/rtl/embedded/arm/samd20j15.pp	1970-01-01 01:00:00.000000000 +0100
-+++ fpc-tmp/rtl/embedded/arm/samd20j15.pp	2018-09-10 22:30:37.000000000 +0200
+Index: rtl/embedded/arm/samd20j15.pp
+===================================================================
+--- rtl/embedded/arm/samd20j15.pp	(nonexistent)
++++ rtl/embedded/arm/samd20j15.pp	(working copy)
 @@ -0,0 +1,685 @@
 +unit samd20j15;
 +interface
@@ -30830,9 +30868,10 @@ diff -Naur fpc-tmp2/rtl/embedded/arm/samd20j15.pp fpc-tmp/rtl/embedded/arm/samd2
 +  .text
 +  end;
 +end.
-diff -Naur fpc-tmp2/rtl/embedded/arm/samd20j16.pp fpc-tmp/rtl/embedded/arm/samd20j16.pp
---- fpc-tmp2/rtl/embedded/arm/samd20j16.pp	1970-01-01 01:00:00.000000000 +0100
-+++ fpc-tmp/rtl/embedded/arm/samd20j16.pp	2018-09-10 22:30:38.000000000 +0200
+Index: rtl/embedded/arm/samd20j16.pp
+===================================================================
+--- rtl/embedded/arm/samd20j16.pp	(nonexistent)
++++ rtl/embedded/arm/samd20j16.pp	(working copy)
 @@ -0,0 +1,685 @@
 +unit samd20j16;
 +interface
@@ -31519,9 +31558,10 @@ diff -Naur fpc-tmp2/rtl/embedded/arm/samd20j16.pp fpc-tmp/rtl/embedded/arm/samd2
 +  .text
 +  end;
 +end.
-diff -Naur fpc-tmp2/rtl/embedded/arm/samd20j17.pp fpc-tmp/rtl/embedded/arm/samd20j17.pp
---- fpc-tmp2/rtl/embedded/arm/samd20j17.pp	1970-01-01 01:00:00.000000000 +0100
-+++ fpc-tmp/rtl/embedded/arm/samd20j17.pp	2018-09-10 22:30:39.000000000 +0200
+Index: rtl/embedded/arm/samd20j17.pp
+===================================================================
+--- rtl/embedded/arm/samd20j17.pp	(nonexistent)
++++ rtl/embedded/arm/samd20j17.pp	(working copy)
 @@ -0,0 +1,685 @@
 +unit samd20j17;
 +interface
@@ -32208,9 +32248,10 @@ diff -Naur fpc-tmp2/rtl/embedded/arm/samd20j17.pp fpc-tmp/rtl/embedded/arm/samd2
 +  .text
 +  end;
 +end.
-diff -Naur fpc-tmp2/rtl/embedded/arm/samd20j18.pp fpc-tmp/rtl/embedded/arm/samd20j18.pp
---- fpc-tmp2/rtl/embedded/arm/samd20j18.pp	1970-01-01 01:00:00.000000000 +0100
-+++ fpc-tmp/rtl/embedded/arm/samd20j18.pp	2018-09-10 22:30:40.000000000 +0200
+Index: rtl/embedded/arm/samd20j18.pp
+===================================================================
+--- rtl/embedded/arm/samd20j18.pp	(nonexistent)
++++ rtl/embedded/arm/samd20j18.pp	(working copy)
 @@ -0,0 +1,685 @@
 +unit samd20j18;
 +interface
@@ -32897,9 +32938,10 @@ diff -Naur fpc-tmp2/rtl/embedded/arm/samd20j18.pp fpc-tmp/rtl/embedded/arm/samd2
 +  .text
 +  end;
 +end.
-diff -Naur fpc-tmp2/rtl/embedded/arm/samd21e15a.pp fpc-tmp/rtl/embedded/arm/samd21e15a.pp
---- fpc-tmp2/rtl/embedded/arm/samd21e15a.pp	1970-01-01 01:00:00.000000000 +0100
-+++ fpc-tmp/rtl/embedded/arm/samd21e15a.pp	2018-09-10 22:31:14.000000000 +0200
+Index: rtl/embedded/arm/samd21e15a.pp
+===================================================================
+--- rtl/embedded/arm/samd21e15a.pp	(nonexistent)
++++ rtl/embedded/arm/samd21e15a.pp	(working copy)
 @@ -0,0 +1,951 @@
 +unit samd21e15a;
 +interface
@@ -33852,9 +33894,10 @@ diff -Naur fpc-tmp2/rtl/embedded/arm/samd21e15a.pp fpc-tmp/rtl/embedded/arm/samd
 +  .text
 +  end;
 +end.
-diff -Naur fpc-tmp2/rtl/embedded/arm/samd21e15b.pp fpc-tmp/rtl/embedded/arm/samd21e15b.pp
---- fpc-tmp2/rtl/embedded/arm/samd21e15b.pp	1970-01-01 01:00:00.000000000 +0100
-+++ fpc-tmp/rtl/embedded/arm/samd21e15b.pp	2018-09-10 22:31:40.000000000 +0200
+Index: rtl/embedded/arm/samd21e15b.pp
+===================================================================
+--- rtl/embedded/arm/samd21e15b.pp	(nonexistent)
++++ rtl/embedded/arm/samd21e15b.pp	(working copy)
 @@ -0,0 +1,952 @@
 +unit samd21e15b;
 +interface
@@ -34808,9 +34851,10 @@ diff -Naur fpc-tmp2/rtl/embedded/arm/samd21e15b.pp fpc-tmp/rtl/embedded/arm/samd
 +  .text
 +  end;
 +end.
-diff -Naur fpc-tmp2/rtl/embedded/arm/samd21e15bu.pp fpc-tmp/rtl/embedded/arm/samd21e15bu.pp
---- fpc-tmp2/rtl/embedded/arm/samd21e15bu.pp	1970-01-01 01:00:00.000000000 +0100
-+++ fpc-tmp/rtl/embedded/arm/samd21e15bu.pp	2018-09-10 22:31:41.000000000 +0200
+Index: rtl/embedded/arm/samd21e15bu.pp
+===================================================================
+--- rtl/embedded/arm/samd21e15bu.pp	(nonexistent)
++++ rtl/embedded/arm/samd21e15bu.pp	(working copy)
 @@ -0,0 +1,952 @@
 +unit samd21e15bu;
 +interface
@@ -35764,9 +35808,10 @@ diff -Naur fpc-tmp2/rtl/embedded/arm/samd21e15bu.pp fpc-tmp/rtl/embedded/arm/sam
 +  .text
 +  end;
 +end.
-diff -Naur fpc-tmp2/rtl/embedded/arm/samd21e15l.pp fpc-tmp/rtl/embedded/arm/samd21e15l.pp
---- fpc-tmp2/rtl/embedded/arm/samd21e15l.pp	1970-01-01 01:00:00.000000000 +0100
-+++ fpc-tmp/rtl/embedded/arm/samd21e15l.pp	2018-09-10 22:31:43.000000000 +0200
+Index: rtl/embedded/arm/samd21e15l.pp
+===================================================================
+--- rtl/embedded/arm/samd21e15l.pp	(nonexistent)
++++ rtl/embedded/arm/samd21e15l.pp	(working copy)
 @@ -0,0 +1,812 @@
 +unit samd21e15l;
 +interface
@@ -36580,9 +36625,10 @@ diff -Naur fpc-tmp2/rtl/embedded/arm/samd21e15l.pp fpc-tmp/rtl/embedded/arm/samd
 +  .text
 +  end;
 +end.
-diff -Naur fpc-tmp2/rtl/embedded/arm/samd21e16a.pp fpc-tmp/rtl/embedded/arm/samd21e16a.pp
---- fpc-tmp2/rtl/embedded/arm/samd21e16a.pp	1970-01-01 01:00:00.000000000 +0100
-+++ fpc-tmp/rtl/embedded/arm/samd21e16a.pp	2018-09-10 22:31:16.000000000 +0200
+Index: rtl/embedded/arm/samd21e16a.pp
+===================================================================
+--- rtl/embedded/arm/samd21e16a.pp	(nonexistent)
++++ rtl/embedded/arm/samd21e16a.pp	(working copy)
 @@ -0,0 +1,951 @@
 +unit samd21e16a;
 +interface
@@ -37535,9 +37581,10 @@ diff -Naur fpc-tmp2/rtl/embedded/arm/samd21e16a.pp fpc-tmp/rtl/embedded/arm/samd
 +  .text
 +  end;
 +end.
-diff -Naur fpc-tmp2/rtl/embedded/arm/samd21e16b.pp fpc-tmp/rtl/embedded/arm/samd21e16b.pp
---- fpc-tmp2/rtl/embedded/arm/samd21e16b.pp	1970-01-01 01:00:00.000000000 +0100
-+++ fpc-tmp/rtl/embedded/arm/samd21e16b.pp	2018-09-10 22:31:45.000000000 +0200
+Index: rtl/embedded/arm/samd21e16b.pp
+===================================================================
+--- rtl/embedded/arm/samd21e16b.pp	(nonexistent)
++++ rtl/embedded/arm/samd21e16b.pp	(working copy)
 @@ -0,0 +1,952 @@
 +unit samd21e16b;
 +interface
@@ -38491,9 +38538,10 @@ diff -Naur fpc-tmp2/rtl/embedded/arm/samd21e16b.pp fpc-tmp/rtl/embedded/arm/samd
 +  .text
 +  end;
 +end.
-diff -Naur fpc-tmp2/rtl/embedded/arm/samd21e16bu.pp fpc-tmp/rtl/embedded/arm/samd21e16bu.pp
---- fpc-tmp2/rtl/embedded/arm/samd21e16bu.pp	1970-01-01 01:00:00.000000000 +0100
-+++ fpc-tmp/rtl/embedded/arm/samd21e16bu.pp	2018-09-10 22:31:47.000000000 +0200
+Index: rtl/embedded/arm/samd21e16bu.pp
+===================================================================
+--- rtl/embedded/arm/samd21e16bu.pp	(nonexistent)
++++ rtl/embedded/arm/samd21e16bu.pp	(working copy)
 @@ -0,0 +1,952 @@
 +unit samd21e16bu;
 +interface
@@ -39447,9 +39495,10 @@ diff -Naur fpc-tmp2/rtl/embedded/arm/samd21e16bu.pp fpc-tmp/rtl/embedded/arm/sam
 +  .text
 +  end;
 +end.
-diff -Naur fpc-tmp2/rtl/embedded/arm/samd21e16l.pp fpc-tmp/rtl/embedded/arm/samd21e16l.pp
---- fpc-tmp2/rtl/embedded/arm/samd21e16l.pp	1970-01-01 01:00:00.000000000 +0100
-+++ fpc-tmp/rtl/embedded/arm/samd21e16l.pp	2018-09-10 22:31:48.000000000 +0200
+Index: rtl/embedded/arm/samd21e16l.pp
+===================================================================
+--- rtl/embedded/arm/samd21e16l.pp	(nonexistent)
++++ rtl/embedded/arm/samd21e16l.pp	(working copy)
 @@ -0,0 +1,812 @@
 +unit samd21e16l;
 +interface
@@ -40263,9 +40312,10 @@ diff -Naur fpc-tmp2/rtl/embedded/arm/samd21e16l.pp fpc-tmp/rtl/embedded/arm/samd
 +  .text
 +  end;
 +end.
-diff -Naur fpc-tmp2/rtl/embedded/arm/samd21e17a.pp fpc-tmp/rtl/embedded/arm/samd21e17a.pp
---- fpc-tmp2/rtl/embedded/arm/samd21e17a.pp	1970-01-01 01:00:00.000000000 +0100
-+++ fpc-tmp/rtl/embedded/arm/samd21e17a.pp	2018-09-10 22:31:18.000000000 +0200
+Index: rtl/embedded/arm/samd21e17a.pp
+===================================================================
+--- rtl/embedded/arm/samd21e17a.pp	(nonexistent)
++++ rtl/embedded/arm/samd21e17a.pp	(working copy)
 @@ -0,0 +1,951 @@
 +unit samd21e17a;
 +interface
@@ -41218,9 +41268,10 @@ diff -Naur fpc-tmp2/rtl/embedded/arm/samd21e17a.pp fpc-tmp/rtl/embedded/arm/samd
 +  .text
 +  end;
 +end.
-diff -Naur fpc-tmp2/rtl/embedded/arm/samd21e18a.pp fpc-tmp/rtl/embedded/arm/samd21e18a.pp
---- fpc-tmp2/rtl/embedded/arm/samd21e18a.pp	1970-01-01 01:00:00.000000000 +0100
-+++ fpc-tmp/rtl/embedded/arm/samd21e18a.pp	2018-09-10 22:31:20.000000000 +0200
+Index: rtl/embedded/arm/samd21e18a.pp
+===================================================================
+--- rtl/embedded/arm/samd21e18a.pp	(nonexistent)
++++ rtl/embedded/arm/samd21e18a.pp	(working copy)
 @@ -0,0 +1,951 @@
 +unit samd21e18a;
 +interface
@@ -42173,9 +42224,10 @@ diff -Naur fpc-tmp2/rtl/embedded/arm/samd21e18a.pp fpc-tmp/rtl/embedded/arm/samd
 +  .text
 +  end;
 +end.
-diff -Naur fpc-tmp2/rtl/embedded/arm/samd21g15a.pp fpc-tmp/rtl/embedded/arm/samd21g15a.pp
---- fpc-tmp2/rtl/embedded/arm/samd21g15a.pp	1970-01-01 01:00:00.000000000 +0100
-+++ fpc-tmp/rtl/embedded/arm/samd21g15a.pp	2018-09-10 22:31:21.000000000 +0200
+Index: rtl/embedded/arm/samd21g15a.pp
+===================================================================
+--- rtl/embedded/arm/samd21g15a.pp	(nonexistent)
++++ rtl/embedded/arm/samd21g15a.pp	(working copy)
 @@ -0,0 +1,963 @@
 +unit samd21g15a;
 +interface
@@ -43140,9 +43192,10 @@ diff -Naur fpc-tmp2/rtl/embedded/arm/samd21g15a.pp fpc-tmp/rtl/embedded/arm/samd
 +  .text
 +  end;
 +end.
-diff -Naur fpc-tmp2/rtl/embedded/arm/samd21g15b.pp fpc-tmp/rtl/embedded/arm/samd21g15b.pp
---- fpc-tmp2/rtl/embedded/arm/samd21g15b.pp	1970-01-01 01:00:00.000000000 +0100
-+++ fpc-tmp/rtl/embedded/arm/samd21g15b.pp	2018-09-10 22:31:50.000000000 +0200
+Index: rtl/embedded/arm/samd21g15b.pp
+===================================================================
+--- rtl/embedded/arm/samd21g15b.pp	(nonexistent)
++++ rtl/embedded/arm/samd21g15b.pp	(working copy)
 @@ -0,0 +1,964 @@
 +unit samd21g15b;
 +interface
@@ -44108,9 +44161,10 @@ diff -Naur fpc-tmp2/rtl/embedded/arm/samd21g15b.pp fpc-tmp/rtl/embedded/arm/samd
 +  .text
 +  end;
 +end.
-diff -Naur fpc-tmp2/rtl/embedded/arm/samd21g15l.pp fpc-tmp/rtl/embedded/arm/samd21g15l.pp
---- fpc-tmp2/rtl/embedded/arm/samd21g15l.pp	1970-01-01 01:00:00.000000000 +0100
-+++ fpc-tmp/rtl/embedded/arm/samd21g15l.pp	2018-09-10 22:31:52.000000000 +0200
+Index: rtl/embedded/arm/samd21g15l.pp
+===================================================================
+--- rtl/embedded/arm/samd21g15l.pp	(nonexistent)
++++ rtl/embedded/arm/samd21g15l.pp	(working copy)
 @@ -0,0 +1,836 @@
 +unit samd21g15l;
 +interface
@@ -44948,9 +45002,10 @@ diff -Naur fpc-tmp2/rtl/embedded/arm/samd21g15l.pp fpc-tmp/rtl/embedded/arm/samd
 +  .text
 +  end;
 +end.
-diff -Naur fpc-tmp2/rtl/embedded/arm/samd21g16a.pp fpc-tmp/rtl/embedded/arm/samd21g16a.pp
---- fpc-tmp2/rtl/embedded/arm/samd21g16a.pp	1970-01-01 01:00:00.000000000 +0100
-+++ fpc-tmp/rtl/embedded/arm/samd21g16a.pp	2018-09-10 22:31:23.000000000 +0200
+Index: rtl/embedded/arm/samd21g16a.pp
+===================================================================
+--- rtl/embedded/arm/samd21g16a.pp	(nonexistent)
++++ rtl/embedded/arm/samd21g16a.pp	(working copy)
 @@ -0,0 +1,963 @@
 +unit samd21g16a;
 +interface
@@ -45915,9 +45970,10 @@ diff -Naur fpc-tmp2/rtl/embedded/arm/samd21g16a.pp fpc-tmp/rtl/embedded/arm/samd
 +  .text
 +  end;
 +end.
-diff -Naur fpc-tmp2/rtl/embedded/arm/samd21g16b.pp fpc-tmp/rtl/embedded/arm/samd21g16b.pp
---- fpc-tmp2/rtl/embedded/arm/samd21g16b.pp	1970-01-01 01:00:00.000000000 +0100
-+++ fpc-tmp/rtl/embedded/arm/samd21g16b.pp	2018-09-10 22:31:53.000000000 +0200
+Index: rtl/embedded/arm/samd21g16b.pp
+===================================================================
+--- rtl/embedded/arm/samd21g16b.pp	(nonexistent)
++++ rtl/embedded/arm/samd21g16b.pp	(working copy)
 @@ -0,0 +1,964 @@
 +unit samd21g16b;
 +interface
@@ -46883,9 +46939,10 @@ diff -Naur fpc-tmp2/rtl/embedded/arm/samd21g16b.pp fpc-tmp/rtl/embedded/arm/samd
 +  .text
 +  end;
 +end.
-diff -Naur fpc-tmp2/rtl/embedded/arm/samd21g16l.pp fpc-tmp/rtl/embedded/arm/samd21g16l.pp
---- fpc-tmp2/rtl/embedded/arm/samd21g16l.pp	1970-01-01 01:00:00.000000000 +0100
-+++ fpc-tmp/rtl/embedded/arm/samd21g16l.pp	2018-09-10 22:31:55.000000000 +0200
+Index: rtl/embedded/arm/samd21g16l.pp
+===================================================================
+--- rtl/embedded/arm/samd21g16l.pp	(nonexistent)
++++ rtl/embedded/arm/samd21g16l.pp	(working copy)
 @@ -0,0 +1,836 @@
 +unit samd21g16l;
 +interface
@@ -47723,9 +47780,10 @@ diff -Naur fpc-tmp2/rtl/embedded/arm/samd21g16l.pp fpc-tmp/rtl/embedded/arm/samd
 +  .text
 +  end;
 +end.
-diff -Naur fpc-tmp2/rtl/embedded/arm/samd21g17a.pp fpc-tmp/rtl/embedded/arm/samd21g17a.pp
---- fpc-tmp2/rtl/embedded/arm/samd21g17a.pp	1970-01-01 01:00:00.000000000 +0100
-+++ fpc-tmp/rtl/embedded/arm/samd21g17a.pp	2018-09-10 22:31:25.000000000 +0200
+Index: rtl/embedded/arm/samd21g17a.pp
+===================================================================
+--- rtl/embedded/arm/samd21g17a.pp	(nonexistent)
++++ rtl/embedded/arm/samd21g17a.pp	(working copy)
 @@ -0,0 +1,963 @@
 +unit samd21g17a;
 +interface
@@ -48690,9 +48748,10 @@ diff -Naur fpc-tmp2/rtl/embedded/arm/samd21g17a.pp fpc-tmp/rtl/embedded/arm/samd
 +  .text
 +  end;
 +end.
-diff -Naur fpc-tmp2/rtl/embedded/arm/samd21g17au.pp fpc-tmp/rtl/embedded/arm/samd21g17au.pp
---- fpc-tmp2/rtl/embedded/arm/samd21g17au.pp	1970-01-01 01:00:00.000000000 +0100
-+++ fpc-tmp/rtl/embedded/arm/samd21g17au.pp	2018-09-10 22:31:27.000000000 +0200
+Index: rtl/embedded/arm/samd21g17au.pp
+===================================================================
+--- rtl/embedded/arm/samd21g17au.pp	(nonexistent)
++++ rtl/embedded/arm/samd21g17au.pp	(working copy)
 @@ -0,0 +1,975 @@
 +unit samd21g17au;
 +interface
@@ -49669,9 +49728,10 @@ diff -Naur fpc-tmp2/rtl/embedded/arm/samd21g17au.pp fpc-tmp/rtl/embedded/arm/sam
 +  .text
 +  end;
 +end.
-diff -Naur fpc-tmp2/rtl/embedded/arm/samd21g18a.pp fpc-tmp/rtl/embedded/arm/samd21g18a.pp
---- fpc-tmp2/rtl/embedded/arm/samd21g18a.pp	1970-01-01 01:00:00.000000000 +0100
-+++ fpc-tmp/rtl/embedded/arm/samd21g18a.pp	2018-09-10 22:31:28.000000000 +0200
+Index: rtl/embedded/arm/samd21g18a.pp
+===================================================================
+--- rtl/embedded/arm/samd21g18a.pp	(nonexistent)
++++ rtl/embedded/arm/samd21g18a.pp	(working copy)
 @@ -0,0 +1,963 @@
 +unit samd21g18a;
 +interface
@@ -50636,9 +50696,10 @@ diff -Naur fpc-tmp2/rtl/embedded/arm/samd21g18a.pp fpc-tmp/rtl/embedded/arm/samd
 +  .text
 +  end;
 +end.
-diff -Naur fpc-tmp2/rtl/embedded/arm/samd21g18au.pp fpc-tmp/rtl/embedded/arm/samd21g18au.pp
---- fpc-tmp2/rtl/embedded/arm/samd21g18au.pp	1970-01-01 01:00:00.000000000 +0100
-+++ fpc-tmp/rtl/embedded/arm/samd21g18au.pp	2018-09-10 22:31:30.000000000 +0200
+Index: rtl/embedded/arm/samd21g18au.pp
+===================================================================
+--- rtl/embedded/arm/samd21g18au.pp	(nonexistent)
++++ rtl/embedded/arm/samd21g18au.pp	(working copy)
 @@ -0,0 +1,975 @@
 +unit samd21g18au;
 +interface
@@ -51615,9 +51676,10 @@ diff -Naur fpc-tmp2/rtl/embedded/arm/samd21g18au.pp fpc-tmp/rtl/embedded/arm/sam
 +  .text
 +  end;
 +end.
-diff -Naur fpc-tmp2/rtl/embedded/arm/samd21j15a.pp fpc-tmp/rtl/embedded/arm/samd21j15a.pp
---- fpc-tmp2/rtl/embedded/arm/samd21j15a.pp	1970-01-01 01:00:00.000000000 +0100
-+++ fpc-tmp/rtl/embedded/arm/samd21j15a.pp	2018-09-10 22:31:32.000000000 +0200
+Index: rtl/embedded/arm/samd21j15a.pp
+===================================================================
+--- rtl/embedded/arm/samd21j15a.pp	(nonexistent)
++++ rtl/embedded/arm/samd21j15a.pp	(working copy)
 @@ -0,0 +1,975 @@
 +unit samd21j15a;
 +interface
@@ -52594,9 +52656,10 @@ diff -Naur fpc-tmp2/rtl/embedded/arm/samd21j15a.pp fpc-tmp/rtl/embedded/arm/samd
 +  .text
 +  end;
 +end.
-diff -Naur fpc-tmp2/rtl/embedded/arm/samd21j15b.pp fpc-tmp/rtl/embedded/arm/samd21j15b.pp
---- fpc-tmp2/rtl/embedded/arm/samd21j15b.pp	1970-01-01 01:00:00.000000000 +0100
-+++ fpc-tmp/rtl/embedded/arm/samd21j15b.pp	2018-09-10 22:31:57.000000000 +0200
+Index: rtl/embedded/arm/samd21j15b.pp
+===================================================================
+--- rtl/embedded/arm/samd21j15b.pp	(nonexistent)
++++ rtl/embedded/arm/samd21j15b.pp	(working copy)
 @@ -0,0 +1,976 @@
 +unit samd21j15b;
 +interface
@@ -53574,9 +53637,10 @@ diff -Naur fpc-tmp2/rtl/embedded/arm/samd21j15b.pp fpc-tmp/rtl/embedded/arm/samd
 +  .text
 +  end;
 +end.
-diff -Naur fpc-tmp2/rtl/embedded/arm/samd21j16a.pp fpc-tmp/rtl/embedded/arm/samd21j16a.pp
---- fpc-tmp2/rtl/embedded/arm/samd21j16a.pp	1970-01-01 01:00:00.000000000 +0100
-+++ fpc-tmp/rtl/embedded/arm/samd21j16a.pp	2018-09-10 22:31:34.000000000 +0200
+Index: rtl/embedded/arm/samd21j16a.pp
+===================================================================
+--- rtl/embedded/arm/samd21j16a.pp	(nonexistent)
++++ rtl/embedded/arm/samd21j16a.pp	(working copy)
 @@ -0,0 +1,975 @@
 +unit samd21j16a;
 +interface
@@ -54553,9 +54617,10 @@ diff -Naur fpc-tmp2/rtl/embedded/arm/samd21j16a.pp fpc-tmp/rtl/embedded/arm/samd
 +  .text
 +  end;
 +end.
-diff -Naur fpc-tmp2/rtl/embedded/arm/samd21j16b.pp fpc-tmp/rtl/embedded/arm/samd21j16b.pp
---- fpc-tmp2/rtl/embedded/arm/samd21j16b.pp	1970-01-01 01:00:00.000000000 +0100
-+++ fpc-tmp/rtl/embedded/arm/samd21j16b.pp	2018-09-10 22:31:59.000000000 +0200
+Index: rtl/embedded/arm/samd21j16b.pp
+===================================================================
+--- rtl/embedded/arm/samd21j16b.pp	(nonexistent)
++++ rtl/embedded/arm/samd21j16b.pp	(working copy)
 @@ -0,0 +1,976 @@
 +unit samd21j16b;
 +interface
@@ -55533,9 +55598,10 @@ diff -Naur fpc-tmp2/rtl/embedded/arm/samd21j16b.pp fpc-tmp/rtl/embedded/arm/samd
 +  .text
 +  end;
 +end.
-diff -Naur fpc-tmp2/rtl/embedded/arm/samd21j17a.pp fpc-tmp/rtl/embedded/arm/samd21j17a.pp
---- fpc-tmp2/rtl/embedded/arm/samd21j17a.pp	1970-01-01 01:00:00.000000000 +0100
-+++ fpc-tmp/rtl/embedded/arm/samd21j17a.pp	2018-09-10 22:31:36.000000000 +0200
+Index: rtl/embedded/arm/samd21j17a.pp
+===================================================================
+--- rtl/embedded/arm/samd21j17a.pp	(nonexistent)
++++ rtl/embedded/arm/samd21j17a.pp	(working copy)
 @@ -0,0 +1,975 @@
 +unit samd21j17a;
 +interface
@@ -56512,9 +56578,10 @@ diff -Naur fpc-tmp2/rtl/embedded/arm/samd21j17a.pp fpc-tmp/rtl/embedded/arm/samd
 +  .text
 +  end;
 +end.
-diff -Naur fpc-tmp2/rtl/embedded/arm/samd21j18a.pp fpc-tmp/rtl/embedded/arm/samd21j18a.pp
---- fpc-tmp2/rtl/embedded/arm/samd21j18a.pp	1970-01-01 01:00:00.000000000 +0100
-+++ fpc-tmp/rtl/embedded/arm/samd21j18a.pp	2018-09-10 22:31:38.000000000 +0200
+Index: rtl/embedded/arm/samd21j18a.pp
+===================================================================
+--- rtl/embedded/arm/samd21j18a.pp	(nonexistent)
++++ rtl/embedded/arm/samd21j18a.pp	(working copy)
 @@ -0,0 +1,975 @@
 +unit samd21j18a;
 +interface

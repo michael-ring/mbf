@@ -1,7 +1,8 @@
-diff -Naur fpc-save/compiler/arm/cpuinfo.pas fpc/compiler/arm/cpuinfo.pas
---- fpc-save/compiler/arm/cpuinfo.pas	2018-02-28 20:24:31.000000000 +0100
-+++ fpc/compiler/arm/cpuinfo.pas	2018-02-28 22:24:00.000000000 +0100
-@@ -319,6 +319,120 @@
+Index: compiler/arm/cpuinfo.pas
+===================================================================
+--- compiler/arm/cpuinfo.pas	(revision 42324)
++++ compiler/arm/cpuinfo.pas	(working copy)
+@@ -336,6 +336,120 @@
        ct_stm32f756xe,
        ct_stm32f756xg,
  
@@ -122,7 +123,7 @@ diff -Naur fpc-save/compiler/arm/cpuinfo.pas fpc/compiler/arm/cpuinfo.pas
        { TI - Fury Class - 64 K Flash, 16 K SRAM Devices }
        ct_lm3s1110,
        ct_lm3s1133,
-@@ -835,6 +949,118 @@
+@@ -852,6 +966,118 @@
        (controllertypestr:'STM32F756XE';     controllerunitstr:'STM32F756';        cputype:cpu_armv7em; fputype:fpu_soft; flashbase:$08000000; flashsize:$00080000; srambase:$20010000; sramsize:$00040000),
        (controllertypestr:'STM32F756XG';     controllerunitstr:'STM32F756';        cputype:cpu_armv7em; fputype:fpu_soft; flashbase:$08000000; flashsize:$00100000; srambase:$20010000; sramsize:$00040000),
  
@@ -241,10 +242,11 @@ diff -Naur fpc-save/compiler/arm/cpuinfo.pas fpc/compiler/arm/cpuinfo.pas
        (controllertypestr:'LM3S1110';	controllerunitstr:'LM3FURY';	cputype:cpu_armv7m; fputype:fpu_soft; flashbase:$00000000;	flashsize:$00010000;	srambase:$20000000;	sramsize:$00004000),
        (controllertypestr:'LM3S1133';	controllerunitstr:'LM3FURY';	cputype:cpu_armv7m; fputype:fpu_soft; flashbase:$00000000;	flashsize:$00010000;	srambase:$20000000;	sramsize:$00004000),
        (controllertypestr:'LM3S1138';	controllerunitstr:'LM3FURY';	cputype:cpu_armv7m; fputype:fpu_soft; flashbase:$00000000;	flashsize:$00010000;	srambase:$20000000;	sramsize:$00004000),
-diff -Naur fpc-save/compiler/systems/t_embed.pas fpc/compiler/systems/t_embed.pas
---- fpc-save/compiler/systems/t_embed.pas	2018-02-28 20:24:31.000000000 +0100
-+++ fpc/compiler/systems/t_embed.pas	2018-02-28 22:21:59.000000000 +0100
-@@ -464,6 +464,120 @@
+Index: compiler/systems/t_embed.pas
+===================================================================
+--- compiler/systems/t_embed.pas	(revision 42324)
++++ compiler/systems/t_embed.pas	(working copy)
+@@ -471,6 +471,120 @@
        ct_stm32f756xe,
        ct_stm32f756xg,
  
@@ -365,10 +367,11 @@ diff -Naur fpc-save/compiler/systems/t_embed.pas fpc/compiler/systems/t_embed.pa
        { TI - 64 K Flash, 16 K SRAM Devices }
        ct_lm3s1110,
        ct_lm3s1133,
-diff -Naur fpc-save/rtl/embedded/Makefile fpc/rtl/embedded/Makefile
---- fpc-save/rtl/embedded/Makefile	2018-02-28 20:24:30.000000000 +0100
-+++ fpc/rtl/embedded/Makefile	2018-02-28 22:20:09.000000000 +0100
-@@ -363,6 +363,8 @@
+Index: rtl/embedded/Makefile
+===================================================================
+--- rtl/embedded/Makefile	(revision 42324)
++++ rtl/embedded/Makefile	(working copy)
+@@ -361,6 +361,8 @@
  endif
  ifeq ($(SUBARCH),armv7em)
  CPU_UNITS=lm4f120 xmc4500 mk20d5 mk20d7 mk22f51212 mk64f12 stm32f401xx stm32f407xx stm32f411xe stm32f429xx stm32f446xx stm32f745 stm32f746 stm32f756 nrf52 cortexm3 cortexm4 cortexm7 # thumb2_bare
@@ -377,9 +380,10 @@ diff -Naur fpc-save/rtl/embedded/Makefile fpc/rtl/embedded/Makefile
  CPU_UNITS_DEFINED=1
  endif
  ifeq ($(SUBARCH),armv4t)
-diff -Naur fpc-save/rtl/embedded/Makefile.fpc fpc/rtl/embedded/Makefile.fpc
---- fpc-save/rtl/embedded/Makefile.fpc	2018-02-28 20:24:30.000000000 +0100
-+++ fpc/rtl/embedded/Makefile.fpc	2018-02-28 20:47:50.000000000 +0100
+Index: rtl/embedded/Makefile.fpc
+===================================================================
+--- rtl/embedded/Makefile.fpc	(revision 42324)
++++ rtl/embedded/Makefile.fpc	(working copy)
 @@ -76,6 +76,8 @@
  endif
  ifeq ($(SUBARCH),armv7em)
@@ -389,9 +393,10 @@ diff -Naur fpc-save/rtl/embedded/Makefile.fpc fpc/rtl/embedded/Makefile.fpc
  CPU_UNITS_DEFINED=1
  endif
  ifeq ($(SUBARCH),armv4t)
-diff -Naur fpc-save/rtl/embedded/arm/stm32l431xx.pp fpc/rtl/embedded/arm/stm32l431xx.pp
---- fpc-save/rtl/embedded/arm/stm32l431xx.pp	1970-01-01 01:00:00.000000000 +0100
-+++ fpc/rtl/embedded/arm/stm32l431xx.pp	2018-02-28 22:09:52.000000000 +0100
+Index: rtl/embedded/arm/stm32l431xx.pp
+===================================================================
+--- rtl/embedded/arm/stm32l431xx.pp	(nonexistent)
++++ rtl/embedded/arm/stm32l431xx.pp	(working copy)
 @@ -0,0 +1,1180 @@
 +unit stm32l431xx;
 +interface
@@ -1573,9 +1578,10 @@ diff -Naur fpc-save/rtl/embedded/arm/stm32l431xx.pp fpc/rtl/embedded/arm/stm32l4
 +  .text
 +end;
 +end.
-diff -Naur fpc-save/rtl/embedded/arm/stm32l432xx.pp fpc/rtl/embedded/arm/stm32l432xx.pp
---- fpc-save/rtl/embedded/arm/stm32l432xx.pp	1970-01-01 01:00:00.000000000 +0100
-+++ fpc/rtl/embedded/arm/stm32l432xx.pp	2018-02-28 22:09:55.000000000 +0100
+Index: rtl/embedded/arm/stm32l432xx.pp
+===================================================================
+--- rtl/embedded/arm/stm32l432xx.pp	(nonexistent)
++++ rtl/embedded/arm/stm32l432xx.pp	(working copy)
 @@ -0,0 +1,1157 @@
 +unit stm32l432xx;
 +interface
@@ -2734,9 +2740,10 @@ diff -Naur fpc-save/rtl/embedded/arm/stm32l432xx.pp fpc/rtl/embedded/arm/stm32l4
 +  .text
 +end;
 +end.
-diff -Naur fpc-save/rtl/embedded/arm/stm32l433xx.pp fpc/rtl/embedded/arm/stm32l433xx.pp
---- fpc-save/rtl/embedded/arm/stm32l433xx.pp	1970-01-01 01:00:00.000000000 +0100
-+++ fpc/rtl/embedded/arm/stm32l433xx.pp	2018-02-28 22:09:59.000000000 +0100
+Index: rtl/embedded/arm/stm32l433xx.pp
+===================================================================
+--- rtl/embedded/arm/stm32l433xx.pp	(nonexistent)
++++ rtl/embedded/arm/stm32l433xx.pp	(working copy)
 @@ -0,0 +1,1234 @@
 +unit stm32l433xx;
 +interface
@@ -3972,9 +3979,10 @@ diff -Naur fpc-save/rtl/embedded/arm/stm32l433xx.pp fpc/rtl/embedded/arm/stm32l4
 +  .text
 +end;
 +end.
-diff -Naur fpc-save/rtl/embedded/arm/stm32l442xx.pp fpc/rtl/embedded/arm/stm32l442xx.pp
---- fpc-save/rtl/embedded/arm/stm32l442xx.pp	1970-01-01 01:00:00.000000000 +0100
-+++ fpc/rtl/embedded/arm/stm32l442xx.pp	2018-02-28 22:10:03.000000000 +0100
+Index: rtl/embedded/arm/stm32l442xx.pp
+===================================================================
+--- rtl/embedded/arm/stm32l442xx.pp	(nonexistent)
++++ rtl/embedded/arm/stm32l442xx.pp	(working copy)
 @@ -0,0 +1,1190 @@
 +unit stm32l442xx;
 +interface
@@ -5166,9 +5174,10 @@ diff -Naur fpc-save/rtl/embedded/arm/stm32l442xx.pp fpc/rtl/embedded/arm/stm32l4
 +  .text
 +end;
 +end.
-diff -Naur fpc-save/rtl/embedded/arm/stm32l443xx.pp fpc/rtl/embedded/arm/stm32l443xx.pp
---- fpc-save/rtl/embedded/arm/stm32l443xx.pp	1970-01-01 01:00:00.000000000 +0100
-+++ fpc/rtl/embedded/arm/stm32l443xx.pp	2018-02-28 22:10:06.000000000 +0100
+Index: rtl/embedded/arm/stm32l443xx.pp
+===================================================================
+--- rtl/embedded/arm/stm32l443xx.pp	(nonexistent)
++++ rtl/embedded/arm/stm32l443xx.pp	(working copy)
 @@ -0,0 +1,1267 @@
 +unit stm32l443xx;
 +interface
@@ -6437,9 +6446,10 @@ diff -Naur fpc-save/rtl/embedded/arm/stm32l443xx.pp fpc/rtl/embedded/arm/stm32l4
 +  .text
 +end;
 +end.
-diff -Naur fpc-save/rtl/embedded/arm/stm32l451xx.pp fpc/rtl/embedded/arm/stm32l451xx.pp
---- fpc-save/rtl/embedded/arm/stm32l451xx.pp	1970-01-01 01:00:00.000000000 +0100
-+++ fpc/rtl/embedded/arm/stm32l451xx.pp	2018-02-28 22:10:10.000000000 +0100
+Index: rtl/embedded/arm/stm32l451xx.pp
+===================================================================
+--- rtl/embedded/arm/stm32l451xx.pp	(nonexistent)
++++ rtl/embedded/arm/stm32l451xx.pp	(working copy)
 @@ -0,0 +1,1227 @@
 +unit stm32l451xx;
 +interface
@@ -7668,9 +7678,10 @@ diff -Naur fpc-save/rtl/embedded/arm/stm32l451xx.pp fpc/rtl/embedded/arm/stm32l4
 +  .text
 +end;
 +end.
-diff -Naur fpc-save/rtl/embedded/arm/stm32l452xx.pp fpc/rtl/embedded/arm/stm32l452xx.pp
---- fpc-save/rtl/embedded/arm/stm32l452xx.pp	1970-01-01 01:00:00.000000000 +0100
-+++ fpc/rtl/embedded/arm/stm32l452xx.pp	2018-02-28 22:10:14.000000000 +0100
+Index: rtl/embedded/arm/stm32l452xx.pp
+===================================================================
+--- rtl/embedded/arm/stm32l452xx.pp	(nonexistent)
++++ rtl/embedded/arm/stm32l452xx.pp	(working copy)
 @@ -0,0 +1,1266 @@
 +unit stm32l452xx;
 +interface
@@ -8938,9 +8949,10 @@ diff -Naur fpc-save/rtl/embedded/arm/stm32l452xx.pp fpc/rtl/embedded/arm/stm32l4
 +  .text
 +end;
 +end.
-diff -Naur fpc-save/rtl/embedded/arm/stm32l462xx.pp fpc/rtl/embedded/arm/stm32l462xx.pp
---- fpc-save/rtl/embedded/arm/stm32l462xx.pp	1970-01-01 01:00:00.000000000 +0100
-+++ fpc/rtl/embedded/arm/stm32l462xx.pp	2018-02-28 22:10:18.000000000 +0100
+Index: rtl/embedded/arm/stm32l462xx.pp
+===================================================================
+--- rtl/embedded/arm/stm32l462xx.pp	(nonexistent)
++++ rtl/embedded/arm/stm32l462xx.pp	(working copy)
 @@ -0,0 +1,1299 @@
 +unit stm32l462xx;
 +interface
@@ -10241,9 +10253,10 @@ diff -Naur fpc-save/rtl/embedded/arm/stm32l462xx.pp fpc/rtl/embedded/arm/stm32l4
 +  .text
 +end;
 +end.
-diff -Naur fpc-save/rtl/embedded/arm/stm32l471xx.pp fpc/rtl/embedded/arm/stm32l471xx.pp
---- fpc-save/rtl/embedded/arm/stm32l471xx.pp	1970-01-01 01:00:00.000000000 +0100
-+++ fpc/rtl/embedded/arm/stm32l471xx.pp	2018-02-28 22:10:22.000000000 +0100
+Index: rtl/embedded/arm/stm32l471xx.pp
+===================================================================
+--- rtl/embedded/arm/stm32l471xx.pp	(nonexistent)
++++ rtl/embedded/arm/stm32l471xx.pp	(working copy)
 @@ -0,0 +1,1341 @@
 +unit stm32l471xx;
 +interface
@@ -11586,9 +11599,10 @@ diff -Naur fpc-save/rtl/embedded/arm/stm32l471xx.pp fpc/rtl/embedded/arm/stm32l4
 +  .text
 +end;
 +end.
-diff -Naur fpc-save/rtl/embedded/arm/stm32l475xx.pp fpc/rtl/embedded/arm/stm32l475xx.pp
---- fpc-save/rtl/embedded/arm/stm32l475xx.pp	1970-01-01 01:00:00.000000000 +0100
-+++ fpc/rtl/embedded/arm/stm32l475xx.pp	2018-02-28 22:10:27.000000000 +0100
+Index: rtl/embedded/arm/stm32l475xx.pp
+===================================================================
+--- rtl/embedded/arm/stm32l475xx.pp	(nonexistent)
++++ rtl/embedded/arm/stm32l475xx.pp	(working copy)
 @@ -0,0 +1,1450 @@
 +unit stm32l475xx;
 +interface
@@ -13040,9 +13054,10 @@ diff -Naur fpc-save/rtl/embedded/arm/stm32l475xx.pp fpc/rtl/embedded/arm/stm32l4
 +  .text
 +end;
 +end.
-diff -Naur fpc-save/rtl/embedded/arm/stm32l476xx.pp fpc/rtl/embedded/arm/stm32l476xx.pp
---- fpc-save/rtl/embedded/arm/stm32l476xx.pp	1970-01-01 01:00:00.000000000 +0100
-+++ fpc/rtl/embedded/arm/stm32l476xx.pp	2018-02-28 22:10:32.000000000 +0100
+Index: rtl/embedded/arm/stm32l476xx.pp
+===================================================================
+--- rtl/embedded/arm/stm32l476xx.pp	(nonexistent)
++++ rtl/embedded/arm/stm32l476xx.pp	(working copy)
 @@ -0,0 +1,1465 @@
 +unit stm32l476xx;
 +interface
@@ -14509,9 +14524,10 @@ diff -Naur fpc-save/rtl/embedded/arm/stm32l476xx.pp fpc/rtl/embedded/arm/stm32l4
 +  .text
 +end;
 +end.
-diff -Naur fpc-save/rtl/embedded/arm/stm32l485xx.pp fpc/rtl/embedded/arm/stm32l485xx.pp
---- fpc-save/rtl/embedded/arm/stm32l485xx.pp	1970-01-01 01:00:00.000000000 +0100
-+++ fpc/rtl/embedded/arm/stm32l485xx.pp	2018-02-28 22:10:38.000000000 +0100
+Index: rtl/embedded/arm/stm32l485xx.pp
+===================================================================
+--- rtl/embedded/arm/stm32l485xx.pp	(nonexistent)
++++ rtl/embedded/arm/stm32l485xx.pp	(working copy)
 @@ -0,0 +1,1483 @@
 +unit stm32l485xx;
 +interface
@@ -15996,9 +16012,10 @@ diff -Naur fpc-save/rtl/embedded/arm/stm32l485xx.pp fpc/rtl/embedded/arm/stm32l4
 +  .text
 +end;
 +end.
-diff -Naur fpc-save/rtl/embedded/arm/stm32l486xx.pp fpc/rtl/embedded/arm/stm32l486xx.pp
---- fpc-save/rtl/embedded/arm/stm32l486xx.pp	1970-01-01 01:00:00.000000000 +0100
-+++ fpc/rtl/embedded/arm/stm32l486xx.pp	2018-02-28 22:10:43.000000000 +0100
+Index: rtl/embedded/arm/stm32l486xx.pp
+===================================================================
+--- rtl/embedded/arm/stm32l486xx.pp	(nonexistent)
++++ rtl/embedded/arm/stm32l486xx.pp	(working copy)
 @@ -0,0 +1,1498 @@
 +unit stm32l486xx;
 +interface
@@ -17498,9 +17515,10 @@ diff -Naur fpc-save/rtl/embedded/arm/stm32l486xx.pp fpc/rtl/embedded/arm/stm32l4
 +  .text
 +end;
 +end.
-diff -Naur fpc-save/rtl/embedded/arm/stm32l496xx.pp fpc/rtl/embedded/arm/stm32l496xx.pp
---- fpc-save/rtl/embedded/arm/stm32l496xx.pp	1970-01-01 01:00:00.000000000 +0100
-+++ fpc/rtl/embedded/arm/stm32l496xx.pp	2018-02-28 22:10:49.000000000 +0100
+Index: rtl/embedded/arm/stm32l496xx.pp
+===================================================================
+--- rtl/embedded/arm/stm32l496xx.pp	(nonexistent)
++++ rtl/embedded/arm/stm32l496xx.pp	(working copy)
 @@ -0,0 +1,1573 @@
 +unit stm32l496xx;
 +interface
@@ -19075,9 +19093,10 @@ diff -Naur fpc-save/rtl/embedded/arm/stm32l496xx.pp fpc/rtl/embedded/arm/stm32l4
 +  .text
 +end;
 +end.
-diff -Naur fpc-save/rtl/embedded/arm/stm32l4a6xx.pp fpc/rtl/embedded/arm/stm32l4a6xx.pp
---- fpc-save/rtl/embedded/arm/stm32l4a6xx.pp	1970-01-01 01:00:00.000000000 +0100
-+++ fpc/rtl/embedded/arm/stm32l4a6xx.pp	2018-02-28 22:10:55.000000000 +0100
+Index: rtl/embedded/arm/stm32l4a6xx.pp
+===================================================================
+--- rtl/embedded/arm/stm32l4a6xx.pp	(nonexistent)
++++ rtl/embedded/arm/stm32l4a6xx.pp	(working copy)
 @@ -0,0 +1,1625 @@
 +unit stm32l4a6xx;
 +interface
@@ -20704,9 +20723,10 @@ diff -Naur fpc-save/rtl/embedded/arm/stm32l4a6xx.pp fpc/rtl/embedded/arm/stm32l4
 +  .text
 +end;
 +end.
-diff -Naur fpc-save/rtl/embedded/arm/stm32l4r5xx.pp fpc/rtl/embedded/arm/stm32l4r5xx.pp
---- fpc-save/rtl/embedded/arm/stm32l4r5xx.pp	1970-01-01 01:00:00.000000000 +0100
-+++ fpc/rtl/embedded/arm/stm32l4r5xx.pp	2018-02-28 22:11:02.000000000 +0100
+Index: rtl/embedded/arm/stm32l4r5xx.pp
+===================================================================
+--- rtl/embedded/arm/stm32l4r5xx.pp	(nonexistent)
++++ rtl/embedded/arm/stm32l4r5xx.pp	(working copy)
 @@ -0,0 +1,1626 @@
 +unit stm32l4r5xx;
 +interface
@@ -22334,9 +22354,10 @@ diff -Naur fpc-save/rtl/embedded/arm/stm32l4r5xx.pp fpc/rtl/embedded/arm/stm32l4
 +  .text
 +end;
 +end.
-diff -Naur fpc-save/rtl/embedded/arm/stm32l4r7xx.pp fpc/rtl/embedded/arm/stm32l4r7xx.pp
---- fpc-save/rtl/embedded/arm/stm32l4r7xx.pp	1970-01-01 01:00:00.000000000 +0100
-+++ fpc/rtl/embedded/arm/stm32l4r7xx.pp	2018-02-28 22:11:08.000000000 +0100
+Index: rtl/embedded/arm/stm32l4r7xx.pp
+===================================================================
+--- rtl/embedded/arm/stm32l4r7xx.pp	(nonexistent)
++++ rtl/embedded/arm/stm32l4r7xx.pp	(working copy)
 @@ -0,0 +1,1702 @@
 +unit stm32l4r7xx;
 +interface
@@ -24040,9 +24061,10 @@ diff -Naur fpc-save/rtl/embedded/arm/stm32l4r7xx.pp fpc/rtl/embedded/arm/stm32l4
 +  .text
 +end;
 +end.
-diff -Naur fpc-save/rtl/embedded/arm/stm32l4r9xx.pp fpc/rtl/embedded/arm/stm32l4r9xx.pp
---- fpc-save/rtl/embedded/arm/stm32l4r9xx.pp	1970-01-01 01:00:00.000000000 +0100
-+++ fpc/rtl/embedded/arm/stm32l4r9xx.pp	2018-02-28 22:11:17.000000000 +0100
+Index: rtl/embedded/arm/stm32l4r9xx.pp
+===================================================================
+--- rtl/embedded/arm/stm32l4r9xx.pp	(nonexistent)
++++ rtl/embedded/arm/stm32l4r9xx.pp	(working copy)
 @@ -0,0 +1,1782 @@
 +unit stm32l4r9xx;
 +interface
@@ -25826,9 +25848,10 @@ diff -Naur fpc-save/rtl/embedded/arm/stm32l4r9xx.pp fpc/rtl/embedded/arm/stm32l4
 +  .text
 +end;
 +end.
-diff -Naur fpc-save/rtl/embedded/arm/stm32l4s5xx.pp fpc/rtl/embedded/arm/stm32l4s5xx.pp
---- fpc-save/rtl/embedded/arm/stm32l4s5xx.pp	1970-01-01 01:00:00.000000000 +0100
-+++ fpc/rtl/embedded/arm/stm32l4s5xx.pp	2018-02-28 22:11:24.000000000 +0100
+Index: rtl/embedded/arm/stm32l4s5xx.pp
+===================================================================
+--- rtl/embedded/arm/stm32l4s5xx.pp	(nonexistent)
++++ rtl/embedded/arm/stm32l4s5xx.pp	(working copy)
 @@ -0,0 +1,1678 @@
 +unit stm32l4s5xx;
 +interface
@@ -27508,9 +27531,10 @@ diff -Naur fpc-save/rtl/embedded/arm/stm32l4s5xx.pp fpc/rtl/embedded/arm/stm32l4
 +  .text
 +end;
 +end.
-diff -Naur fpc-save/rtl/embedded/arm/stm32l4s7xx.pp fpc/rtl/embedded/arm/stm32l4s7xx.pp
---- fpc-save/rtl/embedded/arm/stm32l4s7xx.pp	1970-01-01 01:00:00.000000000 +0100
-+++ fpc/rtl/embedded/arm/stm32l4s7xx.pp	2018-02-28 22:11:31.000000000 +0100
+Index: rtl/embedded/arm/stm32l4s7xx.pp
+===================================================================
+--- rtl/embedded/arm/stm32l4s7xx.pp	(nonexistent)
++++ rtl/embedded/arm/stm32l4s7xx.pp	(working copy)
 @@ -0,0 +1,1754 @@
 +unit stm32l4s7xx;
 +interface
@@ -29266,9 +29290,10 @@ diff -Naur fpc-save/rtl/embedded/arm/stm32l4s7xx.pp fpc/rtl/embedded/arm/stm32l4
 +  .text
 +end;
 +end.
-diff -Naur fpc-save/rtl/embedded/arm/stm32l4s9xx.pp fpc/rtl/embedded/arm/stm32l4s9xx.pp
---- fpc-save/rtl/embedded/arm/stm32l4s9xx.pp	1970-01-01 01:00:00.000000000 +0100
-+++ fpc/rtl/embedded/arm/stm32l4s9xx.pp	2018-02-28 22:11:39.000000000 +0100
+Index: rtl/embedded/arm/stm32l4s9xx.pp
+===================================================================
+--- rtl/embedded/arm/stm32l4s9xx.pp	(nonexistent)
++++ rtl/embedded/arm/stm32l4s9xx.pp	(working copy)
 @@ -0,0 +1,1834 @@
 +unit stm32l4s9xx;
 +interface
