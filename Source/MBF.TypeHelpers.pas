@@ -13,13 +13,13 @@ unit MBF.TypeHelpers;
   License for more details.
 }
 
-{$mode objfpc}{$H+}
+{$mode objfpc}
 {$modeswitch typehelpers}
 
 interface
-
 type
   TStringHelper = Type Helper for String
+    {$IF defined(ANSISTRINGS)}
     // Compares two 0-based strings for equality.
     function Compare(const S1: string; const S2: string): Integer; inline;
     // CompareOrdinal compares two strings by evaluating the numeric values of the corresponding characters in each string.
@@ -29,6 +29,7 @@ type
     // Compares this 0-based string against a given string.
     function CompareTo(const S2: string): Integer;
     // Returns whether this 0-based string contains the given string.
+    {$ENDIF}
     function Contains(const Value: string): Boolean;
     // Copies and returns the 0-based given string.
     //function Copy
@@ -52,10 +53,12 @@ type
     // Returns an integer that specifies the position of the first occurrence of a character or a substring within this 0-based string, starting the search at StartIndex. This method returns -1 if the value is not found or StartIndex specifies an invalid value.
     function IndexOf(value: Char): Integer; inline;
     function IndexOf(const Value: string): Integer; inline;
+    {$if defined(ANSISTRINGS)}
     function IndexOf(Value: Char; StartIndex: Integer): Integer;
     function IndexOf(const Value: string; StartIndex: Integer): Integer;
     function IndexOf(Value: Char; StartIndex: Integer; Count: Integer): Integer;
     function IndexOf(const Value: string; StartIndex: Integer; Count: Integer): Integer;
+    {$ENDIF}
     // Returns an integer indicating the position of the first given character found in the 0-based string.
     function IndexOfAny(const AnyOf: array of Char): Integer; overload;
     function IndexOfAny(const AnyOf: array of Char; StartIndex: Integer): Integer; overload;
@@ -152,12 +155,16 @@ public
   //Function TryParse(const AString: string; out AValue: Integer): Boolean; inline;
 Public
   Function ToBoolean: Boolean; inline;
+  {$if not defined(FPUNONE)}
   Function ToDouble: Double; inline;
   Function ToExtended: Extended; inline;
+  {$endif}
   Function ToHexString(const AMinDigits: Integer): string; overload; inline;
   Function ToHexString: string; overload; inline;
+  {$if not defined(FPUNONE)}
   Function ToSingle: Single; inline;
   Function ToString: string; overload; inline;
+  {$endif}
 end;
 
 TLongWordHelper = Type Helper for LongWord { for LongInt Type too }
@@ -172,11 +179,15 @@ public
     //Function TryParse(const AString: string; out AValue: Integer): Boolean; inline;
 Public
   Function ToBoolean: Boolean; inline;
+  {$if not defined(FPUNONE)}
   Function ToDouble: Double; inline;
   Function ToExtended: Extended; inline;
+  {$endif}
   Function ToHexString(const AMinDigits: Integer): string; overload; inline;
   Function ToHexString: string; overload; inline;
+  {$if not defined(FPUNONE)}
   Function ToSingle: Single; inline;
+  {$endif}
   Function ToString: string; overload;
 end;
 
@@ -197,7 +208,11 @@ end;
 
 
 implementation
-
+{$IF defined(ANSISTRINGS)}
+uses
+  HeapMgr;
+{$ENDIF}
+{$IF defined(ANSISTRINGS)}
 function CompareMemRange(P1, P2: Pointer; Length: PtrUInt): integer;inline;
 begin
   Result:=CompareByte(P1^,P2^,Length);
@@ -270,6 +285,7 @@ begin
   if result=0 then
     result:=Count1-Count2;
 end;
+{$ENDIF}
 
 function TStringHelper.Contains(const Value: string): Boolean;
 begin
@@ -309,6 +325,7 @@ begin
   Result := Pos(value,Self);
 end;
 
+{$IF defined(ANSISTRINGS)}
 function TStringHelper.IndexOf(Value: Char; StartIndex: Integer): Integer;
 begin
   Result := Pos(Value,StartIndex);
@@ -332,6 +349,7 @@ begin
   if Result > StartIndex+Count then
     Result := 0;
 end;
+{$ENDIF}
 
 function TStringHelper.IndexOfAny(const AnyOf: array of Char): Integer;
 var
@@ -505,11 +523,13 @@ begin
   Result:=(C=0);
 end;
 *)
+
 Function TIntegerHelper.ToBoolean: Boolean; inline;
 begin
   Result:=(Self<>0);
 end;
 
+{$if not defined(FPUNONE)}
 Function TIntegerHelper.ToDouble: Double; inline;
 begin
   Result:=Self;
@@ -519,6 +539,7 @@ Function TIntegerHelper.ToExtended: Extended; inline;
 begin
   Result:=Self;
 end;
+{$endif}
 
 Function TIntegerHelper.ToHexString(const AMinDigits: Integer): string; overload; inline;
 begin
@@ -530,8 +551,8 @@ begin
   Result:=HexStr(Self,SizeOf(Integer)*2);
 end;
 
+{$if not defined(FPUNONE)}
 Function TIntegerHelper.ToSingle: Single; inline;
-
 begin
   Result:=Self;
 end;
@@ -540,10 +561,11 @@ Function TIntegerHelper.ToString: string; overload; inline;
 begin
   System.Str(Self, result);
 end;
+{$endif}
 
 Class Function ToString(const AValue: Integer): string; overload; inline;
 begin
-  System.Str(AValue, result);
+  Str(AValue, result);
 end;
 
 Function TLongWordHelper.ToBoolean: Boolean; inline;
@@ -551,6 +573,7 @@ begin
   Result:=(Self<>0);
 end;
 
+{$if not defined(FPUNONE)}
 Function TLongWordHelper.ToDouble: Double; inline;
 begin
   Result:=Self;
@@ -560,6 +583,7 @@ Function TLongWordHelper.ToExtended: Extended; inline;
 begin
   Result:=Self;
 end;
+{$ENDIF}
 
 Function TLongWordHelper.ToHexString(const AMinDigits: Integer): string; overload; inline;
 begin
@@ -571,11 +595,13 @@ begin
   Result:=HexStr(Self,SizeOf(LongWord)*2);
 end;
 
+{$if not defined(FPUNONE)}
 Function TLongWordHelper.ToSingle: Single; inline;
 begin
   Result:=Self;
 end;
-
+{$ENDIF
+}
 Function TLongWordHelper.ToString: string; overload;
 begin
   System.Str(Self, result);

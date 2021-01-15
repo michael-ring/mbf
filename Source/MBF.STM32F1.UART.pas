@@ -12,11 +12,21 @@ unit MBF.STM32F1.UART;
   warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the FPC modified GNU Library General Public
   License for more details.
 }
-{< ST Micro F1xx board series functions. }
+{
+  Related Reference Manuals
+
+  STM32F100xx advanced ARM
+  http://www.st.com/resource/en/reference_manual/CD00246267.pdf
+
+  STM32F101xx, STM32F102xx, STM32F103xx, STM32F105xx and STM32F107xx advanced Arm
+  http://www.st.com/resource/en/reference_manual/CD00171190.pdf
+}
+
 interface
 {$INCLUDE MBF.Config.inc}
 
 uses
+  MBF.STM32F1.SystemCore,
   MBF.STM32F1.GPIO;
 
 type
@@ -26,31 +36,33 @@ type
 
 const
   DefaultUARTBaudrate=115200;
-  DefaultUARTTimeout=10000;
+  DefaultUARTTimeOut=10000;
 type
   TUARTRXPins = (
-    {$if defined(has_USART2 ) and defined(has_gpioa) }   PA3_USART2  = ALT0 or TNativePin.PA3  {$endif}
-    {$if defined(HAS_ARDUINOPINS)                    },   D0_UART    = ALT0 or TNativePin.PA3  {$endif}
-    {$if defined(HAS_ARDUINOPINS)                    },DEBUG_UART    = ALT0 or TNativePin.PA3  {$endif}
-    {$if defined(has_USART1 ) and defined(has_gpioa) }, PA10_USART1  = ALT0 or TNativePin.PA10 {$endif}
-    {$if defined(has_USART1 ) and defined(has_gpiob) },  PB7_USART1  = ALT1 or TNativePin.PB7  {$endif}
-    {$if defined(has_USART3 ) and defined(has_gpiob) }, PB11_USART3  = ALT0 or TNativePin.PB11 {$endif}
-    {$if defined(has_USART3 ) and defined(has_gpioc) }, PC11_USART3  = ALT1 or TNativePin.PC11 {$endif}
-    {$if defined(has_USART2 ) and defined(has_gpiod) },  PD6_USART2  = ALT1 or TNativePin.PD6  {$endif}
-    {$if defined(has_USART3 ) and defined(has_gpiod) },  PD9_USART3  = ALT3 or TNativePin.PD9  {$endif}
+    NONE_USART = TNativePin.None
+    {$if defined(has_USART2) and defined(has_gpioa)}, PA3_USART2  = ALT0 or TNativePin.PA3 {$endif}
+    {$if defined(HAS_ARDUINOPINS)                  },    D0_UART  = ALT0 or TNativePin.PA3 {$endif}
+    {$if defined(HAS_ARDUINOPINS)                  }, DEBUG_UART  = ALT0 or TNativePin.PA3 {$endif}
+
+    {$if defined(has_USART1) and defined(has_gpioa)}, PA10_USART1 = ALT0 or TNativePin.PA10{$endif}
+    {$if defined(has_USART3) and defined(has_gpiob)}, PB11_USART3 = ALT0 or TNativePin.PB11{$endif}
+    {$if defined(has_USART3) and defined(has_gpioc)}, PC11_USART3 = ALT1 or TNativePin.PC11{$endif}
+    {$if defined(has_USART1) and defined(has_gpiob)}, PB7_USART1  = ALT3 or TNativePin.PB7 {$endif}
+    {$if defined(has_USART2) and defined(has_gpiod)}, PD6_USART2  = ALT3 or TNativePin.PD6 {$endif}
+    {$if defined(has_USART3) and defined(has_gpiod)}, PD9_USART3  = ALT3 or TNativePin.PD9 {$endif}
   );
   TUARTTXPins = (
-    {$if defined(has_USART2 ) and defined(has_gpioa) }   PA2_USART2  = ALT0 or TNativePin.PA2  {$endif}
-    {$if defined(HAS_ARDUINOPINS)                    },   D1_UART    = ALT0 or TNativePin.PA2  {$endif}
-    {$if defined(HAS_ARDUINOPINS)                    },DEBUG_UART    = ALT0 or TNativePin.PA2  {$endif}
-    {$if defined(has_USART1 ) and defined(has_gpioa) },  PA9_USART1  = ALT0 or TNativePin.PA9  {$endif}
-    {$if defined(has_USART1 ) and defined(has_gpiob) },  PB6_USART1  = ALT1 or TNativePin.PB6  {$endif}
-    {$if defined(has_USART3 ) and defined(has_gpiob) }, PB10_USART3  = ALT0 or TNativePin.PB10 {$endif}
-    {$if defined(has_USART3 ) and defined(has_gpioc) }, PC10_USART3  = ALT1 or TNativePin.PC10 {$endif}
-    {$if defined(has_USART2 ) and defined(has_gpiod) },  PD5_USART2  = ALT1 or TNativePin.PD5  {$endif}
-    {$if defined(has_USART3 ) and defined(has_gpiod) },  PD8_USART3  = ALT3 or TNativePin.PD8  {$endif}
+    NONE_USART = TNativePin.None
+    {$if defined(has_USART2) and defined(has_gpioa)}, PA2_USART2  = ALT0 or TNativePin.PA2 {$endif}
+    {$if defined(HAS_ARDUINOPINS)                  },   D1_UART   = ALT0 or TNativePin.PA2 {$endif}
+    {$if defined(HAS_ARDUINOPINS)                  }, DEBUG_UART  = ALT0 or TNativePin.PA2 {$endif}
+    {$if defined(has_USART1) and defined(has_gpioa)}, PA9_USART1  = ALT0 or TNativePin.PA9 {$endif}
+    {$if defined(has_USART3) and defined(has_gpiob)}, PB10_USART3 = ALT0 or TNativePin.PB10{$endif}
+    {$if defined(has_USART3) and defined(has_gpioc)}, PC10_USART3 = ALT1 or TNativePin.PC10{$endif}
+    {$if defined(has_USART1) and defined(has_gpiob)}, PB6_USART1  = ALT3 or TNativePin.PB6 {$endif}
+    {$if defined(has_USART2) and defined(has_gpiod)}, PD5_USART2  = ALT3 or TNativePin.PD5 {$endif}
+    {$if defined(has_USART3) and defined(has_gpiod)}, PD8_USART3  = ALT3 or TNativePin.PD8 {$endif}
   );
-
 
 {$ENDREGION}
 
@@ -78,95 +90,40 @@ type
 
   TUARTRegistersHelper = record helper for TUART_Registers
   private
-    function  GetBaudRate: Cardinal;
-    procedure SetBaudRate(const aBaudrate: Cardinal);
+    function  GetBaudRate: longWord;
+    procedure SetBaudRate(const aBaudrate: longWord);
     function  GetBitsPerWord: TUARTBitsPerWord;
     procedure SetBitsPerWord(const aBitsPerWord: TUARTBitsPerWord);
     function  GetParity: TUARTParity;
     procedure SetParity(const aParity: TUARTParity);
     function  GetStopBits: TUARTStopBits;
     procedure SetStopBits(const aStopBit: TUARTStopBits);
-    procedure SetRxPin(const aRXPin : TUARTRXPins);
-    procedure SetTxPin(const aTXPin : TUARTTXPins);
     function  GetClockSource : TUARTClockSource;
     procedure SetClockSource(const aClockSource : TUARTClockSource);
   public
-    procedure initialize;
     procedure initialize(const ARxPin : TUARTRXPins;
                        const ATxPin : TUARTTXPins);
     function Disable : boolean;
     procedure Enable;
 
-    { Reads data buffer from UART (serial) port.
-      @param(Buffer Pointer to data buffer where the data will be written to.)
-      @param(BufferSize Number of bytes to read.)
-      @param(Timeout Maximum time (in milliseconds) to wait while attempting to read the buffer. If this parameter is
-        set to zero, then the function will block indefinitely, attempting to read until the specified number of
-        bytes have been read.)
-      @returns(Number of bytes that were actually read.) }
-
-    { Writes data buffer to UART (serial) port.
-      @param(Buffer Pointer to data buffer where the data will be read from.)
-      @param(BufferSize Number of bytes to write.)
-      @param(Timeout Maximum time (in milliseconds) to wait while attempting to write the buffer. If this parameter
-        is set to zero, then the function will block indefinitely, attempting to write until the specified number of
-        bytes have been written.)
-      @returns(Number of bytes that were actually written.) }
-
-    { Attempts to read a byte from UART (serial) port. @code(Timeout) defines maximum time (in milliseconds) to wait
-      while attempting to do so; if this parameter is set to zero, then the function will block indefinitely until the
-      byte has been read. @True is returned when the operation was successful and @False when the byte could not be
-      read. }
-
-    { Attempts to write a byte to UART (serial) port. @code(Timeout) defines maximum time (in milliseconds) to wait
-      while attempting to do so; if this parameter is set to zero, then the function will block indefinitely until the
-      byte has been written. @True is returned when the operation was successful and @False when the byte could not be
-      written. }
-
-    { Attempts to write multiple bytes to UART (serial) port. @code(Timeout) defines maximum time (in milliseconds) to
-      wait while attempting to do so; if this parameter is set to zero, then the function will block indefinitely,
-      attempting to write until the specified bytes have been written. @True is returned when the operation was
-      successful and @False when not all bytes could be written. }
-
-    { Reads string from UART (serial) port.
-      @param(Text String that will hold the incoming data.)
-      @param(MaxCharacters Maximum number of characters to read. Once this number of characters has been read, the
-        function immediately returns, even if there is more data to read. When this parameter is set to zero, then
-        the function will continue to read the data, depending on value of @code(Timeout).)
-      @param(Timeout Maximum time (in milliseconds) to wait while attempting to read the buffer. If this parameter
-        is set to zero, then the function will read only as much data as fits in readable FIFO buffers (or fail when
-        such buffers are not supported).)
-      @returns(Number of bytes that were actually read.) }
-
-    { Writes string to UART (serial) port.
-        @param(Text String that should be sent.)
-        @param(Timeout Maximum time (in milliseconds) to wait while attempting to write the buffer. If this parameter
-          is set to zero, then the function will write only what fits in writable FIFO buffers (or fail when such
-          buffers are not supported).)
-        @returns(Number of bytes that were actually read.) }
-
-    function ReadBuffer(aReadBuffer: Pointer; aReadCount : integer; TimeOut: Cardinal=0): Cardinal;
-    function WriteBuffer(const aWriteBuffer: Pointer; aWriteCount : integer; TimeOut: Cardinal=0): Cardinal;
-
-    function ReadByte(var aReadByte: byte; const Timeout : Cardinal=0):boolean;
-    function ReadByte(var aReadBuffer: array of byte; aReadCount : integer=-1; const Timeout : Cardinal=0):boolean;
-
-    function WriteByte(const aWriteByte: byte; const Timeout : Cardinal=0) : boolean;
-    function WriteByte(const aWriteBuffer: array of byte; aWriteCount : integer=-1; const Timeout : Cardinal=0) : boolean;
-
-    function ReadString(var aReadString: String; aReadCount: Integer = -1;
-          const Timeout: Cardinal = 0): Boolean;
-    function ReadString(var aReadString: String; const aDelimiter : char;
-          const Timeout: Cardinal = 0): Boolean;
-    function WriteString(const aWriteString: String; const Timeout: cardinal = 0): Boolean;
-
-    property BaudRate : Cardinal read getBaudRate write setBaudRate;
+    property BaudRate : longWord read getBaudRate write setBaudRate;
     property BitsPerWord : TUARTBitsPerWord read getBitsPerWord write setBitsPerWord;
     property Parity : TUARTParity read getParity write setParity;
     property StopBits : TUARTStopBits read getStopBits write setStopBits;
-    property RxPin : TUARTRxPins write setRxPin;
-    property TxPin : TUARTTxPins write setTxPin;
     property ClockSource : TUARTClockSource read getClockSource;
+
+    procedure WaitForTXReady; inline;
+    procedure WaitForRXReady; inline;
+
+    function  WaitForTXReady(EndTime : TMilliSeconds):boolean; inline;
+    function  WaitForRXReady(EndTime : TMilliSeconds):boolean; inline;
+
+    procedure WriteDR(const Value : byte);
+    function  ReadDR : byte;
+
+    {$DEFINE INTERFACE}
+    {$I MBF.STM32.UART.inc}
+    {$UNDEF INTERFACE}
   end;
 
 {$IF DEFINED(HAS_ARDUINOMINIPINS)}
@@ -190,7 +147,7 @@ var
 
 implementation
 uses
-  MBF.STM32F1.SystemCore;
+  MBF.BitHelpers;
 
 function TUARTRegistersHelper.GetClockSource : TUARTClockSource;
 begin
@@ -199,17 +156,18 @@ end;
 
 procedure TUARTRegistersHelper.setClockSource(const aClockSource : TUARTClockSource);
 begin
-  //No choice on STM32F401 family
+  //No choice on STM32F1 family
 end;
 
-procedure TUARTRegistersHelper.Initialize;
+procedure TUARTRegistersHelper.initialize(const ARxPin : TUARTRXPins;
+                       const ATxPin : TUARTTXPins);
 begin
   case longWord(@Self) of
     USART1_BASE : RCC.APB2ENR := RCC.APB2ENR or (1 shl 14);
     USART2_BASE : RCC.APB1ENR := RCC.APB1ENR or (1 shl 17);
-    {$ifdef has_uart3}USART3_BASE : RCC.APB1ENR := RCC.APB1ENR or (1 shl 18);{$endif}
-    {$ifdef has_uart4}UART4_BASE : RCC.APB1ENR := RCC.APB1ENR or (1 shl 19);{$endif}
-    {$ifdef has_uart5}UART5_BASE : RCC.APB1ENR := RCC.APB1ENR or (1 shl 20);{$endif}
+    {$if defined(has_usart3)}USART3_BASE : RCC.APB1ENR := RCC.APB1ENR or (1 shl 18);{$endif}
+    {$if defined(has_uart4)}  UART4_BASE : RCC.APB1ENR := RCC.APB1ENR or (1 shl 19);{$endif}
+    {$if defined(has_uart5)}  UART5_BASE : RCC.APB1ENR := RCC.APB1ENR or (1 shl 20);{$endif}
   end;
   // First, load Reset Value, this also turns off the UART
   // Create the basic config for all n81 use cases
@@ -221,42 +179,28 @@ begin
   // Set Defaults not RTS/CTS
   self.CR3:= 0;
 
-  // RE TE Enable both receiver and sender
-  self.CR1 := self.CR1 or (1 shl 2) or (1 shl 3);
-end;
+   // RE TE Enable both receiver and sender
+  setBit(self.CR1,2);
+  setBit(self.CR1,3);
 
-procedure TUARTRegistersHelper.initialize(const ARxPin : TUARTRXPins;
-                       const ATxPin : TUARTTXPins);
-begin
-  Initialize;
   setBaudRate(DefaultUARTBaudRate);
-  setRxPin(ARxPin);
-  setTxPin(ATxPin);
+  GPIO.PinMode[longWord(aRxPin) and $ff] := TPinMode((longWord(aRxPin) shr 8));
+  GPIO.PinMode[longWord(aTxPin) and $ff] := TPinMode((longWord(aTxPin) shr 8));
   Enable;
 end;
 
-procedure TUARTRegistersHelper.SetRxPin(const aRxPin : TUARTRXPins);
+function TUARTRegistersHelper.Disable:boolean; inline;
 begin
-  GPIO.PinMode[longWord(aRxPin) and $ff] := TPinMode((longWord(aRxPin) shr 8));
+  Result := GetBit(self.CR1,13)>0;
+  clearBit(self.CR1,13);
 end;
 
-procedure TUARTRegistersHelper.SetTxPin(const aTxPin : TUARTTXPins);
+procedure TUARTRegistersHelper.Enable; inline;
 begin
-  GPIO.PinMode[longWord(aTxPin) and $ff] := TPinMode((longWord(aTxPin) shr 8));
+  SetBit(self.CR1,13);
 end;
 
-function TUARTRegistersHelper.Disable:boolean;
-begin
-  Result := self.CR1 and (1 shl 13) > 0;
-  self.CR1 := self.CR1 and (not(1 shl 0));
-end;
-
-procedure TUARTRegistersHelper.Enable;
-begin
-  self.CR1 := self.CR1 or (1 shl 13);
-end;
-
-function TUARTRegistersHelper.GetBaudRate: Cardinal;
+function TUARTRegistersHelper.GetBaudRate: longWord;
 var
   ClockFreq : longWord;
 begin
@@ -264,9 +208,10 @@ begin
     TUARTClockSource.APB1orAPB2 : if longWord(@self) = USART1_BASE then ClockFreq := SystemCore.GetAPB2PeripheralClockFrequency
                                                   else ClockFreq := SystemCore.GetAPB1PeripheralClockFrequency;
   end;
+  Result := (ClockFreq*16 div self.BRR) shr 4;
 end;
 
-procedure TUARTRegistersHelper.SetBaudRate(const aBaudrate: Cardinal);
+procedure TUARTRegistersHelper.SetBaudRate(const aBaudrate: longWord);
 var
   ClockFreq,Mantissa,Fraction : longWord;
   ReEnable : boolean = false;
@@ -288,7 +233,7 @@ end;
 
 function TUARTRegistersHelper.GetBitsPerWord: TUARTBitsPerWord;
 begin
-  Result := TUARTBitsPerWord((Self.CR1 shr 12) and %1);
+  Result := TUARTBitsPerWord(GetBit(Self.CR1,12));
 end;
 
 procedure TUARTRegistersHelper.SetBitsPerWord(const aBitsPerWord: TUARTBitsPerWord);
@@ -296,14 +241,14 @@ var
   ReEnable : boolean;
 begin
   ReEnable := Disable;
-  Self.CR1 := Self.CR1 and (not ((1 shl 12)) or ((longWord(aBitsPerWord) and %1) shl 12));
+  setBitValue(Self.CR1,longWord(aBitsPerWord),12);
   if ReEnable = true then
     Enable;
 end;
 
 function TUARTRegistersHelper.GetParity: TUARTParity;
 begin
-  Result := TUARTParity((Self.CR1 shr 9) and %11);
+  Result := TUARTParity(getCrumb(Self.CR1,9));
 end;
 
 procedure TUARTRegistersHelper.SetParity(const aParity: TUARTParity);
@@ -311,14 +256,14 @@ var
   ReEnable : boolean;
 begin
   ReEnable := Disable;
-  Self.CR1 := Self.CR1 and (not (%11 shl 9)) or (longWord(aParity) shl 9);
+  SetCrumb(Self.CR1,longWord(aParity),9);
   if ReEnable = true then
     Enable;
 end;
 
 function TUARTRegistersHelper.GetStopBits: TUARTStopBits;
 begin
-  Result := TUARTStopBits((Self.CR2 shr 12) and %11);
+  Result := TUARTStopBits(getCrumb(Self.CR2,12));
 end;
 
 procedure TUARTRegistersHelper.SetStopBits(const aStopBit: TUARTStopBits);
@@ -326,262 +271,44 @@ var
   ReEnable : boolean;
 begin
   ReEnable := Disable;
-  Self.CR2 := Self.CR2  and (not (%11 shl 12)) or (longWord(aStopBit) shl 12);
+  setCrumb(Self.CR2,longWord(aStopBit),12);
   if ReEnable = true then
     Enable;
 end;
 
-function TUARTRegistersHelper.ReadBuffer(aReadBuffer: Pointer; aReadCount : integer; TimeOut: Cardinal=0): longWord;
-var
-  EndTime : longWord;
+procedure TUARTRegistersHelper.WaitForTXReady; inline;
 begin
-  Result := 0;
-  if Timeout = 0 then
-    EndTime := SystemCore.GetTickCount + DefaultUARTTimeout
-  else
-    EndTime := SystemCore.GetTickCount + TimeOut;
-
-  while (Result < aReadCount) do
-  begin
-    while self.SR and (1 shl 5) = 0 do
-    begin
-      if SystemCore.GetTickCount > EndTime then
-        Exit;
-    end;
-    if GetBitsPerWord = TUARTBitsPerWord.Eight then
-      PByte(PByte(aReadBuffer) + Result)^ := self.DR
-    else
-    begin
-      PWord(PByte(aReadBuffer) + Result)^ := self.DR;
-      inc(Result);
-    end;
-    Inc(Result);
-  end;
+  WaitBitIsSet(self.SR,7);
 end;
 
-function TUARTRegistersHelper.WriteBuffer(const aWriteBuffer: Pointer; aWriteCount : Integer; TimeOut: Cardinal=0): Cardinal;
-var
-  EndTime : longWord;
+procedure TUARTRegistersHelper.WaitForRXReady; inline;
 begin
-  Result := 0;
-  if Timeout = 0 then
-    EndTime := SystemCore.GetTickCount + DefaultUARTTimeout
-  else
-    EndTime := SystemCore.GetTickCount + TimeOut;
-
-  while Result < aWriteCount do
-  begin
-    //TXE
-    while self.SR and (1 shl 7) = 0 do
-    begin
-      if SystemCore.GetTickCount > EndTime then
-        Exit;
-    end;
-    if GetBitsPerWord = TUARTBitsPerWord.Eight then
-      self.DR := PByte(pByte(aWriteBuffer) + Result)^
-    else
-    begin
-      inc(Result);
-      self.DR := pword(pword(WriteBuffer) + Result)^
-    end;
-    Inc(Result);
-  end;
+  WaitBitIsSet(self.SR,5);
 end;
 
-function TUARTRegistersHelper.ReadByte(var aReadByte: byte; const Timeout : Cardinal=0):boolean;
-var
-  EndTime : longWord;
+function TUARTRegistersHelper.WaitForTXReady(EndTime : TMilliSeconds):boolean; inline;
 begin
-  Result := false;
-  //Default timeout is 10 Seconds
-  if Timeout = 0 then
-    EndTime := SystemCore.GetTickCount + DefaultUARTTimeout
-  else
-    EndTime := SystemCore.GetTickCount + TimeOut;
-
-  repeat
-    if self.SR and (1 shl 5) <> 0 then
-    begin
-      aReadByte := DR;
-      result := true;
-      exit;
-    end;
-  until (SystemCore.GetTickCount > EndTime);
+  Result := WaitBitIsSet(self.SR,7,EndTime);
 end;
 
-function TUARTRegistersHelper.ReadByte(var aReadBuffer: array of byte; aReadCount : integer=-1; const Timeout : Cardinal=0):boolean;
-var
-  EndTime : longWord;
-  DataRead : byte;
-  i : integer;
+function TUARTRegistersHelper.WaitForRXReady(EndTime : TMilliSeconds):boolean; inline;
 begin
-  Result := false;
-  //Default timeout is 10 Seconds
-  if Timeout = 0 then
-    EndTime := SystemCore.GetTickCount + DefaultUARTTimeout
-  else
-    EndTime := SystemCore.GetTickCount + TimeOut;
-
-  i := Low(aReadBuffer);
-  repeat
-    if self.SR and (1 shl 5) <> 0 then
-    begin
-      aReadBuffer[i] := DR;
-      inc(i);
-      if i > high(aReadBuffer) then
-      begin
-        result := true;
-        exit;
-      end;
-    end;
-  until (SystemCore.GetTickCount > EndTime);
-  //TODO: SetLength does not work
-  //if result = false then
-    //setLength(aReadBuffer,i-1-Low(aReadBuffer));
+  Result := WaitBitIsSet(self.SR,5,EndTime);
 end;
 
-function TUARTRegistersHelper.WriteByte(const aWriteByte: byte; const Timeout : Cardinal=0) : boolean;
-var
-  EndTime : longWord;
-  DataRead : byte;
-  i : longWord;
+procedure TUARTRegistersHelper.WriteDR(const Value : byte); inline;
 begin
-  Result := false;
-  //Default timeout is 10 Seconds
-  if Timeout = 0 then
-    EndTime := SystemCore.GetTickCount + DefaultUARTTimeout
-  else
-    EndTime := SystemCore.GetTickCount + TimeOut;
-
-  repeat
-    //Wait for TXE (Transmit Data Register Empty) to go high
-    if self.SR and (1 shl 7) <> 0 then
-    begin
-      DR := aWriteByte;
-      result := true;
-      exit;
-    end;
-  until (SystemCore.GetTickCount > EndTime);
+  self.DR := Value;
 end;
 
-function TUARTRegistersHelper.WriteByte(const aWriteBuffer: array of byte; aWriteCount : integer=-1; const Timeout : Cardinal=0) : boolean;
-var
-  EndTime : longWord;
-  DataRead : byte;
-  i : longWord;
+function TUARTRegistersHelper.ReadDR : byte ; inline;
 begin
-  Result := false;
-  //Default timeout is 10 Seconds
-  if Timeout = 0 then
-    EndTime := SystemCore.GetTickCount + DefaultUARTTimeout
-  else
-    EndTime := SystemCore.GetTickCount + TimeOut;
-
-  i := low(aWriteBuffer);
-  begin
-    repeat
-      //Wait for TXE (Transmit Data Register Empty) to go high
-      if self.SR and (1 shl 7) <> 0 then
-      begin
-        DR := aWriteBuffer[i];
-        inc(i);
-        if i > high(aWriteBuffer) then
-        begin
-          result := true;
-          exit;
-        end;
-      end;
-    until (SystemCore.GetTickCount > EndTime);
-  end;
+  Result := self.DR;
 end;
 
-function TUARTRegistersHelper.ReadString(var aReadString: String; aReadCount: integer = -1;
-  const Timeout: Cardinal = 0): Boolean;
-var
-  EndTime : longWord;
-  i : integer;
-begin
-  Result := false;
-  aReadString := '';
-  //Default timeout is 10 Seconds
-  if Timeout = 0 then
-    EndTime := SystemCore.GetTickCount + DefaultUARTTimeout
-  else
-    EndTime := SystemCore.GetTickCount + TimeOut;
-  i := 1;
-  repeat
-    if self.SR and (1 shl 5) <> 0 then
-    begin
-      aReadString := aReadString + char(DR);
-      inc(i);
-      if i >aReadCount then
-      begin
-        result := true;
-        exit;
-      end;
-    end;
-  until (SystemCore.GetTickCount > EndTime);
-end;
-
-function TUARTRegistersHelper.ReadString(var aReadString: String; const aDelimiter: char;
-  const Timeout: Cardinal = 0): Boolean;
-var
-  EndTime : longWord;
-  charRead : char;
-begin
-  Result := false;
-  aReadString := '';
-  //Default timeout is 10 Seconds
-  if Timeout = 0 then
-    EndTime := SystemCore.GetTickCount + DefaultUARTTimeout
-  else
-    EndTime := SystemCore.GetTickCount + TimeOut;
-
-  repeat
-    if self.SR and (1 shl 5) <> 0 then
-    begin
-      charRead := char(DR);
-      aReadString := aReadString + charread;
-      if charRead = aDelimiter then
-      begin
-        result := true;
-        exit;
-      end;
-    end;
-  until (SystemCore.GetTickCount > EndTime);
-end;
-
-function TUARTRegistersHelper.WriteString(const aWriteString: String; const Timeout: Cardinal = 0): Boolean;
-var
-  EndTime : longWord;
-  DataRead : byte;
-  i : longWord;
-begin
-  Result := false;
-  //Default timeout is 10 Seconds
-  if Timeout = 0 then
-    EndTime := SystemCore.GetTickCount + DefaultUARTTimeout
-  else
-    EndTime := SystemCore.GetTickCount + TimeOut;
-
-  i := 1;
-  begin
-    repeat
-      //Wait for TXE (Transmit Data Register Empty) to go high
-      if self.SR and (1 shl 7) <> 0 then
-      begin
-        DR := byte(aWriteString[i]);
-        inc(i);
-        if i > length(aWriteString) then
-        begin
-          result := true;
-          exit;
-        end;
-      end;
-    until (SystemCore.GetTickCount > EndTime);
-  end;
-end;
+{$DEFINE IMPLEMENTATION}
+{$I MBF.STM32.UART.inc}
+{$UNDEF IMPLEMENTATION}
 
 {$ENDREGION}
-
 end.

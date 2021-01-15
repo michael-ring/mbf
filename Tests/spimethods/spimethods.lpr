@@ -47,74 +47,54 @@ begin
   aSPIOperatingMode := TSPIOperatingMode.Slave;
 
   // Initialize the SPI subsystem
-  SPI.Initialize;
-  SPI.MosiPin := TSPIMosiPins.D11_SPI;
-  SPI.MisoPin := TSPIMisoPins.D12_SPI;
-  SPI.SCLKPin := TSPISCLKPins.D13_SPI;
-  SPI.NSSPin  := TSPINSSPins.D10_SPI;
+  SPI.Initialize(TSPIMosiPins.D11_SPI,TSPIMisoPins.D12_SPI,TSPISCLKPins.D13_SPI,TSPINSSPins.D10_SPI);
   SPI.Baudrate := DefaultSPIBaudrate;
   SPI.Mode := TSPIMode.Mode0;
   SPI.OperatingMode := TSPIOperatingMode.Master;
 
-  SPI.Initialize(TSPIMosiPins.D11_SPI,TSPIMisoPins.D12_SPI,TSPISCLKPins.D13_SPI,TSPINSSPins.D10_SPI);
-
-  // Read with Default Timeout
+  // Read without Timeout
   success := SPI.ReadByte(dummyByte);
   success := SPI.ReadWord(dummyWord);
-  success := SPI.ReadByte(dummyByteArray);
-  success := SPI.ReadWord(dummyWordArray);
+  success := SPI.ReadBytes(dummyByteArray,length(dummyByteArray));
+  success := SPI.ReadWords(dummyWordArray,length(dummyWordArray));
   
   // Read with Timeout
   success := SPI.ReadByte(dummyByte,1000);
   success := SPI.ReadWord(dummyWord,1000);
-  success := SPI.ReadByte(dummyByteArray,1000);
-  success := SPI.ReadWord(dummyWordArray,1000);
+  success := SPI.ReadBytes(dummyByteArray,length(dummyByteArray),1000);
+  success := SPI.ReadWords(dummyWordArray,length(dummyWordArray),1000);
   
-  // Write with Default Timeout
+  // Write without Timeout
   success := SPI.WriteByte(dummyByte);
   success := SPI.WriteWord(dummyWord);
-  success := SPI.WriteByte(dummyByteArray);
-  success := SPI.WriteWord(dummyWordArray);
+  success := SPI.WriteBytes(dummyByteArray,length(dummyByteArray));
+  success := SPI.WriteWords(dummyWordArray,length(dummyWordArray));
   
   // Write with Timeout
   success := SPI.WriteByte(dummyByte,1000);
   success := SPI.WriteWord(dummyWord,1000);
-  success := SPI.WriteByte(dummyByteArray,1000);
-  success := SPI.WriteWord(dummyWordArray,1000);
+  success := SPI.WriteBytes(dummyByteArray,length(dummyByteArray),1000);
+  success := SPI.WriteWords(dummyWordArray,length(dummyWordArray),1000);
   
-  // Transfer with Default Timeout
+  // Transfer without Timeout
   success := SPI.TransferByte(dummyByte,dummyByte);
   success := SPI.TransferWord(dummyWord,dummyWord);
-  success := SPI.TransferByte(dummyByteArray,dummyByteArray);
-  success := SPI.TransferWord(dummyWordArray,dummyWordArray);
+  success := SPI.TransferBytes(dummyByteArray,dummyByteArray,length(dummyByteArray));
+  success := SPI.TransferWords(dummyWordArray,dummyWordArray,length(dummyWordArray));
   
   // Transfer with Timeout
   success := SPI.TransferByte(dummyByte,dummyByte,1000);
   success := SPI.TransferWord(dummyWord,dummyWord,1000);
-  success := SPI.TransferByte(dummyByteArray,dummyByteArray,1000);
-  success := SPI.TransferWord(dummyWordArray,dummyWordArray,1000);
+  success := SPI.TransferBytes(dummyByteArray,dummyByteArray,length(dummyByteArray),1000);
+  success := SPI.TransferWords(dummyWordArray,dummyWordArray,length(dummyWordArray),1000);
   
   // Initialize an extra Pin for Soft-NSS
   GPIO.PinMode[TArduinoPin.D9] := TPinMode.Output;
 
-  // Read with Timeout & SoftNSS
-  success := SPI.ReadByte(dummyByte,1000,TArduinoPin.D9);
-  success := SPI.ReadWord(dummyWord,1000,TArduinoPin.D9);
-  success := SPI.ReadByte(dummyByteArray,1000,TArduinoPin.D9);
-  success := SPI.ReadWord(dummyWordArray,1000,TArduinoPin.D9);
-  
-  
-  // Write with Timeout
-  success := SPI.WriteByte(dummyByte,1000,TArduinoPin.D9);
-  success := SPI.WriteWord(dummyWord,1000,TArduinoPin.D9);
-  success := SPI.WriteByte(dummyByteArray,1000,TArduinoPin.D9);
-  success := SPI.WriteWord(dummyWordArray,1000,TArduinoPin.D9);
-  
-  // Transfer with Timeout
-  success := SPI.TransferByte(dummyByte,dummyByte,1000,TArduinoPin.D9);
-  success := SPI.TransferWord(dummyWord,dummyWord,1000,TArduinoPin.D9);
-  success := SPI.TransferByte(dummyByteArray,dummyByteArray,1000,TArduinoPin.D9);
-  success := SPI.TransferWord(dummyWordArray,dummyWordArray,1000,TArduinoPin.D9);
-  
+  // NSS Handling
+  SPI.BeginTransaction;
+  SPI.BeginTransaction(TArduinoPin.D9);
+  SPI.EndTransaction;
+  SPI.EndTransaction(TArduinoPin.D9);
 end.  
 

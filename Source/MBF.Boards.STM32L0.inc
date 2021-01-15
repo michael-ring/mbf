@@ -1,15 +1,15 @@
 {
-  This file is part of Pascal Microcontroller Board Framework (MBF)
-  Copyright (c) 2015 -  Michael Ring
-  based on Pascal eXtended Library (PXL)
+  This file is part of Micro Board Framework Library (MBF)
   Copyright (c) 2000 - 2015  Yuriy Kotsarenko
+  Copyright (c) 2015         Michael Ring
 
-  This program is free software: you can redistribute it and/or modify it under the terms of the FPC modified GNU
-  Library General Public License for more
+  This program is free software: you can redistribute it and/or modify it under the terms of the GNU Lesser General
+  Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option)
+  any later version.
 
   This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied
-  warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the FPC modified GNU Library General Public
-  License for more details.
+  warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+  details.
 }
 
 { Indicates that this config file has been processed (to avoid redeclaring or redefining of parameters in other
@@ -44,11 +44,107 @@
   {$define stm32l073rz}
 {$endif}
 
+{$if defined(nucleol010rb) }
+  {$define nucleo}
+  {$define has_arduinopins}
+  {$define has_morphopins}
+  {$define stm32l010rb}
+{$endif}
+
 {$if defined(stm32l0538discovery) }
   {$define discovery}
   {$define stm32l053c8}
 {$endif}
 
+{$if defined(bl072zlrwan1) }
+  {$define discovery}
+  {$define stm32l072cz}
+{$endif}
+
+{$if defined(STM32L010C6) }
+  {$define STM32L0x0 }
+  {$define STM32L01x }
+  {$define LQFP48 }
+  {$define has_gpioa } {$define has_gpiob } {$define has_gpioc } {$define has_gpioh }
+  {$define has_usart2 } {$define has_uart1 } {$define has_lpuart1 }
+  {$define has_spi1 }
+  {$define has_i2c1 }
+  {$define has_lptim1 } {$define has_tim2 } {$define has_tim21 }
+  {$define has_adc1 }
+  
+  
+  {$define has_rtc }
+{$endif}
+{$if defined(STM32L010F4) }
+  {$define STM32L0x0 }
+  {$define STM32L01x }
+  {$define TSSOP20 }
+  {$define has_gpioa } {$define has_gpiob } {$define has_gpioc }
+  {$define has_usart2 } {$define has_uart1 } {$define has_lpuart1 }
+  {$define has_spi1 }
+  {$define has_i2c1 }
+  {$define has_lptim1 } {$define has_tim2 } {$define has_tim21 }
+  {$define has_adc1 }
+  
+  
+  {$define has_rtc }
+{$endif}
+{$if defined(STM32L010K4) }
+  {$define STM32L0x0 }
+  {$define STM32L01x }
+  {$define LQFP32 }
+  {$define has_gpioa } {$define has_gpiob } {$define has_gpioc }
+  {$define has_usart2 } {$define has_uart1 } {$define has_lpuart1 }
+  {$define has_spi1 }
+  {$define has_i2c1 }
+  {$define has_lptim1 } {$define has_tim2 } {$define has_tim21 }
+  {$define has_adc1 }
+  
+  
+  {$define has_rtc }
+{$endif}
+{$if defined(STM32L010K8) }
+  {$define STM32L0x0 }
+  {$define STM32L01x }
+  {$define LQFP32 }
+  {$define has_gpioa } {$define has_gpiob } {$define has_gpioc }
+  {$define has_usart2 }
+  {$define has_spi1 }
+  {$define has_i2c1 }
+  {$define has_lptim1 } {$define has_tim2 } {$define has_tim21 }
+  {$define has_adc1 }
+  
+  
+  {$define has_rtc }
+{$endif}
+{$if defined(STM32L010R8) }
+  {$define STM32L0x0 }
+  {$define STM32L01x }
+  {$define LQFP64 }
+  {$define has_gpioa } {$define has_gpiob } {$define has_gpioc } {$define has_gpiod } {$define has_gpioh }
+  {$define has_usart2 } {$define has_uart1 } {$define has_lpuart1 }
+  {$define has_spi1 }
+  {$define has_i2c1 }
+  {$define has_lptim1 } {$define has_tim2 } {$define has_tim21 }
+  {$define has_adc1 }
+  
+  
+  {$define has_rtc }
+{$endif}
+{$if defined(STM32L010RB) }
+  {$define STM32L0x0 }
+  {$define STM32L01x }
+  {$define LQFP64 }
+  {$define has_gpioa } {$define has_gpiob } {$define has_gpioc } {$define has_gpiod } {$define has_gpioh }
+  {$define has_usart2 } {$define has_uart1 } {$define has_lpuart1 }
+  {$define has_spi1 }
+  {$define has_i2c1 }
+  {$define has_lptim1 } {$define has_tim2 } {$define has_tim21 } {$define has_tim22 }
+  {$define has_adc1 }
+  
+  
+  {$define has_rtc }
+{$endif}
 {$if defined(STM32L011D3) or defined(STM32L011D4) }
   {$define STM32L0x1 }
   {$define STM32L01x }
@@ -245,6 +341,20 @@
   
   {$define has_rtc }
 {$endif}
+{$if defined(STM32L031C6) }
+  {$define STM32L0x1 }
+  {$define STM32L03x }
+  {$define UFQFPN48 }
+  {$define has_gpioa } {$define has_gpiob } {$define has_gpioc } {$define has_gpioh }
+  {$define has_usart2 } {$define has_uart1 } {$define has_lpuart1 }
+  {$define has_spi1 }
+  {$define has_i2c1 }
+  {$define has_lptim1 } {$define has_tim2 } {$define has_tim21 } {$define has_tim22 }
+  {$define has_adc1 }
+  
+  
+  {$define has_rtc }
+{$endif}
 {$if defined(STM32L031E4) or defined(STM32L031E6) }
   {$define STM32L0x1 }
   {$define STM32L03x }
@@ -343,6 +453,20 @@
   
   {$define has_rtc }
 {$endif}
+{$if defined(STM32L041E6) }
+  {$define STM32L0x1 }
+  {$define STM32L04x }
+  {$define WLCSP25 }
+  {$define has_gpioa } {$define has_gpiob } {$define has_gpioc }
+  {$define has_usart2 } {$define has_uart1 } {$define has_lpuart1 }
+  {$define has_spi1 }
+  {$define has_i2c1 }
+  {$define has_lptim1 } {$define has_tim2 } {$define has_tim21 } {$define has_tim22 }
+  {$define has_adc1 }
+  
+  
+  {$define has_rtc }
+{$endif}
 {$if defined(STM32L041F6) }
   {$define STM32L0x1 }
   {$define STM32L04x }
@@ -358,6 +482,20 @@
   {$define has_rtc }
 {$endif}
 {$if defined(STM32L041G6) }
+  {$define STM32L0x1 }
+  {$define STM32L04x }
+  {$define UFQFPN28 }
+  {$define has_gpioa } {$define has_gpiob } {$define has_gpioc }
+  {$define has_usart2 } {$define has_uart1 } {$define has_lpuart1 }
+  {$define has_spi1 }
+  {$define has_i2c1 }
+  {$define has_lptim1 } {$define has_tim2 } {$define has_tim21 } {$define has_tim22 }
+  {$define has_adc1 }
+  
+  
+  {$define has_rtc }
+{$endif}
+{$if defined(STM32L041G6S) }
   {$define STM32L0x1 }
   {$define STM32L04x }
   {$define UFQFPN28 }
@@ -554,6 +692,20 @@
   {$define has_rtc }
 {$endif}
 {$if defined(STM32L052T6) or defined(STM32L052T8) }
+  {$define STM32L0x2 }
+  {$define STM32L05x }
+  {$define WLCSP36 }
+  {$define has_gpioa } {$define has_gpiob } {$define has_gpioc }
+  {$define has_usart1 } {$define has_usart2 } {$define has_uart1 } {$define has_lpuart1 }
+  {$define has_spi1 }
+  {$define has_i2c1 } {$define has_i2c2 }
+  {$define has_lptim1 } {$define has_tim2 } {$define has_tim21 } {$define has_tim22 } {$define has_tim6 }
+  {$define has_adc1 }
+  {$define has_dac1 }
+  
+  {$define has_rtc }
+{$endif}
+{$if defined(STM32L052T8) }
   {$define STM32L0x2 }
   {$define STM32L05x }
   {$define WLCSP36 }
@@ -1043,6 +1195,20 @@
   
   {$define has_rtc }
 {$endif}
+{$if defined(STM32L073RZ) }
+  {$define STM32L0x3 }
+  {$define STM32L07x }
+  {$define UFBGA64 }
+  {$define has_gpioa } {$define has_gpiob } {$define has_gpioc } {$define has_gpiod } {$define has_gpioh }
+  {$define has_usart1 } {$define has_usart2 } {$define has_usart4 } {$define has_usart5 } {$define has_uart1 } {$define has_lpuart1 }
+  {$define has_spi1 } {$define has_spi2 }
+  {$define has_i2c1 } {$define has_i2c2 } {$define has_i2c3 }
+  {$define has_lptim1 } {$define has_tim2 } {$define has_tim21 } {$define has_tim22 } {$define has_tim3 } {$define has_tim6 } {$define has_tim7 }
+  {$define has_adc1 }
+  {$define has_dac1 }
+  
+  {$define has_rtc }
+{$endif}
 {$if defined(STM32L073VB) or defined(STM32L073VZ) }
   {$define STM32L0x3 }
   {$define STM32L07x }
@@ -1099,7 +1265,7 @@
   
   {$define has_rtc }
 {$endif}
-{$if defined(STM32L081CZ) }
+{$if defined(STM32L081CB) or defined(STM32L081CZ) }
   {$define STM32L0x1 }
   {$define STM32L08x }
   {$define LQFP48 }
@@ -1138,6 +1304,20 @@
   {$define has_lptim1 } {$define has_tim2 } {$define has_tim21 } {$define has_tim22 } {$define has_tim3 } {$define has_tim6 } {$define has_tim7 }
   {$define has_adc1 }
   
+  
+  {$define has_rtc }
+{$endif}
+{$if defined(STM32L082CZ) }
+  {$define STM32L0x2 }
+  {$define STM32L08x }
+  {$define WLCSP49 }
+  {$define has_gpioa } {$define has_gpiob } {$define has_gpioc } {$define has_gpioh }
+  {$define has_usart1 } {$define has_usart2 } {$define has_usart4 } {$define has_usart5 } {$define has_uart1 } {$define has_lpuart1 }
+  {$define has_spi1 } {$define has_spi2 }
+  {$define has_i2c1 } {$define has_i2c2 } {$define has_i2c3 }
+  {$define has_lptim1 } {$define has_tim2 } {$define has_tim21 } {$define has_tim22 } {$define has_tim3 } {$define has_tim6 } {$define has_tim7 }
+  {$define has_adc1 }
+  {$define has_dac1 }
   
   {$define has_rtc }
 {$endif}
@@ -1267,7 +1447,7 @@
   
   {$define has_rtc }
 {$endif}
-{$if defined(STM32L0x1) or defined(STM32L0x2) or defined(STM32L0x3) }
+{$if defined(STM32L0x0 ) or defined(STM32L0x1) or defined(STM32L0x2) or defined(STM32L0x3) }
   {$define CortexM0}
   {$define __CONTROLLERTYPE__:=STM32L0}
   {$define STM32L0}

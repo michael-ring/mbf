@@ -1,17 +1,20 @@
 #!/bin/sh
+IGNOREDEVICES="templates "
+FILTER=$1
 curdir=$(pwd)
-if [ -z "$1" ]; then
-  exclusivetest=.
-else
-  exclusivetest=$1
-fi
-find . -name "*lpi" | grep $exclusivetest | while read lpi ; do
-    echo $IGNOREDEVICES | grep $(basename $lpi | sed -e "s,^.*-,," -e "s,.lpi,,g")
-    if [ "$?" != 0 ]; then  
-      cd $curdir/$(dirname $lpi)
-      lazbuild --build-all $(basename $lpi)
-      if [ "$?" != "0" ]; then
-        exit
-      fi
+ls -1 */*${FILTER}*lpi | while read lpi ; do
+  echo $IGNOREDEVICES | grep $(basename $lpi | sed -e "s,^.*-,," -e "s,.lpi,,g") >/dev/null
+  if [ "$?" != 0 ]; then  
+    printf "Building %-60s" $lpi
+    cd $curdir/$(dirname $lpi)
+#    lazbuild --build-all $(basename $lpi) | grep -v Hint | grep -v Info | grep -v Note | grep -v Warning | grep -v TCodeToolManager.HandleException | grep -v Compiling | grep -v "Linking" | grep -v "Assembling"
+    lazbuild --build-all $(basename $lpi) >../compile
+    if [ "$?" != "0" ]; then
+      echo "[FAILED]"
+    else
+      printf "[OK]    "
+      cat ../compile  | grep "lines compiled" | sed "s~^.*sec,~~g"
     fi
+  fi
 done
+echo ""

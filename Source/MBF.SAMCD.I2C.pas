@@ -35,7 +35,7 @@ type
 
 const
   DefaultI2CBaudrate=TI2CBaudRates.Standard100k;
-  DefaultI2CTimeout = 10000;
+  DefaultI2CTimeOut = 10000;
 
 type
   TI2C_Registers = TSercomI2CM_Registers;
@@ -66,7 +66,7 @@ type
     SPEED100KHZ=100;
   strict private
     procedure SyncWait;
-    function GetBaud(const Value: Cardinal):cardinal;
+    function GetBaud(const Value: longWord):longWord;
     function isMasterWIRE:boolean;
     //TODO function isSlaveWIRE:boolean;
     function isBusIdleWIRE:boolean;
@@ -103,9 +103,9 @@ type
     function WriteByte(const Address:byte; const aByte:byte):boolean;
     function WriteWord(const Address:byte; const aWord:word):boolean;
     function WriteLongWord(const Address:byte; const aLongWord:longword):boolean;
-    function ReadRegister(var aReadByte : byte ; const aRegister : byte; const TimeOut : longWord=0; const DeviceAddress : word = 0):boolean;
-    function ReadRegister(var aReadBuffer : array of byte ; const aStartRegister : byte; const TimeOut : longWord=0; const DeviceAddress : word = 0):boolean;
-    function WriteRegister(const aWriteByte : byte ; const aRegister : byte; const TimeOut : longWord=0; const DeviceAddress : word = 0):boolean;
+    function ReadRegister(var aReadByte : byte ; const aRegister : byte; const TimeOut: TMilliSeconds=0; const DeviceAddress : word = 0):boolean;
+    function ReadRegister(var aReadBuffer : array of byte ; const aStartRegister : byte; const TimeOut: TMilliSeconds=0; const DeviceAddress : word = 0):boolean;
+    function WriteRegister(const aWriteByte : byte ; const aRegister : byte; const TimeOut: TMilliSeconds=0; const DeviceAddress : word = 0):boolean;
   end;
 
  var
@@ -262,7 +262,7 @@ end;
 procedure TI2CRegistersHelper.Initialize(const ASDAPin : TI2CSDAPins;
                      const ASCLPin  : TI2CSCLPins);
 var
-  speed,baud,baudlow:cardinal;
+  speed,baud,baudlow:longWord;
 begin
   Initialize;
 
@@ -404,7 +404,7 @@ begin
 end;
 *)
 
-function TI2CRegistersHelper.GetBaud(const Value: Cardinal):cardinal;
+function TI2CRegistersHelper.GetBaud(const Value: longWord):longWord;
 var
   tmp_baud, correction:longword;
 begin
@@ -487,38 +487,38 @@ begin
   result:=Write(Address, @aLongWord, SizeOf(aLongWord),true);
 end;
 
-function TI2CRegistersHelper.ReadRegister(var aReadByte : byte ; const aRegister : byte; const TimeOut : longWord=0; const DeviceAddress : word = 0):boolean;
+function TI2CRegistersHelper.ReadRegister(var aReadByte : byte ; const aRegister : byte; const TimeOut: TMilliSeconds=0; const DeviceAddress : word = 0):boolean;
 var
    EndTime : longWord;
 begin
   Result := true;
   //Default timeout is 10 Seconds
-  if Timeout = 0 then
-    EndTime := SystemCore.GetTickCount + DefaultI2CTimeout
+  if TimeOut = 0 then
+    EndTime := SystemCore.GetTickCount + DefaultI2CTimeOut
   else
     EndTime := SystemCore.GetTickCount + TimeOut;
 end;
 
-function TI2CRegistersHelper.ReadRegister(var aReadBuffer : array of byte ; const aStartRegister : byte; const TimeOut : longWord=0; const DeviceAddress : word = 0):boolean;
+function TI2CRegistersHelper.ReadRegister(var aReadBuffer : array of byte ; const aStartRegister : byte; const TimeOut: TMilliSeconds=0; const DeviceAddress : word = 0):boolean;
 var
    EndTime : longWord;
 begin
   Result := true;
   //Default timeout is 10 Seconds
-  if Timeout = 0 then
-    EndTime := SystemCore.GetTickCount + DefaultI2CTimeout
+  if TimeOut = 0 then
+    EndTime := SystemCore.GetTickCount + DefaultI2CTimeOut
   else
     EndTime := SystemCore.GetTickCount + TimeOut;
 end;
 
-function TI2CRegistersHelper.WriteRegister(const aWriteByte : byte ; const aRegister : byte; const TimeOut : longWord=0; const DeviceAddress : word = 0):boolean;
+function TI2CRegistersHelper.WriteRegister(const aWriteByte : byte ; const aRegister : byte; const TimeOut: TMilliSeconds=0; const DeviceAddress : word = 0):boolean;
 var
    EndTime : longWord;
 begin
   Result := true;
   //Default timeout is 10 Seconds
-  if Timeout = 0 then
-    EndTime := SystemCore.GetTickCount + DefaultI2CTimeout
+  if TimeOut = 0 then
+    EndTime := SystemCore.GetTickCount + DefaultI2CTimeOut
   else
     EndTime := SystemCore.GetTickCount + TimeOut;
 end;

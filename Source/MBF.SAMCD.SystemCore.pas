@@ -19,11 +19,14 @@ interface
 
 {$INCLUDE MBF.Config.inc}
 
-uses
-{$ifdef SAMD10}
-  CortexM0,
-{$endif}
-  MBF.SystemCore;
+//{$ifdef SAMD10}
+//uses
+//  CortexM0;
+//{$endif}
+
+{$DEFINE INTERFACE}
+{$INCLUDE MBF.ARM.SystemCore.inc}
+{$UNDEF INTERFACE}
 
 const
 {$if defined(samd10) or defined(samd11) or defined(samd20) or defined(samd21) }
@@ -57,15 +60,20 @@ type
   end;
   private
     procedure ConfigureSystem;
-    function GetSysTickClockFrequency : Cardinal;
+    function GetSysTickClockFrequency : longWord;
   public
     procedure Initialize;
-    function GetSystemClockFrequency: Cardinal;
-    function getMaxCPUFrequency : Cardinal;
+    function GetSystemClockFrequency: longWord;
+    function getMaxCPUFrequency : longWord;
     procedure SetClockSourceTarget(aClockSource,aClockTarget:longword);
-    function GetCPUFrequency: Cardinal;
-    procedure SetCPUFrequency(const Value: Cardinal; aClockType : TClockType = TClockType.RC_PLL);
-    property CPUFrequency: Cardinal read GetCPUFrequency write SetCPUFrequency;
+    function GetCPUFrequency: longWord;
+    {$ifdef samc}
+      procedure SetCPUFrequency(const Value: longWord; aClockType : TClockType = TClockType.RC);
+    {$endif}
+    {$ifdef samd}
+      procedure SetCPUFrequency(const Value: longWord; aClockType : TClockType = TClockType.RC_PLL);
+    {$endif}
+    property CPUFrequency: longWord read GetCPUFrequency write SetCPUFrequency;
   end;
 
 var
@@ -73,9 +81,27 @@ var
 
 implementation
 
+{$IF DEFINED(CortexM0)}
 uses
+  cortexm0,
+{$ELSEIF DEFINED(CortexM3)}
+uses
+  cortexm3,
+{$ELSEIF DEFINED(CortexM4)}
+uses
+  cortexm4,
+{$ELSEIF DEFINED(CortexM7)}
+uses
+  cortexm7,
+{$ENDIF}
   MBF.SAMCD.Helpers,
   MBF.BitHelpers;
+
+{$DEFINE IMPLEMENTATION}
+{$INCLUDE MBF.ARM.SystemCore.inc}
+{$UNDEF IMPLEMENTATION}
+
+
 
 {$REGION 'TSystemCore'}
 
@@ -86,12 +112,12 @@ begin
   ConfigureTimer;
 end;
 
-function TSAMCDSystemCore.GetSystemClockFrequency: Cardinal;
+function TSAMCDSystemCore.GetSystemClockFrequency: longWord;
 begin
   Result := FCPUFrequency;
 end;
 
-function TSAMCDSystemCore.GetSysTickClockFrequency : Cardinal; [public, alias: 'MBF_GetSysTickClockFrequency'];
+function TSAMCDSystemCore.GetSysTickClockFrequency : longWord; [public, alias: 'MBF_GetSysTickClockFrequency'];
 begin
   Result := GetSystemClockFrequency;
 end;
@@ -140,13 +166,13 @@ begin
   {$endif samc}
 end;
 
-function TSAMCDSystemCore.GetCPUFrequency: Cardinal;
+function TSAMCDSystemCore.GetCPUFrequency: longWord;
 begin
   result:=FCPUFrequency;
 end;
 
 {$ifdef samc}
-procedure TSAMCDSystemCore.SetCPUFrequency(const Value: Cardinal; aClockType : TClockType = TClockType.RC);
+procedure TSAMCDSystemCore.SetCPUFrequency(const Value: longWord; aClockType : TClockType = TClockType.RC);
 const
   PLLREFCLOCK=1;
   PLLREFCLOCK32=2;
@@ -347,7 +373,7 @@ end;
 {$endif}
 
 {$ifdef samd}
-procedure TSAMCDSystemCore.SetCPUFrequency(const Value: Cardinal; aClockType : TClockType = TClockType.RC_PLL);
+procedure TSAMCDSystemCore.SetCPUFrequency(const Value: longWord; aClockType : TClockType = TClockType.RC_PLL);
 const
   PLLREFCLOCK=3;
 procedure WaitGLK;
@@ -731,7 +757,7 @@ begin
 end;
 {$endif}
 
-function TSAMCDSystemCore.getMaxCPUFrequency : Cardinal;
+function TSAMCDSystemCore.getMaxCPUFrequency : longWord;
 begin
   Result := MaxCPUFrequency;
 end;

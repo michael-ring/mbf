@@ -270,6 +270,9 @@ begin
                              GPIOMem[GPIO]^.CNPUCLR := BitMask;
                              GPIOMem[GPIO]^.CNPDCLR := BitMask;
     end;
+  else
+    begin
+    end;
 (*    else
                          begin
                            if (Value >= TPinMode.AF0) and (Value <= TPinMode.AF7) then

@@ -119,8 +119,8 @@ TUARTStopBits = (
 
 TUARTRegistersHelper = record Helper for TUART_Registers
 private
-  function GetBaudRate: Cardinal;
-  procedure SetBaudRate(const Value: Cardinal);
+  function GetBaudRate: longWord;
+  procedure SetBaudRate(const Value: longWord);
   function GetBitsPerWord: TUARTBitsPerWord;
   procedure SetBitsPerWord(const Value: TUARTBitsPerWord);
   function GetParity: TUARTParity;
@@ -139,60 +139,60 @@ public
   { Reads data buffer from UART (serial) port.
     @param(Buffer Pointer to data buffer where the data will be written to.)
     @param(BufferSize Number of bytes to read.)
-    @param(Timeout Maximum time (in milliseconds) to wait while attempting to read the buffer. If this parameter is
+    @param(TimeOut Maximum time (in milliseconds) to wait while attempting to read the buffer. If this parameter is
       set to zero, then the function will block indefinitely, attempting to read until the specified number of
       bytes have been read.)
     @returns(Number of bytes that were actually read.) }
-  function ReadBuffer(const Buffer: Pointer; const BufferSize,TimeOut: Cardinal): Cardinal;
+  function ReadBuffer(const Buffer: Pointer; const BufferSize,TimeOut: TMilliSeconds): longWord;
 
   { Writes data buffer to UART (serial) port.
     @param(Buffer Pointer to data buffer where the data will be read from.)
     @param(BufferSize Number of bytes to write.)
-    @param(Timeout Maximum time (in milliseconds) to wait while attempting to write the buffer. If this parameter
+    @param(TimeOut Maximum time (in milliseconds) to wait while attempting to write the buffer. If this parameter
       is set to zero, then the function will block indefinitely, attempting to write until the specified number of
       bytes have been written.)
     @returns(Number of bytes that were actually written.) }
-  function WriteBuffer(const Buffer: Pointer; const BufferSize,TimeOut: Cardinal): Cardinal;
+  function WriteBuffer(const Buffer: Pointer; const BufferSize,TimeOut: TMilliSeconds): longWord;
 
-  { Attempts to read a byte from UART (serial) port. @code(Timeout) defines maximum time (in milliseconds) to wait
+  { Attempts to read a byte from UART (serial) port. @code(TimeOut) defines maximum time (in milliseconds) to wait
     while attempting to do so; if this parameter is set to zero, then the function will block indefinitely until the
     byte has been read. @True is returned when the operation was successful and @False when the byte could not be
     read. }
-  function ReadByte(out Value: Byte; const Timeout: Cardinal = 0): Boolean; inline;
+  function ReadByte(out Value: Byte; const TimeOut: TMilliSeconds = 0): Boolean; inline;
 
-  { Attempts to write a byte to UART (serial) port. @code(Timeout) defines maximum time (in milliseconds) to wait
+  { Attempts to write a byte to UART (serial) port. @code(TimeOut) defines maximum time (in milliseconds) to wait
     while attempting to do so; if this parameter is set to zero, then the function will block indefinitely until the
     byte has been written. @True is returned when the operation was successful and @False when the byte could not be
     written. }
-  function WriteByte(const Value: Byte; const Timeout: Cardinal = 0): Boolean; inline;
+  function WriteByte(const Value: Byte; const TimeOut: TMilliSeconds = 0): Boolean; inline;
 
-  { Attempts to write multiple bytes to UART (serial) port. @code(Timeout) defines maximum time (in milliseconds) to
+  { Attempts to write multiple bytes to UART (serial) port. @code(TimeOut) defines maximum time (in milliseconds) to
     wait while attempting to do so; if this parameter is set to zero, then the function will block indefinitely,
     attempting to write until the specified bytes have been written. @True is returned when the operation was
     successful and @False when not all bytes could be written. }
-  function WriteBytes(const Values: array of Byte; const Timeout: Cardinal = 0): Boolean;
+  function WriteBytes(const Values: array of Byte; const TimeOut: TMilliSeconds = 0): Boolean;
 
   { Reads string from UART (serial) port.
     @param(Text String that will hold the incoming data.)
     @param(MaxCharacters Maximum number of characters to read. Once this number of characters has been read, the
       function immediately returns, even if there is more data to read. When this parameter is set to zero, then
-      the function will continue to read the data, depending on value of @code(Timeout).)
-    @param(Timeout Maximum time (in milliseconds) to wait while attempting to read the buffer. If this parameter
+      the function will continue to read the data, depending on value of @code(TimeOut).)
+    @param(TimeOut Maximum time (in milliseconds) to wait while attempting to read the buffer. If this parameter
       is set to zero, then the function will read only as much data as fits in readable FIFO buffers (or fail when
       such buffers are not supported).)
     @returns(Number of bytes that were actually read.) }
-  function ReadString(out Text: String; const MaxCharacters: Cardinal = 0;
-    const Timeout: Cardinal = 0): Boolean;
+  function ReadString(out Text: String; const MaxCharacters: longWord = 0;
+    const TimeOut: TMilliSeconds = 0): Boolean;
 
   { Writes string to UART (serial) port.
       @param(Text String that should be sent.)
-      @param(Timeout Maximum time (in milliseconds) to wait while attempting to write the buffer. If this parameter
+      @param(TimeOut Maximum time (in milliseconds) to wait while attempting to write the buffer. If this parameter
         is set to zero, then the function will write only what fits in writable FIFO buffers (or fail when such
         buffers are not supported).)
       @returns(Number of bytes that were actually read.) }
-  function WriteString(const Text: String; const Timeout: Cardinal = 0): Boolean;
+  function WriteString(const Text: String; const TimeOut: TMilliSeconds = 0): Boolean;
 
-  property BaudRate : Cardinal read getBaudRate write setBaudRate;
+  property BaudRate : longWord read getBaudRate write setBaudRate;
   property BitsPerWord : TUARTBitsPerWord read getBitsPerWord write setBitsPerWord;
   property Parity : TUARTParity read getParity write setParity;
   property StopBits : TUARTStopBits read getStopBits write setStopBits;
@@ -294,12 +294,12 @@ begin
   GPIO.PinMode[longWord(Value) and $ff] := TPinMode(longWord(Value) shr 8);
 end;
 
-function TUARTRegistersHelper.GetBaudRate: Cardinal;
+function TUARTRegistersHelper.GetBaudRate: longWord;
 begin
   Result := (SystemCore.GetSystemClockFrequency shl 5) div (((longWord((self.BDH and $1f) shl 8 or self.BDL) shl 5)+(self.C4 and longWord(%11111 shl 0))) shl 4);
 end;
 
-procedure TUARTRegistersHelper.SetBaudRate(const Value: Cardinal);
+procedure TUARTRegistersHelper.SetBaudRate(const Value: longWord);
 var
   SBR : longWord;
   BRFA : integer;
@@ -362,7 +362,7 @@ begin
   //LPC_UART.IIR_FCR := $07;
 end;
 
-function TUARTRegistersHelper.ReadBuffer(const Buffer: Pointer; const BufferSize,TimeOut: Cardinal): Cardinal;
+function TUARTRegistersHelper.ReadBuffer(const Buffer: Pointer; const BufferSize,TimeOut: TMilliSeconds): longWord;
 var
   StartTime : longWord;
 begin
@@ -390,7 +390,7 @@ begin
   end;
 end;
 
-function TUARTRegistersHelper.WriteBuffer(const Buffer: Pointer; const BufferSize,TimeOut: Cardinal): Cardinal;
+function TUARTRegistersHelper.WriteBuffer(const Buffer: Pointer; const BufferSize,TimeOut: TMilliSeconds): longWord;
 var
   StartTime : longWord;
 begin
@@ -431,32 +431,32 @@ begin
   end;
 end;
 
-function TUARTRegistersHelper.ReadByte(out Value: Byte; const Timeout: Cardinal): Boolean;
+function TUARTRegistersHelper.ReadByte(out Value: Byte; const TimeOut: TMilliSeconds): Boolean;
 begin
-  Result := ReadBuffer(@Value, SizeOf(Byte), Timeout) = SizeOf(Byte);
+  Result := ReadBuffer(@Value, SizeOf(Byte), TimeOut) = SizeOf(Byte);
 end;
 
-function TUARTRegistersHelper.WriteByte(const Value: Byte; const Timeout: Cardinal): Boolean;
+function TUARTRegistersHelper.WriteByte(const Value: Byte; const TimeOut: TMilliSeconds): Boolean;
 begin
-  Result := WriteBuffer(@Value, SizeOf(Byte), Timeout) = SizeOf(Byte);
+  Result := WriteBuffer(@Value, SizeOf(Byte), TimeOut) = SizeOf(Byte);
 end;
 
-function TUARTRegistersHelper.WriteBytes(const Values: array of Byte; const Timeout: Cardinal): Boolean;
+function TUARTRegistersHelper.WriteBytes(const Values: array of Byte; const TimeOut: TMilliSeconds): Boolean;
 begin
   if Length(Values) > 0 then
-    Result := WriteBuffer(@Values[0], Length(Values), Timeout) = Cardinal(Length(Values))
+    Result := WriteBuffer(@Values[0], Length(Values), TimeOut) = longWord(Length(Values))
   else
     Result := False;
 end;
 
-function TUARTRegistersHelper.ReadString(out Text: String; const MaxCharacters: Cardinal = 0;
-  const Timeout: Cardinal = 0): Boolean;
+function TUARTRegistersHelper.ReadString(out Text: String; const MaxCharacters: longWord = 0;
+  const TimeOut: TMilliSeconds = 0): Boolean;
 begin
   Text := '';
   Result := false;
 end;
 
-function TUARTRegistersHelper.WriteString(const Text: String; const Timeout: Cardinal = 0): Boolean;
+function TUARTRegistersHelper.WriteString(const Text: String; const TimeOut: TMilliSeconds = 0): Boolean;
 begin
   WriteBuffer(@Text[1],length(Text),TimeOut);
   result := true;

@@ -12,7 +12,22 @@ unit MBF.STM32L4.GPIO;
   warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the FPC modified GNU Library General Public
   License for more details.
 }
-{< ST Micro F0xx series GPIO functions. }
+{
+  Related Reference Manuals
+
+  STM32L4x5 and STM32L4x6 advanced Arm
+  http://www.st.com/resource/en/reference_manual/DM00083560.pdf
+
+  STM32L4x1 advanced ARM
+  http://www.st.com/resource/en/reference_manual/DM00149427.pdf
+
+  STM32L41xxx42xxx43xxx44xxx45xxx46xxx advanced Arm
+  http://www.st.com/resource/en/reference_manual/DM00151940.pdf
+
+  STM32L4Rxxx and STM32L4Sxxx advanced Arm
+  http://www.st.com/resource/en/reference_manual/DM00310109.pdf
+}
+
 interface
 
 {$include MBF.Config.inc}

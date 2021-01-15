@@ -26,16 +26,14 @@ type
   TPixelCount = 1..100;
 
   TAPA106 = object
-    FRGBPixel: array of TColor;
+    FRGBPixel: array[1..100] of TColor;
     MaxPixelCount: longword;
     FPin: TPinIdentifier;
     pFSPI: ^TSPI_Registers;
     FUseSPI : boolean;
     ZeroPattern, OnePattern: word;
     constructor Initialize(Pin: TPinIdentifier; PixelCount: TPixelCount);
-    constructor Initialize(var SPI: TSPI_Registers; PixelCount: TPixelCount;
-      MOSIPin: TSPIMOSIPins; MISOPin: TSPIMISOPins; CLKPin: TSPISCLKPins;
-      NSSPin: TSPINSSPins);
+    constructor Initialize(var SPI: TSPI_Registers; PixelCount: TPixelCount);
       overload;
     procedure Clear;
     procedure Refresh;
@@ -48,7 +46,7 @@ implementation
 
 constructor TAPA106.Initialize(Pin: TPinIdentifier; PixelCount: TPixelCount);
 begin
-  SetLength(FRGBPixel, PixelCount);
+  //SetLength(FRGBPixel, PixelCount);
   MaxPixelCount := PixelCount;
   FPin := Pin;
   GPIO.Initialize;
@@ -57,14 +55,12 @@ begin
   FUseSPI := false;
 end;
 
-constructor TAPA106.Initialize(var SPI: TSPI_Registers; PixelCount: TPixelCount;
-  MOSIPin: TSPIMOSIPins; MISOPin: TSPIMISOPins; CLKPin: TSPISCLKPins;
-  NSSPin: TSPINSSPins);
+constructor TAPA106.Initialize(var SPI: TSPI_Registers; PixelCount: TPixelCount);
 begin
-  SetLength(FRGBPixel, PixelCount);
+  //SetLength(FRGBPixel, PixelCount);
   MaxPixelCount := PixelCount;
   pFSPI := @SPI;
-  pFSPI^.Initialize(MOSIPin, MISOPin, CLKPin, NSSPin);
+  //pFSPI^.Initialize(MOSIPin, MISOPin, CLKPin, NSSPin);
   ZeroPattern := %0111000000000000;
   OnePattern  := %0111111000000000;
   FUseSPI := true;
@@ -102,7 +98,7 @@ begin
         Mask := Mask shr 1;
       end;
     end;
-    pFSPI^.WriteWord(WriteBuffer, length(WriteBuffer));
+    pFSPI^.WriteWords(WriteBuffer, length(WriteBuffer));
   end
   else
   begin

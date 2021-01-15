@@ -967,10 +967,12 @@ const
     %11111110,
     %00000000
     )
-  );
+  ); {$if defined(CPUAVR_HAS_LPMX)} section '.progmem';{$endif}
 
 var
   Px437Verite8x8_RowBuffer : array[0..7] of byte;
+const
+  Charmap :string[96] = ' !"#$%&''()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~'; {$if defined(CPUAVR_HAS_LPMX)} section '.progmem';{$endif}
 const
   Px437Verite8x8 : TFontInfo =
   (
@@ -978,7 +980,7 @@ const
     Height : 8;
     BitsPerPixel : 1;
     BytesPerChar : 8;
-    Charmap : ' !"#$%&''()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~';
+    pCharmap : @Charmap;
     pFontData : @Px437Verite8x8_FontData;
     pRowBuffer : @Px437Verite8x8_RowBuffer;
   );

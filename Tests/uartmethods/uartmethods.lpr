@@ -50,41 +50,40 @@ begin
   aUARTStopBits := TUARTStopBits.One;
 
   // Initialize the UART subsystem
-  UART.Initialize;
-  UART.RxPin := TUARTRxPins.D0_UART;
-  UART.TxPin := TUARTTxPins.D1_UART;
-  UART.RxPin := TUARTRxPins.DEBUG_UART;
-  UART.TxPin := TUARTTxPins.DEBUG_UART;
+  UART.Initialize(TUARTRxPins.D0_UART,TUARTTxPins.D1_UART);
   WasEnabled := UART.Disable;
   UART.Enable;
 
-  UART.Initialize(TUARTRxPins.D0_UART,TUARTTxPins.D1_UART);
   UART.Baudrate := DefaultUARTBaudrate;
   UART.Parity := TUARTParity.None;
   UART.StopBits := TUARTStopBits.One;
 
   // Read without Timeout
-  count := UART.ReadBuffer(@dummyByteArray,length(dummyByteArray));
-  success := UART.ReadByte(dummyByte);
-  success := UART.ReadByte(dummyByteArray);
-  success := UART.ReadString(DummyString,MaxLength);
-  success := UART.ReadString(DummyString,Delimiter);
-  
+  dummyByte := UART.ReadByte;
+  UART.ReadBytes(dummyByteArray);
+  UART.ReadBytes(dummyByteArray,count);
+  UART.ReadString(DummyString,MaxLength);
+  UART.ReadString(DummyString,Delimiter);
+  UART.ReadBuffer(@dummyByteArray,length(dummyByteArray));
+
   // Read  with Timeout
   success := UART.ReadByte(dummyByte,1000);
-  success := UART.ReadByte(dummyByteArray,1000);
+  success := UART.ReadBytes(dummyByteArray,count,1000);
   success := UART.ReadString(dummyString,MaxLength,1000);
   success := UART.ReadString(dummyString,Delimiter,1000);
-  
+  success := UART.ReadBuffer(@dummyByteArray,count,1000);
+
   // Write without Timeout
-  success := UART.WriteByte(dummyByte);
-  success := UART.WriteByte(dummyByteArray);
-  success := UART.WriteString(dummyString);
-  
+  UART.WriteByte(dummyByte);
+  UART.WriteBytes(dummyByteArray);
+  UART.WriteBytes(dummyByteArray,1);
+  UART.WriteString(dummyString);
+  UART.WriteBuffer(@dummyByteArray,length(dummyByteArray));
+
   // Write with Timeout
   success := UART.WriteByte(dummyByte,1000);
-  success := UART.WriteByte(dummyByteArray,1000);
+  success := UART.WriteBytes(dummyByteArray,1,1000);
   success := UART.WriteString(dummyString,1000);
-
-end.  
+  success := UART.WriteBuffer(@dummyByteArray,count,1000);
+end.
 

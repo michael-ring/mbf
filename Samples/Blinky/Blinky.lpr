@@ -23,9 +23,8 @@ uses
 
 begin
   SystemCore.Initialize;
-  SystemCore.SetCPUFrequency(SystemCore.getMaxCPUFrequency);
-  SystemCore.GetCPUFrequency;
-  //SystemCore.DisableJTAGInterface;
+  //SystemCore.SetCPUFrequency(SystemCore.getMaxCPUFrequency);
+
   GPIO.Initialize;
   GPIO.PinMode[TArduinoPin.D13] := TPinMode.Output;
 

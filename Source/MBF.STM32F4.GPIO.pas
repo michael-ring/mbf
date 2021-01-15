@@ -12,7 +12,34 @@ unit mbf.stm32f4.gpio;
   warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the FPC modified GNU Library General Public
   License for more details.
 }
-{< ST Micro F4xx series GPIO functions. }
+{
+  Related Reference Manuals
+
+  STM32F405415, STM32F407417, STM32F427437 and STM32F429439 advanced Arm
+  http://www.st.com/resource/en/reference_manual/DM00031020.pdf
+
+  STM32F401xBC and STM32F401xDE advanced Arm
+  http://www.st.com/resource/en/reference_manual/DM00096844.pdf
+
+  STM32F411xCE advanced Arm
+  http://www.st.com/resource/en/reference_manual/DM00119316.pdf
+
+  STM32F446xx advanced Arm
+  http://www.st.com/resource/en/reference_manual/DM00135183.pdf
+
+  STM32F469xx and STM32F479xx advanced Arm
+  http://www.st.com/resource/en/reference_manual/DM00127514.pdf
+
+  STM32F410 advanced Arm
+  http://www.st.com/resource/en/reference_manual/DM00180366.pdf
+
+  STM32F412 advanced Arm
+  http://www.st.com/resource/en/reference_manual/DM00180369.pdf
+
+  STM32F413423 advanced Arm
+  http://www.st.com/resource/en/reference_manual/DM00305666.pdf
+}
+{$WARN 4055 off : Conversion between ordinals and pointers is not portable}
 interface
 
 {$include MBF.Config.inc}
@@ -109,13 +136,12 @@ type
 type
   TPinLevel=(Low=0,High=1);
   TPinValue=0..1;
-  TPinIdentifier=-1..160;
+  TPinIdentifier=-1..167;
   TPinMode = (Input=%00, Output=%01, Analog=%11, AF0=$10, AF1, AF2, AF3, AF4, AF5, AF6, AF7, AF8, AF9, AF10, AF11, AF12, AF13, AF14, AF15);
   TPinDrive = (None=%00,PullUp=%01,PullDown=%10);
   TPinOutputMode = (PushPull=0,OpenDrain=1);
   TPinOutputSpeed = (Slow=%00, Medium=%01, High=%10, VeryHigh=%11);
-  //TBit = (Bit0=1, Bit1=2, Bit2=4, Bit3=8, Bit4=16, Bit5=32, Bit6=64, Bit7=128,
-  //        Bit8=256, Bit9=512, Bit10=1024, Bit11=2048, Bit12=4096, Bit13=8192, Bit14=16384, Bit15=32768);
+
   TBit = (Bit0, Bit1, Bit2, Bit3, Bit4, Bit5, Bit6, Bit7,
           Bit8, Bit9, Bit10, Bit11, Bit12, Bit13, Bit14, Bit15);
   TBitSet = set of TBit;
@@ -126,27 +152,26 @@ type
     pGPIORegisters = ^TGPIO_Registers;
   private const
     // Indexed mapping to GPIO registers.
-    GPIOMem: array[0..8] of pGPIORegisters = (@GPIOA,
+    GPIOMem: array[0..10] of pGPIORegisters = (@GPIOA,
                                               @GPIOB,
                                               @GPIOC,
                                               {$ifdef has_gpiod}@GPIOD{$else}nil{$endif},
                                               {$ifdef has_gpioe}@GPIOE{$else}nil{$endif},
                                               {$ifdef has_gpiof}@GPIOF{$else}nil{$endif},
                                               {$ifdef has_gpiog}@GPIOG{$else}nil{$endif},
-                                              @GPIOH,
-                                              {$ifdef has_gpioi}@GPIOI{$else}nil{$endif});
+                                              {$ifdef has_gpioh}@GPIOH{$else}nil{$endif},
+                                              {$ifdef has_gpioi}@GPIOI{$else}nil{$endif},
+                                              {$ifdef has_gpioj}@GPIOJ{$else}nil{$endif},
+                                              {$ifdef has_gpiok}@GPIOK{$else}nil{$endif});
 
-    function GetPinMode(const Pin: TPinIdentifier): TPinMode;
+    function  GetPinMode(const Pin: TPinIdentifier): TPinMode;
     procedure SetPinMode(const Pin: TPinIdentifier; const Value: TPinMode);
-    function GetPinDrive(const Pin: TPinIdentifier): TPinDrive;
+    function  GetPinDrive(const Pin: TPinIdentifier): TPinDrive;
     procedure SetPinDrive(const Pin: TPinIdentifier; const Value: TPinDrive);
-    function GetPinOutputMode(const Pin: TPinIdentifier): TPinOutputMode;
+    function  GetPinOutputMode(const Pin: TPinIdentifier): TPinOutputMode;
     procedure SetPinOutputMode(const Pin: TPinIdentifier; const Value: TPinOutputMode);
-    function GetPinOutputSpeed(const Pin: TPinIdentifier): TPinOutputSpeed;
+    function  GetPinOutputSpeed(const Pin: TPinIdentifier): TPinOutputSpeed;
     procedure SetPinOutputSpeed(const Pin: TPinIdentifier; const Value: TPinOutputSpeed);
-    //function  GetPinValue2(const Pin: TPinIdentifier): TPinValues;
-    //procedure SetPinValue2(const Pin: TPinIdentifier; const Value: TPinValues);
-
   public
     procedure Initialize;
     function  GetPinValue(const Pin: TPinIdentifier): TPinValue;
@@ -185,282 +210,15 @@ var
   GPIO : TGPIO;
 
 implementation
+uses
+  MBF.BitHelpers;
 
-procedure TGPIOPort.Initialize;
+procedure EnableGPIOPort(const GPIO : byte);
 begin
-  case longWord(@Self) of
-    longWord(@GPIOA): RCC.AHB1ENR:= RCC.AHB1ENR or 1 shl 0;
-    longWord(@GPIOB): RCC.AHB1ENR:= RCC.AHB1ENR or 1 shl 1;
-    longWord(@GPIOC): RCC.AHB1ENR:= RCC.AHB1ENR or 1 shl 2;
-    {$ifdef has_gpiod}longWord(@GPIOD): RCC.AHB1ENR:= RCC.AHB1ENR or 1 shl 3;{$endif}
-    {$ifdef has_gpioe}longWord(@GPIOE): RCC.AHB1ENR:= RCC.AHB1ENR or 1 shl 4;{$endif}
-    {$ifdef has_gpiof}longWord(@GPIOF): RCC.AHB1ENR:= RCC.AHB1ENR or 1 shl 5;{$endif}
-    {$ifdef has_gpiog}longWord(@GPIOG): RCC.AHB1ENR:= RCC.AHB1ENR or 1 shl 6;{$endif}
-    {$ifdef has_gpioh}longWord(@GPIOH): RCC.AHB1ENR:= RCC.AHB1ENR or 1 shl 7;{$endif}
-    {$ifdef has_gpioi}longWord(@GPIOI): RCC.AHB1ENR:= RCC.AHB1ENR or 1 shl 8;{$endif}
-  end;
+  // Make sure that the GPIO Clock is enabled
+  SetBit(RCC.AHB1ENR,GPIO);
 end;
 
-function TGPIOPort.GetPortValues : word; inline;
-begin
-  Result := Self.IDR;
-end;
-
-function TGPIOPort.GetPortBits : TBitSet; inline;
-begin
-  Result := TBitSet(Self.IDR);
-end;
-
-procedure TGPIOPort.SetPortValues(const Values : word); inline;
-begin
-  Self.ODR := Values;
-end;
-
-procedure TGPIOPort.SetPortBits(const Bits : TBitSet); inline;
-begin
-  Self.BSRR := longWord(Bits);
-end;
-
-procedure TGPIOPort.ClearPortBits(const Bits : TBitSet); inline;
-begin
-  Self.BSRR := longWord(Bits) shl 16;
-end;
-
-procedure TGPIOPort.SetPortMode(PortMode : TPinMode); inline;
-begin
-  if PortMode = TPinMode.Input then
-    Self.MODER:= 0
-  else if PortMode = TPinMode.Output then
-    Self.MODER := %01010101010101010101010101010101
-  else if PortMode = TPinMode.Analog then
-    Self.MODER := %11111111111111111111111111111111
-  else
-  begin
-    Self.MODER := %10101010101010101010101010101010;
-    //TODO Set AF Modes, but it is a rare usecase
-  end;
-end;
-
-procedure TGPIOPort.SetPortOutputSpeed(Speed : TPinOutputSpeed); inline;
-begin
-  if Speed = TPinOutputSpeed.Slow then
-    Self.OSPEEDR:= 0
-  else if Speed = TPinOutputSpeed.Medium then
-    Self.OSPEEDR := %01010101010101010101010101010101
-  else if Speed = TPinOutputSpeed.High then
-    Self.OSPEEDR := %10101010101010101010101010101010
-  else
-    Self.OSPEEDR := %11111111111111111111111111111111;
-end;
-
-procedure TGPIOPort.SetPortDrive(Drive : TPinDrive); inline;
-begin
-  if Drive = TPinDrive.None then
-    Self.PUPDR:= 0
-  else if Drive = TPinDrive.PullDown then
-    Self.PUPDR := %01010101010101010101010101010101
-  else
-    Self.MODER := %10101010101010101010101010101010;
-end;
-
-procedure TGPIOPort.SetPortOutputMode(OutputMode : TPinOutputMode); inline;
-begin
-  if OutputMode = TPinOutputMode.PushPull then
-    Self.OTYPER:= 0
-  else
-    Self.OTYPER := %1111111111111111;
-end;
-
-procedure TGPIO.Initialize;
-begin
-  // Nothing to do (yet) here
-end;
-
-function TGPIO.GetPinMode(const Pin: TPinIdentifier): TPinMode;
-var
-  GPIO,Bit : byte;
-begin
-  GPIO := Pin shr 4;
-  Bit := Pin and $0f;
-  case (GPIOMem[GPIO]^.MODER shr ((Bit) shl 1)) and $03 of
-    00:     Result := TPinMode.Input;
-    01:     Result := TPinMode.Output;
-    02:     Result := TPinMode(((GPIOMem[GPIO]^.AFR[Bit shr 3] shr longWord((Bit and $07) shl 2)) and $0f) +$10);
-    03:     Result := TPinMode.Analog;
-  end;
-end;
-
-procedure TGPIO.SetPinMode(const Pin: TPinIdentifier; const Value: TPinMode);
-var
-  BitMask,Bit2xMask : longWord;
-  Bit,Bit2x,Bit4x,GPIO : byte;
-begin
-  GPIO := Pin shr 4;
-  Bit := Pin and $0f;
-  Bit2x := Bit shl 1;
-  BitMask := not(1 shl Bit);
-  Bit2xMask := not(3 shl Bit2x);
-  Bit4x := Bit shl 2;
-
-  //First make sure that the GPIO Clock is enabled
-
-  RCC.AHB1ENR := RCC.AHB1ENR or longWord(1 shl GPIO);
-
-  //Now set default Mode with some sane settings
-
-  case Value of
-    TPinMode.Input     : begin
-                             //Enable Input Mode
-                             GPIOMem[GPIO]^.MODER := GPIOMem[GPIO]^.MODER and Bit2xMask;
-                             //Disable Pullup/Pulldown
-                             GPIOMem[GPIO]^.PUPDR := GPIOMem[GPIO]^.PUPDR and Bit2xMask;
-    end;
-    TPinMode.Output    : begin
-                             //Enable Output Mode
-                             GPIOMem[GPIO]^.MODER := GPIOMem[GPIO]^.MODER and Bit2xMask or longWord(%01 shl Bit2x);
-                             //Disable Pullup/Pulldown
-                             GPIOMem[GPIO]^.PUPDR := GPIOMem[GPIO]^.PUPDR and Bit2xMask;
-                             //Enable Push/Pull Mode
-                             GPIOMem[GPIO]^.OTYPER := GPIOMem[GPIO]^.OTYPER and BitMask;
-                             //Enable Fast Speed of GPIO
-                             GPIOMem[GPIO]^.OSPEEDR := GPIOMem[GPIO]^.OSPEEDR and Bit2xMask or longWord(%10 shl Bit2x);
-    end;
-
-    TPinMode.Analog    : begin
-                             //Enable Analog Mode
-                             GPIOMem[GPIO]^.MODER := GPIOMem[GPIO]^.MODER or longWord(%11 shl Bit2x);
-                             //Disable Pullup/Pulldown
-                             GPIOMem[GPIO]^.PUPDR := GPIOMem[GPIO]^.PUPDR and Bit2xMask;
-    end
-    else
-                         begin
-                             //Enable Alternate Node
-                             GPIOMem[GPIO]^.MODER := GPIOMem[GPIO]^.MODER and Bit2xMask or longWord(%10 shl Bit2x);
-                             //Disable Pullup/Pulldown
-                             GPIOMem[GPIO]^.PUPDR := GPIOMem[GPIO]^.PUPDR and Bit2xMask;
-                             //Enable Push/Pull Mode
-                             GPIOMem[GPIO]^.OTYPER := GPIOMem[GPIO]^.OTYPER and BitMask;
-                             //Enable Fast Speed of GPIO
-                             GPIOMem[GPIO]^.OSPEEDR := GPIOMem[GPIO]^.OSPEEDR and Bit2xMask or longWord(%10 shl Bit2x);
-
-                             GPIOMem[GPIO]^.AFR[Bit4x shr 5] := GPIOMem[GPIO]^.AFR[Bit4x shr 5] and (not (%1111 shl (Bit4x and $1f)))
-                                     or ((longWord(Value) and $0f) shl (Bit4x and $1f));
-
-    end;
-  end;
-end;
-
-function TGPIO.GetPinValue(const Pin: TPinIdentifier): TPinValue; inline;
-begin
-  if GPIOMem[Pin shr 4]^.IDR and (1 shl (Pin and $0f)) <> 0 then
-    Result := 1
-  else
-    Result := 0;
-end;
-
-procedure TGPIO.SetPinValue(const Pin: TPinIdentifier; const Value: TPinValue); inline;
-begin
-  if Value = 1 then
-    GPIOMem[Pin shr 4]^.BSRR := 1 shl (Pin and $0f)
-  else
-    GPIOMem[Pin shr 4]^.BSRR := $10000 shl (Pin and $0f);
-end;
-
-function TGPIO.GetPinLevel(const Pin: TPinIdentifier): TPinLevel; inline;
-begin
-  if GPIOMem[Pin shr 4]^.IDR and (1 shl (Pin and $0f)) <> 0 then
-    Result := TPinLevel.High
-  else
-    Result := TPinLevel.Low;
-end;
-
-procedure TGPIO.SetPinLevel(const Pin: TPinIdentifier; const Level: TPinLevel); inline;
-begin
-  if Level = TPinLevel.High then
-    GPIOMem[Pin shr 4]^.BSRR := 1 shl (Pin and $0f)
-  else
-    GPIOMem[Pin shr 4]^.BSRR := $10000 shl (Pin and $0f);
-end;
-
-procedure TGPIO.SetPinLevelHigh(const Pin: TPinIdentifier); inline;
-begin
-  GPIOMem[Pin shr 4]^.BSRR := 1 shl (Pin and $0f)
-end;
-
-procedure TGPIO.SetPinLevelLow(const Pin: TPinIdentifier); inline;
-begin
-  GPIOMem[Pin shr 4]^.BSRR := $10000 shl (Pin and $0f);
-end;
-
-procedure TGPIO.TogglePinValue(const Pin: TPinIdentifier); inline;
-begin
-  if GPIOMem[Pin shr 4]^.ODR and (1 shl (Pin and $0f)) = 0 then
-    GPIOMem[Pin shr 4]^.BSRR := 1 shl (Pin and $0f)
-  else
-    GPIOMem[Pin shr 4]^.BSRR := $10000 shl (Pin and $0f);
-end;
-
-procedure TGPIO.TogglePinLevel(const Pin: TPinIdentifier); inline;
-begin
-  if GPIOMem[Pin shr 4]^.ODR and (1 shl (Pin and $0f)) = 0 then
-    GPIOMem[Pin shr 4]^.BSRR := 1 shl (Pin and $0f)
-  else
-    GPIOMem[Pin shr 4]^.BSRR := $10000 shl (Pin and $0f);
-end;
-
-function TGPIO.GetPinDrive(const Pin: TPinIdentifier): TPinDrive;
-begin
-  case (GPIOMem[Pin shr 4]^.PUPDR shr ((Pin and $0f) shl 1)) and $03 of
-    00: Result := TPinDrive.None;
-    01: Result := TPinDrive.PullUp;
-    02: Result := TPinDrive.PullDown;
-  end;
-end;
-
-procedure TGPIO.SetPinDrive(const Pin: TPinIdentifier; const Value: TPinDrive);
-var
-  Bit2x,GPIO : byte;
-begin
-  Bit2x := ((Pin and $0f) shl 1);
-  GPIO := Pin shr 4;
-  case Value of
-    TPinDrive.None : GPIOMem[GPIO]^.PUPDR := GPIOMem[GPIO]^.PUPDR and (not (3 shl Bit2x));
-    TPinDrive.PullUp : GPIOMem[GPIO]^.PUPDR := GPIOMem[GPIO]^.PUPDR and (not (3 shl Bit2x)) or longWord(%01 shl Bit2x);
-    TPinDrive.PullDown : GPIOMem[GPIO]^.PUPDR := GPIOMem[GPIO]^.PUPDR and (not (3 shl Bit2x)) or longWord(%10 shl Bit2x);
-  end;
-end;
-
-function TGPIO.GetPinOutputMode(const Pin: TPinIdentifier): TPinOutputMode;
-var
-  GPIO : byte;
-begin
-  GPIO := Pin shr 4;
-  Result := TPinOutputMode(GPIOMem[GPIO]^.OTYPER and (%1 shl (Pin and $0f)));
-end;
-
-procedure TGPIO.SetPinOutputMode(const Pin: TPinIdentifier; const Value: TPinOutputMode);
-var
-  GPIO : byte;
-begin
-  GPIO := Pin shr 4;
-  if value = TPinOutputMode.OpenDrain then
-    GPIOMem[GPIO]^.OTYPER := GPIOMem[GPIO]^.OTYPER or longWord(%1 shl (Pin and $0f))
-  else
-    GPIOMem[GPIO]^.OTYPER := GPIOMem[GPIO]^.OTYPER and (not longWord(%1 shl (Pin and $0f)));
-end;
-
-function TGPIO.GetPinOutputSpeed(const Pin: TPinIdentifier): TPinOutputSpeed;
-begin
-  Result := TPinOutputSpeed((GPIOMem[Pin shr 4]^.OSPEEDR shr ((Pin and $0f) shl 1)) and $03)
-end;
-
-procedure TGPIO.SetPinOutputSpeed(const Pin: TPinIdentifier; const Value: TPinOutputSpeed);
-var
-  Bit2x,GPIO : byte;
-begin
-  Bit2x := ((Pin and $0f) shl 1);
-  GPIO := Pin shr 4;
-  GPIOMem[GPIO]^.OSPEEDR := GPIOMem[GPIO]^.OSPEEDR and (not (3 shl Bit2x)) or longWord(longWord(Value) shl Bit2x);
-end;
+{$I MBF.STM32.GPIO.inc}
 
 end.

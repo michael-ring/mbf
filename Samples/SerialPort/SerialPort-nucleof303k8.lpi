@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CONFIG>
   <ProjectOptions>
+    <Version Value="12"/>
     <General>
       <UseAppBundle Value="False"/>
     </General>
@@ -17,6 +18,7 @@
     </Units>
   </ProjectOptions>
   <CompilerOptions>
+    <Version Value="11"/>
     <Target>
       <Filename Value="SerialPort"/>
     </Target>
@@ -26,8 +28,9 @@
       <UnitOutputDirectory Value="lib/$(TargetCPU)-$(TargetOS)"/>
     </SearchPaths>
     <CodeGeneration>
-      <HeapSize Value="8192"/>
-      <StackSize Value="8192"/>
+      <!--HeapSize Value="8192"/-->
+      <!--StackSize Value="8192"/-->
+      <TargetProcessor Value="ARMV7EM"/>
       <TargetCPU Value="arm"/>
       <TargetOS Value="embedded"/>
     </CodeGeneration>
@@ -39,10 +42,14 @@
       </Debugging>
     </Linking>
     <Other>
-      <CustomOptions Value="-Cparmv7em
--XParm-none-eabi-
+      <CustomOptions Value="
 -Wpnucleof303k8
 -dnucleof303k8
+-godwarfsets
+-godwarfcpp
+
+
+
       "/>
     </Other>
   </CompilerOptions>

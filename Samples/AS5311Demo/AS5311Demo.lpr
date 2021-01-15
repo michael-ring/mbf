@@ -19,8 +19,7 @@ uses
   MBF.__CONTROLLERTYPE__.SystemCore,
   MBF.__CONTROLLERTYPE__.GPIO,
   MBF.__CONTROLLERTYPE__.UART,
-  MBF.TypeHelpers,
-  HeapMgr;
+  MBF.TypeHelpers;
 
 type
   TAS5311Data = record

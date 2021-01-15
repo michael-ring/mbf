@@ -13,6 +13,15 @@ unit MBF.STM32F1.CRC;
   warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the FPC modified GNU Library General Public
   License for more details.
 }
+{
+  Related Reference Manuals
+
+  STM32F100xx advanced ARM
+  http://www.st.com/resource/en/reference_manual/CD00246267.pdf
+
+  STM32F101xx, STM32F102xx, STM32F103xx, STM32F105xx and STM32F107xx advanced Arm
+  http://www.st.com/resource/en/reference_manual/CD00171190.pdf
+}
 
 // Code based on description and testdata available from
 // http://www.sunshine2k.de/coding/javascript/crc/crc_js.html

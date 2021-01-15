@@ -1,0 +1,23 @@
+### TCodeToolManager.HandleException: [20170422130152] "include file not found "MBF.Config.inc"" at Line=16 Col=11 in "/Users/ring/devel/mbf/Samples/US2066Demo/US2066Demo.lpr"
+### TCodeToolManager.HandleException: [20170422130205] "include file not found "MBF.Config.inc"" at Line=16 Col=11 in "/Users/ring/devel/mbf/Samples/US2066Demo/US2066Demo.lpr"
+Hint: (11030) Start of reading config file /etc/fpc.cfg
+Hint: (11031) End of reading config file /etc/fpc.cfg
+Free Pascal Compiler version 3.3.1 [2019/09/16] for arm
+Copyright (c) 1993-2019 by Florian Klaempfl and others
+(1002) Target OS: Embedded
+(3104) Compiling US2066Demo.lpr
+(3104) Compiling /Users/ring/devel/mbf/Source/MBF.STM32L4.SystemCore.pas
+/Users/ring/devel/mbf/Source/MBF.ARM.SystemCore.inc(163,3) Note: (5027) Local variable "TickDiff" is assigned but never used
+/Users/ring/devel/mbf/Source/MBF.STM32L4.SystemCore.pas(263,56) Hint: (4035) Mixing signed expressions and longwords gives a 64bit result
+/Users/ring/devel/mbf/Source/MBF.STM32L4.SystemCore.pas(263,56) Hint: (4081) Converting the operands to "Int64" before doing the multiply could prevent overflow errors.
+/Users/ring/devel/mbf/Source/MBF.STM32L4.SystemCore.pas(263,56) Hint: (4079) Converting the operands to "Int64" before doing the add could prevent overflow errors.
+/Users/ring/devel/mbf/Source/MBF.STM32L4.SystemCore.pas(342,3) Warning: (6060) Case statement does not handle all possible cases
+(9009) Assembling mbf.stm32l4.systemcore
+(3104) Compiling /Users/ring/devel/mbf/Source/MBF.STM32L4.GPIO.pas
+(9009) Assembling mbf.stm32l4.gpio
+/Users/ring/devel/mbf/Samples/US2066Demo/US2066Demo.lpr(167,28) Error: (5038) Identifier idents no member "D14"
+/Users/ring/devel/mbf/Samples/US2066Demo/US2066Demo.lpr(167,28) Fatal: (2003) Syntax error, "]" expected but "identifier D14" found
+Fatal: (1018) Compilation aborted
+Error: /usr/local/bin/ppcarm returned an error exitcode
+Error: (lazarus) Compile Project, OS: embedded, CPU: arm, Target: US2066Demo: stopped with exit code 1
+Error: (lazbuild) failed compiling of project /Users/ring/devel/mbf/Samples/US2066Demo/US2066Demo-nucleol432kc.lpi

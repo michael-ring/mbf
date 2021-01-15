@@ -23,7 +23,8 @@ interface
 uses
   MBF.SAMCD.Helpers,
   MBF.SAMCD.GPIO,
-  MBF.SAMCD.SerCom;
+  MBF.SAMCD.SerCom,
+  MBF.SAMCD.SystemCore;
 
 //We do not implement 9 Bits support in this code
 {$undef has_spi_implementation_9bits}
@@ -32,7 +33,7 @@ uses
 {$include MBF.SAMCD.SPI.inc}
 const
   DefaultSPIBaudrate=100000;
-  DefaultSPITimeout=10000;
+  DefaultSPITimeOut=10000;
 
 type
   TSPIMode = (
@@ -71,8 +72,8 @@ type
     {$if defined(has_spi_implementation_9bits) }
     function ReadSingleWord:word;
     {$endif}
-    function GetBaudrate: Cardinal;
-    procedure SetBaudrate(const aBaudrate: Cardinal);
+    function GetBaudrate: longWord;
+    procedure SetBaudrate(const aBaudrate: longWord);
     function  GetBitsPerWord: TSPIBitsPerWord;
     procedure SetBitsPerWord(const aBitsPerWord: TSPIBitsPerWord);
     function  GetMode: TSPIMode;
@@ -97,24 +98,24 @@ type
     function Disable:boolean;
     procedure Enable;
 
-    function ReadByte(var aReadByte: byte; const Timeout : longWord=0; const SoftNSSPin : TPinIdentifier = TNativePin.None):boolean;
-    function ReadByte(var aReadBuffer: array of byte; aReadCount : integer=-1; const Timeout : longWord=0; const SoftNSSPin : TPinIdentifier = TNativePin.None):boolean;
-    function ReadWord(var aReadWord: word; const Timeout : longWord=0; const SoftNSSPin : TPinIdentifier = TNativePin.None):boolean;
-    function ReadWord(var aReadBuffer: array of word; aReadCount : integer=-1; const Timeout : longWord=0; const SoftNSSPin : TPinIdentifier = TNativePin.None):boolean;
+    function ReadByte(var aReadByte: byte; const TimeOut: TMilliSeconds=0; const SoftNSSPin : TPinIdentifier = TNativePin.None):boolean;
+    function ReadByte(var aReadBuffer: array of byte; aReadCount : integer=-1; const TimeOut: TMilliSeconds=0; const SoftNSSPin : TPinIdentifier = TNativePin.None):boolean;
+    function ReadWord(var aReadWord: word; const TimeOut: TMilliSeconds=0; const SoftNSSPin : TPinIdentifier = TNativePin.None):boolean;
+    function ReadWord(var aReadBuffer: array of word; aReadCount : integer=-1; const TimeOut: TMilliSeconds=0; const SoftNSSPin : TPinIdentifier = TNativePin.None):boolean;
 
-    function WriteBuffer(const aWriteBuffer: pointer; aWriteCount : integer; const Timeout : longWord=0; const SoftNSSPin : TPinIdentifier = TNativePin.None) : boolean;
+    function WriteBuffer(const aWriteBuffer: pointer; aWriteCount : integer; const TimeOut: TMilliSeconds=0; const SoftNSSPin : TPinIdentifier = TNativePin.None) : boolean;
 
-    function WriteByte(const aWriteByte: byte; const Timeout : longWord=0; const SoftNSSPin : TPinIdentifier = TNativePin.None) : boolean;
-    function WriteByte(const aWriteBuffer: array of byte; aWriteCount : integer=-1; const Timeout : longWord=0; const SoftNSSPin : TPinIdentifier = TNativePin.None) : boolean;
-    function WriteWord(const aWriteWord: word; const Timeout : longWord=0; const SoftNSSPin : TPinIdentifier = TNativePin.None) : boolean;
-    function WriteWord(const aWriteBuffer: array of word; aWriteCount : integer=-1; const Timeout : longWord=0; const SoftNSSPin : TPinIdentifier = TNativePin.None) : boolean;
+    function WriteByte(const aWriteByte: byte; const TimeOut: TMilliSeconds=0; const SoftNSSPin : TPinIdentifier = TNativePin.None) : boolean;
+    function WriteByte(const aWriteBuffer: array of byte; aWriteCount : integer=-1; const TimeOut: TMilliSeconds=0; const SoftNSSPin : TPinIdentifier = TNativePin.None) : boolean;
+    function WriteWord(const aWriteWord: word; const TimeOut: TMilliSeconds=0; const SoftNSSPin : TPinIdentifier = TNativePin.None) : boolean;
+    function WriteWord(const aWriteBuffer: array of word; aWriteCount : integer=-1; const TimeOut: TMilliSeconds=0; const SoftNSSPin : TPinIdentifier = TNativePin.None) : boolean;
 
-    function TransferByte(const aWriteByte : byte; var aReadByte : byte; const Timeout : longWord=0; const SoftNSSPin : TPinIdentifier = TNativePin.None) : boolean;
-    function TransferByte(const aWriteBuffer: array of byte; var aReadBuffer : array of byte; aTransferCount : integer=-1; const Timeout : longWord=0; const SoftNSSPin : TPinIdentifier = TNativePin.None) : boolean;
-    function TransferWord(const aWriteWord: word; var aReadWord : word; const Timeout : longWord=0; const SoftNSSPin : TPinIdentifier = TNativePin.None) : boolean;
-    function TransferWord(const aWriteBuffer: array of word; var aReadBuffer : array of word; aTransferCount : integer=-1; const Timeout : longWord=0; const SoftNSSPin : TPinIdentifier = TNativePin.None) : boolean;
+    function TransferByte(const aWriteByte : byte; var aReadByte : byte; const TimeOut: TMilliSeconds=0; const SoftNSSPin : TPinIdentifier = TNativePin.None) : boolean;
+    function TransferByte(const aWriteBuffer: array of byte; var aReadBuffer : array of byte; aTransferCount : integer=-1; const TimeOut: TMilliSeconds=0; const SoftNSSPin : TPinIdentifier = TNativePin.None) : boolean;
+    function TransferWord(const aWriteWord: word; var aReadWord : word; const TimeOut: TMilliSeconds=0; const SoftNSSPin : TPinIdentifier = TNativePin.None) : boolean;
+    function TransferWord(const aWriteBuffer: array of word; var aReadBuffer : array of word; aTransferCount : integer=-1; const TimeOut: TMilliSeconds=0; const SoftNSSPin : TPinIdentifier = TNativePin.None) : boolean;
 
-    property Baudrate : Cardinal read getBaudrate write setBaudrate;
+    property Baudrate : longWord read getBaudrate write setBaudrate;
     property Mode : TSPIMode read getMode write setMode;
     {$if defined(has_spi_implementation_9bits) }
     property BitsPerWord : TSPIBitsPerWord read getBitsPerWord write setBitsPerWord;
@@ -148,8 +149,7 @@ var
 implementation
 
 uses
-  MBF.BitHelpers,
-  MBF.SAMCD.SystemCore;
+  MBF.BitHelpers;
 
 var
   NSSPins : array[0..6] of TPinIdentifier;
@@ -378,12 +378,12 @@ begin
     enable;
 end;
 
-function TSPIRegistersHelper.GetBaudrate: Cardinal;
+function TSPIRegistersHelper.GetBaudrate: longWord;
 begin
   Result := SystemCore.CPUFrequency div (2*(BAUD+1));
 end;
 
-procedure TSPIRegistersHelper.SetBaudrate(const aBaudrate: Cardinal);
+procedure TSPIRegistersHelper.SetBaudrate(const aBaudrate: longWord);
 var
   WasEnabled : boolean;
 begin
@@ -403,7 +403,7 @@ var
   WasEnabled : boolean;
 begin
   WasEnabled := Disable;
-  SetBitsMasked(CTRLB,longWord(aBitsPerWord),%111,0);
+  SetBitsMasked(CTRLB,longWord(aBitsPerWord),%111 shl 0,0);
   if WasEnabled then
     enable;
 end;
@@ -456,7 +456,7 @@ begin
 end;
 {$endif}
 
-function TSPIRegistersHelper.WriteBuffer(const aWriteBuffer: pointer; aWriteCount : integer; const Timeout : longWord=0; const SoftNSSPin : TPinIdentifier = TNativePin.None) : boolean;
+function TSPIRegistersHelper.WriteBuffer(const aWriteBuffer: pointer; aWriteCount : integer; const TimeOut: TMilliSeconds=0; const SoftNSSPin : TPinIdentifier = TNativePin.None) : boolean;
 var
   i : longWord;
   EndTime : longWord;
@@ -467,8 +467,8 @@ begin
   if (NOT Assigned(aWriteBuffer)) then exit(false);
 
   //Default timeout is 10 Seconds
-  if Timeout = 0 then
-    EndTime := SystemCore.GetTickCount + DefaultSPITimeout
+  if TimeOut = 0 then
+    EndTime := SystemCore.GetTickCount + DefaultSPITimeOut
   else
     EndTime := SystemCore.GetTickCount + TimeOut;
 
@@ -503,15 +503,15 @@ begin
 end;
 
 
-function TSPIRegistersHelper.WriteByte(const aWriteByte: byte; const Timeout : longWord=0; const SoftNSSPin : TPinIdentifier = TNativePin.None) : boolean;
+function TSPIRegistersHelper.WriteByte(const aWriteByte: byte; const TimeOut: TMilliSeconds=0; const SoftNSSPin : TPinIdentifier = TNativePin.None) : boolean;
 var
   Dummy : byte;
   EndTime : longWord;
 begin
   Result := true;
   //Default timeout is 10 Seconds
-  if Timeout = 0 then
-    EndTime := SystemCore.GetTickCount + DefaultSPITimeout
+  if TimeOut = 0 then
+    EndTime := SystemCore.GetTickCount + DefaultSPITimeOut
   else
     EndTime := SystemCore.GetTickCount + TimeOut;
 
@@ -543,7 +543,7 @@ begin
   Disable;
 end;
 
-function TSPIRegistersHelper.WriteByte(const aWriteBuffer: array of byte; aWriteCount : integer=-1; const Timeout : longWord=0; const SoftNSSPin : TPinIdentifier = TNativePin.None) : boolean;
+function TSPIRegistersHelper.WriteByte(const aWriteBuffer: array of byte; aWriteCount : integer=-1; const TimeOut: TMilliSeconds=0; const SoftNSSPin : TPinIdentifier = TNativePin.None) : boolean;
 var
   Dummy : byte;
   i : longWord;
@@ -551,8 +551,8 @@ var
 begin
   Result := true;
   //Default timeout is 10 Seconds
-  if Timeout = 0 then
-    EndTime := SystemCore.GetTickCount + DefaultSPITimeout
+  if TimeOut = 0 then
+    EndTime := SystemCore.GetTickCount + DefaultSPITimeOut
   else
     EndTime := SystemCore.GetTickCount + TimeOut;
 
@@ -588,15 +588,15 @@ begin
   Disable;
 end;
 
-function TSPIRegistersHelper.WriteWord(const aWriteWord: word; const Timeout : longWord=0; const SoftNSSPin : TPinIdentifier = TNativePin.None) : boolean;
+function TSPIRegistersHelper.WriteWord(const aWriteWord: word; const TimeOut: TMilliSeconds=0; const SoftNSSPin : TPinIdentifier = TNativePin.None) : boolean;
 var
   Dummy : byte;
   EndTime : longWord;
 begin
   Result := true;
   //Default timeout is 10 Seconds
-  if Timeout = 0 then
-    EndTime := SystemCore.GetTickCount + DefaultSPITimeout
+  if TimeOut = 0 then
+    EndTime := SystemCore.GetTickCount + DefaultSPITimeOut
   else
     EndTime := SystemCore.GetTickCount + TimeOut;
 
@@ -635,7 +635,7 @@ begin
   Disable;
 end;
 
-function TSPIRegistersHelper.WriteWord(const aWriteBuffer: array of Word; aWriteCount : integer=-1; const Timeout : longWord=0; const SoftNSSPin : TPinIdentifier = TNativePin.None) : boolean;
+function TSPIRegistersHelper.WriteWord(const aWriteBuffer: array of Word; aWriteCount : integer=-1; const TimeOut: TMilliSeconds=0; const SoftNSSPin : TPinIdentifier = TNativePin.None) : boolean;
 var
   Dummy : byte;
   i : longWord;
@@ -643,8 +643,8 @@ var
 begin
   Result := true;
   //Default timeout is 10 Seconds
-  if Timeout = 0 then
-    EndTime := SystemCore.GetTickCount + DefaultSPITimeout
+  if TimeOut = 0 then
+    EndTime := SystemCore.GetTickCount + DefaultSPITimeOut
   else
     EndTime := SystemCore.GetTickCount + TimeOut;
 
@@ -689,15 +689,15 @@ begin
   Disable;
 end;
 
-function TSPIRegistersHelper.TransferByte(const aWriteByte : byte; var aReadByte : byte; const Timeout : Cardinal=0; const SoftNSSPin : TPinIdentifier = TNativePin.None) : boolean;
+function TSPIRegistersHelper.TransferByte(const aWriteByte : byte; var aReadByte : byte; const TimeOut: TMilliSeconds=0; const SoftNSSPin : TPinIdentifier = TNativePin.None) : boolean;
 var
   Dummy : byte;
   EndTime : longWord;
 begin
   Result := true;
   //Default timeout is 10 Seconds
-  if Timeout = 0 then
-    EndTime := SystemCore.GetTickCount + DefaultSPITimeout
+  if TimeOut = 0 then
+    EndTime := SystemCore.GetTickCount + DefaultSPITimeOut
   else
     EndTime := SystemCore.GetTickCount + TimeOut;
 
@@ -729,7 +729,7 @@ begin
   Disable;
 end;
 
-function TSPIRegistersHelper.TransferByte(const aWriteBuffer: array of byte; var aReadBuffer : array of byte; aTransferCount : integer=-1; const Timeout : Cardinal=0; const SoftNSSPin : TPinIdentifier = TNativePin.None) : boolean;
+function TSPIRegistersHelper.TransferByte(const aWriteBuffer: array of byte; var aReadBuffer : array of byte; aTransferCount : integer=-1; const TimeOut: TMilliSeconds=0; const SoftNSSPin : TPinIdentifier = TNativePin.None) : boolean;
 var
   Dummy : byte;
   i : longWord;
@@ -737,8 +737,8 @@ var
 begin
   Result := true;
   //Default timeout is 10 Seconds
-  if Timeout = 0 then
-    EndTime := SystemCore.GetTickCount + DefaultSPITimeout
+  if TimeOut = 0 then
+    EndTime := SystemCore.GetTickCount + DefaultSPITimeOut
   else
     EndTime := SystemCore.GetTickCount + TimeOut;
 
@@ -785,15 +785,15 @@ begin
   Disable;
 end;
 
-function TSPIRegistersHelper.TransferWord(const aWriteWord: word; var aReadWord : word; const Timeout : Cardinal=0; const SoftNSSPin : TPinIdentifier = TNativePin.None) : boolean;
+function TSPIRegistersHelper.TransferWord(const aWriteWord: word; var aReadWord : word; const TimeOut: TMilliSeconds=0; const SoftNSSPin : TPinIdentifier = TNativePin.None) : boolean;
 var
   Dummy : byte;
   EndTime : longWord;
 begin
   Result := true;
   //Default timeout is 10 Seconds
-  if Timeout = 0 then
-    EndTime := SystemCore.GetTickCount + DefaultSPITimeout
+  if TimeOut = 0 then
+    EndTime := SystemCore.GetTickCount + DefaultSPITimeOut
   else
     EndTime := SystemCore.GetTickCount + TimeOut;
 
@@ -848,7 +848,7 @@ begin
   Disable;
 end;
 
-function TSPIRegistersHelper.TransferWord(const aWriteBuffer: array of word; var aReadBuffer : array of word; aTransferCount : integer=-1; const Timeout : Cardinal=0; const SoftNSSPin : TPinIdentifier = TNativePin.None) : boolean;
+function TSPIRegistersHelper.TransferWord(const aWriteBuffer: array of word; var aReadBuffer : array of word; aTransferCount : integer=-1; const TimeOut: TMilliSeconds=0; const SoftNSSPin : TPinIdentifier = TNativePin.None) : boolean;
 var
   Dummy : byte;
   i : longWord;
@@ -856,8 +856,8 @@ var
 begin
   Result := true;
   //Default timeout is 10 Seconds
-  if Timeout = 0 then
-    EndTime := SystemCore.GetTickCount + DefaultSPITimeout
+  if TimeOut = 0 then
+    EndTime := SystemCore.GetTickCount + DefaultSPITimeOut
   else
     EndTime := SystemCore.GetTickCount + TimeOut;
 
@@ -922,22 +922,22 @@ begin
 end;
 
 
-function TSPIRegistersHelper.ReadByte(var aReadByte: byte; const Timeout : Cardinal=0; const SoftNSSPin : TPinIdentifier = TNativePin.None):boolean;
+function TSPIRegistersHelper.ReadByte(var aReadByte: byte; const TimeOut: TMilliSeconds=0; const SoftNSSPin : TPinIdentifier = TNativePin.None):boolean;
 begin
   //TODO
 end;
 
-function TSPIRegistersHelper.ReadWord(var aReadWord: word; const Timeout : Cardinal=0; const SoftNSSPin : TPinIdentifier = TNativePin.None):boolean;
+function TSPIRegistersHelper.ReadWord(var aReadWord: word; const TimeOut: TMilliSeconds=0; const SoftNSSPin : TPinIdentifier = TNativePin.None):boolean;
 begin
   //TODO
 end;
 
-function TSPIRegistersHelper.ReadByte(var aReadBuffer: array of byte; aReadCount : integer=-1; const Timeout : Cardinal=0; const SoftNSSPin : TPinIdentifier = TNativePin.None):boolean;
+function TSPIRegistersHelper.ReadByte(var aReadBuffer: array of byte; aReadCount : integer=-1; const TimeOut: TMilliSeconds=0; const SoftNSSPin : TPinIdentifier = TNativePin.None):boolean;
 begin
   //TODO
 end;
 
-function TSPIRegistersHelper.ReadWord(var aReadBuffer: array of word; aReadCount : integer=-1; const Timeout : Cardinal=0; const SoftNSSPin : TPinIdentifier = TNativePin.None):boolean;
+function TSPIRegistersHelper.ReadWord(var aReadBuffer: array of word; aReadCount : integer=-1; const TimeOut: TMilliSeconds=0; const SoftNSSPin : TPinIdentifier = TNativePin.None):boolean;
 begin
   //TODO
 end;

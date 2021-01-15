@@ -1,0 +1,46 @@
+### TCodeToolManager.HandleException: [20170422130152] "include file not found "MBF.Config.inc"" at Line=16 Col=11 in "/Users/ring/devel/mbf/Tests/uartmethods/uartmethods.lpr"
+### TCodeToolManager.HandleException: [20170422130205] "include file not found "MBF.Config.inc"" at Line=16 Col=11 in "/Users/ring/devel/mbf/Tests/uartmethods/uartmethods.lpr"
+Hint: (lazarus) [RunTool] "/usr/local/bin/fpc" "-iWTOTP" "-Parm" "-Tembedded"
+Hint: (lazarus) [RunTool] "/usr/local/bin/fpc" "-va" "compilertest.pas" "-Parm" "-Tembedded"
+Hint: (11030) Start of reading config file /etc/fpc.cfg
+Hint: (11031) End of reading config file /etc/fpc.cfg
+Free Pascal Compiler version 3.3.1 [2019/10/19] for arm
+Copyright (c) 1993-2019 by Florian Klaempfl and others
+(1002) Target OS: Embedded
+(3104) Compiling uartmethods.lpr
+(3104) Compiling /Users/ring/devel/mbf/Source/MBF.STM32L4.SystemCore.pas
+/Users/ring/devel/mbf/Source/MBF.STM32L4.SystemCore.pas(263,56) Hint: (4035) Mixing signed expressions and longwords gives a 64bit result
+/Users/ring/devel/mbf/Source/MBF.STM32L4.SystemCore.pas(263,56) Hint: (4081) Converting the operands to "Int64" before doing the multiply could prevent overflow errors.
+/Users/ring/devel/mbf/Source/MBF.STM32L4.SystemCore.pas(263,56) Hint: (4079) Converting the operands to "Int64" before doing the add could prevent overflow errors.
+/Users/ring/devel/mbf/Source/MBF.STM32L4.SystemCore.pas(342,3) Warning: (6060) Case statement does not handle all possible cases
+(9009) Assembling mbf.stm32l4.systemcore
+(3104) Compiling /Users/ring/devel/mbf/Source/MBF.STM32L4.GPIO.pas
+(9009) Assembling mbf.stm32l4.gpio
+(3104) Compiling /Users/ring/devel/mbf/Source/MBF.STM32L4.UART.pas
+/Users/ring/devel/mbf/Source/MBF.STM32L4.UART.pas(38,53) Note: (3031) Values in enumeration types have to be ascending
+/Users/ring/devel/mbf/Source/MBF.STM32L4.UART.pas(62,53) Note: (3031) Values in enumeration types have to be ascending
+(3104) Compiling /Users/ring/devel/mbf/Source/MBF.BitHelpers.pas
+(9009) Assembling mbf.bithelpers
+/Users/ring/devel/mbf/Source/MBF.STM32L4.UART.pas(174,8) Hint: (4055) Conversion between ordinals and pointers is not portable
+/Users/ring/devel/mbf/Source/MBF.STM32L4.UART.pas(185,8) Hint: (4055) Conversion between ordinals and pointers is not portable
+/Users/ring/devel/mbf/Source/MBF.STM32L4.UART.pas(197,8) Hint: (4055) Conversion between ordinals and pointers is not portable
+(9009) Assembling mbf.stm32l4.uart
+/Users/ring/devel/mbf/Tests/uartmethods/uartmethods.lpr(63,32) Hint: (5058) Variable "dummyByteArray" does not seem to be initialized
+/Users/ring/devel/mbf/Tests/uartmethods/uartmethods.lpr(64,38) Warning: (5037) Variable "count" does not seem to be initialized
+/Users/ring/devel/mbf/Tests/uartmethods/uartmethods.lpr(65,40) Warning: (5037) Variable "MaxLength" does not seem to be initialized
+/Users/ring/devel/mbf/Tests/uartmethods/uartmethods.lpr(65,30) Hint: (5058) Variable "dummyString" does not seem to be initialized
+/Users/ring/devel/mbf/Tests/uartmethods/uartmethods.lpr(66,40) Warning: (5037) Variable "Delimiter" does not seem to be initialized
+/Users/ring/devel/mbf/Tests/uartmethods/uartmethods.lpr(24,3) Note: (5027) Local variable "aUARTParity" is assigned but never used
+/Users/ring/devel/mbf/Tests/uartmethods/uartmethods.lpr(25,3) Note: (5027) Local variable "aUARTBitsPerWord" is assigned but never used
+/Users/ring/devel/mbf/Tests/uartmethods/uartmethods.lpr(26,3) Note: (5027) Local variable "aUARTStopBits" is assigned but never used
+/Users/ring/devel/mbf/Tests/uartmethods/uartmethods.lpr(28,3) Note: (5025) Local variable "dummyWord" not used
+/Users/ring/devel/mbf/Tests/uartmethods/uartmethods.lpr(31,3) Note: (5025) Local variable "dummyWordArray" not used
+/Users/ring/devel/mbf/Tests/uartmethods/uartmethods.lpr(32,3) Note: (5027) Local variable "WasEnabled" is assigned but never used
+/Users/ring/devel/mbf/Tests/uartmethods/uartmethods.lpr(32,14) Note: (5027) Local variable "success" is assigned but never used
+(9009) Assembling uartmethods
+(9015) Linking /Users/ring/devel/mbf/Tests/uartmethods/uartmethods
+STM32L432XX
+(1008) 90645 lines compiled, 0.3 sec, 7052 bytes code, 549 bytes data
+(1021) 4 warning(s) issued
+(1022) 10 hint(s) issued
+(1023) 9 note(s) issued

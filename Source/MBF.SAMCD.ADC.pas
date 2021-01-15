@@ -39,10 +39,10 @@ type
   private
     procedure SyncWait;
     procedure ConversionWait;
-    function GetRawValue(const Channel: TPinIdentifier): Cardinal;
+    function GetRawValue(const Channel: TPinIdentifier): longWord;
   public
     procedure Initialize;
-    property GetADCResult[const Channel: TPinIdentifier]:Cardinal read GetRawValue;
+    property GetADCResult[const Channel: TPinIdentifier]:longWord read GetRawValue;
   end;
 
 implementation
@@ -181,7 +181,7 @@ begin
   SyncWait;
 end;
 
-function TADCHelper.GetRawValue(const Channel: TPinIdentifier): Cardinal;
+function TADCHelper.GetRawValue(const Channel: TPinIdentifier): longWord;
 var
   aPin,aChannel:TADCPin;
 begin

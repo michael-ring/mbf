@@ -46,18 +46,18 @@ type
     SlowRCClockFreq = 32768;
   private
     procedure ConfigureSystem;
-    function GetBusClockFrequency: Cardinal;
-    function GetFlexbusClockFrequency: Cardinal;
-    function GetFlashClockFrequency: Cardinal;
-    function GetMCGOUTCLKFrequency: Cardinal;
-    function GetSysTickClockFrequency : Cardinal;
+    function GetBusClockFrequency: longWord;
+    function GetFlexbusClockFrequency: longWord;
+    function GetFlashClockFrequency: longWord;
+    function GetMCGOUTCLKFrequency: longWord;
+    function GetSysTickClockFrequency : longWord;
   public
     procedure Initialize;
-    function GetMaxCPUFrequency: Cardinal;
-    function GetCPUFrequency: Cardinal;
-    procedure SetCPUFrequency(const Value: Cardinal);
-    function GetSystemClockFrequency: Cardinal;
-    property CPUFrequency: Cardinal read GetCPUFrequency write SetCPUFrequency;
+    function GetMaxCPUFrequency: longWord;
+    function GetCPUFrequency: longWord;
+    procedure SetCPUFrequency(const Value: longWord);
+    function GetSystemClockFrequency: longWord;
+    property CPUFrequency: longWord read GetCPUFrequency write SetCPUFrequency;
 
   end;
 
@@ -68,27 +68,27 @@ implementation
 
 {$REGION 'TSystemCore'}
 
-function TKinetisSystemCore.GetSystemClockFrequency: Cardinal;
+function TKinetisSystemCore.GetSystemClockFrequency: longWord;
 begin
   Result := GetMCGOUTCLKFrequency div (((SIM.CLKDIV1 shr 28) and %1111) +1);
 end;
 
-function TKinetisSystemCore.GetBusClockFrequency: Cardinal;
+function TKinetisSystemCore.GetBusClockFrequency: longWord;
 begin
   Result := GetMCGOUTCLKFrequency div (((SIM.CLKDIV1 shr 24) and %1111) +1);
 end;
 
-function TKinetisSystemCore.GetFlexBusClockFrequency: Cardinal;
+function TKinetisSystemCore.GetFlexBusClockFrequency: longWord;
 begin
   Result := GetMCGOUTCLKFrequency div (((SIM.CLKDIV1 shr 20) and %1111) +1);
 end;
 
-function TKinetisSystemCore.GetFlashClockFrequency: Cardinal;
+function TKinetisSystemCore.GetFlashClockFrequency: longWord;
 begin
   Result := GetMCGOUTCLKFrequency div (((SIM.CLKDIV1 shr 16) and %1111) +1);
 end;
 
-function TKinetisSystemCore.GetMCGOUTCLKFrequency: Cardinal;
+function TKinetisSystemCore.GetMCGOUTCLKFrequency: longWord;
 var
   OSCSELCLK : longword;
   multiplier,divider : longWord;
@@ -158,7 +158,7 @@ begin
   ConfigureTimer;
 end;
 
-function TKinetisSystemCore.GetSysTickClockFrequency : Cardinal; [public, alias: 'MBF_GetSysTickClockFrequency'];
+function TKinetisSystemCore.GetSysTickClockFrequency : longWord; [public, alias: 'MBF_GetSysTickClockFrequency'];
 begin
     Result := GetSystemClockFrequency;
 end;
@@ -167,18 +167,18 @@ procedure TKinetisSystemCore.ConfigureSystem;
 begin
 end;
 
-function TKinetisSystemCore.GetCPUFrequency: Cardinal;
+function TKinetisSystemCore.GetCPUFrequency: longWord;
 begin
   //TODO, for now always take Bootup Frequency
   Result := $1400000;
 end;
 
-function TKinetisSystemCore.GetMaxCPUFrequency: Cardinal;
+function TKinetisSystemCore.GetMaxCPUFrequency: longWord;
 begin
   Result := MaxCPUFrequency;
 end;
 
-procedure TKinetisSystemCore.SetCPUFrequency(const Value: Cardinal);
+procedure TKinetisSystemCore.SetCPUFrequency(const Value: longWord);
 begin
   //TODO, for now always take Bootup Frequency
   ConfigureTimer;

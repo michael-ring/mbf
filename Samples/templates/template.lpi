@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CONFIG>
   <ProjectOptions>
+    <Version Value="12"/>
     <General>
       <UseAppBundle Value="False"/>
     </General>
@@ -17,6 +18,7 @@
     </Units>
   </ProjectOptions>
   <CompilerOptions>
+    <Version Value="11"/>
     <Target>
       <Filename Value="%%APPNAME%%"/>
     </Target>
@@ -26,8 +28,9 @@
       <UnitOutputDirectory Value="lib/$(TargetCPU)-$(TargetOS)"/>
     </SearchPaths>
     <CodeGeneration>
-      <HeapSize Value="%%HEAPSIZE%%"/>
-      <StackSize Value="%%STACKSIZE%%"/>
+      <!--HeapSize Value="%%HEAPSIZE%%"/-->
+      <!--StackSize Value="%%STACKSIZE%%"/-->
+      <TargetProcessor Value="%%SUBARCH%%"/>
       <TargetCPU Value="%%ARCH%%"/>
       <TargetOS Value="embedded"/>
     </CodeGeneration>
@@ -39,10 +42,14 @@
       </Debugging>
     </Linking>
     <Other>
-      <CustomOptions Value="-Cp%%SUBARCH%%
--XP%%BINUTILS_PATH%%
+      <CustomOptions Value="
 -Wp%%BOARD_OR_CPU%%
 -d%%BOARD_OR_CPU%%
+-godwarfsets
+-godwarfcpp
+%%EXTRACUSTOMOPTION1%%
+%%EXTRACUSTOMOPTION2%%
+%%EXTRACUSTOMOPTION3%%
       "/>
     </Other>
   </CompilerOptions>

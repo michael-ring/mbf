@@ -1,14 +1,16 @@
 #Boardname	SubArch		Chipname (JLink)	SVD File
-nucleof042k6    armv6m		stm32f072rb		STM32F0x2.svd
-nucleof103rb    armv7m		stm32f103rb		STM32F103.svd
-nucleof303k8 	armv7em		stm32f303k8		STM32F303.svd
-nucleof401re 	armv7em		stm32f401re		STM32F401.svd
-nucleol432kc    armv7em 	stm32l432kc		STM32L4x2.svd
-samc21xpro      armv6m		atsamc21j18		ATSAMC21J18A.svd
-samd10xmini     armv6m		atsamd10d14		ATSAMD10D14A.svd
-samd20xpro   	armv6m		atsamd20j18		ATSAMD20J18.svd
-samd21xpro   	armv6m		atsamd21j18		ATSAMD21J18A.svd
-arduinozero	armv6m		atsamd21g18		ATSAMD21G18A.svd
-#freedom_k22f	armv7em		mk22fn512vlh12		
-#freedom_k64f	armv7em 	mk64fn1m0vll12
-chipkitlenny	mips32r2	pic32mx270f256d
+nucleof103rb    ARMV7M		stm32f103rb		STM32F103.svd
+nucleof303k8 	ARMV7EM		stm32f303k8		STM32F303.svd
+nucleof401re 	ARMV7EM		stm32f401re		STM32F401.svd
+nucleog071rb 	ARMV7EM		stm32g071rb		STM32G07X.svd
+nucleog431kb 	ARMV7EM		stm32g474re		STM32G431.svd
+nucleog474re 	ARMV7EM		stm32g474re		STM32G474.svd
+nucleol432kc	ARMV7EM 	stm32l432kc		STM32L4x2.svd
+#samc21xpro     ARMV6M		atsamc21j18		ATSAMC21J18A.svd
+#samd10xmini    ARMV6M		atsamd10d14		ATSAMD10D14A.svd
+#samd20xpro   	ARMV6M		atsamd20j18		ATSAMD20J18.svd
+#samd21xpro   	ARMV6M		atsamd21j18		ATSAMD21J18A.svd
+#arduinozero	ARMV6M		atsamd21g18		ATSAMD21G18A.svd
+#freedom_k22f	ARMV7EM		mk22fn512vlh12		
+#freedom_k64f	ARMV7EM 	mk64fn1m0vll12
+chipkitlenny	MIPS32R2	pic32mx270f256d

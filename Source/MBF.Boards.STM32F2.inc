@@ -1,15 +1,15 @@
 {
-  This file is part of Pascal Microcontroller Board Framework (MBF)
-  Copyright (c) 2015 -  Michael Ring
-  based on Pascal eXtended Library (PXL)
+  This file is part of Micro Board Framework Library (MBF)
   Copyright (c) 2000 - 2015  Yuriy Kotsarenko
+  Copyright (c) 2015         Michael Ring
 
-  This program is free software: you can redistribute it and/or modify it under the terms of the FPC modified GNU
-  Library General Public License for more
+  This program is free software: you can redistribute it and/or modify it under the terms of the GNU Lesser General
+  Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option)
+  any later version.
 
   This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied
-  warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the FPC modified GNU Library General Public
-  License for more details.
+  warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+  details.
 }
 
 { Indicates that this config file has been processed (to avoid redeclaring or redefining of parameters in other
@@ -53,7 +53,7 @@
   {$define has_can1 } {$define has_can2 }
   {$define has_rtc }
 {$endif}
-{$if defined(STM32F205RGEx) }
+{$if defined(STM32F205RG) }
   {$define STM32F2x5 }
   {$define STM32F20xx }
   {$define EWLCSP66 }

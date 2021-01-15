@@ -1356,13 +1356,14 @@ const
 var
   BitstreamVeraSansMono6x12_RowBuffer : array[0..7] of byte;
 const
+  Charmap :string[96] = ' !"#$%&''()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~';
   BitstreamVeraSansMono6x12 : TFontInfo =
   (
     Width : 6;
     Height : 12;
     BitsPerPixel : 1;
     BytesPerChar : 12;
-    Charmap : ' !"#$%&''()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~';
+    pCharmap : @Charmap;
     pFontData : @BitstreamVeraSansMono6x12_FontData;
     pRowBuffer : @BitstreamVeraSansMono6x12_RowBuffer;
   );

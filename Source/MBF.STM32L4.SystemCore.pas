@@ -12,13 +12,29 @@ unit mbf.stm32l4.systemcore;
   warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the FPC modified GNU Library General Public
   License for more details.
 }
-{< ST Micro F0xx board series functions. }
+{
+  Related Reference Manuals
+
+  STM32L4x5 and STM32L4x6 advanced Arm
+  http://www.st.com/resource/en/reference_manual/DM00083560.pdf
+
+  STM32L4x1 advanced ARM
+  http://www.st.com/resource/en/reference_manual/DM00149427.pdf
+
+  STM32L41xxx42xxx43xxx44xxx45xxx46xxx advanced Arm
+  http://www.st.com/resource/en/reference_manual/DM00151940.pdf
+
+  STM32L4Rxxx and STM32L4Sxxx advanced Arm
+  http://www.st.com/resource/en/reference_manual/DM00310109.pdf
+}
+
 interface
 
 {$INCLUDE MBF.Config.inc}
 
-uses
-  MBF.SystemCore;
+{$DEFINE INTERFACE}
+{$INCLUDE MBF.ARM.SystemCore.inc}
+{$UNDEF INTERFACE}
 
 {$define has_hsi48}
 {$if defined(stm32l471xx) or defined(stm32l475xx)  or defined(stm32l476xx)
@@ -67,25 +83,43 @@ type
   private
     procedure ConfigureSystem;
     function GetFrequencyParameters(aHCLKFrequency : longWord;aClockType : TClockType):TOSCParameters;
-    function GetSysTickClockFrequency : Cardinal;
-    function GetHCLKFrequency : Cardinal;
+    function GetSysTickClockFrequency : longWord;
+    function GetHCLKFrequency : longWord;
   public
     procedure Initialize;
-    function GetSYSCLKFrequency: Cardinal;
-    function GetHSIClockFrequency: Cardinal;
-    function GetAPB1PeripheralClockFrequency : Cardinal;
-    function GetAPB1TimerClockFrequency : Cardinal;
-    function GetAPB2PeripheralClockFrequency : Cardinal;
-    function GetAPB2TimerClockFrequency : Cardinal;
-    procedure SetCPUFrequency(const Value: Cardinal; aClockType : TClockType = TClockType.PLLMSI4M);
-    function GetCPUFrequency : Cardinal;
-    function getMaxCPUFrequency : Cardinal;
+    function GetSYSCLKFrequency: longWord;
+    function GetHSIClockFrequency: longWord;
+    function GetAPB1PeripheralClockFrequency : longWord;
+    function GetAPB1TimerClockFrequency : longWord;
+    function GetAPB2PeripheralClockFrequency : longWord;
+    function GetAPB2TimerClockFrequency : longWord;
+    procedure SetCPUFrequency(const Value: longWord; aClockType : TClockType = TClockType.PLLMSI4M);
+    function GetCPUFrequency : longWord;
+    function getMaxCPUFrequency : longWord;
   end;
 
 var
   SystemCore : TSystemCore;
 
 implementation
+
+{$IF DEFINED(CortexM0)}
+uses
+  cortexm0;
+{$ELSEIF DEFINED(CortexM3)}
+uses
+  cortexm3;
+{$ELSEIF DEFINED(CortexM4)}
+uses
+  cortexm4;
+{$ELSEIF DEFINED(CortexM7)}
+uses
+  cortexm7;
+{$ENDIF}
+
+{$DEFINE IMPLEMENTATION}
+{$INCLUDE MBF.ARM.SystemCore.inc}
+{$UNDEF IMPLEMENTATION}
 
 {$REGION 'TSystemCore'}
 
@@ -95,17 +129,17 @@ begin
   ConfigureTimer;
 end;
 
-function TSTM32SystemCore.GetSysTickClockFrequency : Cardinal; [public, alias: 'MBF_GetSysTickClockFrequency'];
+function TSTM32SystemCore.GetSysTickClockFrequency : longWord; [public, alias: 'MBF_GetSysTickClockFrequency'];
 begin
   Result := GetHCLKFrequency;
 end;
 
-function TSTM32SystemCore.GetHSIClockFrequency : Cardinal;
+function TSTM32SystemCore.GetHSIClockFrequency : longWord;
 begin
   Result := HSIClockFrequency;
 end;
 
-function TSTM32SystemCore.GetAPB1PeripheralClockFrequency : Cardinal;
+function TSTM32SystemCore.GetAPB1PeripheralClockFrequency : longWord;
 var
   divider : byte;
 begin
@@ -116,7 +150,7 @@ begin
     Result := GetHCLKFrequency div longWord(2 shl (divider and $03));
 end;
 
-function TSTM32SystemCore.GetAPB1TimerClockFrequency : Cardinal;
+function TSTM32SystemCore.GetAPB1TimerClockFrequency : longWord;
 begin
     if ((RCC.CFGR shr 8) and $07) < 4 then
       Result := GetAPB1PeripheralClockFrequency
@@ -124,7 +158,7 @@ begin
       Result := GetAPB1PeripheralClockFrequency shl 1;
 end;
 
-function TSTM32SystemCore.GetAPB2PeripheralClockFrequency : Cardinal;
+function TSTM32SystemCore.GetAPB2PeripheralClockFrequency : longWord;
 var
   divider : byte;
 begin
@@ -135,7 +169,7 @@ begin
     Result := GetHCLKFrequency div longWord(2 shl (divider and $03));
 end;
 
-function TSTM32SystemCore.GetAPB2TimerClockFrequency : Cardinal;
+function TSTM32SystemCore.GetAPB2TimerClockFrequency : longWord;
 begin
     if ((RCC.CFGR shr 11) and $07) < 4 then
       Result := GetAPB1PeripheralClockFrequency
@@ -304,7 +338,7 @@ begin
   end;
 end;
 
-procedure TSTM32SystemCore.SetCPUFrequency(const Value: Cardinal; aClockType : TClockType = TClockType.PLLMSI4M);
+procedure TSTM32SystemCore.SetCPUFrequency(const Value: longWord; aClockType : TClockType = TClockType.PLLMSI4M);
 var
   dummy : longWord;
   Params : TOscParameters;

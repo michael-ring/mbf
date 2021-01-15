@@ -12,6 +12,26 @@ unit MBF.STM32F3.I2C;
   warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the FPC modified GNU Library General Public
   License for more details.
 }
+{
+  Related Reference Manuals
+
+  STM32F37xxx advanced Arm
+  http://www.st.com/resource/en/reference_manual/DM00041563.pdf
+
+  STM32F303xBCDE, STM32F303x68, STM32F328x8, STM32F358xC, STM32F398xE advanced ARM
+  http://www.st.com/resource/en/reference_manual/DM00043574.pdf
+
+  STM32F334xx advanced Arm
+  http://www.st.com/resource/en/reference_manual/DM00093941.pdf
+
+  STM32F302xBCDE and STM32F302x68 advanced ARM
+  http://www.st.com/resource/en/reference_manual/DM00094349.pdf
+
+  STM32F301x68 and STM32F318x8 advanced ARM
+  http://www.st.com/resource/en/reference_manual/DM00094350.pdf
+}
+
+
 interface
 {$INCLUDE MBF.Config.inc}
 
@@ -19,30 +39,32 @@ uses
   MBF.STM32F3.GPIO;
 
 {$REGION PinDefinitions}
-type
+
   TI2CSDAPins = (
-    {$if defined(has_I2C3) and defined(has_gpioc) }   PC9_I2C3 = ALT3 or TNativePin.PC9  {$endif}
-    {$if defined(has_I2C3) and defined(has_gpioc) },                                     {$endif}
-    {$if defined(has_I2C2) and defined(has_gpioa) }  PA10_I2C2 = ALT4 or TNativePin.PA10 {$endif}
-    {$if defined(has_I2C2) and defined(has_gpioa) },                                     {$endif}
-    {$if defined(has_I2C1) and defined(has_gpioa) }  PA14_I2C1 = ALT4 or TNativePin.PA14 {$endif}
-    {$if defined(has_I2C1) and defined(has_gpiob) },  PB7_I2C1 = ALT4 or TNativePin.PB7  {$endif}
-    {$if defined(has_I2C1) and defined(has_gpiob) },  PB9_I2C1 = ALT4 or TNativePin.PB9  {$endif}
-    {$if defined(has_I2C2) and defined(has_gpiof) },  PF0_I2C2 = ALT4 or TNativePin.PF0  {$endif}
-    {$if defined(has_I2C2) and defined(has_gpiof) },  PF7_I2C2 = ALT4 or TNativePin.PF7  {$endif}
-    {$if defined(has_I2C3) and defined(has_gpiob) },  PB5_I2C3 = ALT8 or TNativePin.PB5  {$endif}
+    NONE_I2C = TNativePin.None
+    {$if defined(has_I2C3) and defined(has_gpioc)}, PC9_I2C3 = ALT3 or TNativePin.PC9 {$endif}
+    {$if defined(has_I2C2) and defined(has_gpioa)}, PA10_I2C2 = ALT4 or TNativePin.PA10 {$endif}
+    {$if defined(has_I2C1) and defined(has_gpioa)}, PA14_I2C1 = ALT4 or TNativePin.PA14 {$endif}
+    {$if defined(has_I2C1) and defined(has_gpiob)}, PB7_I2C1 = ALT4 or TNativePin.PB7 {$endif}
+    {$if defined(has_I2C1) and defined(has_gpiob)}, PB9_I2C1 = ALT4 or TNativePin.PB9 {$endif}
+    {$if defined(has_arduinopins)                }, D14_I2C  = ALT4 or TNativePin.PB9 {$endif}
+    {$if defined(has_I2C2) and defined(has_gpiof)}, PF0_I2C2 = ALT4 or TNativePin.PF0 {$endif}
+    {$if defined(has_I2C2) and defined(has_gpiof)}, PF7_I2C2 = ALT4 or TNativePin.PF7 {$endif}
+    {$if defined(has_I2C3) and defined(has_gpiob)}, PB5_I2C3 = ALT8 or TNativePin.PB5 {$endif}
   );
+
   TI2CSCLPins = (
-    {$if defined(has_I2C3) and defined(has_gpioa) }   PA8_I2C3 = ALT3 or TNativePin.PA8  {$endif}
-    {$if defined(has_I2C3) and defined(has_gpioa) },                                     {$endif}
-    {$if defined(has_I2C2) and defined(has_gpioa) }   PA9_I2C2 = ALT4 or TNativePin.PA9  {$endif}
-    {$if defined(has_I2C2) and defined(has_gpioa) },                                     {$endif}
-    {$if defined(has_I2C1) and defined(has_gpioa) }  PA15_I2C1 = ALT4 or TNativePin.PA15 {$endif}
-    {$if defined(has_I2C1) and defined(has_gpiob) },  PB6_I2C1 = ALT4 or TNativePin.PB6  {$endif}
-    {$if defined(has_I2C1) and defined(has_gpiob) },  PB8_I2C1 = ALT4 or TNativePin.PB8  {$endif}
-    {$if defined(has_I2C2) and defined(has_gpiof) },  PF1_I2C2 = ALT4 or TNativePin.PF1  {$endif}
-    {$if defined(has_I2C2) and defined(has_gpiof) },  PF6_I2C2 = ALT4 or TNativePin.PF6  {$endif}
+    NONE_I2C = TNativePin.None
+    {$if defined(has_I2C3) and defined(has_gpioa)}, PA8_I2C3 = ALT3 or TNativePin.PA8 {$endif}
+    {$if defined(has_I2C2) and defined(has_gpioa)}, PA9_I2C2 = ALT4 or TNativePin.PA9 {$endif}
+    {$if defined(has_I2C1) and defined(has_gpioa)}, PA15_I2C1 = ALT4 or TNativePin.PA15 {$endif}
+    {$if defined(has_I2C1) and defined(has_gpiob)}, PB6_I2C1 = ALT4 or TNativePin.PB6 {$endif}
+    {$if defined(has_I2C1) and defined(has_gpiob)}, PB8_I2C1 = ALT4 or TNativePin.PB8 {$endif}
+    {$if defined(has_arduinopins)                }, D15_I2C  = ALT4 or TNativePin.PB8 {$endif}
+    {$if defined(has_I2C2) and defined(has_gpiof)}, PF1_I2C2 = ALT4 or TNativePin.PF1 {$endif}
+    {$if defined(has_I2C2) and defined(has_gpiof)}, PF6_I2C2 = ALT4 or TNativePin.PF6 {$endif}
   );
+
 {$ENDREGION}
 
 const
@@ -57,9 +79,9 @@ type
   { Abstract I2C (Inter-Integrated Circuit) communication manager. }
   TI2CRegistersHelper = record helper for TI2C_Registers
   private
-    function FindDividerValue(const Baudrate: Cardinal) : Cardinal;
-    function GetFrequency: Cardinal;
-    procedure SetFrequency(const Value: Cardinal);
+    function FindDividerValue(const Baudrate: longWord) : longWord;
+    function GetFrequency: longWord;
+    procedure SetFrequency(const Value: longWord);
     procedure SetSDAPin(const Value : TI2CSDAPins);
     procedure SetSCLPin(const Value : TI2CSCLPins);
   public
@@ -67,7 +89,7 @@ type
     procedure Initialize(const ASDAPin : TI2CSDAPins;
                          const ASCLPin  : TI2CSCLPins); overload;
     { Specifies new device address to which the communication will be made. }
-    procedure SetAddress(const Address: Cardinal);
+    procedure SetAddress(const Address: longWord);
 
     { Reads a single byte from current address. Returns @True when the operation was successful and @False otherwise. }
     function ReadByte(out Value: Byte): Boolean;
@@ -100,23 +122,23 @@ type
       implementation, but typically stop bit is given at the end of the whole transmission (so there is no stop bit
       between command and read operation). Returns @True when the operation was successful and @False otherwise. }
     function ReadBlockData(const Command: Byte; const Buffer: Pointer;
-      const BufferSize: Cardinal): Cardinal;
+      const BufferSize: longWord): longWord;
 
     { Writes command and specified block of data to current address. Returns @True when the operation was
       successful and @False otherwise. }
     function WriteBlockData(const Command: Byte; const Buffer: Pointer;
-      const BufferSize: Cardinal): Cardinal;
+      const BufferSize: longWord): longWord;
     { Abstract communication manager can be used for reading and writing data. }
 
     { Reads specified number of bytes to buffer and returns actual number of bytes read. }
-    function Read(const Buffer: Pointer; const BufferSize: Cardinal): Cardinal;
+    function Read(const Buffer: Pointer; const BufferSize: longWord): longWord;
 
     { Writes specified number of bytes from buffer and returns actual number of bytes written. }
-    function Write(const Buffer: Pointer; const BufferSize: Cardinal): Cardinal;
+    function Write(const Buffer: Pointer; const BufferSize: longWord): longWord;
 
     property SDAPin : TI2CSDAPins write setSDAPin;
     property SCLPin : TI2CSCLPins write setSCLPin;
-    property Frequency : Cardinal read getFrequency write setFrequency;
+    property Frequency : longWord read getFrequency write setFrequency;
   end;
 
 {$IF DEFINED(HAS_ARDUINOPINS)}
@@ -128,12 +150,12 @@ implementation
 uses
   MBF.STM32F3.SystemCore;
 
-function TI2CRegistersHelper.GetFrequency: Cardinal;
+function TI2CRegistersHelper.GetFrequency: longWord;
 begin
 
 end;
 
-procedure TI2CRegistersHelper.SetFrequency(const Value: Cardinal);
+procedure TI2CRegistersHelper.SetFrequency(const Value: longWord);
 type
   TI2CDutyCycle = (two=0,sixteentonine=1);
 var
@@ -225,7 +247,7 @@ begin
   Initialize;
 end;
 
-procedure TI2CRegistersHelper.SetAddress(const Address: Cardinal);
+procedure TI2CRegistersHelper.SetAddress(const Address: longWord);
 begin
 
 end;
@@ -247,13 +269,13 @@ procedure I2C_TransferConfig(DevAddress: word; Size: byte; Mode, Request: longwo
     self.CR2 := tmpreg;
   end;
 function TI2CRegistersHelper.ReadBlockData(const Command: Byte; const Buffer: Pointer;
-  const BufferSize: Cardinal): Cardinal;
+  const BufferSize: longWord): longWord;
 begin
 
 end;
 
 function TI2CRegistersHelper.WriteBlockData(const Command: Byte; const Buffer: Pointer;
-  const BufferSize: Cardinal): Cardinal;
+  const BufferSize: longWord): longWord;
 var
   sizetmp: longword;
 begin
@@ -275,7 +297,7 @@ begin
 
   repeat
     (* Wait until TXIS flag is set *)
-    if (I2C_WaitOnTXISFlagUntilTimeout(hi2c, Timeout) <> HAL_OK) then
+    if (I2C_WaitOnTXISFlagUntilTimeOut(hi2c, TimeOut) <> HAL_OK) then
     begin
       if (hi2c.ErrorCode = HAL_I2C_ERROR_AF) then
       begin
@@ -295,7 +317,7 @@ begin
     if ((sizetmp = 0) and (Size <> 0)) then
     begin
       (* Wait until TXE flag is set *)
-      if (I2C_WaitOnFlagUntilTimeout(hi2c, I2C_FLAG_TCR, False, Timeout) <> HAL_OK) then
+      if (I2C_WaitOnFlagUntilTimeOut(hi2c, I2C_FLAG_TCR, False, TimeOut) <> HAL_OK) then
       begin
         exit(HAL_TIMEOUT);
       end;
@@ -315,7 +337,7 @@ begin
 
   (* No need to Check TC flag, with AUTOEND mode the stop is automatically generated *)
   (* Wait until STOPF flag is set *)
-  if (I2C_WaitOnSTOPFlagUntilTimeout(hi2c, Timeout) <> HAL_OK) then
+  if (I2C_WaitOnSTOPFlagUntilTimeOut(hi2c, TimeOut) <> HAL_OK) then
   begin
     if (hi2c.ErrorCode = HAL_I2C_ERROR_AF) then
     begin
@@ -341,12 +363,12 @@ begin
   exit(HAL_OK);
 end;
 
-function TI2CRegistersHelper.Read(const Buffer: Pointer; const BufferSize: Cardinal): Cardinal;
+function TI2CRegistersHelper.Read(const Buffer: Pointer; const BufferSize: longWord): longWord;
 begin
 
 end;
 
-function TI2CRegistersHelper.Write(const Buffer: Pointer; const BufferSize: Cardinal): Cardinal;
+function TI2CRegistersHelper.Write(const Buffer: Pointer; const BufferSize: longWord): longWord;
 begin
 
 end;
@@ -364,7 +386,7 @@ end;
 function TI2CRegistersHelper.WriteBytes(const Values: array of Byte): Boolean;
 begin
   if Length(Values) > 0 then
-    Result := Write(@Values[0], Length(Values)) = Cardinal(Length(Values))
+    Result := Write(@Values[0], Length(Values)) = longWord(Length(Values))
   else
     Result := False;
 end;

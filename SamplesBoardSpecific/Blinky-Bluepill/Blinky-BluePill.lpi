@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CONFIG>
+  <ProjectOptions>
+    <Version Value="12"/>
+    <General>
+      <Flags>
+        <LRSInOutputDirectory Value="False"/>
+        <CompatibilityMode Value="True"/>
+      </Flags>
+      <UseAppBundle Value="False"/>
+    </General>
+    <BuildModes Count="1">
+      <Item1 Name="default" Default="True"/>
+    </BuildModes>
+    <PublishOptions>
+      <Version Value="2"/>
+    </PublishOptions>
+    <RunParams>
+      <FormatVersion Value="2"/>
+      <Modes Count="1">
+        <Mode0 Name="default"/>
+      </Modes>
+    </RunParams>
+    <Units Count="9">
+      <Unit0>
+        <Filename Value="Blinky.lpr"/>
+        <IsPartOfProject Value="True"/>
+        <IsVisibleTab Value="True"/>
+        <CursorPos Y="28"/>
+        <UsageCount Value="60"/>
+        <Loaded Value="True"/>
+        <LoadedDesigner Value="True"/>
+      </Unit0>
+      <Unit1>
+        <Filename Value="../../Source/MBF.Config.inc"/>
+        <EditorIndex Value="4"/>
+        <TopLine Value="50"/>
+        <CursorPos X="13" Y="62"/>
+        <UsageCount Value="28"/>
+        <Loaded Value="True"/>
+      </Unit1>
+      <Unit2>
+        <Filename Value="../../Source/MBF.Boards.STM32F1.inc"/>
+        <EditorIndex Value="5"/>
+        <TopLine Value="12"/>
+        <CursorPos X="23" Y="34"/>
+        <UsageCount Value="28"/>
+        <Loaded Value="True"/>
+      </Unit2>
+      <Unit3>
+        <Filename Value="../../Source/MBF.ARM.SystemCore.inc"/>
+        <EditorIndex Value="2"/>
+        <TopLine Value="111"/>
+        <CursorPos Y="131"/>
+        <UsageCount Value="28"/>
+        <Loaded Value="True"/>
+      </Unit3>
+      <Unit4>
+        <Filename Value="../../Source/MBF.STM32F1.SystemCore.pas"/>
+        <UnitName Value="mbf.stm32f1.systemcore"/>
+        <EditorIndex Value="3"/>
+        <TopLine Value="88"/>
+        <CursorPos Y="113"/>
+        <UsageCount Value="28"/>
+        <Loaded Value="True"/>
+      </Unit4>
+      <Unit5>
+        <Filename Value="../../Source/MBF.STM32F1.GPIO.pas"/>
+        <EditorIndex Value="1"/>
+        <TopLine Value="232"/>
+        <CursorPos Y="299"/>
+        <UsageCount Value="28"/>
+        <Loaded Value="True"/>
+      </Unit5>
+      <Unit6>
+        <Filename Value="/usr/local/share/lazarus/components/lazdebuggergdbmi/gdbmiserverdebugger.pas"/>
+        <UnitName Value="GDBMIServerDebugger"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="306"/>
+        <CursorPos X="68" Y="34"/>
+        <UsageCount Value="26"/>
+      </Unit6>
+      <Unit7>
+        <Filename Value="/usr/local/share/lazarus/components/lazutils/lazclasses.pas"/>
+        <UnitName Value="LazClasses"/>
+        <EditorIndex Value="-1"/>
+        <CursorPos X="6" Y="9"/>
+        <UsageCount Value="12"/>
+      </Unit7>
+      <Unit8>
+        <Filename Value="/usr/local/share/lazarus/components/lazdebuggergdbmi/gdbmidebugger.pp"/>
+        <UnitName Value="GDBMIDebugger"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="11343"/>
+        <CursorPos X="13" Y="11367"/>
+        <UsageCount Value="12"/>
+      </Unit8>
+    </Units>
+    <JumpHistory Count="14" HistoryIndex="13">
+      <Position1>
+        <Filename Value="Blinky.lpr"/>
+        <Caret Line="25"/>
+      </Position1>
+      <Position2>
+        <Filename Value="../../Source/MBF.STM32F1.SystemCore.pas"/>
+        <Caret Line="111" TopLine="93"/>
+      </Position2>
+      <Position3>
+        <Filename Value="../../Source/MBF.STM32F1.SystemCore.pas"/>
+        <Caret Line="112" TopLine="93"/>
+      </Position3>
+      <Position4>
+        <Filename Value="../../Source/MBF.STM32F1.SystemCore.pas"/>
+        <Caret Line="162" TopLine="137"/>
+      </Position4>
+      <Position5>
+        <Filename Value="../../Source/MBF.STM32F1.SystemCore.pas"/>
+        <Caret Line="164" TopLine="137"/>
+      </Position5>
+      <Position6>
+        <Filename Value="../../Source/MBF.STM32F1.SystemCore.pas"/>
+        <Caret Line="168" TopLine="137"/>
+      </Position6>
+      <Position7>
+        <Filename Value="../../Source/MBF.STM32F1.SystemCore.pas"/>
+        <Caret Line="113" TopLine="88"/>
+      </Position7>
+      <Position8>
+        <Filename Value="../../Source/MBF.ARM.SystemCore.inc"/>
+        <Caret Line="131" TopLine="111"/>
+      </Position8>
+      <Position9>
+        <Filename Value="Blinky.lpr"/>
+        <Caret Line="25"/>
+      </Position9>
+      <Position10>
+        <Filename Value="Blinky.lpr"/>
+        <Caret Line="26"/>
+      </Position10>
+      <Position11>
+        <Filename Value="Blinky.lpr"/>
+        <Caret Line="28"/>
+      </Position11>
+      <Position12>
+        <Filename Value="Blinky.lpr"/>
+        <Caret Line="29"/>
+      </Position12>
+      <Position13>
+        <Filename Value="Blinky.lpr"/>
+        <Caret Line="25"/>
+      </Position13>
+      <Position14>
+        <Filename Value="Blinky.lpr"/>
+        <Caret Line="26"/>
+      </Position14>
+    </JumpHistory>
+  </ProjectOptions>
+  <CompilerOptions>
+    <Version Value="11"/>
+    <Target>
+      <Filename Value="Blinky"/>
+    </Target>
+    <SearchPaths>
+      <IncludeFiles Value="../../Source;$(ProjOutDir)"/>
+      <OtherUnitFiles Value="../../Source"/>
+      <UnitOutputDirectory Value="lib/$(TargetCPU)-$(TargetOS)"/>
+    </SearchPaths>
+    <Parsing>
+      <SyntaxOptions>
+        <UseAnsiStrings Value="False"/>
+      </SyntaxOptions>
+    </Parsing>
+    <CodeGeneration>
+      <TargetProcessor Value="ARMV7M"/>
+      <TargetCPU Value="arm"/>
+      <TargetOS Value="embedded"/>
+    </CodeGeneration>
+    <Linking>
+      <Debugging>
+        <DebugInfoType Value="dsDwarf2"/>
+        <UseLineInfoUnit Value="False"/>
+      </Debugging>
+    </Linking>
+    <Other>
+      <CustomOptions Value="-WpBluePill
+-dBluePill
+-godwarfcpp"/>
+    </Other>
+  </CompilerOptions>
+  <Debugging>
+    <BreakPoints Count="2">
+      <Item1>
+        <Kind Value="bpkSource"/>
+        <WatchScope Value="wpsLocal"/>
+        <WatchKind Value="wpkWrite"/>
+        <Source Value="Blinky.lpr"/>
+        <Line Value="25"/>
+      </Item1>
+      <Item2>
+        <Kind Value="bpkSource"/>
+        <WatchScope Value="wpsLocal"/>
+        <WatchKind Value="wpkWrite"/>
+        <Source Value="/usr/local/share/lazarus/components/lazdebuggergdbmi/gdbmidebugger.pp"/>
+        <Line Value="48"/>
+      </Item2>
+    </BreakPoints>
+  </Debugging>
+</CONFIG>

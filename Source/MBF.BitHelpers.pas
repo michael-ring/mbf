@@ -25,6 +25,8 @@ type
   TLongWordIndex = 0..31;
   TBitLevel=(Low=0,High=1);
   TBitValue=0..1;
+  TCrumbValue=0..3;
+  TNibbleValue=0..15;
 
 // LongWord Implementation
 procedure SetBitValue(var Destination: longword; const aBitValue : TBitValue; const Index: TLongWordIndex); inline;
@@ -37,6 +39,12 @@ procedure SetBitLevel(var Destination: longword; const aBitLevel : TBitLevel; co
 procedure SetBitLevelHigh(var Destination: longword; const Index: TLongWordIndex); inline;
 procedure SetBitLevelLow(var Destination : longWord; const Index: TLongWordIndex); inline;
 function  GetBitLevel(var Source : longWord; const Index: TLongWordIndex): TBitLevel; inline;
+
+function  GetCrumb(var Source : longWord; const Index: TLongWordIndex):TCrumbValue;
+procedure SetCrumb(var Destination: longword; const aCrumbValue : TCrumbValue; const Index: TLongWordIndex); inline;
+
+function  GetNibble(var Source : longWord; const Index: TLongWordIndex):TNibbleValue;
+procedure SetNibble(var Destination: longword; const aNibbleValue : TNibbleValue; const Index: TLongWordIndex); inline;
 
 procedure SetBitsMasked(var Destination: longword; const Value : longWord; const Mask : longWord; const MaskIndex: TLongWordIndex); inline;
 function  GetBitsMasked(var Source: longWord; const Mask : longWord; const MaskIndex: TLongWordIndex): longWord; inline;
@@ -58,6 +66,12 @@ procedure SetBitLevelHigh(var Destination: Word; const Index: TWordIndex); inlin
 procedure SetBitLevelLow(var Destination : Word; const Index: TWordIndex); inline;
 function  GetBitLevel(var Source : Word; const Index: TWordIndex): TBitLevel; inline;
 
+function  GetCrumb(var Source : Word; const Index: TLongWordIndex):TCrumbValue;
+procedure SetCrumb(var Destination: Word; const aCrumbValue : TCrumbValue; const Index: TLongWordIndex); inline;
+
+function  GetNibble(var Source : Word; const Index: TLongWordIndex):TNibbleValue;
+procedure SetNibble(var Destination: Word; const aNibbleValue : TNibbleValue; const Index: TLongWordIndex); inline;
+
 procedure SetBitsMasked(var Destination: Word; const Value : Word; const Mask : Word; const MaskIndex: TWordIndex); inline;
 function  GetBitsMasked(var Source: Word; const Mask : Word; const MaskIndex: TWordIndex): Word; inline;
 
@@ -77,6 +91,12 @@ procedure SetBitLevel(var Destination: Byte; const aBitLevel : TBitLevel; const 
 procedure SetBitLevelHigh(var Destination: Byte; const Index: TByteIndex); inline;
 procedure SetBitLevelLow(var Destination : Byte; const Index: TByteIndex); inline;
 function  GetBitLevel(var Source : Byte; const Index: TByteIndex): TBitLevel; inline;
+
+function  GetCrumb(var Source : Byte; const Index: TLongWordIndex):TCrumbValue;
+procedure SetCrumb(var Destination: Byte; const aCrumbValue : TCrumbValue; const Index: TLongWordIndex); inline;
+
+function  GetNibble(var Source : Byte; const Index: TLongWordIndex):TNibbleValue;
+procedure SetNibble(var Destination: Byte; const aNibbleValue : TNibbleValue; const Index: TLongWordIndex); inline;
 
 procedure SetBitsMasked(var Destination: Byte; const Value : Byte; const Mask : Byte; const MaskIndex: TByteIndex); inline;
 function  GetBitsMasked(var Source: Byte; const Mask : Byte; const MaskIndex: TByteIndex): Byte; inline;
@@ -137,7 +157,6 @@ begin
     Destination := Destination and longWord(not (%1 shl Index));
 end;
 
-
 procedure SetBitLevelHigh(var Destination: longword; const Index: TLongWordIndex); inline;
 begin
   Destination := Destination or longWord(%1 shl Index);
@@ -153,9 +172,29 @@ begin
   Result := TBitLevel((Source shr Index) and %1);
 end;
 
+procedure SetCrumb(var Destination: longword; const aCrumbValue : TCrumbValue; const Index: TLongWordIndex); inline;
+begin
+  Destination := (Destination and (not (%11 shl index))) or (longWord((aCrumbValue and %11) shl Index));
+end;
+
+function  GetCrumb(var Source: longWord;const Index: TLongWordIndex): TCrumbValue; inline;
+begin
+  Result := (Source shr Index) and %11;
+end;
+
+procedure SetNibble(var Destination: longword; const aNibbleValue : TNibbleValue; const Index: TLongWordIndex); inline;
+begin
+  Destination := (Destination and (not (%1111 shl Index))) or (longWord((aNibbleValue and %1111) shl Index));
+end;
+
+function  GetNibble(var Source: longWord;const Index: TLongWordIndex): TNibbleValue; inline;
+begin
+  Result := (Source shr Index) and %1111;
+end;
+
 procedure SetBitsMasked(var Destination: longword; const Value : longWord; const Mask : longWord; const MaskIndex: TLongWordIndex); inline;
 begin
-  Destination := (Destination and (not Mask)) or ((Value shl MaskIndex) and Mask);
+  Destination := (Destination and (not Mask)) or (longWord(Value shl MaskIndex) and Mask);
 end;
 
 function  GetBitsMasked(var Source: longWord; const Mask : longWord; const MaskIndex: TLongWordIndex): longWord; inline;
@@ -250,6 +289,26 @@ end;
 function  GetBitLevel(var Source : Word; const Index: TWordIndex): TBitLevel; inline;
 begin
   Result := TBitLevel((Source shr Index) and Word(%1));
+end;
+
+procedure SetCrumb(var Destination: Word; const aCrumbValue : TCrumbValue; const Index: TLongWordIndex); inline;
+begin
+  Destination := (Destination and (not (%11 shl index))) or (((aCrumbValue and %11) shl Index));
+end;
+
+function  GetCrumb(var Source: Word;const Index: TLongWordIndex): TCrumbValue; inline;
+begin
+  Result := (Source shr Index) and %11;
+end;
+
+procedure SetNibble(var Destination: Word; const aNibbleValue : TNibbleValue; const Index: TLongWordIndex); inline;
+begin
+  Destination := (Destination and (not (%1111 shl Index))) or (((aNibbleValue and %1111) shl Index));
+end;
+
+function  GetNibble(var Source: Word;const Index: TLongWordIndex): TNibbleValue; inline;
+begin
+  Result := (Source shr Index) and %1111;
 end;
 
 procedure SetBitsMasked(var Destination: Word; const Value : Word; const Mask : Word; const MaskIndex: TWordIndex); inline;
@@ -350,6 +409,26 @@ end;
 function  GetBitLevel(var Source : Byte; const Index: TByteIndex): TBitLevel; inline;
 begin
   Result := TBitLevel((Source shr Index) and Byte(%1));
+end;
+
+procedure SetCrumb(var Destination: Byte; const aCrumbValue : TCrumbValue; const Index: TLongWordIndex); inline;
+begin
+  Destination := (Destination and (not (%11 shl index))) or (((aCrumbValue and %11) shl Index));
+end;
+
+function  GetCrumb(var Source: Byte;const Index: TLongWordIndex): TCrumbValue; inline;
+begin
+  Result := (Source shr Index) and %11;
+end;
+
+procedure SetNibble(var Destination: Byte; const aNibbleValue : TNibbleValue; const Index: TLongWordIndex); inline;
+begin
+  Destination := (Destination and (not (%1111 shl Index))) or (((aNibbleValue and %1111) shl Index));
+end;
+
+function  GetNibble(var Source: Byte;const Index: TLongWordIndex): TNibbleValue; inline;
+begin
+  Result := (Source shr Index) and %1111;
 end;
 
 procedure SetBitsMasked(var Destination: Byte; const Value : Byte; const Mask : Byte; const MaskIndex: TByteIndex); inline;

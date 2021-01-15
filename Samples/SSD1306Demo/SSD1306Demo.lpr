@@ -16,24 +16,22 @@ program SSD1306Demo;
 {$INCLUDE MBF.Config.inc}
 
 uses
-  HeapMgr,
   MBF.Types,
+  MBF.TypeHelpers,
   MBF.__CONTROLLERTYPE__.SystemCore,
   MBF.__CONTROLLERTYPE__.GPIO,
   MBF.__CONTROLLERTYPE__.SPI,
   MBF.Displays.SSD1306,
-  MBF.Displays.CustomDisplay;
-  //MBF.Fonts.Hack12x16;
+  MBF.Displays.CustomDisplay,
+  MBF.Fonts.Px437Verite8x8;
 
 var
   Display: TSSD1306;
-  i : integer;
 
 begin
   // Initialize the Board and the SystemTimer
   SystemCore.Initialize;
   SystemCore.SetCPUFrequency(SystemCore.getMaxCPUFrequency);
-  SystemCore.GetCPUFrequency;
 
   // Initialize the GPIO subsystem
   GPIO.Initialize;
@@ -46,54 +44,32 @@ begin
   // D13 -> D0
 
   SPI.Initialize(TSPIMOSIPins.D11_SPI,TSPIMISOPINS.D12_SPI,TSPISCLKPINS.D13_SPI,TSPINSSPins.D10_SPI);
+  SPI.Baudrate := 8000000;
 
   //Remeber to properly set the Screensize of your Display!
   Display.Initialize(SPI,TArduinopin.D9,TArduinopin.D8,ScreenSize128x64x1);
   Display.Reset;
   Display.InitSequence;
+  Display.setFont(Px437Verite8x8);
   repeat
     Display.BackgroundColor := clBlack;
+    Display.ForegroundColor := clWhite;
     Display.ClearScreen;
-
-    Display.setDrawArea(0,0,8,16);
-    Display.writeData([%11110000,
-                       %11111000,
-                       %10001100,
-                       %10000100,
-                       %10001100,
-                       %11111000,
-                       %11110000,
-                       %00000000,
-                       %00001111,
-                       %00001111,
-                       %00000000,
-                       %00000000,
-                       %00000000,
-                       %00001111,
-                       %00001111,
-                       %00000000
-    ]);
-
-    Display.setDrawArea(8,0,8,16);
-    Display.writeData([%00000100,
-                       %11111100,
-                       %11111100,
-                       %01000100,
-                       %01100100,
-                       %11111100,
-                       %10111000,
-                       %00000000,
-                       %00001000,
-                       %00001111,
-                       %00001111,
-                       %00001000,
-                       %00001000,
-                       %00001111,
-                       %00000111,
-                       %00000000
-    ]);
-
-    SystemCore.Delay(5000);
-
+    Display.drawText('CPU-Speed:',0,0*Px437Verite8x8.Height);
+    Display.drawText(SystemCore.GetCPUFrequency.toString,0,1*Px437Verite8x8.Height);
+    Display.drawText('SPI-Baudrate:',0,2*Px437Verite8x8.Height);
+    Display.drawText(SPI.Baudrate.toString,0,3*Px437Verite8x8.Height);
+    SystemCore.Delay(2000);
+    Display.BackgroundColor := clWhite;
+    Display.ForegroundColor := clBlack;
+    Display.ClearScreen;
+    Display.drawText('X',0,0*Px437Verite8x8.Height);
+    Display.drawText('This is White',0,0*Px437Verite8x8.Height);
+    SystemCore.Delay(2000);
+    //Display.BackgroundColor := clBlack;
+    //Display.ForegroundColor := clWhite;
+    //Display.ClearScreen;
+    //mDisplay.drawText('This is Black',0,1*BitstreamVeraSansMono6x12.Height);
+    //SystemCore.Delay(2000);
   until 1=0
 end.

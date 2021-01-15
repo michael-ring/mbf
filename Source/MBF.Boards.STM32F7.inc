@@ -1,15 +1,15 @@
 {
-  This file is part of Pascal Microcontroller Board Framework (MBF)
-  Copyright (c) 2015 -  Michael Ring
-  based on Pascal eXtended Library (PXL)
+  This file is part of Micro Board Framework Library (MBF)
   Copyright (c) 2000 - 2015  Yuriy Kotsarenko
+  Copyright (c) 2015         Michael Ring
 
-  This program is free software: you can redistribute it and/or modify it under the terms of the FPC modified GNU
-  Library General Public License for more
+  This program is free software: you can redistribute it and/or modify it under the terms of the GNU Lesser General
+  Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option)
+  any later version.
 
   This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied
-  warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the FPC modified GNU Library General Public
-  License for more details.
+  warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+  details.
 }
 
 { Indicates that this config file has been processed (to avoid redeclaring or redefining of parameters in other
@@ -59,7 +59,17 @@
   {$define stm32f723ie}
 {$endif}
 
-{$if defined(STM32F722ICKx) or defined(STM32F722IEKx) }
+{$if defined(stm32f7308dk) }
+  {$define discovery}
+  {$define stm32f730i8}
+{$endif}
+
+{$if defined(stm32f7508dk) }
+  {$define discovery}
+  {$define stm32f750n8}
+{$endif}
+
+{$if defined(STM32F722IC) or defined(STM32F722IE) }
   {$define STM32F7x2 }
   {$define STM32F72xx }
   {$define UFBGA176 }
@@ -129,7 +139,7 @@
   {$define has_can1 }
   {$define has_rtc }
 {$endif}
-{$if defined(STM32F723ICKx) or defined(STM32F723IEKx) }
+{$if defined(STM32F723IC) or defined(STM32F723IE) }
   {$define STM32F7x3 }
   {$define STM32F72xx }
   {$define UFBGA176 }
@@ -171,7 +181,7 @@
   {$define has_can1 }
   {$define has_rtc }
 {$endif}
-{$if defined(STM32F723ZCIx) or defined(STM32F723ZEIx) }
+{$if defined(STM32F723ZC) or defined(STM32F723ZE) }
   {$define STM32F7x3 }
   {$define STM32F72xx }
   {$define UFBGA144 }
@@ -199,7 +209,63 @@
   {$define has_can1 }
   {$define has_rtc }
 {$endif}
-{$if defined(STM32F732IEKx) }
+{$if defined(STM32F730I8) }
+  {$define STM32F7x0 }
+  {$define STM32F73xx }
+  {$define UFBGA176 }
+  {$define has_gpioa } {$define has_gpiob } {$define has_gpioc } {$define has_gpiod } {$define has_gpioe } {$define has_gpiof } {$define has_gpiog } {$define has_gpioh } {$define has_gpioi }
+  {$define has_usart1 } {$define has_usart2 } {$define has_usart3 } {$define has_usart6 } {$define has_uart4 } {$define has_uart5 } {$define has_uart7 } {$define has_uart8 }
+  {$define has_spi1 } {$define has_spi2 } {$define has_spi3 } {$define has_spi4 } {$define has_spi5 }
+  {$define has_i2c1 } {$define has_i2c2 } {$define has_i2c3 }
+  {$define has_lptim1 } {$define has_tim1 } {$define has_tim10 } {$define has_tim11 } {$define has_tim12 } {$define has_tim13 } {$define has_tim14 } {$define has_tim2 } {$define has_tim3 } {$define has_tim4 } {$define has_tim5 } {$define has_tim6 } {$define has_tim7 } {$define has_tim8 } {$define has_tim9 }
+  {$define has_adc1 } {$define has_adc2 } {$define has_adc3 }
+  {$define has_dac1 }
+  {$define has_can1 }
+  {$define has_rtc }
+{$endif}
+{$if defined(STM32F730R8) }
+  {$define STM32F7x0 }
+  {$define STM32F73xx }
+  {$define LQFP64 }
+  {$define has_gpioa } {$define has_gpiob } {$define has_gpioc } {$define has_gpiod } {$define has_gpioh }
+  {$define has_usart1 } {$define has_usart2 } {$define has_usart3 } {$define has_usart6 } {$define has_uart4 } {$define has_uart5 }
+  {$define has_spi1 } {$define has_spi2 } {$define has_spi3 }
+  {$define has_i2c1 } {$define has_i2c2 } {$define has_i2c3 }
+  {$define has_tim1 } {$define has_tim10 } {$define has_tim11 } {$define has_tim12 } {$define has_tim13 } {$define has_tim14 } {$define has_tim2 } {$define has_tim3 } {$define has_tim4 } {$define has_tim5 } {$define has_tim6 } {$define has_tim7 } {$define has_tim8 } {$define has_tim9 }
+  {$define has_adc1 } {$define has_adc2 } {$define has_adc3 }
+  {$define has_dac1 }
+  {$define has_can1 }
+  {$define has_rtc }
+{$endif}
+{$if defined(STM32F730V8) }
+  {$define STM32F7x0 }
+  {$define STM32F73xx }
+  {$define LQFP100 }
+  {$define has_gpioa } {$define has_gpiob } {$define has_gpioc } {$define has_gpiod } {$define has_gpioe } {$define has_gpioh }
+  {$define has_usart1 } {$define has_usart2 } {$define has_usart3 } {$define has_usart6 } {$define has_uart4 } {$define has_uart5 } {$define has_uart7 } {$define has_uart8 }
+  {$define has_spi1 } {$define has_spi2 } {$define has_spi3 } {$define has_spi4 }
+  {$define has_i2c1 } {$define has_i2c2 } {$define has_i2c3 }
+  {$define has_lptim1 } {$define has_tim1 } {$define has_tim10 } {$define has_tim11 } {$define has_tim12 } {$define has_tim13 } {$define has_tim14 } {$define has_tim2 } {$define has_tim3 } {$define has_tim4 } {$define has_tim5 } {$define has_tim6 } {$define has_tim7 } {$define has_tim8 } {$define has_tim9 }
+  {$define has_adc1 } {$define has_adc2 } {$define has_adc3 }
+  {$define has_dac1 }
+  {$define has_can1 }
+  {$define has_rtc }
+{$endif}
+{$if defined(STM32F730Z8) }
+  {$define STM32F7x0 }
+  {$define STM32F73xx }
+  {$define LQFP144 }
+  {$define has_gpioa } {$define has_gpiob } {$define has_gpioc } {$define has_gpiod } {$define has_gpioe } {$define has_gpiof } {$define has_gpiog } {$define has_gpioh }
+  {$define has_usart1 } {$define has_usart2 } {$define has_usart3 } {$define has_usart6 } {$define has_uart4 } {$define has_uart5 } {$define has_uart7 } {$define has_uart8 }
+  {$define has_spi1 } {$define has_spi2 } {$define has_spi3 } {$define has_spi4 } {$define has_spi5 }
+  {$define has_i2c1 } {$define has_i2c2 } {$define has_i2c3 }
+  {$define has_lptim1 } {$define has_tim1 } {$define has_tim10 } {$define has_tim11 } {$define has_tim13 } {$define has_tim14 } {$define has_tim2 } {$define has_tim3 } {$define has_tim4 } {$define has_tim5 } {$define has_tim6 } {$define has_tim7 } {$define has_tim8 } {$define has_tim9 }
+  {$define has_adc1 } {$define has_adc2 } {$define has_adc3 }
+  {$define has_dac1 }
+  {$define has_can1 }
+  {$define has_rtc }
+{$endif}
+{$if defined(STM32F732IE) }
   {$define STM32F7x2 }
   {$define STM32F73xx }
   {$define UFBGA176 }
@@ -269,7 +335,7 @@
   {$define has_can1 }
   {$define has_rtc }
 {$endif}
-{$if defined(STM32F733IEKx) }
+{$if defined(STM32F733IE) }
   {$define STM32F7x3 }
   {$define STM32F73xx }
   {$define UFBGA176 }
@@ -311,7 +377,7 @@
   {$define has_can1 }
   {$define has_rtc }
 {$endif}
-{$if defined(STM32F733ZEIx) }
+{$if defined(STM32F733ZE) }
   {$define STM32F7x3 }
   {$define STM32F73xx }
   {$define UFBGA144 }
@@ -339,7 +405,7 @@
   {$define has_can1 }
   {$define has_rtc }
 {$endif}
-{$if defined(STM32F745IEKx) or defined(STM32F745IGKx) }
+{$if defined(STM32F745IE) or defined(STM32F745IG) }
   {$define STM32F7x5 }
   {$define STM32F74xx }
   {$define UFBGA176 }
@@ -423,7 +489,7 @@
   {$define has_can1 } {$define has_can2 }
   {$define has_rtc }
 {$endif}
-{$if defined(STM32F746IEKx) or defined(STM32F746IGKx) }
+{$if defined(STM32F746IE) or defined(STM32F746IG) }
   {$define STM32F7x6 }
   {$define STM32F74xx }
   {$define UFBGA176 }
@@ -437,7 +503,7 @@
   {$define has_can1 } {$define has_can2 }
   {$define has_rtc }
 {$endif}
-{$if defined(STM32F746IE) or defined(STM32F746IG) }
+{$if defined(STM32F746IE) }
   {$define STM32F7x6 }
   {$define STM32F74xx }
   {$define LQFP176 }
@@ -451,7 +517,35 @@
   {$define has_can1 } {$define has_can2 }
   {$define has_rtc }
 {$endif}
-{$if defined(STM32F746NE) or defined(STM32F746NG) }
+{$if defined(STM32F746IG) }
+  {$define STM32F7x6 }
+  {$define STM32F74xx }
+  {$define LQFP176 }
+  {$define has_gpioa } {$define has_gpiob } {$define has_gpioc } {$define has_gpiod } {$define has_gpioe } {$define has_gpiof } {$define has_gpiog } {$define has_gpioh } {$define has_gpioi }
+  {$define has_usart1 } {$define has_usart2 } {$define has_usart3 } {$define has_usart6 } {$define has_uart4 } {$define has_uart5 } {$define has_uart7 } {$define has_uart8 }
+  {$define has_spi1 } {$define has_spi2 } {$define has_spi3 } {$define has_spi4 } {$define has_spi5 } {$define has_spi6 }
+  {$define has_i2c1 } {$define has_i2c2 } {$define has_i2c3 } {$define has_i2c4 }
+  {$define has_lptim1 } {$define has_tim1 } {$define has_tim10 } {$define has_tim11 } {$define has_tim12 } {$define has_tim13 } {$define has_tim14 } {$define has_tim2 } {$define has_tim3 } {$define has_tim4 } {$define has_tim5 } {$define has_tim6 } {$define has_tim7 } {$define has_tim8 } {$define has_tim9 }
+  {$define has_adc1 } {$define has_adc2 } {$define has_adc3 }
+  {$define has_dac1 }
+  {$define has_can1 } {$define has_can2 }
+  {$define has_rtc }
+{$endif}
+{$if defined(STM32F746NE) }
+  {$define STM32F7x6 }
+  {$define STM32F74xx }
+  {$define TFBGA216 }
+  {$define has_gpioa } {$define has_gpiob } {$define has_gpioc } {$define has_gpiod } {$define has_gpioe } {$define has_gpiof } {$define has_gpiog } {$define has_gpioh } {$define has_gpioi } {$define has_gpioj } {$define has_gpiok }
+  {$define has_usart1 } {$define has_usart2 } {$define has_usart3 } {$define has_usart6 } {$define has_uart4 } {$define has_uart5 } {$define has_uart7 } {$define has_uart8 }
+  {$define has_spi1 } {$define has_spi2 } {$define has_spi3 } {$define has_spi4 } {$define has_spi5 } {$define has_spi6 }
+  {$define has_i2c1 } {$define has_i2c2 } {$define has_i2c3 } {$define has_i2c4 }
+  {$define has_lptim1 } {$define has_tim1 } {$define has_tim10 } {$define has_tim11 } {$define has_tim12 } {$define has_tim13 } {$define has_tim14 } {$define has_tim2 } {$define has_tim3 } {$define has_tim4 } {$define has_tim5 } {$define has_tim6 } {$define has_tim7 } {$define has_tim8 } {$define has_tim9 }
+  {$define has_adc1 } {$define has_adc2 } {$define has_adc3 }
+  {$define has_dac1 }
+  {$define has_can1 } {$define has_can2 }
+  {$define has_rtc }
+{$endif}
+{$if defined(STM32F746NG) }
   {$define STM32F7x6 }
   {$define STM32F74xx }
   {$define TFBGA216 }
@@ -479,7 +573,21 @@
   {$define has_can1 } {$define has_can2 }
   {$define has_rtc }
 {$endif}
-{$if defined(STM32F746VE) or defined(STM32F746VG) }
+{$if defined(STM32F746VE) }
+  {$define STM32F7x6 }
+  {$define STM32F74xx }
+  {$define LQFP100 }
+  {$define has_gpioa } {$define has_gpiob } {$define has_gpioc } {$define has_gpiod } {$define has_gpioe } {$define has_gpioh }
+  {$define has_usart1 } {$define has_usart2 } {$define has_usart3 } {$define has_usart6 } {$define has_uart4 } {$define has_uart5 } {$define has_uart7 } {$define has_uart8 }
+  {$define has_spi1 } {$define has_spi2 } {$define has_spi3 } {$define has_spi4 }
+  {$define has_i2c1 } {$define has_i2c2 } {$define has_i2c3 } {$define has_i2c4 }
+  {$define has_lptim1 } {$define has_tim1 } {$define has_tim10 } {$define has_tim11 } {$define has_tim12 } {$define has_tim13 } {$define has_tim14 } {$define has_tim2 } {$define has_tim3 } {$define has_tim4 } {$define has_tim5 } {$define has_tim6 } {$define has_tim7 } {$define has_tim8 } {$define has_tim9 }
+  {$define has_adc1 } {$define has_adc2 } {$define has_adc3 }
+  {$define has_dac1 }
+  {$define has_can1 } {$define has_can2 }
+  {$define has_rtc }
+{$endif}
+{$if defined(STM32F746VG) }
   {$define STM32F7x6 }
   {$define STM32F74xx }
   {$define LQFP100 }
@@ -496,6 +604,20 @@
 {$if defined(STM32F746ZE) or defined(STM32F746ZG) }
   {$define STM32F7x6 }
   {$define STM32F74xx }
+  {$define WLCSP143 }
+  {$define has_gpioa } {$define has_gpiob } {$define has_gpioc } {$define has_gpiod } {$define has_gpioe } {$define has_gpiof } {$define has_gpiog } {$define has_gpioh }
+  {$define has_usart1 } {$define has_usart2 } {$define has_usart3 } {$define has_usart6 } {$define has_uart4 } {$define has_uart5 } {$define has_uart7 } {$define has_uart8 }
+  {$define has_spi1 } {$define has_spi2 } {$define has_spi3 } {$define has_spi4 } {$define has_spi5 } {$define has_spi6 }
+  {$define has_i2c1 } {$define has_i2c2 } {$define has_i2c3 } {$define has_i2c4 }
+  {$define has_lptim1 } {$define has_tim1 } {$define has_tim10 } {$define has_tim11 } {$define has_tim12 } {$define has_tim13 } {$define has_tim14 } {$define has_tim2 } {$define has_tim3 } {$define has_tim4 } {$define has_tim5 } {$define has_tim6 } {$define has_tim7 } {$define has_tim8 } {$define has_tim9 }
+  {$define has_adc1 } {$define has_adc2 } {$define has_adc3 }
+  {$define has_dac1 }
+  {$define has_can1 } {$define has_can2 }
+  {$define has_rtc }
+{$endif}
+{$if defined(STM32F746ZE) }
+  {$define STM32F7x6 }
+  {$define STM32F74xx }
   {$define LQFP144 }
   {$define has_gpioa } {$define has_gpiob } {$define has_gpioc } {$define has_gpiod } {$define has_gpioe } {$define has_gpiof } {$define has_gpiog } {$define has_gpioh }
   {$define has_usart1 } {$define has_usart2 } {$define has_usart3 } {$define has_usart6 } {$define has_uart4 } {$define has_uart5 } {$define has_uart7 } {$define has_uart8 }
@@ -507,10 +629,52 @@
   {$define has_can1 } {$define has_can2 }
   {$define has_rtc }
 {$endif}
-{$if defined(STM32F746ZE) or defined(STM32F746ZG) }
+{$if defined(STM32F746ZG) }
   {$define STM32F7x6 }
   {$define STM32F74xx }
-  {$define WLCSP143 }
+  {$define LQFP144 }
+  {$define has_gpioa } {$define has_gpiob } {$define has_gpioc } {$define has_gpiod } {$define has_gpioe } {$define has_gpiof } {$define has_gpiog } {$define has_gpioh }
+  {$define has_usart1 } {$define has_usart2 } {$define has_usart3 } {$define has_usart6 } {$define has_uart4 } {$define has_uart5 } {$define has_uart7 } {$define has_uart8 }
+  {$define has_spi1 } {$define has_spi2 } {$define has_spi3 } {$define has_spi4 } {$define has_spi5 } {$define has_spi6 }
+  {$define has_i2c1 } {$define has_i2c2 } {$define has_i2c3 } {$define has_i2c4 }
+  {$define has_lptim1 } {$define has_tim1 } {$define has_tim10 } {$define has_tim11 } {$define has_tim12 } {$define has_tim13 } {$define has_tim14 } {$define has_tim2 } {$define has_tim3 } {$define has_tim4 } {$define has_tim5 } {$define has_tim6 } {$define has_tim7 } {$define has_tim8 } {$define has_tim9 }
+  {$define has_adc1 } {$define has_adc2 } {$define has_adc3 }
+  {$define has_dac1 }
+  {$define has_can1 } {$define has_can2 }
+  {$define has_rtc }
+{$endif}
+{$if defined(STM32F750N8) }
+  {$define STM32F7x0 }
+  {$define STM32F75xx }
+  {$define TFBGA216 }
+  {$define has_gpioa } {$define has_gpiob } {$define has_gpioc } {$define has_gpiod } {$define has_gpioe } {$define has_gpiof } {$define has_gpiog } {$define has_gpioh } {$define has_gpioi } {$define has_gpioj } {$define has_gpiok }
+  {$define has_usart1 } {$define has_usart2 } {$define has_usart3 } {$define has_usart6 } {$define has_uart4 } {$define has_uart5 } {$define has_uart7 } {$define has_uart8 }
+  {$define has_spi1 } {$define has_spi2 } {$define has_spi3 } {$define has_spi4 } {$define has_spi5 } {$define has_spi6 }
+  {$define has_i2c1 } {$define has_i2c2 } {$define has_i2c3 } {$define has_i2c4 }
+  {$define has_lptim1 } {$define has_tim1 } {$define has_tim10 } {$define has_tim11 } {$define has_tim12 } {$define has_tim13 } {$define has_tim14 } {$define has_tim2 } {$define has_tim3 } {$define has_tim4 } {$define has_tim5 } {$define has_tim6 } {$define has_tim7 } {$define has_tim8 } {$define has_tim9 }
+  {$define has_adc1 } {$define has_adc2 } {$define has_adc3 }
+  {$define has_dac1 }
+  {$define has_can1 } {$define has_can2 }
+  {$define has_rtc }
+{$endif}
+{$if defined(STM32F750V8) }
+  {$define STM32F7x0 }
+  {$define STM32F75xx }
+  {$define LQFP100 }
+  {$define has_gpioa } {$define has_gpiob } {$define has_gpioc } {$define has_gpiod } {$define has_gpioe } {$define has_gpioh }
+  {$define has_usart1 } {$define has_usart2 } {$define has_usart3 } {$define has_usart6 } {$define has_uart4 } {$define has_uart5 } {$define has_uart7 } {$define has_uart8 }
+  {$define has_spi1 } {$define has_spi2 } {$define has_spi3 } {$define has_spi4 }
+  {$define has_i2c1 } {$define has_i2c2 } {$define has_i2c3 } {$define has_i2c4 }
+  {$define has_lptim1 } {$define has_tim1 } {$define has_tim10 } {$define has_tim11 } {$define has_tim12 } {$define has_tim13 } {$define has_tim14 } {$define has_tim2 } {$define has_tim3 } {$define has_tim4 } {$define has_tim5 } {$define has_tim6 } {$define has_tim7 } {$define has_tim8 } {$define has_tim9 }
+  {$define has_adc1 } {$define has_adc2 } {$define has_adc3 }
+  {$define has_dac1 }
+  {$define has_can1 } {$define has_can2 }
+  {$define has_rtc }
+{$endif}
+{$if defined(STM32F750Z8) }
+  {$define STM32F7x0 }
+  {$define STM32F75xx }
+  {$define LQFP144 }
   {$define has_gpioa } {$define has_gpiob } {$define has_gpioc } {$define has_gpiod } {$define has_gpioe } {$define has_gpiof } {$define has_gpiog } {$define has_gpioh }
   {$define has_usart1 } {$define has_usart2 } {$define has_usart3 } {$define has_usart6 } {$define has_uart4 } {$define has_uart5 } {$define has_uart7 } {$define has_uart8 }
   {$define has_spi1 } {$define has_spi2 } {$define has_spi3 } {$define has_spi4 } {$define has_spi5 } {$define has_spi6 }
@@ -535,7 +699,7 @@
   {$define has_can1 } {$define has_can2 }
   {$define has_rtc }
 {$endif}
-{$if defined(STM32F756IGKx) }
+{$if defined(STM32F756IG) }
   {$define STM32F7x6 }
   {$define STM32F75xx }
   {$define UFBGA176 }
@@ -647,7 +811,7 @@
   {$define has_can1 } {$define has_can2 } {$define has_can3 }
   {$define has_rtc }
 {$endif}
-{$if defined(STM32F765IGKx) or defined(STM32F765IIKx) }
+{$if defined(STM32F765IG) or defined(STM32F765II) }
   {$define STM32F7x5 }
   {$define STM32F76xx }
   {$define UFBGA176 }
@@ -682,6 +846,20 @@
   {$define has_gpioa } {$define has_gpiob } {$define has_gpioc } {$define has_gpiod } {$define has_gpioe } {$define has_gpiof } {$define has_gpiog } {$define has_gpioh } {$define has_gpioi } {$define has_gpioj } {$define has_gpiok }
   {$define has_usart1 } {$define has_usart2 } {$define has_usart3 } {$define has_usart6 } {$define has_uart4 } {$define has_uart5 } {$define has_uart7 } {$define has_uart8 }
   {$define has_spi1 } {$define has_spi2 } {$define has_spi3 } {$define has_spi4 } {$define has_spi5 } {$define has_spi6 }
+  {$define has_i2c1 } {$define has_i2c2 } {$define has_i2c3 } {$define has_i2c4 }
+  {$define has_lptim1 } {$define has_tim1 } {$define has_tim10 } {$define has_tim11 } {$define has_tim12 } {$define has_tim13 } {$define has_tim14 } {$define has_tim2 } {$define has_tim3 } {$define has_tim4 } {$define has_tim5 } {$define has_tim6 } {$define has_tim7 } {$define has_tim8 } {$define has_tim9 }
+  {$define has_adc1 } {$define has_adc2 } {$define has_adc3 }
+  {$define has_dac1 }
+  {$define has_can1 } {$define has_can2 } {$define has_can3 }
+  {$define has_rtc }
+{$endif}
+{$if defined(STM32F765VG) or defined(STM32F765VI) }
+  {$define STM32F7x5 }
+  {$define STM32F76xx }
+  {$define TFBGA100 }
+  {$define has_gpioa } {$define has_gpiob } {$define has_gpioc } {$define has_gpiod } {$define has_gpioe } {$define has_gpioh }
+  {$define has_usart1 } {$define has_usart2 } {$define has_usart3 } {$define has_usart6 } {$define has_uart4 } {$define has_uart5 } {$define has_uart7 } {$define has_uart8 }
+  {$define has_spi1 } {$define has_spi2 } {$define has_spi3 } {$define has_spi4 } {$define has_spi6 }
   {$define has_i2c1 } {$define has_i2c2 } {$define has_i2c3 } {$define has_i2c4 }
   {$define has_lptim1 } {$define has_tim1 } {$define has_tim10 } {$define has_tim11 } {$define has_tim12 } {$define has_tim13 } {$define has_tim14 } {$define has_tim2 } {$define has_tim3 } {$define has_tim4 } {$define has_tim5 } {$define has_tim6 } {$define has_tim7 } {$define has_tim8 } {$define has_tim9 }
   {$define has_adc1 } {$define has_adc2 } {$define has_adc3 }
@@ -731,7 +909,7 @@
   {$define has_can1 } {$define has_can2 } {$define has_can3 }
   {$define has_rtc }
 {$endif}
-{$if defined(STM32F767IGKx) or defined(STM32F767IIKx) }
+{$if defined(STM32F767IG) or defined(STM32F767II) }
   {$define STM32F7x7 }
   {$define STM32F76xx }
   {$define UFBGA176 }
@@ -773,7 +951,21 @@
   {$define has_can1 } {$define has_can2 } {$define has_can3 }
   {$define has_rtc }
 {$endif}
-{$if defined(STM32F767VG) or defined(STM32F767VI) }
+{$if defined(STM32F767VG) }
+  {$define STM32F7x7 }
+  {$define STM32F76xx }
+  {$define TFBGA100 }
+  {$define has_gpioa } {$define has_gpiob } {$define has_gpioc } {$define has_gpiod } {$define has_gpioe } {$define has_gpioh }
+  {$define has_usart1 } {$define has_usart2 } {$define has_usart3 } {$define has_usart6 } {$define has_uart4 } {$define has_uart5 } {$define has_uart7 } {$define has_uart8 }
+  {$define has_spi1 } {$define has_spi2 } {$define has_spi3 } {$define has_spi4 } {$define has_spi6 }
+  {$define has_i2c1 } {$define has_i2c2 } {$define has_i2c3 } {$define has_i2c4 }
+  {$define has_lptim1 } {$define has_tim1 } {$define has_tim10 } {$define has_tim11 } {$define has_tim12 } {$define has_tim13 } {$define has_tim14 } {$define has_tim2 } {$define has_tim3 } {$define has_tim4 } {$define has_tim5 } {$define has_tim6 } {$define has_tim7 } {$define has_tim8 } {$define has_tim9 }
+  {$define has_adc1 } {$define has_adc2 } {$define has_adc3 }
+  {$define has_dac1 }
+  {$define has_can1 } {$define has_can2 } {$define has_can3 }
+  {$define has_rtc }
+{$endif}
+{$if defined(STM32F767VG) }
   {$define STM32F7x7 }
   {$define STM32F76xx }
   {$define LQFP100 }
@@ -787,7 +979,49 @@
   {$define has_can1 } {$define has_can2 } {$define has_can3 }
   {$define has_rtc }
 {$endif}
-{$if defined(STM32F767ZG) or defined(STM32F767ZI) }
+{$if defined(STM32F767VI) }
+  {$define STM32F7x7 }
+  {$define STM32F76xx }
+  {$define TFBGA100 }
+  {$define has_gpioa } {$define has_gpiob } {$define has_gpioc } {$define has_gpiod } {$define has_gpioe } {$define has_gpioh }
+  {$define has_usart1 } {$define has_usart2 } {$define has_usart3 } {$define has_usart6 } {$define has_uart4 } {$define has_uart5 } {$define has_uart7 } {$define has_uart8 }
+  {$define has_spi1 } {$define has_spi2 } {$define has_spi3 } {$define has_spi4 } {$define has_spi6 }
+  {$define has_i2c1 } {$define has_i2c2 } {$define has_i2c3 } {$define has_i2c4 }
+  {$define has_lptim1 } {$define has_tim1 } {$define has_tim10 } {$define has_tim11 } {$define has_tim12 } {$define has_tim13 } {$define has_tim14 } {$define has_tim2 } {$define has_tim3 } {$define has_tim4 } {$define has_tim5 } {$define has_tim6 } {$define has_tim7 } {$define has_tim8 } {$define has_tim9 }
+  {$define has_adc1 } {$define has_adc2 } {$define has_adc3 }
+  {$define has_dac1 }
+  {$define has_can1 } {$define has_can2 } {$define has_can3 }
+  {$define has_rtc }
+{$endif}
+{$if defined(STM32F767VI) }
+  {$define STM32F7x7 }
+  {$define STM32F76xx }
+  {$define LQFP100 }
+  {$define has_gpioa } {$define has_gpiob } {$define has_gpioc } {$define has_gpiod } {$define has_gpioe } {$define has_gpioh }
+  {$define has_usart1 } {$define has_usart2 } {$define has_usart3 } {$define has_usart6 } {$define has_uart4 } {$define has_uart5 } {$define has_uart7 } {$define has_uart8 }
+  {$define has_spi1 } {$define has_spi2 } {$define has_spi3 } {$define has_spi4 } {$define has_spi6 }
+  {$define has_i2c1 } {$define has_i2c2 } {$define has_i2c3 } {$define has_i2c4 }
+  {$define has_lptim1 } {$define has_tim1 } {$define has_tim10 } {$define has_tim11 } {$define has_tim12 } {$define has_tim13 } {$define has_tim14 } {$define has_tim2 } {$define has_tim3 } {$define has_tim4 } {$define has_tim5 } {$define has_tim6 } {$define has_tim7 } {$define has_tim8 } {$define has_tim9 }
+  {$define has_adc1 } {$define has_adc2 } {$define has_adc3 }
+  {$define has_dac1 }
+  {$define has_can1 } {$define has_can2 } {$define has_can3 }
+  {$define has_rtc }
+{$endif}
+{$if defined(STM32F767ZG) }
+  {$define STM32F7x7 }
+  {$define STM32F76xx }
+  {$define LQFP144 }
+  {$define has_gpioa } {$define has_gpiob } {$define has_gpioc } {$define has_gpiod } {$define has_gpioe } {$define has_gpiof } {$define has_gpiog } {$define has_gpioh }
+  {$define has_usart1 } {$define has_usart2 } {$define has_usart3 } {$define has_usart6 } {$define has_uart4 } {$define has_uart5 } {$define has_uart7 } {$define has_uart8 }
+  {$define has_spi1 } {$define has_spi2 } {$define has_spi3 } {$define has_spi4 } {$define has_spi5 } {$define has_spi6 }
+  {$define has_i2c1 } {$define has_i2c2 } {$define has_i2c3 } {$define has_i2c4 }
+  {$define has_lptim1 } {$define has_tim1 } {$define has_tim10 } {$define has_tim11 } {$define has_tim12 } {$define has_tim13 } {$define has_tim14 } {$define has_tim2 } {$define has_tim3 } {$define has_tim4 } {$define has_tim5 } {$define has_tim6 } {$define has_tim7 } {$define has_tim8 } {$define has_tim9 }
+  {$define has_adc1 } {$define has_adc2 } {$define has_adc3 }
+  {$define has_dac1 }
+  {$define has_can1 } {$define has_can2 } {$define has_can3 }
+  {$define has_rtc }
+{$endif}
+{$if defined(STM32F767ZI) }
   {$define STM32F7x7 }
   {$define STM32F76xx }
   {$define LQFP144 }
@@ -843,7 +1077,7 @@
   {$define has_can1 } {$define has_can2 } {$define has_can3 }
   {$define has_rtc }
 {$endif}
-{$if defined(STM32F769IG) or defined(STM32F769II) }
+{$if defined(STM32F769IG) }
   {$define STM32F7x9 }
   {$define STM32F76xx }
   {$define LQFP176 }
@@ -857,7 +1091,35 @@
   {$define has_can1 } {$define has_can2 } {$define has_can3 }
   {$define has_rtc }
 {$endif}
-{$if defined(STM32F769NG) or defined(STM32F769NI) }
+{$if defined(STM32F769II) }
+  {$define STM32F7x9 }
+  {$define STM32F76xx }
+  {$define LQFP176 }
+  {$define has_gpioa } {$define has_gpiob } {$define has_gpioc } {$define has_gpiod } {$define has_gpioe } {$define has_gpiof } {$define has_gpiog } {$define has_gpioh } {$define has_gpioi }
+  {$define has_usart1 } {$define has_usart2 } {$define has_usart3 } {$define has_usart6 } {$define has_uart4 } {$define has_uart5 } {$define has_uart7 } {$define has_uart8 }
+  {$define has_spi1 } {$define has_spi2 } {$define has_spi3 } {$define has_spi4 } {$define has_spi5 } {$define has_spi6 }
+  {$define has_i2c1 } {$define has_i2c2 } {$define has_i2c3 } {$define has_i2c4 }
+  {$define has_lptim1 } {$define has_tim1 } {$define has_tim10 } {$define has_tim11 } {$define has_tim12 } {$define has_tim13 } {$define has_tim14 } {$define has_tim2 } {$define has_tim3 } {$define has_tim4 } {$define has_tim5 } {$define has_tim6 } {$define has_tim7 } {$define has_tim8 } {$define has_tim9 }
+  {$define has_adc1 } {$define has_adc2 } {$define has_adc3 }
+  {$define has_dac1 }
+  {$define has_can1 } {$define has_can2 } {$define has_can3 }
+  {$define has_rtc }
+{$endif}
+{$if defined(STM32F769NG) }
+  {$define STM32F7x9 }
+  {$define STM32F76xx }
+  {$define TFBGA216 }
+  {$define has_gpioa } {$define has_gpiob } {$define has_gpioc } {$define has_gpiod } {$define has_gpioe } {$define has_gpiof } {$define has_gpiog } {$define has_gpioh } {$define has_gpioi } {$define has_gpioj } {$define has_gpiok }
+  {$define has_usart1 } {$define has_usart2 } {$define has_usart3 } {$define has_usart6 } {$define has_uart4 } {$define has_uart5 } {$define has_uart7 } {$define has_uart8 }
+  {$define has_spi1 } {$define has_spi2 } {$define has_spi3 } {$define has_spi4 } {$define has_spi5 } {$define has_spi6 }
+  {$define has_i2c1 } {$define has_i2c2 } {$define has_i2c3 } {$define has_i2c4 }
+  {$define has_lptim1 } {$define has_tim1 } {$define has_tim10 } {$define has_tim11 } {$define has_tim12 } {$define has_tim13 } {$define has_tim14 } {$define has_tim2 } {$define has_tim3 } {$define has_tim4 } {$define has_tim5 } {$define has_tim6 } {$define has_tim7 } {$define has_tim8 } {$define has_tim9 }
+  {$define has_adc1 } {$define has_adc2 } {$define has_adc3 }
+  {$define has_dac1 }
+  {$define has_can1 } {$define has_can2 } {$define has_can3 }
+  {$define has_rtc }
+{$endif}
+{$if defined(STM32F769NI) }
   {$define STM32F7x9 }
   {$define STM32F76xx }
   {$define TFBGA216 }
@@ -885,7 +1147,7 @@
   {$define has_can1 } {$define has_can2 } {$define has_can3 }
   {$define has_rtc }
 {$endif}
-{$if defined(STM32F777IIKx) }
+{$if defined(STM32F777II) }
   {$define STM32F7x7 }
   {$define STM32F77xx }
   {$define UFBGA176 }
@@ -930,6 +1192,20 @@
 {$if defined(STM32F777VI) }
   {$define STM32F7x7 }
   {$define STM32F77xx }
+  {$define TFBGA100 }
+  {$define has_gpioa } {$define has_gpiob } {$define has_gpioc } {$define has_gpiod } {$define has_gpioe } {$define has_gpioh }
+  {$define has_usart1 } {$define has_usart2 } {$define has_usart3 } {$define has_usart6 } {$define has_uart4 } {$define has_uart5 } {$define has_uart7 } {$define has_uart8 }
+  {$define has_spi1 } {$define has_spi2 } {$define has_spi3 } {$define has_spi4 } {$define has_spi6 }
+  {$define has_i2c1 } {$define has_i2c2 } {$define has_i2c3 } {$define has_i2c4 }
+  {$define has_lptim1 } {$define has_tim1 } {$define has_tim10 } {$define has_tim11 } {$define has_tim12 } {$define has_tim13 } {$define has_tim14 } {$define has_tim2 } {$define has_tim3 } {$define has_tim4 } {$define has_tim5 } {$define has_tim6 } {$define has_tim7 } {$define has_tim8 } {$define has_tim9 }
+  {$define has_adc1 } {$define has_adc2 } {$define has_adc3 }
+  {$define has_dac1 }
+  {$define has_can1 } {$define has_can2 } {$define has_can3 }
+  {$define has_rtc }
+{$endif}
+{$if defined(STM32F777VI) }
+  {$define STM32F7x7 }
+  {$define STM32F77xx }
   {$define LQFP100 }
   {$define has_gpioa } {$define has_gpiob } {$define has_gpioc } {$define has_gpiod } {$define has_gpioe } {$define has_gpioh }
   {$define has_usart1 } {$define has_usart2 } {$define has_usart3 } {$define has_usart6 } {$define has_uart4 } {$define has_uart5 } {$define has_uart7 } {$define has_uart8 }
@@ -956,7 +1232,7 @@
   {$define has_rtc }
 {$endif}
 {$if defined(STM32F778AI) }
-  {$define STM32F7x8 }
+  {$define STM32F7x9 }
   {$define STM32F77xx }
   {$define WLCSP180 }
   {$define has_gpioa } {$define has_gpiob } {$define has_gpioc } {$define has_gpiod } {$define has_gpioe } {$define has_gpiof } {$define has_gpiog } {$define has_gpioh } {$define has_gpioi }
@@ -1025,7 +1301,7 @@
   {$define has_can1 } {$define has_can2 } {$define has_can3 }
   {$define has_rtc }
 {$endif}
-{$if defined(STM32F7x2) or defined(STM32F7x3) or defined(STM32F7x5) or defined(STM32F7x6) or defined(STM32F7x7) or defined(STM32F7x8) or defined(STM32F7x9) }
+{$if defined(STM32F7x0 ) or defined(STM32F7x2) or defined(STM32F7x3) or defined(STM32F7x5) or defined(STM32F7x6) or defined(STM32F7x7) or defined(STM32F7x8) or defined(STM32F7x9) }
   {$define CortexM7}
   {$define __CONTROLLERTYPE__:=STM32F7}
   {$define STM32F7}

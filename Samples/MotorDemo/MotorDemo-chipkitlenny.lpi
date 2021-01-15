@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CONFIG>
   <ProjectOptions>
+    <Version Value="12"/>
     <General>
       <UseAppBundle Value="False"/>
     </General>
@@ -17,6 +18,7 @@
     </Units>
   </ProjectOptions>
   <CompilerOptions>
+    <Version Value="11"/>
     <Target>
       <Filename Value="MotorDemo"/>
     </Target>
@@ -26,8 +28,9 @@
       <UnitOutputDirectory Value="lib/$(TargetCPU)-$(TargetOS)"/>
     </SearchPaths>
     <CodeGeneration>
-      <HeapSize Value="8192"/>
-      <StackSize Value="8192"/>
+      <!--HeapSize Value="8192"/-->
+      <!--StackSize Value="8192"/-->
+      <TargetProcessor Value="MIPS32R2"/>
       <TargetCPU Value="mipsel"/>
       <TargetOS Value="embedded"/>
     </CodeGeneration>
@@ -39,10 +42,14 @@
       </Debugging>
     </Linking>
     <Other>
-      <CustomOptions Value="-Cpmips32r2
--XPmips-sde-elf-
+      <CustomOptions Value="
 -Wpchipkitlenny
 -dchipkitlenny
+-godwarfsets
+-godwarfcpp
+
+
+
       "/>
     </Other>
   </CompilerOptions>

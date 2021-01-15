@@ -23,11 +23,12 @@ interface
 uses
   MBF.SAMCD.Helpers,
   MBF.SAMCD.SerCom,
-  MBF.SAMCD.GPIO;
+  MBF.SAMCD.GPIO,
+  MBF.SAMCD.SystemCore;
 
 const
   DefaultUARTBaudrate=115200;
-  DefaultUARTTimeout = 10000;
+  DefaultUARTTimeOut = 10000;
 
   //UART includes are complex and automagically created, so include them to keep Sourcecode clean
   {$include MBF.SAMCD.UART.inc}
@@ -64,15 +65,15 @@ type
     BAUD_INT_MAX=8192;
     BAUD_FP_MAX=8;
   strict private
-    function  GetBaud2(const Value: Cardinal):cardinal;
-    function  GetBaudFrac(const Value: Cardinal):cardinal;
-    function  GetBaudFrac2(const Value: Cardinal):cardinal;
+    function  GetBaud2(const Value: longWord):longWord;
+    function  GetBaudFrac(const Value: longWord):longWord;
+    function  GetBaudFrac2(const Value: longWord):longWord;
     function  TX_Ready:boolean;
     function  DRE_Ready:boolean;
     function  RXC_Ready:boolean;
 
-    function  GetBaudRate: Cardinal;
-    procedure SetBaudRate(const Value: Cardinal);
+    function  GetBaudRate: longWord;
+    procedure SetBaudRate(const Value: longWord);
     function  GetBitsPerWord: TUARTBitsPerWord;
     procedure SetBitsPerWord(const Value: TUARTBitsPerWord);
     function  GetParity: TUARTParity;
@@ -90,22 +91,22 @@ type
     function Disable : boolean;
     procedure Enable;
 
-    function ReadBuffer(aReadBuffer: Pointer; aReadCount : integer; TimeOut: Cardinal=0): Cardinal;
-    function WriteBuffer(const aWriteBuffer: Pointer; aWriteCount : integer; TimeOut: Cardinal=0): Cardinal;
+    function ReadBuffer(aReadBuffer: Pointer; aReadCount : integer; TimeOut: TMilliSeconds=0): longWord;
+    function WriteBuffer(const aWriteBuffer: Pointer; aWriteCount : integer; TimeOut: TMilliSeconds=0): longWord;
 
-    function ReadByte(var aReadByte: byte; const Timeout : Cardinal=0):boolean; inline;
-    function ReadByte(var aReadBuffer: array of byte; aReadCount : integer=-1; const Timeout : Cardinal=0):boolean;
+    function ReadByte(var aReadByte: byte; const TimeOut: TMilliSeconds=0):boolean; inline;
+    function ReadByte(var aReadBuffer: array of byte; aReadCount : integer=-1; const TimeOut: TMilliSeconds=0):boolean;
 
-    function WriteByte(const aWriteByte: byte; const Timeout : Cardinal=0) : boolean;
-    function WriteByte(const aWriteBuffer: array of byte; aWriteCount : integer= -1; const Timeout : Cardinal=0) : boolean;
+    function WriteByte(const aWriteByte: byte; const TimeOut: TMilliSeconds=0) : boolean;
+    function WriteByte(const aWriteBuffer: array of byte; aWriteCount : integer= -1; const TimeOut: TMilliSeconds=0) : boolean;
 
     function ReadString(var aReadString: String; aReadCount: Integer = -1;
-      const Timeout: Cardinal = 0): Boolean;
+      const TimeOut: TMilliSeconds = 0): Boolean;
     function ReadString(var aReadString: String; const aDelimiter : char;
-      const Timeout: Cardinal = 0): Boolean;
-    function WriteString(const aWriteString: String; const Timeout: Cardinal = 0): Boolean;
+      const TimeOut: TMilliSeconds = 0): Boolean;
+    function WriteString(const aWriteString: String; const TimeOut: TMilliSeconds = 0): Boolean;
 
-    property BaudRate : Cardinal read getBaudRate write setBaudRate;
+    property BaudRate : longWord read getBaudRate write setBaudRate;
     property BitsPerWord : TUARTBitsPerWord read getBitsPerWord; //write setBitsPerWord; We do currently not allow to set 9Bits
     property Parity : TUARTParity read getParity write setParity;
     property StopBits : TUARTStopBits read getStopBits write setStopBits;
@@ -141,10 +142,9 @@ var
 implementation
 
 uses
-  MBF.BitHelpers,
-  MBF.SAMCD.SystemCore;
+  MBF.BitHelpers;
 
-function TUARTRegistersHelper.GetBaud2(const Value: Cardinal):cardinal;
+function TUARTRegistersHelper.GetBaud2(const Value: longWord):longWord;
 var
   temp1:uint64;
 begin
@@ -153,11 +153,11 @@ begin
   result:=65536 - word(temp1);
 end;
 
-function TUARTRegistersHelper.GetBaudFrac(const Value: Cardinal):cardinal;
+function TUARTRegistersHelper.GetBaudFrac(const Value: longWord):longWord;
 var
   baud_fp:byte;
   temp1,temp2:uint64;
-  baud_int:cardinal;
+  baud_int:longWord;
 begin
   result:=0;
   baud_fp:=0;
@@ -175,7 +175,7 @@ begin
   result:=((baud_int AND longword($FFF)) OR ((baud_fp AND byte($7)) shl 13));
 end;
 
-function TUARTRegistersHelper.GetBaudFrac2(const Value: Cardinal):cardinal;
+function TUARTRegistersHelper.GetBaudFrac2(const Value: longWord):longWord;
 var
   baud,fp,mul_ratio:uint64;
 begin
@@ -251,12 +251,12 @@ begin
   Result :=  TSercom_Registers(Self).Disable;
 end;
 
-function TUARTRegistersHelper.GetBaudRate: Cardinal;
+function TUARTRegistersHelper.GetBaudRate: longWord;
 begin
   Result := (uint64(SystemCore.CPUFrequency)*(65536-BAUD)) shr 4 shr 16 //Divide by 16, Divide by 65536
 end;
 
-procedure TUARTRegistersHelper.SetBaudRate(const Value: Cardinal);
+procedure TUARTRegistersHelper.SetBaudRate(const Value: longWord);
 const
   SHIFT=32;
 var
@@ -356,13 +356,13 @@ begin
     Enable;
 end;
 
-function TUARTRegistersHelper.ReadBuffer(aReadBuffer: Pointer; aReadCount : integer; TimeOut: Cardinal=0): longWord;
+function TUARTRegistersHelper.ReadBuffer(aReadBuffer: Pointer; aReadCount : integer; TimeOut: TMilliSeconds=0): longWord;
 var
   EndTime : longWord;
 begin
   Result := 0;
-  if Timeout = 0 then
-    EndTime := SystemCore.GetTickCount + DefaultUARTTimeout
+  if TimeOut = 0 then
+    EndTime := SystemCore.GetTickCount + DefaultUARTTimeOut
   else
     EndTime := SystemCore.GetTickCount + TimeOut;
 
@@ -384,13 +384,13 @@ begin
   end;
 end;
 
-function TUARTRegistersHelper.WriteBuffer(const aWriteBuffer: Pointer; aWriteCount : Integer; TimeOut: Cardinal=0): Cardinal;
+function TUARTRegistersHelper.WriteBuffer(const aWriteBuffer: Pointer; aWriteCount : Integer; TimeOut: TMilliSeconds=0): longWord;
 var
   EndTime : longWord;
 begin
   Result := 0;
-  if Timeout = 0 then
-    EndTime := SystemCore.GetTickCount + DefaultUARTTimeout
+  if TimeOut = 0 then
+    EndTime := SystemCore.GetTickCount + DefaultUARTTimeOut
   else
     EndTime := SystemCore.GetTickCount + TimeOut;
 
@@ -418,13 +418,13 @@ begin
   end;
 end;
 
-function TUARTRegistersHelper.ReadByte(var aReadByte: byte; const Timeout: Cardinal = 0):boolean; inline;
+function TUARTRegistersHelper.ReadByte(var aReadByte: byte; const TimeOut: TMilliSeconds = 0):boolean; inline;
 var
   EndTime : longWord;
 begin
   result := false;
-  if Timeout = 0 then
-    EndTime := SystemCore.GetTickCount + DefaultUARTTimeout
+  if TimeOut = 0 then
+    EndTime := SystemCore.GetTickCount + DefaultUARTTimeOut
   else
     EndTime := SystemCore.GetTickCount + TimeOut;
   repeat
@@ -440,7 +440,7 @@ begin
   //		/* Set the error flag */
 end;
 
-function TUARTRegistersHelper.ReadByte(var aReadBuffer: array of byte; aReadCount : integer=-1; const Timeout : Cardinal=0):boolean;
+function TUARTRegistersHelper.ReadByte(var aReadBuffer: array of byte; aReadCount : integer=-1; const TimeOut: TMilliSeconds=0):boolean;
 var
   EndTime : longWord;
   DataRead : byte;
@@ -448,8 +448,8 @@ var
 begin
   Result := false;
   //Default timeout is 10 Seconds
-  if Timeout = 0 then
-    EndTime := SystemCore.GetTickCount + DefaultUARTTimeout
+  if TimeOut = 0 then
+    EndTime := SystemCore.GetTickCount + DefaultUARTTimeOut
   else
     EndTime := SystemCore.GetTickCount + TimeOut;
 
@@ -471,7 +471,7 @@ begin
     //setLength(aReadBuffer,i-1-Low(aReadBuffer));
 end;
 
-function TUARTRegistersHelper.WriteByte(const aWriteByte: byte; const Timeout : Cardinal=0) : boolean;
+function TUARTRegistersHelper.WriteByte(const aWriteByte: byte; const TimeOut: TMilliSeconds=0) : boolean;
 var
   EndTime : longWord;
   DataRead : byte;
@@ -479,8 +479,8 @@ var
 begin
   Result := false;
   //Default timeout is 10 Seconds
-  if Timeout = 0 then
-    EndTime := SystemCore.GetTickCount + DefaultUARTTimeout
+  if TimeOut = 0 then
+    EndTime := SystemCore.GetTickCount + DefaultUARTTimeOut
   else
     EndTime := SystemCore.GetTickCount + TimeOut;
 
@@ -499,7 +499,7 @@ begin
   until  (SystemCore.GetTickCount > EndTime);
 end;
 
-function TUARTRegistersHelper.WriteByte(const aWriteBuffer: array of byte; aWriteCount : integer=-1; const Timeout : Cardinal=0) : boolean;
+function TUARTRegistersHelper.WriteByte(const aWriteBuffer: array of byte; aWriteCount : integer=-1; const TimeOut: TMilliSeconds=0) : boolean;
 var
   EndTime : longWord;
   DataRead : byte;
@@ -507,8 +507,8 @@ var
 begin
   Result := false;
   //Default timeout is 10 Seconds
-  if Timeout = 0 then
-    EndTime := SystemCore.GetTickCount + DefaultUARTTimeout
+  if TimeOut = 0 then
+    EndTime := SystemCore.GetTickCount + DefaultUARTTimeOut
   else
     EndTime := SystemCore.GetTickCount + TimeOut;
 
@@ -535,7 +535,7 @@ begin
 end;
 
 function TUARTRegistersHelper.ReadString(var aReadString: String; aReadCount: integer = -1;
-  const Timeout: Cardinal = 0): Boolean;
+  const TimeOut: TMilliSeconds = 0): Boolean;
 var
   EndTime : longWord;
   i : integer;
@@ -543,8 +543,8 @@ begin
   Result := false;
   aReadString := '';
   //Default timeout is 10 Seconds
-  if Timeout = 0 then
-    EndTime := SystemCore.GetTickCount + DefaultUARTTimeout
+  if TimeOut = 0 then
+    EndTime := SystemCore.GetTickCount + DefaultUARTTimeOut
   else
     EndTime := SystemCore.GetTickCount + TimeOut;
   i := 1;
@@ -563,7 +563,7 @@ begin
 end;
 
 function TUARTRegistersHelper.ReadString(var aReadString: String; const aDelimiter: char;
-  const Timeout: Cardinal = 0): Boolean;
+  const TimeOut: TMilliSeconds = 0): Boolean;
 var
   EndTime : longWord;
   charRead : char;
@@ -571,8 +571,8 @@ begin
   Result := false;
   aReadString := '';
   //Default timeout is 10 Seconds
-  if Timeout = 0 then
-    EndTime := SystemCore.GetTickCount + DefaultUARTTimeout
+  if TimeOut = 0 then
+    EndTime := SystemCore.GetTickCount + DefaultUARTTimeOut
   else
     EndTime := SystemCore.GetTickCount + TimeOut;
 
@@ -590,7 +590,7 @@ begin
   until (SystemCore.GetTickCount > EndTime);
 end;
 
-function TUARTRegistersHelper.WriteString(const aWriteString: String; const Timeout: Cardinal = 0): Boolean;
+function TUARTRegistersHelper.WriteString(const aWriteString: String; const TimeOut: TMilliSeconds = 0): Boolean;
 var
   EndTime : longWord;
   DataRead : byte;
@@ -598,8 +598,8 @@ var
 begin
   Result := false;
   //Default timeout is 10 Seconds
-  if Timeout = 0 then
-    EndTime := SystemCore.GetTickCount + DefaultUARTTimeout
+  if TimeOut = 0 then
+    EndTime := SystemCore.GetTickCount + DefaultUARTTimeOut
   else
     EndTime := SystemCore.GetTickCount + TimeOut;
 

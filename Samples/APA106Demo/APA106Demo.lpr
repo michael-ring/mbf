@@ -31,15 +31,22 @@ var
 
 begin
   SystemCore.Initialize;
-  //Core Frequency should be 8, 16 of 64MHz to get perfect SPI Timing
+  //For SPI Usage we need the SPI Clock to run at 8 MHz.
+  //On most controllers the SPI Clock is in some relation to the Systemcore Clock.
+  //So we first tey to set the CPU speed to a multiple of 8MHz
+  //and then we set the SPI Clock Speed to 8MHz (and hope that works.....)
+
   if SystemCore.getMaxCPUFrequency >= 64000000 then
     SystemCore.SetCPUFrequency(64000000)
   else if SystemCore.getMaxCPUFrequency >= 16000000 then
     SystemCore.SetCPUFrequency(16000000)
   else
     SystemCore.SetCPUFrequency(8000000);
-  //APA106.Initialize(TArduinoPin.A3,16);
-  APA106.Initialize(SPI,16,TSPIMOSIPins.D11_SPI,TSPIMISOPins.D12_SPI,TSPISCLKPins.D13_SPI,TSPINSSPins.D10_SPI);
+
+  SPI.Initialize(TSPIMOSIPins.D11_SPI,TSPIMISOPins.D12_SPI,TSPISCLKPins.D13_SPI,TSPINSSPins.D10_SPI);
+  SPI.Baudrate := 8000000;
+
+  APA106.Initialize(SPI,16);
 
   while True do
   begin

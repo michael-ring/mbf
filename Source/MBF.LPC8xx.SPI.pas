@@ -327,9 +327,9 @@ type
 
     TSPIRegistersHelper = record helper for TSPI_Registers
   protected
-    function FindDividerValue(const Baudrate: Cardinal) : Cardinal;
-    function GetFrequency: Cardinal;
-    procedure SetFrequency(const Value: Cardinal);
+    function FindDividerValue(const Baudrate: longWord) : longWord;
+    function GetFrequency: longWord;
+    procedure SetFrequency(const Value: longWord);
     function GetBitsPerWord: TSPIBitsPerWord;
     procedure SetBitsPerWord(const Value: TSPIBitsPerWord);
     function GetMode: TSPIMode;
@@ -348,12 +348,12 @@ type
                          const ANSSPin  : TSPINSSPins); overload;
 
     { Reads specified number of bytes to buffer and returns actual number of bytes read. }
-    function Read(const Buffer: Pointer; const BufferSize: Cardinal;
-                  const SoftNSSPin : TPinIdentifier = TNativePin.None): Cardinal;
+    function Read(const Buffer: Pointer; const BufferSize: longWord;
+                  const SoftNSSPin : TPinIdentifier = TNativePin.None): longWord;
 
     { Writes specified number of bytes from buffer and returns actual number of bytes written. }
-    function Write(const Buffer: Pointer; const BufferSize: Cardinal;
-                   const SoftNSSPin : TPinIdentifier = TNativePin.None): Cardinal;
+    function Write(const Buffer: Pointer; const BufferSize: longWord;
+                   const SoftNSSPin : TPinIdentifier = TNativePin.None): longWord;
 
     { Transfers data through SPI port asynchronously - that is, reading and writing at the same time.
       @param(ReadBuffer Pointer to data buffer where the data will be read from. If this parameter is set to @nil,
@@ -363,16 +363,16 @@ type
       @param(BufferSize The size of read and write buffers in bytes.)
       @param(optional GPIO Pin that is configured as an Output. This allows the use of Soft-SPI when Hardware SPI is not suitable)
       @returns(Number of bytes that were actually transferred.) }
-    function Transfer(const ReadBuffer, WriteBuffer: Pointer; const BufferSize: Cardinal;
-                      const SoftNSSPin : TPinIdentifier = TNativePin.None): Cardinal;
+    function Transfer(const ReadBuffer, WriteBuffer: Pointer; const BufferSize: longWord;
+                      const SoftNSSPin : TPinIdentifier = TNativePin.None): longWord;
 
     { Transfers data through SPI port asynchronously - that is, reading and writing at the same time.
       @param(Buffer Pointer to data buffer where the data will be read from and at the same time written to,
         overwriting its contents.)
       @param(BufferSize The size of buffer in bytes.)
       @returns(Number of bytes that were actually transferred.) }
-    function Transfer(const Buffer: Pointer; const BufferSize: Cardinal;
-                      const SoftNSSPin : TPinIdentifier = TNativePin.None): Cardinal;
+    function Transfer(const Buffer: Pointer; const BufferSize: longWord;
+                      const SoftNSSPin : TPinIdentifier = TNativePin.None): longWord;
 
     { Transfers data through SPI port asynchronously - that is, reading and writing at the same time.
       @param(Value  Word sized Data Value that weill get sent over SPI When in 8 Bit Mode then 2 bytes will be transfered)
@@ -385,7 +385,7 @@ type
     property MISOPin : TSPIMISOPins write setMISOPin;
     property SCLKPin : TSPISCLKPins write setSCLKPin;
     property NSSPin  : TSPINSSPins  write setNSSPin;
-    property Frequency : Cardinal read getFrequency write setFrequency;
+    property Frequency : longWord read getFrequency write setFrequency;
     property Mode : TSPIMode read getMode write setMode;
     property BitsPerWord : TSPIBitsPerWord read getBitsPerWord write setBitsPerWord;
   end;
@@ -458,9 +458,9 @@ begin
   setNSSPin(ANSSPin);
 end;
 
-function TSPIRegistersHelper.FindDividerValue(const Baudrate: Cardinal): Cardinal;
+function TSPIRegistersHelper.FindDividerValue(const Baudrate: longWord): longWord;
 var
-  BaseFrequency : Cardinal;
+  BaseFrequency : longWord;
 begin
   Result := SystemCore.GetSystemClockFrequency div Baudrate;
   if Result > 0 then
@@ -469,14 +469,14 @@ begin
     Result := $ffff;
 end;
 
-function TSPIRegistersHelper.GetFrequency: Cardinal;
+function TSPIRegistersHelper.GetFrequency: longWord;
 var
-  BaseFrequency : Cardinal;
+  BaseFrequency : longWord;
 begin
   Result := SystemCore.GetSystemClockFrequency div (Self.&DIV+1);
 end;
 
-procedure TSPIRegistersHelper.SetFrequency(const Value: Cardinal);
+procedure TSPIRegistersHelper.SetFrequency(const Value: longWord);
 var
   Divider : longWord;
 begin
@@ -565,10 +565,10 @@ begin
   self.CFG := self.CFG and (not (1 shl 0));
 end;
 
-function TSPIRegistersHelper.Transfer(const ReadBuffer, WriteBuffer: Pointer; const BufferSize: Cardinal;
-                  const SoftNSSPin : TPinIdentifier = TNativePin.None): Cardinal;
+function TSPIRegistersHelper.Transfer(const ReadBuffer, WriteBuffer: Pointer; const BufferSize: longWord;
+                  const SoftNSSPin : TPinIdentifier = TNativePin.None): longWord;
 var
-  ReadBytes,WriteBytes : cardinal;
+  ReadBytes,WriteBytes : longWord;
   tmpPin, _NSSPin : TPinIdentifier;
 begin
   ReadBytes := 0;
@@ -706,20 +706,20 @@ begin
   end;
 end;
 
-function TSPIRegistersHelper.Read(const Buffer: Pointer; const BufferSize: Cardinal;
-                                  const SoftNSSPin : TPinIdentifier = TNativePin.None): Cardinal;
+function TSPIRegistersHelper.Read(const Buffer: Pointer; const BufferSize: longWord;
+                                  const SoftNSSPin : TPinIdentifier = TNativePin.None): longWord;
 begin
   Result := Transfer(Buffer, nil, BufferSize, SoftNSSPin);
 end;
 
-function TSPIRegistersHelper.Write(const Buffer: Pointer; const BufferSize: Cardinal;
-                                   const SoftNSSPin : TPinIdentifier = TNativePin.None): Cardinal;
+function TSPIRegistersHelper.Write(const Buffer: Pointer; const BufferSize: longWord;
+                                   const SoftNSSPin : TPinIdentifier = TNativePin.None): longWord;
 begin
   Result := Transfer(nil, Buffer, BufferSize, SoftNSSPin);
 end;
 
-function TSPIRegistersHelper.Transfer(const Buffer: Pointer; const BufferSize: Cardinal;
-                                      const SoftNSSPin : TPinIdentifier = TNativePin.None): Cardinal;
+function TSPIRegistersHelper.Transfer(const Buffer: Pointer; const BufferSize: longWord;
+                                      const SoftNSSPin : TPinIdentifier = TNativePin.None): longWord;
 begin
   Result := Transfer(Buffer, Buffer, BufferSize, SoftNSSPin);
 end;

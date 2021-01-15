@@ -38,15 +38,15 @@ type
     IRCClockFrequency = 12000000;
   private
     procedure ConfigureSystem;
-    function GetCPUFrequency: Cardinal;
-    procedure SetCPUFrequency(const Value: Cardinal);
-    function GetSysTickClockFrequency : Cardinal;
+    function GetCPUFrequency: longWord;
+    procedure SetCPUFrequency(const Value: longWord);
+    function GetSysTickClockFrequency : longWord;
     function GetWatchdogClockFrequency : longWord;
   public
     procedure Initialize;
-    function getMainClockFrequency : Cardinal;
-    function GetSystemClockFrequency: Cardinal;
-    property CPUFrequency: Cardinal read GetCPUFrequency write SetCPUFrequency;
+    function getMainClockFrequency : longWord;
+    function GetSystemClockFrequency: longWord;
+    property CPUFrequency: longWord read GetCPUFrequency write SetCPUFrequency;
     function getI2CDriverPointer : pointer;
     function getSPIDriverPointer : pointer;
     function getADCDriverPointer : pointer;
@@ -133,7 +133,7 @@ begin
 end;
 
 
-function TLPC8xxSystemCore.GetSystemClockFrequency: Cardinal;
+function TLPC8xxSystemCore.GetSystemClockFrequency: longWord;
 begin
   if SysCon.SYSAHBCLKDIV and %11111111 <> 0 then
     Result := GetMainClockFrequency div (SysCon.SYSAHBCLKDIV and %11111111)
@@ -150,7 +150,7 @@ begin
   Result := Result div (1+(SYSCON.WDTOSCCTRL and %11111) shl 1);
 end;
 
-function TLPC8xxSystemCore.GetMainClockFrequency: Cardinal;
+function TLPC8xxSystemCore.GetMainClockFrequency: longWord;
 begin
   case SYSCON.MAINCLKSEL and %11 of
     0 : Result := IRCClockFrequency;
@@ -182,7 +182,7 @@ begin
   pRomTable := pointer(pointer($1fff1ff8)^);
 end;
 
-function TLPC8xxSystemCore.GetSysTickClockFrequency : Cardinal; [public, alias: 'MBF_GetSysTickClockFrequency'];
+function TLPC8xxSystemCore.GetSysTickClockFrequency : longWord; [public, alias: 'MBF_GetSysTickClockFrequency'];
 begin
     Result := GetSystemClockFrequency;
 end;
@@ -192,12 +192,12 @@ begin
 end;
 
 
-function TLPC8xxSystemCore.GetCPUFrequency: Cardinal;
+function TLPC8xxSystemCore.GetCPUFrequency: longWord;
 begin
   Result := GetSystemClockFrequency;
 end;
 
-procedure TLPC8xxSystemCore.SetCPUFrequency(const Value: Cardinal);
+procedure TLPC8xxSystemCore.SetCPUFrequency(const Value: longWord);
 const
   CPU_FREQ_EQU=0; CPU_FREQ_LTE=1; CPU_FREQ_GTE=2; CPU_FREQ_APPROX=3;
   PLL_CMD_SUCCESS=0; PLL_INVALID_FREQ=1; PLL_INVALID_MODE=2; PLL_FREQ_NOT_FOUND=3; PLL_NOT_LOCKED=4;

@@ -35,33 +35,33 @@ begin
 
   aPinValue :=0;
   aPinValue :=1;
-  aPinValue := GPIO.GetPinValue(TNativePin.PA0);
-  GPIO.SetPinValue(TNativePin.PA0,0);
-  GPIO.SetPinValue(TNativePin.PA0,1);
-  GPIO.TogglePinValue(TNativePin.PA0);
+  aPinValue := GPIO.GetPinValue(TNativePin.None);
+  GPIO.SetPinValue(TNativePin.None,0);
+  GPIO.SetPinValue(TNativePin.None,1);
+  GPIO.TogglePinValue(TNativePin.None);
 
   aPinLevel := TPinLevel.Low;
   aPinLevel := TPinLevel.High;
-  aPinLevel := GPIO.GetPinLevel(TNativePin.PA0);
-  GPIO.SetPinLevel(TNativePin.PA0,aPinLevel);
-  GPIO.TogglePinLevel(TNativePin.PA0);
+  aPinLevel := GPIO.GetPinLevel(TNativePin.None);
+  GPIO.SetPinLevel(TNativePin.None,aPinLevel);
+  GPIO.TogglePinLevel(TNativePin.None);
 
-  GPIO.SetPinLevelHigh(TNativePin.PA0);
-  GPIO.SetPinLevelLow(TNativePin.PA0);
+  GPIO.SetPinLevelHigh(TNativePin.None);
+  GPIO.SetPinLevelLow(TNativePin.None);
 
   aPinMode := TPinMode.Input;
   aPinMode := TPinMode.Output;
   aPinMode := TPinMode.Analog;
-  aPinMode := GPIO.PinMode[TNativePin.PA0];
-  GPIO.PinMode[TNativePin.PA0] := aPinMode;
+  aPinMode := GPIO.PinMode[TNativePin.None];
+  GPIO.PinMode[TNativePin.None] := aPinMode;
   
-  aPinDrive := GPIO.PinDrive[TNativePin.PA0];
-  GPIO.PinDrive[TNativePin.PA0] := aPinDrive;
+  aPinDrive := GPIO.PinDrive[TNativePin.None];
+  GPIO.PinDrive[TNativePin.None] := aPinDrive;
 
-  aPinValue := GPIO.PinValue[TNativePin.PA0];
-  GPIO.PinValue[TNativePin.PA0] := aPinValue;
+  aPinValue := GPIO.PinValue[TNativePin.None];
+  GPIO.PinValue[TNativePin.None] := aPinValue;
 
-  aPinLevel := GPIO.PinLevel[TNativePin.PA0];
-  GPIO.PinLevel[TNativePin.PA0] := aPinLevel;
+  aPinLevel := GPIO.PinLevel[TNativePin.None];
+  GPIO.PinLevel[TNativePin.None] := aPinLevel;
 end.  
 

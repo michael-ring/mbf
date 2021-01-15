@@ -12,13 +12,32 @@ unit mbf.stm32f3.systemcore;
   warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the FPC modified GNU Library General Public
   License for more details.
 }
-{< ST Micro F3xx board series functions. }
+{
+  Related Reference Manuals
+
+  STM32F37xxx advanced Arm
+  http://www.st.com/resource/en/reference_manual/DM00041563.pdf
+
+  STM32F303xBCDE, STM32F303x68, STM32F328x8, STM32F358xC, STM32F398xE advanced ARM
+  http://www.st.com/resource/en/reference_manual/DM00043574.pdf
+
+  STM32F334xx advanced Arm
+  http://www.st.com/resource/en/reference_manual/DM00093941.pdf
+
+  STM32F302xBCDE and STM32F302x68 advanced ARM
+  http://www.st.com/resource/en/reference_manual/DM00094349.pdf
+
+  STM32F301x68 and STM32F318x8 advanced ARM
+  http://www.st.com/resource/en/reference_manual/DM00094350.pdf
+}
+
 interface
 
 {$INCLUDE MBF.Config.inc}
 
-uses
-  MBF.SystemCore;
+{$DEFINE INTERFACE}
+{$INCLUDE MBF.ARM.SystemCore.inc}
+{$UNDEF INTERFACE}
 
 {$if defined(stm32f3) }
 // All f3 chips have 72MHz
@@ -46,24 +65,24 @@ type
     FREQUENCY : longWord;
     USBPRE : integer;
     PREDIV : byte;
-    PLLMUL : byte;
+    PLLN : byte;
     AHBPRE : byte;
   end;
   private
     procedure ConfigureSystem;
     function GetFrequencyParameters(aHCLKFrequency : longWord;aClockType : TClockType):TOSCParameters;
-    function GetSysTickClockFrequency : Cardinal;
-    function GetHCLKFrequency : Cardinal;
+    function GetSysTickClockFrequency : longWord;
+    function GetHCLKFrequency : longWord;
   public
     procedure Initialize;
-    function GetSYSCLKFrequency: Cardinal;
-    function GetAPB1PeripheralClockFrequency : Cardinal;
-    function GetAPB1TimerClockFrequency : Cardinal;
-    function GetAPB2PeripheralClockFrequency : Cardinal;
-    function GetAPB2TimerClockFrequency : Cardinal;
-    procedure SetCPUFrequency(const Value: Cardinal; aClockType : TClockType = TClockType.PLLHSI);
-    function GetCPUFrequency : Cardinal;
-    function getMaxCPUFrequency : Cardinal;
+    function GetSYSCLKFrequency: longWord;
+    function GetAPB1PeripheralClockFrequency : longWord;
+    function GetAPB1TimerClockFrequency : longWord;
+    function GetAPB2PeripheralClockFrequency : longWord;
+    function GetAPB2TimerClockFrequency : longWord;
+    procedure SetCPUFrequency(const Value: longWord; aClockType : TClockType = TClockType.PLLHSI);
+    function GetCPUFrequency : longWord;
+    function getMaxCPUFrequency : longWord;
   end;
 
 var
@@ -71,7 +90,93 @@ var
 
 implementation
 
+uses
+  cortexm4,MBF.BitHelpers;
+
+{$DEFINE IMPLEMENTATION}
+{$INCLUDE MBF.ARM.SystemCore.inc}
+{$UNDEF IMPLEMENTATION}
+
 {$REGION 'TSystemCore'}
+
+const
+  AHBDividers : array[0..15] of word =(1,1,1,1,1,1,1,1,2,4,8,16,64,128,256,512);
+  APBDividers : array[0..7] of byte = (1,1,1,1,2,4,8,16);
+
+function TSTM32SystemCore.GetSYSCLKFrequency : longWord;
+var
+  temp : longWord;
+begin
+  case GetCrumb(RCC.CFGR,2) of
+    %00:  //HSI used as system clock
+        Result := HSIClockFrequency;
+    %01:  //HSE used as system clock
+        Result := HSEClockFrequency;
+    %10:  //PLL used as system clock;
+        begin
+          {$if defined(STM32F303RD) or defined(STM32F303RE)
+               or defined(STM32F303VD) or defined(STM32F303VE)
+               or defined(STM32F303ZD) or defined(STM32F303ZE)
+               or defined(STM32F398VE) }
+          case GetCrumb(RCC.CFGR,15) of
+            %00: Result := HSIClockFrequency div 2;
+            %01: Result := HSIClockFrequency div (getNibble(RCC.CFGR2,0)+1);
+            %10: Result := HSEClockFrequency div (getNibble(RCC.CFGR2,0)+1);
+          else
+            Result := 0;
+          {$else}
+
+          case GetBit(RCC.CFGR,16) of
+            0: Result := HSIClockFrequency div 2;
+            1: Result := HSEClockFrequency div longWord(getNibble(RCC.CFGR2,0)+1);
+          end;
+          {$endif}
+          temp := getNibble(RCC.CFGR,18) + 2;
+          if temp > 16 then temp := 16;
+          Result := Result * temp;
+        end;
+    else
+      Result := 0;
+  end;
+end;
+
+function TSTM32SystemCore.GetHCLKFrequency : longWord;
+begin
+  Result := getSYSCLKFrequency div AHBDividers[getNibble(RCC.CFGR,4)];
+end;
+
+function TSTM32SystemCore.GetSysTickClockFrequency : longWord; [public, alias: 'MBF_GetSysTickClockFrequency'];
+begin
+  Result := GetHCLKFrequency;
+  if GetBit(SysTick.CTRL,2) = 0 then
+    Result := Result div 8;
+end;
+
+function TSTM32SystemCore.GetAPB1PeripheralClockFrequency : longWord;
+begin
+  Result := GetHCLKFrequency div APBDividers[getBitsMasked(RCC.CFGR,%111 shl 8,8)];
+end;
+
+function TSTM32SystemCore.GetAPB1TimerClockFrequency : longWord;
+begin
+  if APBDividers[getBitsMasked(RCC.CFGR,%111 shl 8,8)] = 1 then
+    Result := GetAPB1PeripheralClockFrequency
+  else
+    Result := GetAPB1PeripheralClockFrequency shl 1;
+end;
+
+function TSTM32SystemCore.GetAPB2PeripheralClockFrequency : longWord;
+begin
+  Result := GetHCLKFrequency div APBDividers[getBitsMasked(RCC.CFGR,%111 shl 11,11)];
+end;
+
+function TSTM32SystemCore.GetAPB2TimerClockFrequency : longWord;
+begin
+  if APBDividers[getBitsMasked(RCC.CFGR,%111 shl 11,11)] = 1 then
+    Result := GetAPB1PeripheralClockFrequency
+  else
+    Result := GetAPB1PeripheralClockFrequency shl 1;
+end;
 
 procedure TSTM32SystemCore.Initialize;
 begin
@@ -79,76 +184,31 @@ begin
   ConfigureTimer;
 end;
 
-function TSTM32SystemCore.GetSysTickClockFrequency : Cardinal; [public, alias: 'MBF_GetSysTickClockFrequency'];
-begin
-  Result := GetHCLKFrequency;
-end;
-
-function TSTM32SystemCore.GetAPB1PeripheralClockFrequency : Cardinal;
-var
-  divider : byte;
-begin
-  divider := (RCC.CFGR shr 8) and $07;
-  if Divider < 4 then
-    Result := GetHCLKFrequency
-  else
-    Result := GetHCLKFrequency div longWord(2 shl (divider and $03));
-end;
-
-function TSTM32SystemCore.GetAPB1TimerClockFrequency : Cardinal;
-begin
-    if ((RCC.CFGR shr 8) and $07) < 4 then
-      Result := GetAPB1PeripheralClockFrequency
-    else
-      Result := GetAPB1PeripheralClockFrequency shl 1;
-end;
-
-function TSTM32SystemCore.GetAPB2PeripheralClockFrequency : Cardinal;
-var
-  Divider : byte;
-begin
-  divider := (RCC.CFGR shr 11) and $07;
-  if Divider < 4 then
-    Result := GetCPUFrequency
-  else
-    Result := GetCPUFrequency div longWord(2 shl (divider and $03));
-end;
-
-function TSTM32SystemCore.GetAPB2TimerClockFrequency : Cardinal;
-begin
-  if (RCC.CFGR shr 11) and $07 < 4 then
-    Result := GetAPB2PeripheralClockFrequency
-  else
-    Result := GetAPB2PeripheralClockFrequency*2;
-end;
-
 procedure TSTM32SystemCore.ConfigureSystem;
-var
-  dummy : longWord;
 begin
   //PWR Enable PWR Subsystem Clock
-  RCC.APB1ENR := RCC.APB1ENR or (1 shl 28);
+  setBit(RCC.APB1ENR,28);
   //Read back value for a short delay
-  dummy := RCC.APB1ENR and (1 shl 28);
+  getBit(RCC.APB1ENR,28);
   //Seems nothing to do here...
 end;
 
 function TSTM32SystemCore.getFrequencyParameters(aHCLKFrequency : longWord;aClockType : TClockType):TOSCParameters;
 var
   PREDIV : byte;
-  PLLMUL : byte;
+  PLLN : byte;
   AHBPRE : byte;
   LastError : longWord;
-  PREDIVMin,PREDIVMax,OSCCLOCK,PLLInFrequency,PLLOutFrequency,HCLKFrequency : longWord;
+  PREDIVMin,PREDIVMax,SysClockFrequency,PLLInFrequency,PLLOutFrequency,HCLKFrequency : longWord;
 begin
   Result.Frequency := 0;
   Result.USBPre := -1;
   LastError := aHCLKFrequency;
 
   if (aClockType = TClockType.HSI) or (aClockType = TClockType.PLLHSI) then
-    OSCCLOCK := HSIClockFrequency
+    SysClockFrequency := HSIClockFrequency
   else
-    OSCCLOCK := HSEClockFrequency;
+    SysClockFrequency := HSEClockFrequency;
 
   case aClockType of
     TClockType.HSI,
@@ -157,14 +217,14 @@ begin
       Result.AHBPRE := 7;
       for AHBPRE := 0 to 7 do
       begin
-        HCLKFrequency := OSCCLOCK div longWord(1 shl AHBPRE);
+        HCLKFrequency := SysClockFrequency div longWord(1 shl AHBPRE);
         if HCLKFrequency <= aHCLKFrequency then
         begin
           Result.AHBPRE := AHBPRE;
           break;
         end;
       end;
-      Result.Frequency := OSCCLOCK div longWord(1 shl Result.AHBPRE);
+      Result.Frequency := SysClockFrequency div longWord(1 shl Result.AHBPRE);
       Result.PREDIV := 1;
     end
   else
@@ -187,17 +247,17 @@ begin
 
       for PREDIV := PREDIVMin to PREDIVMax do
       begin
-        PLLInFrequency := OSCCLOCK div longWord(PREDIV+1);
+        PLLInFrequency := SysClockFrequency div longWord(PREDIV+1);
         if (PLLInFrequency >=4000000) and (PLLInFrequency <=24000000) then
         begin
-          for PLLMUL := 2 to 16 do
+          for PLLN := 2 to 16 do
           begin
-            PLLOUTFrequency := PLLInFrequency * PLLMUL;
+            PLLOUTFrequency := PLLInFrequency * PLLN;
             if PLLOUTFrequency <= MaxCPUFrequency then
             begin
-              for AHBPRE := 0 to 7 do
+              for AHBPRE := 7 to 15 do
               begin
-                HCLKFrequency := PLLOutFrequency div longWord(1 shl AHBPRE);
+                HCLKFrequency := PLLOutFrequency div AHBDividers[AHBPRE];
                 if LastError >= Abs(aHCLKFrequency-HCLKFrequency) then
                 begin
                   // Do not overwrite a match that gives USB Datarate with another
@@ -206,7 +266,7 @@ begin
                   LastError := Abs(aHCLKFrequency-HCLKFrequency);
                   Result.Frequency := HCLKFrequency;
                   Result.PREDIV := PREDIV;
-                  Result.PLLMUL := PLLMUL-1;
+                  Result.PLLN := PLLN-1;
                   Result.AHBPRE := AHBPRE;
                   Result.USBPRE := -1;
                   if (PLLOUTFrequency = 48000000) then
@@ -221,142 +281,117 @@ begin
       end;
     end;
   end;
+  if Result.AHBPRE = 7 then
+    Result.AHBPRE := 0;
 end;
 
-function TSTM32SystemCore.GetHCLKFrequency : longWord;
+procedure TSTM32SystemCore.SetCPUFrequency(const Value: longWord; aClockType : TClockType = TClockType.PLLHSI);
 var
-  temp : longWord;
-begin
-  temp := (RCC.CFGR shr 4) and %1111;
-  if temp < 8 then
-    temp := 0
-  else
-    temp := temp - 7;
-
-  if temp > 4 then
-    inc(temp);
-
-  Result := getSYSCLKFrequency div longWord(1 shl temp);
-end;
-
-function TSTM32SystemCore.GetSYSCLKFrequency : longWord;
-var
-  temp : longWord;
-begin
-  case (RCC.CFGR shr 2) and %11 of
-    0:  //HSI used as system clock
-        Result := HSIClockFrequency;
-    1:  //HSE used as system clock
-        Result := HSEClockFrequency;
-    2:  //PLL used as system clock;
-        begin
-          case (RCC.CFGR shr 16) and %1 of
-            0: Result := HSIClockFrequency div 2;
-            1: Result := HSEClockFrequency div ((RCC.CFGR2 and %1111)+1);
-          end;
-          temp := (RCC.CFGR shr 18) and %1111 + 2;
-          if temp > 16 then temp := 16;
-          Result := Result * temp;
-        end;
-  end;
-end;
-
-procedure TSTM32SystemCore.SetCPUFrequency(const Value: Cardinal; aClockType : TClockType = TClockType.PLLHSI);
-var
-  dummy : longWord;
+  WaitStates : Byte;
   Params : TOscParameters;
 begin
   //Make sure that HSI Clock is enabled
-  if RCC.CR and (1 shl 0) = 0 then
-    RCC.CR := RCC.CR or (1 shl 0);
+  if GetBit(RCC.CR,0) = 0 then
+    SetBit(RCC.CR,0);
 
   //Wait for HSI Clock to be stable
-  while (RCC.CR and (1 shl 1)) = 0 do
-    ;
+  WaitBitIsSet(RCC.CR,1);
 
   // Switch to HSI Clock
-  if (RCC.CFGR and (%11 shl 2)) <> 0 then
-    RCC.CFGR := RCC.CFGR and not (%11 shl 0);
+  if getCrumb(RCC.CFGR,2) <> 0 then
+    setCrumb(RCC.CFGR,%00,0);
 
   //Wait until HSI Clock is activated
-  while (RCC.CFGR  and (%11 shl 2)) <> 0 do
+  while getCrumb(RCC.CFGR,2) <> 0 do
     ;
 
   //PLLON Disable PLL if active
-  if RCC.CR and (1 shl 24) = 1 then
+  if getBit(RCC.CR,24) = 1 then
   begin
-    RCC.CR := RCC.CR and (not (1 shl 24));
+    clearBit(RCC.CR,24);
 
     //PLLRDY Wait for PLL to shut down
-    while (RCC.CR and (1 shl 25)) <> 0 do
-      ;
+    WaitBitIsCleared(RCC.CR,25);
   end;
 
   Params := getFrequencyParameters(Value,aClockType);
 
   //Set Flash Waitstates
+  WaitStates := 0;
+  if Params.Frequency >= 24000000 then
+    WaitStates := 1;
   if Params.Frequency >= 48000000 then
-    //Two Waitstates Prefetch Buffer enabled
-    FLASH.ACR := (1 shl 5) or (1 shl 4) or %010
-  else if Params.Frequency >= 24000000 then
-  //One Waitstate Prefetch Buffer enabled
-    FLASH.ACR := (1 shl 5) or (1 shl 4) or %001
-  else
-    //Zero Waitstates Prefetch Buffer enabled
-    FLASH.ACR := (1 shl 5) or (1 shl 4);
+    WaitStates := 2;
 
-  //Read Register to activate
-  dummy := FLASH.ACR;
+  //Set Waitstates
+  SetBitsMasked(FLASH.ACR,WaitStates,%111 shl 0,0);
+  repeat
+  until getBitsMasked(FLASH.ACR,%111 shl 0,0) = WaitStates;
+
+  SetNibble(RCC.CFGR2,Params.PREDIV,0);
+  repeat
+  until GetNibble(RCC.CFGR2,0) = Params.PREDIV;
+
+  // Set AHB Prescaler
+  SetNibble(RCC.CFGR,Params.AHBPRE,4);
+  repeat
+  until GetNibble(RCC.CFGR,4) = Params.AHBPRE;
+
+  // Set APB1 Prescaler
+  if Params.FREQUENCY >= 36000000 then
+  begin
+    SetBitsMasked(RCC.CFGR,4,%111 shl 8,8);
+    repeat
+    until GetBitsMasked(RCC.CFGR,%111 shl 8,8) = 4;
+  end
+  else
+  begin
+    SetBitsMasked(RCC.CFGR,0,%111 shl 8,8);
+    repeat
+    until GetBitsMasked(RCC.CFGR,%111 shl 8,8) = 0;
+  end;
+
+  // Set APB2 Prescaler
+  SetBitsMasked(RCC.CFGR,0,%111 shl 11,11);
+  repeat
+  until GetBitsMasked(RCC.CFGR,%111 shl 11,11) = 0;
 
   case aClockType of
     TClockType.HSI :
     begin
-      RCC.CFGR2 := (RCC.CFGR2 and (not %1111)) or Params.PREDIV;
-      RCC.CFGR := (RCC.CFGR and (not (%1111 shl 4))) or (Params.AHBPRE shl 4);
-    end;
+      SetCrumb(RCC.CFGR,byte(TClockType.HSI),0);
+      repeat
+      until GetCrumb(RCC.CFGR,2) = byte(TClockType.HSI);
+   end;
     TClockType.HSE :
     begin
-      RCC.CR := RCC.CR or (1 shl 16);
-      while RCC.CR and (1 shl 17) = 0 do
-        ;
-      RCC.CFGR2 := (RCC.CFGR2 and (not %1111)) or Params.PREDIV;
-      RCC.CFGR := (RCC.CFGR and (not (%1111 shl 4))) or (Params.AHBPRE shl 4);
-      RCC.CFGR := (RCC.CFGR and (not (%11 shl 0))) or %01;
+      setBit(RCC.CR,16);
+      WaitBitIsSet(RCC.CR,17);
+      SetCrumb(RCC.CFGR,longWord(TClockType.HSE),0);
+      repeat
+      until GetCrumb(RCC.CFGR,2) = longWord(TClockType.HSE);
     end
     else
     begin
-      RCC.CFGR := (RCC.CFGR and not (%1111 shl 18)) or (Params.PLLMUL shl 18);
+      SetNibble(RCC.CFGR,Params.PLLN,18);
       //Set PLL Source
       if aClockType = TClockType.PLLHSI then
-        RCC.CFGR := RCC.CFGR and not (%1 shl 16)
+        ClearBit(RCC.CFGR,16)
       else
-        RCC.CFGR := (RCC.CFGR and not (%1 shl 16)) or (1 shl 16);
-
-      //Set Prescaler
-      RCC.CFGR := (RCC.CFGR and not (%1111 shl 4)) or (Params.AHBPRE shl 4);
-
-      //Configure APB1 (slow) clock
-      if Params.FREQUENCY >= 36000000 then
-        RCC.CFGR := (RCC.CFGR and not (%111 shl 8)) or (%100 shl 8)
-      else
-        RCC.CFGR := (RCC.CFGR and not (%111 shl 8)) or (%000 shl 8);
-
-      //Configure APB2 (fast) clock
-      RCC.CFGR := (RCC.CFGR and not (%111 shl 11)) or (%000 shl 11);
+        SetBit(RCC.CFGR,16);
 
       //PLLON Enable PLL
-      RCC.CR := RCC.CR or (1 shl 24);
+      setBit(RCC.CR,24);
 
       //PLLRDY Wait for PLL to lock
-      while (RCC.CR and (1 shl 25)) = 0 do
-        ;
+      waitBitIsSet(RCC.CR,25);
 
       //Enable PLL
-      RCC.CFGR := RCC.CFGR and (not (%11)) or %10;
+      setCrumb(RCC.CFGR,longWord(TClockType.PLLHSI),0);
 
       //Wait for PLL Switch
-      while RCC.CFGR and (%11 shl 2) <> (%10 shl 2) do
-        ;
+      repeat
+      until GetBitsMasked(RCC.CFGR,%11 shl 2,2) = longWord(TClockType.PLLHSI);
     end;
   end;
   ConfigureTimer;

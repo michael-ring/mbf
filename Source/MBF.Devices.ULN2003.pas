@@ -17,7 +17,7 @@ interface
 {$INCLUDE MBF.Config.inc}
 uses
   MBF.__CONTROLLERTYPE__.GPIO,
-  MBF.SystemCore;
+  MBF.__CONTROLLERTYPE__.SystemCore;
 type
    TULN2003Direction=(Left,Right);
    TULN2003 = record
@@ -37,8 +37,6 @@ type
    end;
 
 implementation
-uses
-  MBF.__CONTROLLERTYPE__.SystemCore;
   
 procedure TULN2003.initialize(const Pin1,Pin2,Pin3,Pin4 : TPinIdentifier);
 begin

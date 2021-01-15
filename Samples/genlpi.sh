@@ -21,32 +21,42 @@ cat devicelist | grep -v "^#" | while read BOARD_OR_CPU SUBARCH DEVICE DEVICESVD
   ARCH=
   ARCHSVD=
   BINUTILS_PATH=
+  EXTRACUSTOMOPTION1=
+  EXTRACUSTOMOPTION2=
+  EXTRACUSTOMOPTION3=
 
-  if [ "$SUBARCH" = armv6m ]; then
+  if [ "$SUBARCH" = ARMV6M ]; then
     ARCH=arm
     ARCHSVD=Cortex-M0.svd
     BINUTILS_PATH=arm-none-eabi-
   fi
 
-  if [ "$SUBARCH" = armv7m ]; then
+  if [ "$SUBARCH" = ARMV7M ]; then
     ARCH=arm
     ARCHSVD=Cortex-M3.svd
     BINUTILS_PATH=arm-none-eabi-
   fi
 
-  if [ "$SUBARCH" = armv7em ]; then
+  if [ "$SUBARCH" = ARMV7EM ]; then
     ARCH=arm
     ARCHSVD=Cortex-M4.svd
     BINUTILS_PATH=arm-none-eabi-
   fi
 
-  if [ "$SUBARCH" = mips32r2 ]; then
+  if [ "$SUBARCH" = MIPS32R2 ]; then
     ARCH=mipsel
     ARCHSVD=
     BINUTILS_PATH=mips-sde-elf-
   fi
 
-  if [ "$BOARD_OR_CPU" = "samd10xmini" -o "$BOARD_OR_CPU" = "nucleof042k6" ]; then
+  if [ "$SUBARCH" = AVR5 ]; then
+    ARCH=avr
+    ARCHSVD=
+    BINUTILS_PATH=avr-
+    EXTRACUSTOMOPTION1=-godwarfcpp
+  fi
+
+  if [ "$BOARD_OR_CPU" = "samd10xmini" -o "$BOARD_OR_CPU" = "nucleof042k6" -o "$SUBARCH" = "AVR5" ]; then
     HEAPSIZE=2048
     STACKSIZE=2048
   else
@@ -62,12 +72,17 @@ cat devicelist | grep -v "^#" | while read BOARD_OR_CPU SUBARCH DEVICE DEVICESVD
                        -e "s,%%BINUTILS_PATH%%,$BINUTILS_PATH,g" \
                        -e "s,%%HEAPSIZE%%,$HEAPSIZE,g" \
                        -e "s,%%STACKSIZE%%,$STACKSIZE,g" \
+                       -e "s,%%EXTRACUSTOMOPTION1%%,$EXTRACUSTOMOPTION1,g" \
+                       -e "s,%%EXTRACUSTOMOPTION2%%,$EXTRACUSTOMOPTION2,g" \
+                       -e "s,%%EXTRACUSTOMOPTION3%%,$EXTRACUSTOMOPTION3,g" \
                        -e "s,%%BOARD_OR_CPU%%,$BOARD_OR_CPU,g" >$APPNAME/$APPNAME-$BOARD_OR_CPU.lpi
+  echo $APPNAME/$APPNAME-$BOARD_OR_CPU.lpi created
   if [ -n "$ARCHSVD" ]; then
     cat templates/template.jdebug | sed -e "s,%%APPNAME%%,$APPNAME,g" \
                                       -e "s,%%ARCHSVD%%,$ARCHSVD,g" \
                                       -e "s,%%DEVICESVD%%,$DEVICESVD,g" \
                                       -e "s,%%DEVICE%%,$DEVICE,g" >$APPNAME/$APPNAME-$BOARD_OR_CPU.jdebug
+    echo $APPNAME/$APPNAME-$BOARD_OR_CPU.jdebug created
   fi
   #if [ -f templates/$DEVICESVD ]; then
   #  cp templates/$DEVICESVD $APPNAME/
@@ -80,7 +95,4 @@ cat devicelist | grep -v "^#" | while read BOARD_OR_CPU SUBARCH DEVICE DEVICESVD
     cat templates/template.lpr | sed "s,%%APPNAME%%,$APPNAME,g" >$APPNAME/$APPNAME.lpr
     echo $APPNAME/$APPNAME.lpr created
   fi
-
-  echo $APPNAME/$APPNAME-$BOARD_OR_CPU.lpi created
-  echo $APPNAME/$APPNAME-$BOARD_OR_CPU.jdebug created
 done

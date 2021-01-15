@@ -12,16 +12,33 @@ unit mbf.stm32f0.systemcore;
   warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the FPC modified GNU Library General Public
   License for more details.
 }
-{< ST Micro F0xx board series functions. }
+{
+  Related Reference Manuals
+
+  STM32F0x1STM32F0x2STM32F0x8 advanced ARM
+  http://www.st.com/resource/en/reference_manual/DM00031936.pdf
+
+  STM32F030x4x6x8xC and STM32F070x6xB advanced ARM
+  http://www.st.com/resource/en/reference_manual/DM00091010.pdf
+}
+
 interface
 
 {$INCLUDE MBF.Config.inc}
 
-uses
-  MBF.SystemCore;
+{$DEFINE INTERFACE}
+{$INCLUDE MBF.ARM.SystemCore.inc}
+{$UNDEF INTERFACE}
 
-{$if defined(stm32f04x) or defined(stm32f07x) or defined(stm32f07x)}
+{$if defined(stm32f04x) or defined(stm32f07x) or defined(stm32f09x)}
   {$define has_hsi48}
+  {$define has_prediv}
+{$endif}
+
+{$if defined(STM32F070C6) or defined(STM32F070F6) or defined(STM32F070CB)
+  or defined(STM32F070RB) or defined(STM32F030CC) or defined(STM32F030RC)}
+  {$undefine has_hsi48}
+  {$define has_prediv}
 {$endif}
 
 {$if defined(stm32f0) }
@@ -37,14 +54,13 @@ const
   HSI48ClockFrequency = 48000000;
   LSIClockFreq = 40000;
   LSEClockFreq = 32768;
-  AHBPREFactors : array[0..15] of word = (1,1,1,1,1,1,1,1,2,4,8,16,64,128,256,512);
 
 var
   HSEClockFrequency : longWord = 0;
   XTALRTCFreq : longword = 32768;
 
 type
-  TClockType = (HSI,{$if defined(has_hsi48)}HSI48,{$endif}HSE,PLLHSI,PLLHSE{$if defined(has_hsi48)},PLLHSI48{$endif});
+  TClockType = (HSI,HSE,PLLHSI,{$if defined(has_hsi48)}HSI48,PLLHSI48,{$endif}PLLHSE);
 
   TSTM32SystemCore = record helper for TSystemCore
   type
@@ -52,22 +68,22 @@ type
     FREQUENCY : longWord;
     USBPRE : integer;
     PREDIV : byte;
-    PLLMUL : byte;
+    PLLN : byte;
     AHBPRE : byte;
   end;
   private
     procedure ConfigureSystem;
     function GetFrequencyParameters(aHCLKFrequency : longWord;aClockType : TClockType):TOSCParameters;
-    function GetSysTickClockFrequency : Cardinal;
-    function GetHCLKFrequency : Cardinal;
+    function GetSysTickClockFrequency : longWord;
+    function GetHCLKFrequency : longWord;
   public
     procedure Initialize;
-    function GetSYSCLKFrequency: Cardinal;
-    function GetAPB1PeripheralClockFrequency : Cardinal;
-    function GetAPB1TimerClockFrequency : Cardinal;
-    procedure SetCPUFrequency(const Value: Cardinal; aClockType : TClockType = TClockType.PLLHSI);
-    function GetCPUFrequency : Cardinal;
-    function getMaxCPUFrequency : Cardinal;
+    function GetSYSCLKFrequency: longWord;
+    function GetAPB1PeripheralClockFrequency : longWord;
+    function GetAPB1TimerClockFrequency : longWord;
+    procedure SetCPUFrequency(const Value: longWord; aClockType : TClockType = TClockType.PLLHSI);
+    function GetCPUFrequency : longWord;
+    function getMaxCPUFrequency : longWord;
   end;
 
 var
@@ -75,7 +91,70 @@ var
 
 implementation
 
+uses
+  cortexm0,MBF.BitHelpers;
+
+{$DEFINE IMPLEMENTATION}
+{$INCLUDE MBF.ARM.SystemCore.inc}
+{$UNDEF IMPLEMENTATION}
+
 {$REGION 'TSystemCore'}
+
+const
+  AHBDividers : array[0..15] of word =(1,1,1,1,1,1,1,1,2,4,8,16,64,128,256,512);
+  APBDividers : array[0..7] of byte = (1,1,1,1,2,4,8,16);
+
+function TSTM32SystemCore.GetSYSCLKFrequency : longWord;
+var
+  temp : longWord;
+begin
+  case getCrumb(RCC.CFGR,2) of
+    %00:  //HSI used as system clock
+        Result := HSIClockFrequency;
+    %01:  //HSI used as system clock
+        Result := HSEClockFrequency;
+    %10:  //PLL used as system clock;
+        begin
+          case getCrumb(RCC.CFGR,15) of
+            %00: Result := HSIClockFrequency div 2;
+            %01: Result := HSIClockFrequency div (getNibble(RCC.CFGR2,0)+1);
+            %10: Result := HSEClockFrequency div longWord(getNibble(RCC.CFGR2,0)+1);
+            %11: Result := HSI48ClockFrequency div (getNibble(RCC.CFGR2,0)+1);
+          end;
+          temp := getNibble(RCC.CFGR,18) + 2;
+          if temp > 16 then
+            temp := 16;
+          Result := Result * temp;
+        end;
+    %11:  //HSI48 used as system clock
+        Result := HSI48ClockFrequency;
+  end;
+end;
+
+function TSTM32SystemCore.GetHCLKFrequency : longWord;
+begin
+  Result := getSYSCLKFrequency div AHBDividers[getNibble(RCC.CFGR,4)];
+end;
+
+function TSTM32SystemCore.GetSysTickClockFrequency : longWord; [public, alias: 'MBF_GetSysTickClockFrequency'];
+begin
+  Result := GetHCLKFrequency;
+  if GetBit(SysTick.CTRL,2) = 0 then
+    Result := Result div 8;
+end;
+
+function TSTM32SystemCore.GetAPB1PeripheralClockFrequency : longWord;
+begin
+  Result := GetHCLKFrequency div APBDividers[getBitsMasked(RCC.CFGR,%111 shl 8,8)];
+end;
+
+function TSTM32SystemCore.GetAPB1TimerClockFrequency : longWord;
+begin
+  if APBDividers[getBitsMasked(RCC.CFGR,%111 shl 8,8)] = 1 then
+    Result := GetAPB1PeripheralClockFrequency
+  else
+    Result := GetAPB1PeripheralClockFrequency shl 1;
+end;
 
 procedure TSTM32SystemCore.Initialize;
 begin
@@ -83,115 +162,96 @@ begin
   ConfigureTimer;
 end;
 
-function TSTM32SystemCore.GetSysTickClockFrequency : Cardinal; [public, alias: 'MBF_GetSysTickClockFrequency'];
-begin
-  Result := GetHCLKFrequency;
-end;
-
-function TSTM32SystemCore.GetAPB1PeripheralClockFrequency : Cardinal;
-var
-  divider : byte;
-begin
-  divider := (RCC.CFGR shr 8) and $07;
-  if Divider < 4 then
-    Result := GetHCLKFrequency
-  else
-    Result := GetHCLKFrequency div longWord(2 shl (divider and $03));
-end;
-
-function TSTM32SystemCore.GetAPB1TimerClockFrequency : Cardinal;
-begin
-    if ((RCC.CFGR shr 8) and $07) < 4 then
-      Result := GetAPB1PeripheralClockFrequency
-    else
-      Result := GetAPB1PeripheralClockFrequency shl 1;
-end;
-
 procedure TSTM32SystemCore.ConfigureSystem;
-{$NOTES OFF}
-var
-  dummy : longWord;
 begin
   //PWR Enable PWR Subsystem Clock
-  RCC.APB1ENR := RCC.APB1ENR or (1 shl 28);
+  setBit(RCC.APB1ENR,28);
   //Read back value for a short delay
-  dummy := RCC.APB1ENR and (1 shl 28);
-  //Seems nothing to do here...
+  getBit(RCC.APB1ENR,28);
 end;
-{$NOTES ON}
 
 function TSTM32SystemCore.getFrequencyParameters(aHCLKFrequency : longWord;aClockType : TClockType):TOSCParameters;
 var
   PREDIV : byte;
-  PLLMUL : byte;
+  PLLN : byte;
   AHBPRE : byte;
   LastError : longWord;
-  PREDIVMin,PREDIVMax,OSCCLOCK,PLLInFrequency,PLLOutFrequency,HCLKFrequency : longWord;
+  PREDIVMin,PREDIVMax,MaxVCOFrequency,SysClockFrequency,PLLInFrequency,PLLOutFrequency,HCLKFrequency : longWord;
 begin
   Result.Frequency := 0;
+  MaxVCOFrequency := 48000000;
   Result.USBPre := -1;
   LastError := aHCLKFrequency;
 
-  if (aClockType = TClockType.HSI) or (aClockType = TClockType.PLLHSI) then
-    OSCCLOCK := HSIClockFrequency
-  {$if defined(hsi48)}
-  elseif aClockType = TClockType.HSI48 then
-    OSCCLOCK := HSI48ClockFrequency
-  {$endif}
-  else
-    OSCCLOCK := HSEClockFrequency;
-
   case aClockType of
     TClockType.HSI,
-    {$if defined(hsi48)}
+    {$if defined(has_hsi48)}
     TClockType.HSI48,
     {$endif}
     TClockType.HSE:
     begin
-      Result.AHBPRE := 15;
-      for AHBPRE := 0 to 15 do
+      if (aClockType = TClockType.HSI) then
+        SysClockFrequency := HSIClockFrequency
+      {$if defined(has_hsi48)}
+      else if aClockType = TClockType.HSI48 then
+        SysClockFrequency := HSI48ClockFrequency
+      {$endif}
+      else
+        SysClockFrequency := HSEClockFrequency;
+
+      for AHBPRE := 7 to 15 do
       begin
-        HCLKFrequency := OSCCLOCK div longWord(AHBPREFactors[AHBPRE]);
+        HCLKFrequency := SysClockFrequency div AHBDividers[AHBPRE];
         if HCLKFrequency <= aHCLKFrequency then
         begin
           Result.AHBPRE := AHBPRE;
           break;
         end;
       end;
-      Result.Frequency := OSCCLOCK div longWord(AHBPREFactors[Result.AHBPRE]);
-      Result.PREDIV := 1;
+      Result.Frequency := SysClockFrequency div AHBDividers[AHBPRE];
     end
   else
     begin
       if aClockType = TClockType.PLLHSI then
       begin
-        {$if defined(has_hsi48)}
-          PREDIVMin := 0;
-          PREDIVMax := 15;
+        {$if not defined(has_prediv)}
+        SysClockFrequency := HSIClockFrequency div 2;
+        PREDIVMin := 1;
+        PREDIVMax := 1;
         {$else}
-          PREDIVMin := 1;
-          PREDIVMax := 1;
+        PREDIVMin := 0;
+        PREDIVMax := 15;
+        SysClockFrequency := HSIClockFrequency;
         {$endif}
       end
+      {$if defined(has_hsi48)}
+      else if aClockType = TClockType.PLLHSI48 then
+      begin
+        SysClockFrequency := HSI48ClockFrequency;
+        PREDIVMin := 0;
+        PREDIVMax := 15;
+      end
+      {$endif}
       else
       begin
+        SysClockFrequency := HSEClockFrequency;
         PREDIVMin := 0;
         PREDIVMax := 15;
       end;
 
       for PREDIV := PREDIVMin to PREDIVMax do
       begin
-        PLLInFrequency := OSCCLOCK div longWord(PREDIV+1);
+        PLLInFrequency := SysClockFrequency div longWord(PREDIV+1);
         if (PLLInFrequency >=1000000) and (PLLInFrequency <=24000000) then
         begin
-          for PLLMUL := 2 to 16 do
+          for PLLN := 2 to 16 do
           begin
-            PLLOUTFrequency := PLLInFrequency * PLLMUL;
-            if (PLLOUTFrequency > 16000000) and (PLLOUTFrequency <= MaxCPUFrequency) then
+            PLLOUTFrequency := PLLInFrequency * PLLN;
+            if (PLLOUTFrequency >= 16000000) and (PLLOUTFrequency <= MaxCPUFrequency) then
             begin
-              for AHBPRE := 0 to 15 do
+              for AHBPRE := 7 to 15 do
               begin
-                HCLKFrequency := PLLOutFrequency div longWord(AHBPREFactors[AHBPRE]);
+                HCLKFrequency := PLLOutFrequency div AHBDividers[AHBPRE];
                 if LastError >= Abs(aHCLKFrequency-HCLKFrequency) then
                 begin
                   // Do not overwrite a match that gives USB Datarate with another
@@ -200,7 +260,7 @@ begin
                   LastError := Abs(aHCLKFrequency-HCLKFrequency);
                   Result.Frequency := HCLKFrequency;
                   Result.PREDIV := PREDIV;
-                  Result.PLLMUL := PLLMUL-1;
+                  Result.PLLN := PLLN-2;
                   Result.AHBPRE := AHBPRE;
                   Result.USBPRE := -1;
                   if (PLLOUTFrequency = 48000000) then
@@ -213,71 +273,36 @@ begin
       end;
     end;
   end;
+  if Result.AHBPRE = 7 then
+    Result.AHBPRE := 0;
 end;
 
-function TSTM32SystemCore.GetHCLKFrequency : longWord;
+procedure TSTM32SystemCore.SetCPUFrequency(const Value: longWord; aClockType : TClockType = TClockType.PLLHSI);
 var
-  temp : longWord;
-begin
-  temp := (RCC.CFGR shr 4) and %1111;
-  Result := getSYSCLKFrequency div longWord(AHBPREFactors[temp]);
-end;
-
-function TSTM32SystemCore.GetSYSCLKFrequency : longWord;
-var
-  temp : longWord;
-begin
-  case (RCC.CFGR shr 2) and %11 of
-    0:  //HSI used as system clock
-        Result := HSIClockFrequency;
-    1:  //HSI used as system clock
-        Result := HSEClockFrequency;
-    2:  //PLL used as system clock;
-        begin
-          case (RCC.CFGR shr 15) and %11 of
-            0: Result := HSIClockFrequency div 2;
-            1: Result := HSIClockFrequency div ((RCC.CFGR2 and %1111)+1);
-            2: Result := HSEClockFrequency div ((RCC.CFGR2 and %1111)+1);
-            3: Result := HSI48ClockFrequency div ((RCC.CFGR2 and %1111)+1);
-          end;
-          temp := (RCC.CFGR shr 18) and %1111 + 2;
-          if temp > 16 then temp := 16;
-          Result := Result * temp;
-        end;
-    3:  //HSI48 used as system clock
-        Result := HSI48ClockFrequency;
-  end;
-end;
-
-procedure TSTM32SystemCore.SetCPUFrequency(const Value: Cardinal; aClockType : TClockType = TClockType.PLLHSI);
-var
-  dummy : longWord;
+  WaitStates : Byte;
   Params : TOscParameters;
 begin
   //Make sure that HSI Clock is enabled
-  if RCC.CR and (1 shl 0) = 0 then
-    RCC.CR := RCC.CR or (1 shl 0);
+  if GetBit(RCC.CR,0) = 0 then
+    SetBit(RCC.CR,0);
 
   //Wait for HSI Clock to be stable
-  while (RCC.CR and (1 shl 1)) = 0 do
-    ;
+  WaitBitIsSet(RCC.CR,1);
 
   // Switch to HSI Clock
-  if (RCC.CFGR and (%11 shl 2)) <> 0 then
-    RCC.CFGR := RCC.CFGR and not (%11 shl 0);
+  if GetCrumb(RCC.CFGR,2) <> byte(TClockType.HSI) then
+    SetCrumb(RCC.CFGR,byte(TClockType.HSI),0);
 
   //Wait until HSI Clock is activated
-  while (RCC.CFGR  and (%11 shl 2)) <> 0 do
-    ;
+  repeat
+  until getCrumb(RCC.CFGR,2) = byte(TClockType.HSI);
 
   //PLLON Disable PLL if active
-  if RCC.CR and (1 shl 24) = 1 then
+  if GetBit(RCC.CR,24) = 1 then
   begin
-    RCC.CR := RCC.CR and (not (1 shl 24));
-
+    clearBit(RCC.CR,24);
     //PLLRDY Wait for PLL to shut down
-    while (RCC.CR and (1 shl 25)) <> 0 do
-      ;
+    WaitBitIsCleared(RCC.CR,25);
   end;
 
   Params := getFrequencyParameters(Value,aClockType);
@@ -285,77 +310,121 @@ begin
   //Set Flash Waitstates
   if Params.Frequency > 24000000 then
   //One Waitstate Prefetch Buffer enabled
-    FLASH.ACR := (1 shl 4) or %001
+    WaitStates := 1
   else
     //Zero Waitstates Prefetch Buffer enabled
-    FLASH.ACR := (1 shl 4);
+    WaitStates := 0;
 
-  //Read Register to activate
-  {$NOTES OFF}
-  dummy := FLASH.ACR;
-  {$NOTES ON}
+  //Set Waitstates
+  SetBitsMasked(FLASH.ACR,WaitStates,%111 shl 0,0);
+  // Wait for WaitStates set
+  repeat
+  until GetBitsMasked(FLASH.ACR,%111 shl 0,0) = WaitStates;
+
+  if Params.AHBPRE=0 then
+    ClearBit(FLASH.ACR,4)
+  else
+    //Enable Prefetch Buffer
+    SetBit(FLASH.ACR,4);
+
+  {$if defined(has_prediv)}
+  SetNibble(RCC.CFGR2,Params.PREDIV,0);
+  repeat
+  until GetNibble(RCC.CFGR2,0) = Params.PREDIV;
+  {$endif}
+
+  // Set AHB Prescaler
+  SetNibble(RCC.CFGR,Params.AHBPRE,4);
+  repeat
+  until GetNibble(RCC.CFGR,4) = Params.AHBPRE;
+
+  // Set APB1 Prescaler
+  if Params.FREQUENCY >= 36000000 then
+  begin
+    SetBitsMasked(RCC.CFGR,4,%111 shl 8,8);
+    repeat
+    until GetBitsMasked(RCC.CFGR,%111 shl 8,8) = 4;
+  end
+  else
+  begin
+    SetBitsMasked(RCC.CFGR,0,%111 shl 8,8);
+    repeat
+    until GetBitsMasked(RCC.CFGR,%111 shl 8,8) = 0;
+  end;
 
   case aClockType of
     TClockType.HSI :
     begin
-      RCC.CFGR2 := (RCC.CFGR2 and (not %1111)) or Params.PREDIV;
-      RCC.CFGR := (RCC.CFGR and (not (%1111 shl 4))) or (Params.AHBPRE shl 4);
+      SetCrumb(RCC.CFGR,byte(TClockType.HSI),0);
+      repeat
+      until GetCrumb(RCC.CFGR,2) = byte(TClockType.HSI);
     end;
+
     {$if defined(has_hsi48)}
     TClockType.HSI48 :
     begin
-      RCC.CR2 := RCC.CR2 or (1 shl 16);
-      while RCC.CR2 and (1 shl 17) = 0 do
-        ;
-      RCC.CFGR2 := (RCC.CFGR2 and (not %1111)) or Params.PREDIV;
-      RCC.CFGR := (RCC.CFGR and (not (%1111 shl 4))) or (Params.AHBPRE shl 4);
-      RCC.CFGR := (RCC.CFGR and (not (%11 shl 0))) or %11;
+      // Turn on HSI48
+      SetBit(RCC.CR2,16);
+      WaitBitIsSet(RCC.CR2,17);
+      // Switch to HSI48
+      SetCrumb(RCC.CFGR,byte(TClockType.HSI48),0);
+      repeat
+      until GetCrumb(RCC.CFGR,2) = byte(TClockType.HSI48);
     end;
     {$endif}
     TClockType.HSE :
     begin
-      RCC.CR := RCC.CR or (1 shl 16);
-      while RCC.CR and (1 shl 17) = 0 do
-        ;
-      RCC.CFGR2 := (RCC.CFGR2 and (not %1111)) or Params.PREDIV;
-      RCC.CFGR := (RCC.CFGR and (not (%1111 shl 4))) or (Params.AHBPRE shl 4);
-      RCC.CFGR := (RCC.CFGR and (not (%11 shl 0))) or %01;
+      // Turn on HSE
+      setBit(RCC.CR,16);
+      WaitBitIsSet(RCC.CR,17);
+      // Switch to HSE
+      SetCrumb(RCC.CFGR,byte(TClockType.HSE),0);
+      repeat
+      until GetCrumb(RCC.CFGR,2) = byte(TClockType.HSE);
     end
     else
     begin
-      RCC.CFGR := (RCC.CFGR and not (%1111 shl 18)) or (Params.PLLMUL shl 18);
-      //Set PLL Source
+      // PLL Case, Set Multiplier
+      SetNibble(RCC.CFGR,Params.PLLN,18);
+
+      //Set PLL Source and activate clock
       if aClockType = TClockType.PLLHSI then
-        RCC.CFGR := RCC.CFGR and not (%11 shl 15);
+      {$if defined(has_prediv)}
+        SetCrumb(RCC.CFGR,%01,15);
+      {$else}
+        SetCrumb(RCC.CFGR,0,15);
+      {$endif}
       {$if defined(has_hsi48)}
       if aClockType = TClockType.PLLHSI48 then
-        RCC.CFGR := RCC.CFGR and not (%11 shl 15) or %11;
+      begin
+        //Start HSI48 Clock
+        SetBit(RCC.CR2,16);
+        WaitBitIsSet(RCC.CR2,17);
+        //Switch PLL to HSI48 Clock
+        SetCrumb(RCC.CFGR,%11,15);
+      end;
       {$endif}
       if aClockType = TClockType.PLLHSE then
-        RCC.CFGR := (RCC.CFGR and not (%11 shl 15)) or (%10 shl 15);
-
-      //Set Prescaler
-      RCC.CFGR := (RCC.CFGR and not (%1111 shl 4)) or (Params.AHBPRE shl 4);
-
-      //Configure APB1 (slow) clock
-      if Params.FREQUENCY >= 36000000 then
-        RCC.CFGR := (RCC.CFGR and not (%111 shl 8)) or (%100 shl 8)
-      else
-        RCC.CFGR := (RCC.CFGR and not (%111 shl 8)) or (%000 shl 8);
+      begin
+        //Start HSE Clock
+        SetBit(RCC.CR,16);
+        WaitBitIsSet(RCC.CR,17);
+        //Switch PLL to HSE Clock
+        SetCrumb(RCC.CFGR,%10,15);
+      end;
 
       //PLLON Enable PLL
-      RCC.CR := RCC.CR or (1 shl 24);
+      setBit(RCC.CR,24);
 
       //PLLRDY Wait for PLL to lock
-      while (RCC.CR and (1 shl 25)) = 0 do
-        ;
+      WaitBitIsSet(RCC.CR,25);
 
       //Enable PLL
-      RCC.CFGR := RCC.CFGR and (not (%11)) or %10;
+      setCrumb(RCC.CFGR,byte(TClockType.PLLHSI),0);
 
       //Wait for PLL Switch
-      while RCC.CFGR and (%11 shl 2) <> (%10 shl 2) do
-        ;
+      repeat
+      until getCrumb(RCC.CFGR,2) = byte(TClockType.PLLHSI);
     end;
   end;
   ConfigureTimer;

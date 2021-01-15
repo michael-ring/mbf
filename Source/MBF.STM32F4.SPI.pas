@@ -12,11 +12,40 @@ unit mbf.stm32f4.spi;
   warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the FPC modified GNU Library General Public
   License for more details.
 }
+{
+  Related Reference Manuals
+
+  STM32F405415, STM32F407417, STM32F427437 and STM32F429439 advanced Arm
+  http://www.st.com/resource/en/reference_manual/DM00031020.pdf
+
+  STM32F401xBC and STM32F401xDE advanced Arm
+  http://www.st.com/resource/en/reference_manual/DM00096844.pdf
+
+  STM32F411xCE advanced Arm
+  http://www.st.com/resource/en/reference_manual/DM00119316.pdf
+
+  STM32F446xx advanced Arm
+  http://www.st.com/resource/en/reference_manual/DM00135183.pdf
+
+  STM32F469xx and STM32F479xx advanced Arm
+  http://www.st.com/resource/en/reference_manual/DM00127514.pdf
+
+  STM32F410 advanced Arm
+  http://www.st.com/resource/en/reference_manual/DM00180366.pdf
+
+  STM32F412 advanced Arm
+  http://www.st.com/resource/en/reference_manual/DM00180369.pdf
+
+  STM32F413423 advanced Arm
+  http://www.st.com/resource/en/reference_manual/DM00305666.pdf
+}
+
 interface
 {$INCLUDE MBF.Config.inc}
 
 uses
-  MBF.STM32F4.GPIO;
+  MBF.STM32F4.GPIO,
+  MBF.STM32F4.SystemCore;
   //MBF.STM32F4.DMA;
 
 {$REGION PinDefinitions}
@@ -147,7 +176,9 @@ type
 
 const
   DefaultSPIBaudrate=8000000;
-  DefaultSPITimeout=10000;
+  MaxSPIBaudrate=50000000;
+  DefaultSPITimeOut=10000;
+  SPICount = 6;
 
 type
   TSPIMode = (
@@ -161,6 +192,8 @@ type
     Eight=0,
     Sixteen=1
   );
+  {$Define HAS_SPI_16Bits}
+
 
   TSPIOperatingMode = (
     Slave=%0,
@@ -169,25 +202,21 @@ type
 
   TSPIRegistersHelper = record helper for TSPI_Registers
   protected
-    function  FindDividerValue(const Baudrate: Cardinal) : Cardinal;
-    function  GetBaudrate: Cardinal;
-    procedure SetBaudrate(const aBaudrate: Cardinal);
+    function  FindDividerValue(const Baudrate: longWord) : longWord;
+    function  GetBaudrate: longWord;
+    procedure SetBaudrate(const aBaudrate: longWord);
     function  GetBitsPerWord: TSPIBitsPerWord;
     procedure SetBitsPerWord(const aBitsPerWord: TSPIBitsPerWord);
     function  GetMode: TSPIMode;
     procedure SetMode(const aMode: TSPIMode);
     function  GetOperatingMode: TSPIOperatingMode;
     procedure SetOperatingMode(const aOperatingMode: TSPIOperatingMode);
-
-    procedure SetMOSIPin(const aMOSIPin : TSPIMOSIPins);
-    procedure SetMISOPin(const aMISOPin : TSPIMISOPins);
-    procedure SetSCLKPin(const aSCLKPin : TSPISCLKPins);
-    procedure SetNSSPin( const aNSSPin : TSPINSSPins);
-    procedure SetNSSPinLow(const SoftNSSPin : TPinIdentifier);
-    procedure SetNSSPinHigh(const SoftNSSPin : TPinIdentifier);
-
   public
-    procedure Initialize;
+    property Baudrate : longWord read getBaudrate write setBaudrate;
+    property Mode : TSPIMode read getMode write setMode;
+    property BitsPerWord : TSPIBitsPerWord read getBitsPerWord write setBitsPerWord;
+    property OperatingMode : TSPIOperatingMode read getOperatingMode write setOperatingMode;
+
     procedure Initialize(const AMosiPin : TSPIMOSIPins;
                          const AMisoPin : TSPIMISOPins;
                          const ASCLKPin : TSPISCLKPins;
@@ -195,32 +224,30 @@ type
     function  Disable : boolean;
     procedure Enable;
 
-    function ReadByte(var aReadByte: byte; const Timeout : longWord=0; const SoftNSSPin : TPinIdentifier = TNativePin.None):boolean;
-    function ReadByte(var aReadBuffer: array of byte; aReadCount : integer=-1; const Timeout : longWord=0; const SoftNSSPin : TPinIdentifier = TNativePin.None):boolean;
-    function ReadWord(var aReadWord: word; const Timeout : longWord=0; const SoftNSSPin : TPinIdentifier = TNativePin.None):boolean;
-    function ReadWord(var aReadBuffer: array of word; aReadCount : integer=-1; const Timeout : longWord=0; const SoftNSSPin : TPinIdentifier = TNativePin.None):boolean;
+    procedure BeginTransaction; inline;
+    procedure EndTransaction; inline;
+    procedure BeginTransaction(const SoftNSSPin : TPinIdentifier); inline;
+    procedure EndTransaction(const SoftNSSPin : TPinIdentifier); inline;
 
-    function WriteByte(const aWriteByte: byte; const Timeout : longWord=0; const SoftNSSPin : TPinIdentifier = TNativePin.None) : boolean;
-    function WriteBuffer(pWriteBuffer: pByte; aWriteCount : longWord; const Timeout : longWord=0; const SoftNSSPin : TPinIdentifier = TNativePin.None) : boolean;
-    function WriteByte(const aWriteBuffer: array of byte; aWriteCount : integer=-1; const Timeout : longWord=0; const SoftNSSPin : TPinIdentifier = TNativePin.None) : boolean;
-    function WriteWord(const aWriteWord: word; const Timeout : longWord=0; const SoftNSSPin : TPinIdentifier = TNativePin.None) : boolean;
-    function WriteWord(const aWriteBuffer: array of word; aWriteCount : integer=-1; const Timeout : longWord=0; const SoftNSSPin : TPinIdentifier = TNativePin.None) : boolean;
+    procedure WaitForTXReady; inline;
+    procedure WaitForRXReady; inline;
+    procedure WaitForTXFinished; inline;
 
-    function TransferByte(const aWriteByte : byte; var aReadByte : byte; const Timeout : longWord=0; const SoftNSSPin : TPinIdentifier = TNativePin.None) : boolean;
-    function TransferByte(const aWriteBuffer: array of byte; var aReadBuffer : array of byte; aTransferCount : integer=-1; const Timeout : longWord=0; const SoftNSSPin : TPinIdentifier = TNativePin.None) : boolean;
-    function TransferWord(const aWriteWord: word; var aReadWord : word; const Timeout : longWord=0; const SoftNSSPin : TPinIdentifier = TNativePin.None) : boolean;
-    function TransferWord(const aWriteBuffer: array of word; var aReadBuffer : array of word; aTransferCount : integer=-1; const Timeout : longWord=0; const SoftNSSPin : TPinIdentifier = TNativePin.None) : boolean;
+    function  WaitForTXReady(EndTime : TMilliSeconds):boolean; inline;
+    function  WaitForRXReady(EndTime : TMilliSeconds):boolean; inline;
+    function  WaitForTXFinished(EndTime : TMilliSeconds):boolean; inline;
 
-    property Baudrate : Cardinal read getBaudrate write setBaudrate;
-    property Mode : TSPIMode read getMode write setMode;
-    //property BitsPerWord : TSPIBitsPerWord read getBitsPerWord write setBitsPerWord;
-    property OperatingMode : TSPIOperatingMode read getOperatingMode write setOperatingMode;
+    procedure WriteDR(const Value : byte); inline;
+    function ReadDR:byte; inline;
 
-    property MOSIPin : TSPIMOSIPins write setMOSIPin;
-    property MISOPin : TSPIMISOPins write setMISOPin;
-    property SCLKPin : TSPISCLKPins write setSCLKPin;
-    property NSSPin  : TSPINSSPins  write setNSSPin;
-  end;
+    {$IF Defined(HAS_SPI_16Bits)}
+    procedure WriteDRWord(const Value : word); inline;
+    function ReadDRWord:word; inline;
+    {$ENDIF}
+
+    {$DEFINE INTERFACE}
+    {$I MBF.STM32.SPI.inc}
+    {$UNDEF INTERFACE}
 
   {$IF DEFINED(HAS_ARDUINOPINS)}
   var
@@ -229,28 +256,30 @@ type
 
 implementation
 uses
-  MBF.BitHelpers,
-  MBF.STM32F4.SystemCore;
+  MBF.BitHelpers;
 
 var
-  NSSPins : array[1..6] of longInt;
+  NSSPins : array[1..SPICount] of longInt;
 
-procedure TSPIRegistersHelper.Initialize;
+procedure TSPIRegistersHelper.Initialize(const AMosiPin : TSPIMOSIPins;
+                     const AMisoPin : TSPIMISOPins;
+                     const ASCLKPin : TSPISCLKPins;
+                     const ANSSPin  : TSPINSSPins); overload;
 var
   i : longWord;
 begin
   case longWord(@Self) of
-    SPI1_BASE : RCC.APB2ENR := RCC.APB2ENR or (1 shl 12);
-    SPI2_BASE : RCC.APB1ENR := RCC.APB1ENR or (1 shl 14);
-    SPI3_BASE : RCC.APB1ENR := RCC.APB1ENR or (1 shl 15);
-    {$ifdef has_spi4}SPI4_BASE : RCC.APB2ENR := RCC.APB2ENR or (1 shl 13);{$endif}
-    {$ifdef has_spi5}SPI5_BASE : RCC.APB2ENR := RCC.APB2ENR or (1 shl 20);{$endif}
-    {$ifdef has_spi6}SPI6_BASE : RCC.APB2ENR := RCC.APB2ENR or (1 shl 21);{$endif}
+    SPI1_BASE : setBit(RCC.APB2ENR,12);
+    SPI2_BASE : setBit(RCC.APB1ENR,14);
+    SPI3_BASE : setBit(RCC.APB1ENR,15);
+    {$ifdef has_spi4}SPI4_BASE : setBit(RCC.APB2ENR,13);{$endif}
+    {$ifdef has_spi5}SPI5_BASE : setBit(RCC.APB2ENR,20);{$endif}
+    {$ifdef has_spi6}SPI6_BASE : setBit(RCC.APB2ENR,21);{$endif}
   end;
 
   //We need to save the primary SPI Pin in Memory so that we can reuse it
-  for i := 1 to 6 do
-    NSSPins[i] := longInt(TArduinoPin.None);
+  for i := 1 to SPICount do
+    NSSPins[i] := -1;
 
   // Set Defaults, all crazy Modes turned off, SPI disabled
   CR1:= 0;
@@ -259,143 +288,60 @@ begin
   CR2:= 0;
 
   // MSTR Always set Master Mode
-  SetBitLevelHigh(CR1,2);
+  SetBit(CR1,2);
 
   // Set correct Polarity and Phase aka as Mode 0-3
   setBitsMasked(CR1,longWord(TSPIMode.Mode0),%11 shl 0,0);
 
   //Disable I2S Mode
   self.I2SCFGR := 0;
-end;
 
-procedure TSPIRegistersHelper.Initialize(const AMosiPin : TSPIMOSIPins;
-                     const AMisoPin : TSPIMISOPins;
-                     const ASCLKPin : TSPISCLKPins;
-                     const ANSSPin  : TSPINSSPins); overload;
-begin
-  Initialize;
+  // Set Software NSS
+  SetBitLevelHigh(CR1,9);
+  SetBitLevelHigh(CR1,8);
+
+  //Start with Eight Bits per Word
+  setBitsPerWord(TSPIBitsPerWord.Eight);
+
   setBaudRate(DefaultSPIBaudrate);
 
   //Set configuration as defined by user
   GPIO.PinMode[longWord(AMOSIPin) and $ff] := TPinMode((LongWord(AMOSIPin) shr 8) and $0f);
   GPIO.PinMode[longWord(AMISOPin) and $ff] := TPinMode((LongWord(AMISOPin) shr 8) and $0f);
   GPIO.PinMode[longWord(ASCLKPin) and $ff] := TPinMode((LongWord(ASCLKPin) shr 8) and $0f);
-  // Some special handling needed
-  setNSSPin(ANSSPin);
-end;
 
-procedure TSPIRegistersHelper.SetMOSIPin(const aMOSIPin : TSPIMOSIPins);
-begin
-  GPIO.PinMode[longWord(aMOSIPin) and $ff] := TPinMode((longWord(aMOSIPin) shr 8) and $0f);
-end;
-
-procedure TSPIRegistersHelper.setMISOPin(const aMISOPIN : TSPIMISOPins);
-begin
-  GPIO.PinMode[longWord(aMISOPin) and $ff] := TPinMode((longWord(aMISOPin) shr 8) and $0f);
-end;
-
-procedure TSPIRegistersHelper.setSCLKPin(const aSCLKPin : TSPISCLKPins);
-begin
-  GPIO.PinMode[longWord(aSCLKPin) and $ff] := TPinMode((longWord(aSCLKPin) shr 8) and $0f);
-end;
-
-procedure TSPIRegistersHelper.setNSSPin(const aNSSPin : TSPINSSPins);
-begin
-  if longInt(aNSSPin) >=ALT0 then
-  begin
-    GPIO.PinMode[longWord(aNSSPin) and $ff] := TPinMode((longWord(aNSSPin) shr 8) and $0f);
-    //Enable Hardware NSS
-    SetBitLevelLow(CR1,9);
-  end
-  else
-  begin
-    SetBitLevelHigh(CR1,9);
-    //TODO Low or High, what will it be????
-    SetBitLevelHigh(CR1,8);
-
-    if longInt(aNSSPin) >= 0 then
-    begin
-      GPIO.PinMode[longWord(aNSSPin)] := TPinMode.Output;
-      GPIO.SetPinLevelHigh(longWord(aNSSPin));
-    end;
-  end;
+  GPIO.PinMode[longWord(aNSSPin) and $ff] := TPinMode.Output;
+  GPIO.SetPinLevelHigh(longWord(aNSSPin) and $ff);
 
   case longWord(@Self) of
-      SPI1_BASE : NSSPins[1] := longInt(aNSSPin);
-      SPI2_BASE : NSSPins[2] := longInt(aNSSPin);
-      SPI3_BASE : NSSPins[3] := longInt(aNSSPin);
-      {$ifdef has_spi4}SPI4_BASE : NSSPins[4] := longInt(aNSSPin);{$endif}
-      {$ifdef has_spi5}SPI5_BASE : NSSPins[5] := longInt(aNSSPin);{$endif}
-      {$ifdef has_spi6}SPI6_BASE : NSSPins[6] := longInt(aNSSPin);{$endif}
+      {$ifdef has_spi1}SPI1_BASE : begin
+        NSSPins[1] := longInt(aNSSPin);
+      end;
+      {$endif}
+      {$ifdef has_spi2}SPI2_BASE : begin
+        NSSPins[2] := longInt(aNSSPin);
+      end;
+      {$endif}
+      {$ifdef has_spi2}SPI3_BASE : begin
+        NSSPins[3] := longInt(aNSSPin);
+      end;
+      {$endif}
+      {$ifdef has_spi2}SPI4_BASE : begin
+        NSSPins[4] := longInt(aNSSPin);
+      end;
+      {$endif}
+      {$ifdef has_spi2}SPI5_BASE : begin
+        NSSPins[5] := longInt(aNSSPin);
+      end;
+      {$endif}
+      {$ifdef has_spi2}SPI6_BASE : begin
+        NSSPins[6] := longInt(aNSSPin);
+      end;
+      {$endif}
   end;
+  Enable;
 end;
 
-procedure TSPIRegistersHelper.SetNSSPinLow(const SoftNSSPin : TPinIdentifier);
-var
-  _NSSPin : longWord;
-begin
-  // Are we doing Hardware NSS?
-  if (GetBitValue(CR1,9) = 0) and (SoftNSSPin=TNativePin.None) then
-    exit;
-
-  if SoftNSSPin > TNativePin.None then
-  begin
-    GPIO.SetPinLevelLow(SoftNSSPin);
-    SetBitLevelHigh(CR1,9);
-    //TODO Low or High, what will it be????
-    SetBitLevelHigh(CR1,8);
-    exit;
-  end;
-
-  case longWord(@Self) of
-    SPI1_BASE : _NSSPin := NSSPins[1];
-    SPI2_BASE : _NSSPin := NSSPins[2];
-    SPI3_BASE : _NSSPin := NSSPins[3];
-    {$ifdef has_spi4}SPI4_BASE : _NSSPin := NSSPins[4];{$endif}
-    {$ifdef has_spi5}SPI5_BASE : _NSSPin := NSSPins[5];{$endif}
-    {$ifdef has_spi6}SPI6_BASE : _NSSPin := NSSPins[6];{$endif}
-  end;
-
-  if _NSSPin >= ALT0 then
-  begin
-    //Enable Hardware NSS
-    SetBitLevelLow(CR1,9);
-  end
-  else
-  begin
-    SetBitLevelHigh(CR1,9);
-    //TODO Low or High, what will it be????
-    SetBitLevelHigh(CR1,8);
-    GPIO.SetPinLevelLow(_NSSPin);
-  end
-end;
-
-procedure TSPIRegistersHelper.SetNSSPinHigh(const SoftNSSPin : TPinIdentifier);
-var
-  _NSSPin : longWord;
-begin
-  // Are we doing Hardware NSS?
-  if (GetBitValue(CR1,9) = 0) and (SoftNSSPin=TNativePin.None) then
-    exit;
-
-  if SoftNSSPin > TNativePin.None then
-  begin
-    GPIO.SetPinLevelHigh(SoftNSSPin);
-    exit;
-  end;
-
-  case longWord(@Self) of
-    SPI1_BASE : _NSSPin := NSSPins[1];
-    SPI2_BASE : _NSSPin := NSSPins[2];
-    SPI3_BASE : _NSSPin := NSSPins[3];
-    {$ifdef has_spi4}SPI4_BASE : _NSSPin := NSSPins[4];{$endif}
-    {$ifdef has_spi5}SPI5_BASE : _NSSPin := NSSPins[5];{$endif}
-    {$ifdef has_spi6}SPI6_BASE : _NSSPin := NSSPins[6];{$endif}
-  end;
-
-  //Take the NSS Pin High in software Mode (end transfer)
-  GPIO.SetPinLevelHigh(_NSSPin);
-end;
 
 function TSPIRegistersHelper.Disable : boolean;
 begin
@@ -408,14 +354,14 @@ begin
   SetBitLevelHigh(CR1,6);
 end;
 
-function TSPIRegistersHelper.FindDividerValue(const Baudrate: Cardinal): Cardinal;
+function TSPIRegistersHelper.FindDividerValue(const Baudrate: longWord): longWord;
 var
-  BaseFrequency : Cardinal;
+  BaseFrequency : longWord;
 begin
     case longWord(@Self) of
-    SPI1_BASE : BaseFrequency := SystemCore.GetAPB2PeripheralClockFrequency;
-    SPI2_BASE : BaseFrequency := SystemCore.GetAPB1PeripheralClockFrequency;
-    SPI3_BASE : BaseFrequency := SystemCore.GetAPB1PeripheralClockFrequency;
+    {$ifdef has_spi1}SPI1_BASE : BaseFrequency := SystemCore.GetAPB2PeripheralClockFrequency;{$endif}
+    {$ifdef has_spi2}SPI2_BASE : BaseFrequency := SystemCore.GetAPB1PeripheralClockFrequency;{$endif}
+    {$ifdef has_spi3}SPI3_BASE : BaseFrequency := SystemCore.GetAPB1PeripheralClockFrequency;{$endif}
     {$ifdef has_spi4}SPI4_BASE : BaseFrequency := SystemCore.GetAPB2PeripheralClockFrequency;{$endif}
     {$ifdef has_spi5}SPI5_BASE : BaseFrequency := SystemCore.GetAPB2PeripheralClockFrequency;{$endif}
     {$ifdef has_spi6}SPI6_BASE : BaseFrequency := SystemCore.GetAPB2PeripheralClockFrequency;{$endif}
@@ -426,14 +372,14 @@ begin
       break;
 end;
 
-function TSPIRegistersHelper.GetBaudrate: Cardinal;
+function TSPIRegistersHelper.GetBaudrate: longWord;
 var
-  BaseFrequency : Cardinal;
+  BaseFrequency : longWord;
 begin
   case longWord(@Self) of
-      SPI1_BASE : BaseFrequency := SystemCore.GetAPB2PeripheralClockFrequency;
-      SPI2_BASE : BaseFrequency := SystemCore.GetAPB1PeripheralClockFrequency;
-      SPI3_BASE : BaseFrequency := SystemCore.GetAPB1PeripheralClockFrequency;
+      {$ifdef has_spi1}SPI1_BASE : BaseFrequency := SystemCore.GetAPB2PeripheralClockFrequency;{$endif}
+      {$ifdef has_spi2}SPI2_BASE : BaseFrequency := SystemCore.GetAPB1PeripheralClockFrequency;{$endif}
+      {$ifdef has_spi3}SPI3_BASE : BaseFrequency := SystemCore.GetAPB1PeripheralClockFrequency;{$endif}
       {$ifdef has_spi4}SPI4_BASE : BaseFrequency := SystemCore.GetAPB2PeripheralClockFrequency;{$endif}
       {$ifdef has_spi5}SPI5_BASE : BaseFrequency := SystemCore.GetAPB2PeripheralClockFrequency;{$endif}
       {$ifdef has_spi6}SPI6_BASE : BaseFrequency := SystemCore.GetAPB2PeripheralClockFrequency;{$endif}
@@ -441,12 +387,14 @@ begin
   Result := BaseFrequency shr (GetBitsMasked(CR1,%111 shl 3,3)+1);
 end;
 
-procedure TSPIRegistersHelper.SetBaudrate(const aBaudrate: Cardinal);
+procedure TSPIRegistersHelper.SetBaudrate(const aBaudrate: longWord);
 var
-  Divider : longWord;
+  Status : boolean;
 begin
-    Divider := FindDividerValue(aBaudrate);
-    SetBitsMasked(CR1,Divider,%111 shl 3,3);
+  status := Disable;
+  SetBitsMasked(CR1,FindDividerValue(aBaudrate),%111 shl 3,3);
+  if status = true then
+    Enable;
 end;
 
 function TSPIRegistersHelper.GetBitsPerWord: TSPIBitsPerWord;
@@ -455,18 +403,28 @@ begin
 end;
 
 procedure TSPIRegistersHelper.SetBitsPerWord(const aBitsPerWord: TSPIBitsPerWord);
+var
+  Status : boolean;
 begin
+  status := Disable;
   SetBitValue(CR1,TBitValue(aBitsPerWord),11);
+  if status = true then
+    Enable;
 end;
 
 function TSPIRegistersHelper.GetMode: TSPIMode;
 begin
-  Result := TSPIMode(GetBitsMasked(CR1,%11,0));
+  Result := TSPIMode(GetBitsMasked(CR1,%11 shl 0,0));
 end;
 
 procedure TSPIRegistersHelper.SetMode(const aMode: TSPIMode);
+var
+  Status : boolean;
 begin
-  SetBitsMasked(CR1,longWord(aMode),%11,0);
+  status := Disable;
+  SetBitsMasked(CR1,longWord(aMode),%11 shl 0,0);
+  if status = true then
+    Enable;
 end;
 
 
@@ -480,702 +438,122 @@ begin
   Result := TSPIOperatingMode(GetBitValue(CR1,2));
 end;
 
-function TSPIRegistersHelper.ReadByte(var aReadByte: byte; const Timeout : longWord=0; const SoftNSSPin : TPinIdentifier = TNativePin.None):boolean;
+procedure TSPIRegistersHelper.WaitForTXFinished;
 var
-  EndTime : longWord;
+  Dummy : word;
 begin
-  Result := true;
-  //Default timeout is 10 Seconds
-  if Timeout = 0 then
-    EndTime := SystemCore.GetTickCount + DefaultSPITimeout
-  else
-    EndTime := SystemCore.GetTickCount + TimeOut;
+  //Make sure are Data is shifted out
+  WaitBitIsSet(SR,1);
+  //Wait for Busy Flag to be cleared
+  WaitBitIsCleared(SR,7);
+  //Clear Overflow
+  dummy := DR;
+end;
 
-  SetNSSPinLow(SoftNSSPin);
-  //transfer in 8 bits
-  setBitsPerWord(TSPIBitsPerWord.Eight);
+procedure TSPIRegistersHelper.BeginTransaction;
+begin
+  case longWord(@Self) of
+    {$ifdef has_spi1}SPI1_BASE : GPIO.SetPinLevelLow(NSSPins[1] and $ff);{$endif}
+    {$ifdef has_spi2}SPI2_BASE : GPIO.SetPinLevelLow(NSSPins[2] and $ff);{$endif}
+    {$ifdef has_spi3}SPI3_BASE : GPIO.SetPinLevelLow(NSSPins[3] and $ff);{$endif}
+    {$ifdef has_spi4}SPI4_BASE : GPIO.SetPinLevelLow(NSSPins[4] and $ff);{$endif}
+    {$ifdef has_spi5}SPI5_BASE : GPIO.SetPinLevelLow(NSSPins[5] and $ff);{$endif}
+    {$ifdef has_spi6}SPI6_BASE : GPIO.SetPinLevelLow(NSSPins[6] and $ff);{$endif}
+  end;
+end;
 
-  // Enable SPI, this also sets NSS Pin Low in Hardware Mode
-  SetBitLevelHigh(CR1,6);
+procedure TSPIRegistersHelper.EndTransaction;
+begin
+  WaitForTXFinished;
+  case longWord(@Self) of
+    {$ifdef has_spi1}SPI1_BASE : GPIO.SetPinLevelHigh(NSSPins[1] and $ff);{$endif}
+    {$ifdef has_spi2}SPI2_BASE : GPIO.SetPinLevelHigh(NSSPins[2] and $ff);{$endif}
+    {$ifdef has_spi3}SPI3_BASE : GPIO.SetPinLevelHigh(NSSPins[3] and $ff);{$endif}
+    {$ifdef has_spi4}SPI4_BASE : GPIO.SetPinLevelHigh(NSSPins[4] and $ff);{$endif}
+    {$ifdef has_spi5}SPI5_BASE : GPIO.SetPinLevelHigh(NSSPins[5] and $ff);{$endif}
+    {$ifdef has_spi6}SPI6_BASE : GPIO.SetPinLevelHigh(NSSPins[6] and $ff);{$endif}
+  end;
+end;
 
+procedure TSPIRegistersHelper.BeginTransaction(const SoftNSSPin : TPinIdentifier);
+begin
+  GPIO.SetPinLevelLow(SoftNSSPin);
+end;
+
+procedure TSPIRegistersHelper.EndTransaction(const SoftNSSPin : TPinIdentifier);
+begin
+  WaitForTXFinished;
+  GPIO.SetPinLevelHigh(SoftNSSPin);
+end;
+
+procedure TSPIRegistersHelper.WaitForTXReady; inline;
+begin
+  WaitBitIsSet(self.SR,1);
+end;
+
+procedure TSPIRegistersHelper.WaitForRXReady; inline;
+begin
+  WaitBitIsSet(self.SR,0);
+end;
+
+procedure TSPIRegistersHelper.WaitForTXFinished; inline;
+begin
+  //Make sure are Data is shifted out
+  WaitBitIsSet(Self.SR,1);
+  //Wait for Busy Flag to be cleared
+  WaitBitIsCleared(Self.SR,7);
+  //Clear Overflow
+  ReadDR;
+end;
+
+function TSPIRegistersHelper.WaitForTXReady(EndTime : TMilliSeconds):boolean; inline;
+begin
+  Result := WaitBitIsSet(self.SR,1,EndTime);
+end;
+
+function TSPIRegistersHelper.WaitForRXReady(EndTime : TMilliSeconds):boolean; inline;
+begin
+  Result := WaitBitIsSet(self.SR,0,EndTime);
+end;
+
+function TSPIRegistersHelper.WaitForTXFinished(EndTime : TMilliSeconds):boolean; inline;
+begin
+  //Make sure are Data is shifted out
   if WaitBitIsSet(SR,1,EndTime) = false then
-  begin
-    setNSSPinHigh(SoftNSSPin);
-    SetBitLevelLow(CR1,6);
     exit(false);
-  end;
-  DR := $ff;
-
-  // TXE Wait until data is completely shifted out
-  if WaitBitIsSet(SR,0,EndTime) = false then
-  begin
-    setNSSPinHigh(SoftNSSPin);
-    SetBitLevelLow(CR1,6);
-    exit(false);
-  end;
-  aReadByte := DR;
-
-  // Wait for Busy Flag to get cleared
+  //Wait for Busy Flag to be cleared
   if WaitBitIsCleared(SR,7,EndTime) = false then
-  begin
-    setNSSPinHigh(SoftNSSPin);
-    SetBitLevelLow(CR1,6);
     exit(false);
-  end;
-
-  setNSSPinHigh(SoftNSSPin);
-
-  // Disable SPI, this also sets NSS Pin High in Hardware Mode
-  SetBitLevelLow(CR1,6);
-end;
-
-function TSPIRegistersHelper.ReadByte(var aReadBuffer: array of byte; aReadCount : integer=-1; const Timeout : longWord=0; const SoftNSSPin : TPinIdentifier = TNativePin.None):boolean;
-var
-  dummy : byte;
-  i : longWord;
-  EndTime : longWord;
-begin
+  //Clear Overflow
+  ReadDR;
   Result := true;
-  //Default timeout is 10 Seconds
-  if Timeout = 0 then
-    EndTime := SystemCore.GetTickCount + DefaultSPITimeout
-  else
-    EndTime := SystemCore.GetTickCount + TimeOut;
-
-  if aReadCount = -1 then
-    aReadCount := High(aReadBuffer) - Low(aReadBuffer);
-
-  SetNSSPinLow(SoftNSSPin);
-  //transfer in 8 bits
-  setBitsPerWord(TSPIBitsPerWord.Eight);
-  // Enable SPI, this also sets NSS Pin Low in Hardware Mode
-  SetBitLevelHigh(CR1,6);
-
-  for i := Low(aReadbuffer) to Low(aReadbuffer)+aReadCount do
-  begin
-    if WaitBitIsSet(SR,1,EndTime) = false then
-    begin
-      setNSSPinHigh(SoftNSSPin);
-      SetBitLevelLow(CR1,6);
-      exit(false);
-    end;
-    DR := $ff;
-
-    // RXNE Wait until data is completely shifted out
-    if WaitBitIsSet(SR,0,EndTime) = false then
-    begin
-      setNSSPinHigh(SoftNSSPin);
-      SetBitLevelLow(CR1,6);
-      exit(false);
-    end;
-    aReadBuffer[i] := DR;
-  end;
-
-  // Wait for Busy Flag to get cleared
-  if WaitBitIsCleared(SR,7,EndTime) = false then
-  begin
-    setNSSPinHigh(SoftNSSPin);
-    SetBitLevelLow(CR1,6);
-    exit(false);
-  end;
-
-  SetNSSPinHigh(SoftNSSPin);
-
-  // Disable SPI, this also sets NSS Pin High in Hardware Mode
-  SetBitLevelLow(CR1,6);
 end;
 
-function TSPIRegistersHelper.ReadWord(var aReadWord: word; const Timeout : longWord=0; const SoftNSSPin : TPinIdentifier = TNativePin.None):boolean;
-var
-  EndTime : longWord;
+procedure TSPIRegistersHelper.WriteDR(const Value : byte); inline;
 begin
-  Result := true;
-  //Default timeout is 10 Seconds
-  if Timeout = 0 then
-    EndTime := SystemCore.GetTickCount + DefaultSPITimeout
-  else
-    EndTime := SystemCore.GetTickCount + TimeOut;
-
-  SetNSSPinLow(SoftNSSPin);
-  //transfer in 8 bits
-  setBitsPerWord(TSPIBitsPerWord.Eight);
-
-  // Enable SPI, this also sets NSS Pin Low in Hardware Mode
-  SetBitLevelHigh(CR1,6);
-
-  if WaitBitIsSet(SR,1,EndTime) = false then
-  begin
-    setNSSPinHigh(SoftNSSPin);
-    SetBitLevelLow(CR1,6);
-    exit(false);
-  end;
-  DR := $ffff;
-
-  // TXE Wait until data is completely shifted out
-  if WaitBitIsSet(SR,0,EndTime) = false then
-  begin
-    setNSSPinHigh(SoftNSSPin);
-    SetBitLevelLow(CR1,6);
-    exit(false);
-  end;
-  aReadWord := DR;
-
-  // Wait for Busy Flag to get cleared
-  if WaitBitIsCleared(SR,7,EndTime) = false then
-  begin
-    setNSSPinHigh(SoftNSSPin);
-    SetBitLevelLow(CR1,6);
-    exit(false);
-  end;
-
-
-  setNSSPinHigh(SoftNSSPin);
-
-  // Disable SPI, this also sets NSS Pin High in Hardware Mode
-  SetBitLevelLow(CR1,6);
+  pByte(@self.DR)^ := Value;
 end;
 
-function TSPIRegistersHelper.ReadWord(var aReadBuffer: array of word; aReadCount : integer=-1; const Timeout : longWord=0; const SoftNSSPin : TPinIdentifier = TNativePin.None):boolean;
-var
-  i : longWord;
-  EndTime : longWord;
+function TSPIRegistersHelper.ReadDR : byte ; inline;
 begin
-  Result := true;
-
-  //Default timeout is 10 Seconds
-  if Timeout = 0 then
-    EndTime := SystemCore.GetTickCount + DefaultSPITimeout
-  else
-    EndTime := SystemCore.GetTickCount + TimeOut;
-
-  if aReadCount = -1 then
-    aReadCount := High(aReadBuffer) - Low(aReadBuffer);
-
-  SetNSSPinLow(SoftNSSPin);
-  //transfer in 8 bits
-  setBitsPerWord(TSPIBitsPerWord.Eight);
-  // Enable SPI, this also sets NSS Pin Low in Hardware Mode
-  SetBitLevelHigh(CR1,6);
-
-  for i := Low(aReadBuffer) to Low(aReadBuffer)+aReadCount do
-  begin
-    if WaitBitIsSet(SR,1,EndTime) = false then
-    begin
-      setNSSPinHigh(SoftNSSPin);
-      SetBitLevelLow(CR1,6);
-      exit(false);
-    end;
-    DR := $ffff;
-
-    // RXNE Wait until data is completely shifted out
-    if WaitBitIsSet(SR,0,EndTime) = false then
-    begin
-      setNSSPinHigh(SoftNSSPin);
-      SetBitLevelLow(CR1,6);
-      exit(false);
-    end;
-    aReadBuffer[i] := DR;
-  end;
-
-  // Wait for Busy Flag to get cleared
-  if WaitBitIsCleared(SR,7,EndTime) = false then
-  begin
-    setNSSPinHigh(SoftNSSPin);
-    SetBitLevelLow(CR1,6);
-    exit(false);
-  end;
-
-  SetNSSPinHigh(SoftNSSPin);
-
-  // Disable SPI, this also sets NSS Pin High in Hardware Mode
-  SetBitLevelLow(CR1,6);
+  Result := pByte(@self.DR)^;
 end;
 
-function TSPIRegistersHelper.WriteByte(const aWriteByte: byte; const Timeout : longWord=0; const SoftNSSPin : TPinIdentifier = TNativePin.None) : boolean;
-var
-  Dummy : byte;
-  EndTime : longWord;
+{$IF Defined(HAS_SPI_16Bits)}
+procedure TSPIRegistersHelper.WriteDRWord(const Value : word); inline;
 begin
-  Result := true;
-  //Default timeout is 10 Seconds
-  if Timeout = 0 then
-    EndTime := SystemCore.GetTickCount + DefaultSPITimeout
-  else
-    EndTime := SystemCore.GetTickCount + TimeOut;
-
-  SetNSSPinLow(SoftNSSPin);
-  //transfer in 8 bits
-  setBitsPerWord(TSPIBitsPerWord.Eight);
-
-  // Enable SPI, this also sets NSS Pin Low in Hardware Mode
-  SetBitLevelHigh(CR1,6);
-
-  if WaitBitIsSet(SR,1,EndTime) = false then
-  begin
-    setNSSPinHigh(SoftNSSPin);
-    SetBitLevelLow(CR1,6);
-    exit(false);
-  end;
-
-  DR := aWriteByte;
-
-  // TXE Wait until data is completely shifted out
-  if WaitBitIsSet(SR,0,EndTime) = false then
-  begin
-    setNSSPinHigh(SoftNSSPin);
-    SetBitLevelLow(CR1,6);
-    exit(false);
-  end;
-
-  Dummy := DR;
-
-  // Wait for Busy Flag to get cleared
-  if WaitBitIsCleared(SR,7,EndTime) = false then
-  begin
-    setNSSPinHigh(SoftNSSPin);
-    SetBitLevelLow(CR1,6);
-    exit(false);
-  end;
-
-  setNSSPinHigh(SoftNSSPin);
-
-  // Disable SPI, this also sets NSS Pin High in Hardware Mode
-  SetBitLevelLow(CR1,6);
+  self.DR := Value;
 end;
 
-function TSPIRegistersHelper.WriteBuffer(pWriteBuffer: pByte; aWriteCount : longWord; const Timeout : longWord=0; const SoftNSSPin : TPinIdentifier = TNativePin.None) : boolean;
-var
-  dummy : byte;
-  i : longWord;
-  EndTime : longWord;
+function TSPIRegistersHelper.ReadDRWord : word ; inline;
 begin
-  Result := true;
-  //Default timeout is 10 Seconds
-  if Timeout = 0 then
-    EndTime := SystemCore.GetTickCount + DefaultSPITimeout
-  else
-    EndTime := SystemCore.GetTickCount + TimeOut;
-
-  SetNSSPinLow(SoftNSSPin);
-  //transfer in 8 bits
-  setBitsPerWord(TSPIBitsPerWord.Eight);
-  // Enable SPI, this also sets NSS Pin Low in Hardware Mode
-  SetBitLevelHigh(CR1,6);
-
-  for i := 1 to aWriteCount do
-  begin
-    if WaitBitIsSet(SR,1,EndTime) = false then
-    begin
-      setNSSPinHigh(SoftNSSPin);
-      SetBitLevelLow(CR1,6);
-      exit(false);
-    end;
-    DR := pWriteBuffer^;
-
-    // RXNE Wait until data is completely shifted out
-    if WaitBitIsSet(SR,0,EndTime) = false then
-    begin
-      setNSSPinHigh(SoftNSSPin);
-      SetBitLevelLow(CR1,6);
-      exit(false);
-    end;
-    Dummy := DR;
-    inc(pWriteBuffer);
-  end;
-
-  // Wait for Busy Flag to get cleared
-  if WaitBitIsCleared(SR,7,EndTime) = false then
-  begin
-    setNSSPinHigh(SoftNSSPin);
-    SetBitLevelLow(CR1,6);
-    exit(false);
-  end;
-
-  SetNSSPinHigh(SoftNSSPin);
-
-  // Disable SPI, this also sets NSS Pin High in Hardware Mode
-  SetBitLevelLow(CR1,6);
+  Result := self.DR;
 end;
+{$ENDIF}
 
-function TSPIRegistersHelper.WriteByte(const aWriteBuffer: array of byte; aWriteCount : integer=-1; const Timeout : longWord=0; const SoftNSSPin : TPinIdentifier = TNativePin.None) : boolean;
-var
-  dummy : byte;
-  i : longWord;
-  EndTime : longWord;
-begin
-  Result := true;
-  //Default timeout is 10 Seconds
-  if Timeout = 0 then
-    EndTime := SystemCore.GetTickCount + DefaultSPITimeout
-  else
-    EndTime := SystemCore.GetTickCount + TimeOut;
+{$DEFINE IMPLEMENTATION}
+{$I MBF.STM32.SPI.inc}
+{$UNDEF IMPLEMENTATION}
 
-  if aWriteCount = -1 then
-    aWriteCount := High(aWriteBuffer) - Low(aWriteBuffer);
-
-  SetNSSPinLow(SoftNSSPin);
-  //transfer in 8 bits
-  setBitsPerWord(TSPIBitsPerWord.Eight);
-  // Enable SPI, this also sets NSS Pin Low in Hardware Mode
-  SetBitLevelHigh(CR1,6);
-
-  for i := Low(aWritebuffer) to Low(aWritebuffer)+aWriteCount do
-  begin
-    if WaitBitIsSet(SR,1,EndTime) = false then
-    begin
-      setNSSPinHigh(SoftNSSPin);
-      SetBitLevelLow(CR1,6);
-      exit(false);
-    end;
-    DR := aWriteBuffer[i];
-
-    // RXNE Wait until data is completely shifted out
-    if WaitBitIsSet(SR,0,EndTime) = false then
-    begin
-      setNSSPinHigh(SoftNSSPin);
-      SetBitLevelLow(CR1,6);
-      exit(false);
-    end;
-    Dummy := DR;
-  end;
-
-  // Wait for Busy Flag to get cleared
-  if WaitBitIsCleared(SR,7,EndTime) = false then
-  begin
-    setNSSPinHigh(SoftNSSPin);
-    SetBitLevelLow(CR1,6);
-    exit(false);
-  end;
-
-  SetNSSPinHigh(SoftNSSPin);
-
-  // Disable SPI, this also sets NSS Pin High in Hardware Mode
-  SetBitLevelLow(CR1,6);
-end;
-
-function TSPIRegistersHelper.WriteWord(const aWriteWord: word; const Timeout : longWord=0; const SoftNSSPin : TPinIdentifier = TNativePin.None) : boolean;
-var
-  Dummy : Word;
-  EndTime : longWord;
-begin
-  Result := true;
-  //Default timeout is 10 Seconds
-  if Timeout = 0 then
-    EndTime := SystemCore.GetTickCount + DefaultSPITimeout
-  else
-    EndTime := SystemCore.GetTickCount + TimeOut;
-
-  SetNSSPinLow(SoftNSSPin);
-  //transfer in 16 bits
-  setBitsPerWord(TSPIBitsPerWord.Sixteen);
-
-  // Enable SPI, this also sets NSS Pin Low in Hardware Mode
-  SetBitLevelHigh(CR1,6);
-
-  if WaitBitIsSet(SR,1,EndTime) = false then
-  begin
-    setNSSPinHigh(SoftNSSPin);
-    SetBitLevelLow(CR1,6);
-    exit(false);
-  end;
-
-  DR := aWriteWord;
-
-  // TXE Wait until data is completely shifted out
-  if WaitBitIsSet(SR,0,EndTime) = false then
-  begin
-    setNSSPinHigh(SoftNSSPin);
-    SetBitLevelLow(CR1,6);
-    exit(false);
-  end;
-
-  Dummy := DR;
-
-  // Wait for Busy Flag to get cleared
-  if WaitBitIsCleared(SR,7,EndTime) = false then
-  begin
-    setNSSPinHigh(SoftNSSPin);
-    SetBitLevelLow(CR1,6);
-    exit(false);
-  end;
-
-  setNSSPinHigh(SoftNSSPin);
-
-  // Disable SPI, this also sets NSS Pin High in Hardware Mode
-  SetBitLevelLow(CR1,6);
-end;
-
-
-function TSPIRegistersHelper.WriteWord(const aWriteBuffer: array of Word; aWriteCount : integer=-1; const Timeout : longWord=0; const SoftNSSPin : TPinIdentifier = TNativePin.None) : boolean;
-var
-  dummy : Word;
-  i : longWord;
-  EndTime : longWord;
-begin
-  Result := true;
-  //Default timeout is 10 Seconds
-  if Timeout = 0 then
-    EndTime := SystemCore.GetTickCount + DefaultSPITimeout
-  else
-    EndTime := SystemCore.GetTickCount + TimeOut;
-
-  if aWriteCount = -1 then
-    aWriteCount := High(aWriteBuffer) - Low(aWriteBuffer);
-
-  SetNSSPinLow(SoftNSSPin);
-  //transfer in 16 bits
-  setBitsPerWord(TSPIBitsPerWord.Sixteen);
-  // Enable SPI, this also sets NSS Pin Low in Hardware Mode
-  SetBitLevelHigh(CR1,6);
-
-  for i := Low(aWritebuffer) to Low(aWritebuffer)+aWriteCount do
-  begin
-    if WaitBitIsSet(SR,1,EndTime) = false then
-    begin
-      setNSSPinHigh(SoftNSSPin);
-      SetBitLevelLow(CR1,6);
-      exit(false);
-    end;
-    self.DR := aWriteBuffer[i];
-    // TXE Wait until data is completely shifted out
-    if WaitBitIsSet(SR,0,EndTime) = false then
-    begin
-      setNSSPinHigh(SoftNSSPin);
-      SetBitLevelLow(CR1,6);
-      exit(false);
-    end;
-    Dummy := DR;
-  end;
-
-  // Wait for Busy Flag to get cleared
-  if WaitBitIsCleared(SR,7,EndTime) = false then
-  begin
-    setNSSPinHigh(SoftNSSPin);
-    SetBitLevelLow(CR1,6);
-    exit(false);
-  end;
-
-  SetNSSPinHigh(SoftNSSPin);
-
-  // Disable SPI, this also sets NSS Pin High in Hardware Mode
-  SetBitLevelLow(CR1,6);
-end;
-
-function TSPIRegistersHelper.TransferByte(const aWriteByte : Byte; var aReadByte : Byte; const Timeout : longWord=0;
-                  const SoftNSSPin : TPinIdentifier = TNativePin.None): boolean;
-var
-  EndTime : longWord;
-begin
-  Result := true;
-  //Default timeout is 10 Seconds
-  if Timeout = 0 then
-    EndTime := SystemCore.GetTickCount + DefaultSPITimeout
-  else
-    EndTime := SystemCore.GetTickCount + TimeOut;
-
-  SetNSSPinLow(SoftNSSPin);
-  //transfer in 8 bits
-  setBitsPerWord(TSPIBitsPerWord.Eight);
-
-  // Enable SPI, this also sets NSS Pin Low in Hardware Mode
-  SetBitLevelHigh(CR1,6);
-
-  if WaitBitIsSet(SR,1,EndTime) = false then
-  begin
-    setNSSPinHigh(SoftNSSPin);
-    SetBitLevelLow(CR1,6);
-    exit(false);
-  end;
-  DR := aWriteByte;
-
-  // TXE Wait until data is completely shifted out
-  if WaitBitIsSet(SR,0,EndTime) = false then
-  begin
-    setNSSPinHigh(SoftNSSPin);
-    SetBitLevelLow(CR1,6);
-    exit(false);
-  end;
-  aReadByte := DR;
-
-  // Wait for Busy Flag to get cleared
-  if WaitBitIsCleared(SR,7,EndTime) = false then
-  begin
-    setNSSPinHigh(SoftNSSPin);
-    SetBitLevelLow(CR1,6);
-    exit(false);
-  end;
-
-  setNSSPinHigh(SoftNSSPin);
-
-  // Disable SPI, this also sets NSS Pin High in Hardware Mode
-  SetBitLevelLow(CR1,6);
-end;
-
-function TSPIRegistersHelper.TransferByte(const aWriteBuffer: array of byte; var aReadBuffer : array of byte; aTransferCount : integer=-1; const Timeout : longWord=0; const SoftNSSPin : TPinIdentifier = TNativePin.None) : boolean;
-var
-  i : longWord;
-  EndTime : longWord;
-begin
-  Result := true;
-  if length(aWriteBuffer) <> length(aReadBuffer) then
-    exit(false);
-
-  //Default timeout is 10 Seconds
-  if Timeout = 0 then
-    EndTime := SystemCore.GetTickCount + DefaultSPITimeout
-  else
-    EndTime := SystemCore.GetTickCount + TimeOut;
-
-  if aTransferCount = -1 then
-    aTransferCount := High(aWriteBuffer) - Low(aWriteBuffer);
-
-  SetNSSPinLow(SoftNSSPin);
-  //transfer in 8 bits
-  setBitsPerWord(TSPIBitsPerWord.Eight);
-  // Enable SPI, this also sets NSS Pin Low in Hardware Mode
-  SetBitLevelHigh(CR1,6);
-
-  for i := Low(aWritebuffer) to Low(aWritebuffer)+aTransferCount do
-  begin
-    if WaitBitIsSet(SR,1,EndTime) = false then
-    begin
-      setNSSPinHigh(SoftNSSPin);
-      SetBitLevelLow(CR1,6);
-      exit(false);
-    end;
-    DR := aWriteBuffer[i];
-
-    // RXNE Wait until data is completely shifted out
-    if WaitBitIsSet(SR,0,EndTime) = false then
-    begin
-      setNSSPinHigh(SoftNSSPin);
-      SetBitLevelLow(CR1,6);
-      exit(false);
-    end;
-    aReadBuffer[i] := DR;
-  end;
-
-  // Wait for Busy Flag to get cleared
-  if WaitBitIsCleared(SR,7,EndTime) = false then
-  begin
-    setNSSPinHigh(SoftNSSPin);
-    SetBitLevelLow(CR1,6);
-    exit(false);
-  end;
-
-  SetNSSPinHigh(SoftNSSPin);
-
-  // Disable SPI, this also sets NSS Pin High in Hardware Mode
-  SetBitLevelLow(CR1,6);
-end;
-
-function TSPIRegistersHelper.TransferWord(const aWriteWord : Word; var aReadWord : Word; const Timeout : longWord=0;
-                  const SoftNSSPin : TPinIdentifier = TNativePin.None): boolean;
-var
-  EndTime : longWord;
-begin
-  Result := true;
-  //Default timeout is 10 Seconds
-  if Timeout = 0 then
-    EndTime := SystemCore.GetTickCount + DefaultSPITimeout
-  else
-    EndTime := SystemCore.GetTickCount + TimeOut;
-
-  SetNSSPinLow(SoftNSSPin);
-  //transfer in 8 bits
-  setBitsPerWord(TSPIBitsPerWord.Eight);
-
-  // Enable SPI, this also sets NSS Pin Low in Hardware Mode
-  SetBitLevelHigh(CR1,6);
-
-  if WaitBitIsSet(SR,1,EndTime) = false then
-  begin
-    setNSSPinHigh(SoftNSSPin);
-    SetBitLevelLow(CR1,6);
-    exit(false);
-  end;
-  DR := aWriteWord;
-
-  // TXE Wait until data is completely shifted out
-  if WaitBitIsSet(SR,0,EndTime) = false then
-  begin
-    setNSSPinHigh(SoftNSSPin);
-    SetBitLevelLow(CR1,6);
-    exit(false);
-  end;
-  aReadWord := DR;
-
-  // Wait for Busy Flag to get cleared
-  if WaitBitIsCleared(SR,7,EndTime) = false then
-  begin
-    setNSSPinHigh(SoftNSSPin);
-    SetBitLevelLow(CR1,6);
-    exit(false);
-  end;
-
-  setNSSPinHigh(SoftNSSPin);
-
-  // Disable SPI, this also sets NSS Pin High in Hardware Mode
-  SetBitLevelLow(CR1,6);
-end;
-
-function TSPIRegistersHelper.TransferWord(const aWriteBuffer: array of word; var aReadBuffer : array of word; aTransferCount : integer=-1; const Timeout : longWord=0; const SoftNSSPin : TPinIdentifier = TNativePin.None) : boolean;
-var
-  i : longWord;
-  EndTime : longWord;
-begin
-  Result := true;
-  if length(aWriteBuffer) <> length(aReadBuffer) then
-    exit(false);
-
-  //Default timeout is 10 Seconds
-  if Timeout = 0 then
-    EndTime := SystemCore.GetTickCount + DefaultSPITimeout
-  else
-    EndTime := SystemCore.GetTickCount + TimeOut;
-
-  if aTransferCount = -1 then
-    aTransferCount := High(aWriteBuffer) - Low(aWriteBuffer);
-
-  SetNSSPinLow(SoftNSSPin);
-  //transfer in 8 bits
-  setBitsPerWord(TSPIBitsPerWord.Eight);
-  // Enable SPI, this also sets NSS Pin Low in Hardware Mode
-  SetBitLevelHigh(CR1,6);
-
-  for i := Low(aWritebuffer) to Low(aWritebuffer)+aTransferCount do
-  begin
-    if WaitBitIsSet(SR,1,EndTime) = false then
-    begin
-      setNSSPinHigh(SoftNSSPin);
-      SetBitLevelLow(CR1,6);
-      exit(false);
-    end;
-    DR := aWriteBuffer[i];
-
-    // RXNE Wait until data is completely shifted out
-    if WaitBitIsSet(SR,0,EndTime) = false then
-    begin
-      setNSSPinHigh(SoftNSSPin);
-      SetBitLevelLow(CR1,6);
-      exit(false);
-    end;
-    aReadBuffer[i] := DR;
-  end;
-
-  // Wait for Busy Flag to get cleared
-  if WaitBitIsCleared(SR,7,EndTime) = false then
-  begin
-    setNSSPinHigh(SoftNSSPin);
-    SetBitLevelLow(CR1,6);
-    exit(false);
-  end;
-
-  SetNSSPinHigh(SoftNSSPin);
-
-  // Disable SPI, this also sets NSS Pin High in Hardware Mode
-  SetBitLevelLow(CR1,6);
-end;
-
+{$ENDREGION}
 end.
-

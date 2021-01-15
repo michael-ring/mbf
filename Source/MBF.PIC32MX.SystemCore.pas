@@ -17,8 +17,11 @@ interface
 
 {$INCLUDE MBF.Config.inc}
 
-uses
-  MBF.SystemCore;
+type
+  { Special unsigned integer that is used to represent ticks in microseconds. }
+  TTickCounter = longWord;
+  TMilliSeconds = longWord;
+  TMicroSeconds = longWord;
 
 {$if defined(PIC32MX1) or defined(PIC32MX2)}
 const
@@ -28,7 +31,7 @@ const
 {$endif}
 
 const
-  FRCClockFrequency = 8000000;
+  FRCClockFrequency:longword = 8000000;
   SlowRCClockFreq = 32768;
 var
   HSEClockFrequency : longWord = 0;
@@ -42,21 +45,46 @@ type
     PLLODIV   : longWord;
   end;
 
-
-  TPIC32MXSystemCore = record helper for TSystemCore
+  TSystemCore = record
+  const
+    TimerResolutionMask = $ffffffff;
+  var
   private
-    //procedure ConfigureSystem;
-    function GetSysTickClockFrequency : Cardinal;
+    function convertMicrosecondsToCoreTicks(MicroSeconds : TMicroSeconds) : TTickCounter;
+    procedure setCoreTimerValue(value : longWord);
+    procedure setCoreTimerReloadCompare(value : longWord);
+    function getCoreTimerReloadCompare : longWord;
+    function getCoreTimerValue: longWord;
+    function GetSysTickClockFrequency : longWord;
     function getFrequencyParameters(aFrequency : longWord; aXTALFrequency : longWord = 0; aSYSCLOCK_MAX : longWord = MaxCPUFrequency):TOSCParameters;
   public
     procedure Initialize;
-    procedure DisableJTAGInterface;
-    procedure EnableJTAGInterface;
-    function GetSYSCLKFrequency: Cardinal;
-    function GetPBCLKFrequency: Cardinal;
-    function GetCPUFrequency: Cardinal;
-    procedure setCPUFrequency(const Value: Cardinal;XTALFrequency : longWord = 0);
-    function getMaxCPUFrequency : Cardinal;
+    function GetSYSCLKFrequency: longWord;
+    function GetPBCLKFrequency: longWord;
+    function GetCPUFrequency: longWord;
+    procedure setCPUFrequency(const Value: longWord;XTALFrequency : longWord = 0);
+    function getMaxCPUFrequency : longWord;
+    procedure RegUnlock;
+    procedure RegLock;
+    procedure ConfigureTimer;
+    procedure ConfigureInterrupts;
+    { Returns the current value of system timer, in microseconds. }
+    function GetTickCount: TMilliSeconds;
+
+    { Calculates the difference between two system timer values with proper handling of overflows. }
+    function TicksInBetween(const InitTicks, EndTicks: TTickCounter): TTickCounter;
+
+    { Waits the specified amount of milliseconds accurately by continuously polling the timer.
+      This is useful for accurate timing but may result in high CPU usage. }
+    procedure BusyWait(const Milliseconds: TMilliseconds);
+
+    { Delays the execution for the specified amount of microseconds. }
+    procedure MicroDelay(const Microseconds: TMicroseconds);
+
+    { Delays the execution for the specified amount of milliseconds. CPU is put to sleep when milliseconds > 10}
+    procedure Delay(const Milliseconds: TMilliseconds);
+
+  public
   end;
 
 var
@@ -74,46 +102,194 @@ const
   PLLMULT : array[0..7] of byte = (15,16,17,18,19,20,21,24);
   FPLLIDIV : array[0..7] of byte = (1,2,3,4,5,6,10,12);
 
-procedure TPIC32MXSystemCore.Initialize;
+var
+  SysTickCounter: TTickCounter = 0;
+  TicksPerMillisecond : TTickCounter = 4000;
+
+procedure TSystemCore.setCoreTimerReloadCompare(value : longWord); //assembler; nostackframe;
+  begin
+    asm
+      mtc0 $a1,$11,0
+      ehb
+    end ['a1'];
+  end;
+
+  function TSystemCore.getCoreTimerReloadCompare : longWord; //assembler; nostackframe;
+  begin
+    asm
+      mfc0 $v0,$11,0
+    end ['v0'];
+  end;
+
+  procedure TSystemCore.setCoreTimerValue(value : longWord); //assembler; nostackframe;
+  begin
+    asm
+      mtc0 $a1,$9,0
+      ehb
+    end ['a1'];
+  end;
+
+  function TSystemCore.getCoreTimerValue: longWord; //assembler; nostackframe;
+  begin
+    asm
+      mfc0 $v0,$9,0
+    end ['v0'];
+  end;
+
+procedure SysTick_interrupt; interrupt; [public, alias: 'CORE_TIMER_interrupt'];
 begin
-  DisableJTAGInterface;
+  asm
+    mfc0 $v1,$9,0
+    lw   $v0,TicksPerMillisecond
+    addu $v1,$v0
+    mtc0 $v1,$11,0
+    ehb
+  end ['v0','v1'];
+
+  Inc(SysTickCounter);
+  INT.IFS0CLR := %1 shl 0;
+end;
+
+{$REGION 'TSystemCore'}
+
+function TSystemCore.ConvertMicrosecondsToCoreTicks(MicroSeconds : TMicroSeconds) : TTickCounter;
+begin
+  Result := Int64(Microseconds) * getSysTickClockFrequency div 1000000;
+end;
+
+procedure TSystemCore.RegUnlock;
+begin
+  asm
+    di
+  end;
+  CFG.SYSKEY := $12345678;
+  CFG.SYSKEY := $AA996655;
+  CFG.SYSKEY := $556699AA;
+  asm
+    ei
+  end;
+end;
+
+procedure TSystemCore.Reglock;
+begin
+  CFG.SYSKEY := $00000000;
+end;
+
+procedure TSystemCore.ConfigureTimer;
+begin
+  TicksPerMillisecond := GetSysTickClockFrequency div 1000;
+  //Coretimer was set on Startup Code
+  SetCoreTimerValue(0);
+  SetCoreTimerReloadCompare(TicksPerMilliSecond);
+
+  // Clear pending Interrupt
+  INT.IFS0CLR := %1;
+  // Activate Interrupt
+  INT.IEC0SET := %1;
+
+  // Set the Core-Timer Interrupt to priority 1
+  INT.IPC0CLR :=%111 <<2;
+  INT.IPC0SET :=%001 <<2;
+  // Set the Core-Timer Interrupt to sub-priority 0
+  INT.IPC0CLR :=%11 <<0;
+  INT.IPC0SET :=%00 <<0;
+end;
+
+procedure TSystemCore.ConfigureInterrupts;
+begin
+  INT.INTCONSET := %1 shl 12;
+  asm
+    mfc0 $v0,$12,0
+    ori $v0,$v0,1
+    mtc0 $v0,$12,0
+    ehb
+    //ei
+  end;
+end;
+
+function TSystemCore.GetTickCount: TTickCounter;
+begin
+  Result := SysTickCounter;
+end;
+
+
+function TSystemCore.TicksInBetween(const InitTicks, EndTicks: TTickCounter): TTickCounter;
+begin
+  Result := EndTicks - InitTicks;
+  if longWord(not Result) < Result then
+    Result := longWord(not Result);
+end;
+
+procedure TSystemCore.MicroDelay(const Microseconds: TMicroseconds);
+var
+  StartTicks : TTickCounter;
+  TickCount : TTickCounter;
+  //TickDiff : TTickCounter;
+begin
+  StartTicks := GetCoreTimerValue;
+  TickCount := convertMicroSecondsToCoreTicks(Microseconds);
+  if (TickCount=0) then exit;
+  while TicksInBetween(StartTicks,GetCoreTimerValue) < TickCount do
+    //TickDiff := TicksInBetween(StartTicks,GetCoreTimerValue);
+  ;
+end;
+
+procedure TSystemCore.BusyWait(const MilliSeconds: TMilliSeconds);
+var
+  StartTicks: TMilliSeconds;
+begin
+  //To keep error below 10% do MicroDelay for short times
+  if MilliSeconds < 10 then
+    MicroDelay(MilliSeconds*1000)
+  else
+  begin
+    StartTicks := GetTickCount;
+    while TicksInBetween(StartTicks, GetTickCount) < Milliseconds do ;
+  end;
+end;
+
+procedure TSystemCore.Delay(const MilliSeconds: TMilliseconds);
+var
+  StartTicks : TTickCounter;
+begin
+  //To keep error below 10% do busywait for short times
+  if MilliSeconds < 10 then
+    MicroDelay(MilliSeconds*1000)
+  else
+  begin
+    StartTicks := GetTickCount;
+    while TicksInBetween(StartTicks, GetTickCount) < Milliseconds do
+    asm
+      nop
+      wait // wait for interrupt
+      nop
+    end;
+  end;
+end;
+
+procedure TSystemCore.Initialize;
+begin
   RegUnlock;
   if GetCPUFrequency <= 24000000 then
-    SetBitsMasked(OSC.OSCCON,%00,%11,19)
+    SetBitsMasked(OSC.OSCCON,%00,%11 shl 19,19)
   else
-    SetBitsMasked(OSC.OSCCON,%01,%11,19);
+    SetBitsMasked(OSC.OSCCON,%01,%11 shl 19,19);
   RegLock;
   ConfigureTimer;
   ConfigureInterrupts;
 end;
 
-function TPIC32MXSystemCore.GetSysTickClockFrequency : Cardinal; [public, alias: 'MBF_GetSysTickClockFrequency'];
+function TSystemCore.GetSysTickClockFrequency : longWord; [public, alias: 'MBF_GetSysTickClockFrequency'];
 begin
   Result := GetSysClkFrequency div 2;
 end;
 
-procedure TPIC32MXSystemCore.DisableJTAGInterface;
-begin
-  //CFG.CFGCON := CFG.CFGCON and (not (%1 shl 3));
-end;
-
-procedure TPIC32MXSystemCore.EnableJTAGInterface;
-begin
-  //CFG.CFGCON := CFG.CFGCON or (%1 shl 3);
-end;
-
-//procedure TPIC32MXSystemCore.ConfigureSystem;
-//begin
-//  DisableJTAGInterface;
-//  ConfigureInterrupts;
-//end;
-
-function TPIC32MXSystemCore.GetCPUFrequency : longWord;
+function TSystemCore.GetCPUFrequency : longWord;
 begin
   Result := getSYSCLKFrequency;
 end;
 
-function TPIC32MXSystemCore.GetSYSCLKFrequency : longWord;
+function TSystemCore.GetSYSCLKFrequency : longWord;
 begin
   case (OSC.OSCCON shr 12) and %111 of
    0:   //Internal FRC Oscillator
@@ -141,12 +317,12 @@ begin
   end;
 end;
 
-function TPIC32MXSystemCore.GetPBCLKFrequency : longWord;
+function TSystemCore.GetPBCLKFrequency : longWord;
 begin
   Result := GetSysCLKFrequency shr ((OSC.OSCCON shr 19) and %11)
 end;
 
-function TPIC32MXSystemCore.getFrequencyParameters(aFrequency : longWord; aXTALFrequency : longWord = 0;aSYSCLOCK_MAX : longWord = MaxCPUFrequency):TOSCParameters;
+function TSystemCore.getFrequencyParameters(aFrequency : longWord; aXTALFrequency : longWord = 0;aSYSCLOCK_MAX : longWord = MaxCPUFrequency):TOSCParameters;
 const
   PLLFREQMAX = 120000000;
 var
@@ -181,7 +357,7 @@ begin
   end;
 end;
 
-procedure TPIC32MXSystemCore.setCPUFrequency(const Value : Cardinal;XtalFrequency : longWord = 0);
+procedure TSystemCore.setCPUFrequency(const Value : longWord;XtalFrequency : longWord = 0);
 var
   Params : TOSCParameters;
   i : longWord;
@@ -248,9 +424,9 @@ begin
 
   //Set some same defaults for Peripherals Clock
   if Value <= 24000000 then
-    SetBitsMasked(OSC.OSCCON,%00,%11,19)
+    SetBitsMasked(OSC.OSCCON,%00,%11 shl 19,19)
   else
-    SetBitsMasked(OSC.OSCCON,%01,%11,19);
+    SetBitsMasked(OSC.OSCCON,%01,%11 shl 19,19);
 
   //Enable Switching
   OSC.OSCCONSET := %1 shl 0;
@@ -261,7 +437,7 @@ begin
   ConfigureTimer;
 end;
 
-function TPIC32MXSystemCore.getMaxCPUFrequency : Cardinal;
+function TSystemCore.getMaxCPUFrequency : longWord;
 begin
   Result := MaxCPUFrequency;
 end;

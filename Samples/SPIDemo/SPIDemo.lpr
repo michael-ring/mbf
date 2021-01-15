@@ -37,35 +37,46 @@ begin
   // Default Initialization is 8MHz SPI Clock, Master and Mode0
   SPI.Initialize(TSPIMOSIPins.D11_SPI,TSPIMISOPins.D12_SPI,TSPISCLKPins.D13_SPI,TSPINSSPins.D10_SPI);
 
-  // Now define which Pins to use for the choosen SPI
-  //SPI.Initialize;
-  //SPI.MISOPin := TSPIMISOPins.D12_SPI;
-  //SPI.MOSIPin := TSPIMOSIPins.D11_SPI;
-  //SPI.SCLKPin := TSPISCLKPins.D13_SPI;
-  //SPI.NSSPin  :=  TSPINSSPins.D10_SPI;
-
-  //SPI.Baudrate := 8000000;
-  //SPI.Mode := TSPIMode.Mode0;
-  //SPI.OperatingMode := TSPIOperatingMode.Master;
-
   // We drive a small 8x8 LED Module that is driven by a MAX7219 Chip
-
+  // First we setup the chip
+  SPI.beginTransaction;
   SPI.WriteWord($0900); //Do not decode bits
-  SPI.WriteWord($0a05); //Brightness of LED's
-  SPI.WriteWord($0b07); //Show all scan lines
-  SPI.WriteWord($0c01); //Display on
-  SPI.WriteWord($0f00); //TestMode off
+  SPI.endTransaction;
+  SPI.beginTransaction;
+  SPI.WriteWord($0A05); //Brightness of LED's
+  SPI.endTransaction;
+  SPI.beginTransaction;
+  SPI.WriteWord($0B07); //Show all scan lines
+  SPI.endTransaction;
+  SPI.beginTransaction;
+  SPI.WriteWord($0C01); //Display on
+  SPI.endTransaction;
+  SPI.beginTransaction;
+  SPI.WriteWord($0F00); //TestMode off
+  SPI.endTransaction;
 
   repeat
     //Clear Display
     for i := 1 to 8 do
+    begin
+      SPI.beginTransaction;
       SPI.WriteWord((i shl 8) + 0);
+      SPI.endTransaction;
+    end;
     SystemCore.Delay(1000);
     for i := 1 to 8 do
+    begin
+      SPI.beginTransaction;
       SPI.WriteWord((i shl 8) + $ff);
+      SPI.endTransaction;
+    end;
     SystemCore.Delay(1000);
-    for i := 1 to 8 do
-      SPI.WriteWord(Pattern[i]);
+      for i := 1 to 8 do
+      begin
+        SPI.beginTransaction;
+        SPI.WriteWord(Pattern[i]);
+        SPI.endTransaction;
+      end;
     SystemCore.Delay(1000);
   until 1=0
 end.

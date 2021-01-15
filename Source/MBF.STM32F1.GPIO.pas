@@ -12,8 +12,16 @@ unit MBF.STM32F1.GPIO;
   warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the FPC modified GNU Library General Public
   License for more details.
 }
+{
+  Related Reference Manuals
 
-{< ST Micro F3xx series GPIO functions. }
+  STM32F100xx advanced ARM
+  http://www.st.com/resource/en/reference_manual/CD00246267.pdf
+
+  STM32F101xx, STM32F102xx, STM32F103xx, STM32F105xx and STM32F107xx advanced Arm
+  http://www.st.com/resource/en/reference_manual/CD00171190.pdf
+}
+
 interface
 
 {$include MBF.Config.inc}
@@ -22,9 +30,11 @@ interface
 
 const
   ALT0=$1000;
-  ALT1=$2000;
-  ALT2=$3000;
-  ALT3=$4000;
+  ALT1=$1100;
+  ALT2=$1200;
+  ALT3=$1300;
+  ALT4=$1400;
+  ALT5=$1500;
 
 type
   TNativePin = record
@@ -107,10 +117,14 @@ type
   TPinLevel=(Low=0,High=1);
   TPinValue=0..1;
   TPinIdentifier=-1..160;
-  TPinMode = (Analog=%00, Input=%01, Output=%10,  AF0=%100, AF1=%101, AF2=%110, AF3=%111);
+  TPinMode = (Analog=%00, Input=%01, Output=%10,  AF0=%11, AF1=%100);
   TPinDrive = (None=%00,PullUp=%01,PullDown=%10);
   TPinOutputMode = (PushPull=0,OpenDrain=1);
   TPinOutputSpeed = (Invalid=%00,Medium=%01, Slow=%10, High=%11);
+
+  TBit = (Bit0, Bit1, Bit2, Bit3, Bit4, Bit5, Bit6, Bit7,
+          Bit8, Bit9, Bit10, Bit11, Bit12, Bit13, Bit14, Bit15);
+  TBitSet = set of TBit;
 
 type
   TGPIO = record
@@ -154,10 +168,32 @@ type
     property PinLevel[const Pin : TPinIdentifier] : TPinLevel read getPinLevel write setPinLevel;
   end;
 
+
+  TGPIOPort = record helper for TGPIO_Registers
+  public
+    procedure Initialize;
+    function GetPortValues : word;
+    function GetPortBits : TBitSet;
+    procedure SetPortValues(const Values : Word);
+    procedure SetPortBits(const Bits : TBitSet);
+    procedure ClearPortBits(const Bits : TBitSet);
+    procedure SetPortMode(PortMode : TPinMode);
+    procedure SetPortOutputSpeed(Speed : TPinOutputSpeed);
+    procedure SetPortDrive(Drive : TPinDrive);
+    procedure SetPortOutputMode(OutputMode : TPinOutputMode);
+  end;
+
 var
   GPIO : TGPIO;
 
 implementation
+uses
+  MBF.BitHelpers;
+
+procedure EnableGPIOPort(GPIO : byte);
+begin
+  setBit(RCC.APB2ENR,GPIO+2);
+end;
 
 procedure TGPIO.Initialize;
 begin
@@ -166,143 +202,94 @@ end;
 
 function TGPIO.GetPinMode(const Pin: TPinIdentifier): TPinMode;
 var
-  Bit,Bit4x,GPIO : byte;
+  Mode : Byte;
+  Bit,GPIO : byte;
 begin
   GPIO := Pin shr 4;
   Bit := Pin and $0f;
 
   if Bit < 8 then
-    Bit4x := Bit shl 2
+    Mode := getNibble(GPIOMem[GPIO]^.CRL,Bit shl 2)
   else
-    Bit4x := (Bit and %111) shl 2;
+    Mode := getNibble(GPIOMem[GPIO]^.CRH,(Bit-8) shl 2);
 
-  if Bit < 8 then
-  begin
-    case (GPIOMem[GPIO]^.CRL shr Bit4x) and $03 of
-      00:     begin
-                if (GPIOMem[GPIO]^.CRL shr (Bit4x+2)) and %11 = 0 then
-                  Result := TPinMode.Analog
-                else
-                  Result := TPinMode.Input;
-              end;
-      else
-              begin
-                if (GPIOMem[GPIO]^.CRL shr (Bit4x+2)) and %10 = 0 then
-                  Result := TPinMode.Output
-                else
-                  Result := TPinMode.AF0;
-              end;
-      end;
-  end
+  case Mode of
+    %0000: Result := TPinMode.Analog;
+    %0100: Result := TPinMode.Input;
+    %1000: Result := TPinMode.Input;
   else
-  begin
-    case (GPIOMem[GPIO]^.CRH shr Bit4x) and $03 of
-      00:     begin
-                if (GPIOMem[GPIO]^.CRH shr (Bit4x+2)) and %11 = 0 then
-                  Result := TPinMode.Analog
-                else
-                  Result := TPinMode.Input;
-              end;
+    if Mode and %10 = 0 then
+      Result := TPinMode.Output
+    else
+      if Mode and %01 = 0 then
+        Result := TPinMode.AF0
       else
-             begin
-               if (GPIOMem[GPIO]^.CRH shr (Bit4x+2)) and %10 = 0 then
-                 Result := TPinMode.Output
-               else
-                 Result := TPinMode.AF0;
-             end;
-      end;
+        Result := TPinMode.AF1;
   end;
 end;
 
 procedure TGPIO.SetPinMode(const Pin: TPinIdentifier; const Value: TPinMode);
 var
-  Bit4xMask : longWord;
   Bit,Bit4x,GPIO : byte;
 begin
   GPIO := Pin shr 4;
   Bit := Pin and $0f;
+  Bit4x := (Bit and %111) shl 2;
 
-  if Bit < 8 then
-    Bit4x := Bit shl 2
-  else
-    Bit4x := (Bit and %111) shl 2;
-
-  Bit4xMask := not(%1111 shl Bit4x);
-
-  //First make sure that the GPIO Clock is enabled
-  RCC.APB2ENR := RCC.APB2ENR or longWord(1 shl (2+GPIO));
+  EnableGPIOPort(GPIO);
 
   //Now set default Mode with some sane settings
 
   if Bit < 8 then
   begin
     case Value of
-      TPinMode.Input     : begin
-                               //Enable Input Mode Free Floating
-                               GPIOMem[GPIO]^.CRL := GPIOMem[GPIO]^.CRL and Bit4xMask or longword(%0100 shl Bit4x);
-      end;
-      TPinMode.Output    : begin
-                               //Enable Output Mode Push/Pull Fastest IO Speed
-                               GPIOMem[GPIO]^.CRL := GPIOMem[GPIO]^.CRL and Bit4xMask or longWord(%0011 shl Bit4x);
-      end;
-
-      TPinMode.Analog    : begin
-                               //Enable Analog Mode no Pullup/Down
-                               GPIOMem[GPIO]^.CRL := GPIOMem[GPIO]^.CRL and Bit4xMask;
-      end
-      else
-                           begin
-                               //Enable Alternate Node no Pullup/Down Fastest IO Speed
-                               GPIOMem[GPIO]^.CRL := GPIOMem[GPIO]^.CRL and Bit4xMask or longWord(%1011 shl Bit4x);
-
-      end;
+      //Enable Input Mode Free Floating
+      TPinMode.Input     : SetNibble(GPIOMem[GPIO]^.CRL,%0100,Bit4x);
+      //Enable Output Mode Push/Pull Fastest IO Speed
+      TPinMode.Output    : SetNibble(GPIOMem[GPIO]^.CRL,%0011,Bit4x);
+      //Enable Analog Mode no Pullup/Down
+      TPinMode.Analog    : SetNibble(GPIOMem[GPIO]^.CRL,%0000,Bit4x);
+      //Enable Alternate Mode, Push-Pull Fastest IO Speed
+      TPinMode.AF0       : SetNibble(GPIOMem[GPIO]^.CRL,%1011,Bit4x);
+    else
+      //Enable Alternate Node OpenDrain Fastest IO Speed
+      SetNibble(GPIOMem[GPIO]^.CRL,%1111,Bit4x);
     end;
   end
   else
   begin
     case Value of
-      TPinMode.Input     : begin
-                               //Enable Input Mode Free Floating
-                               GPIOMem[GPIO]^.CRH := GPIOMem[GPIO]^.CRH and Bit4xMask or longword(%0100 shl Bit4x);
-      end;
-      TPinMode.Output    : begin
-                               //Enable Output Mode Push/Pull Fastest IO Speed
-                               GPIOMem[GPIO]^.CRH := GPIOMem[GPIO]^.CRH and Bit4xMask or longWord(%0011 shl Bit4x);
-      end;
-
-      TPinMode.Analog    : begin
-                               //Enable Analog Mode no Pullup/Down
-                               GPIOMem[GPIO]^.CRH := GPIOMem[GPIO]^.CRH and Bit4xMask;
-      end
-      else
-                           begin
-                               //Enable Alternate Node no Pullup/Down Fastest IO Speed
-                               GPIOMem[GPIO]^.CRH := GPIOMem[GPIO]^.CRH and Bit4xMask or longWord(%1011 shl Bit4x);
-
-      end;
+      //Enable Input Mode Free Floating
+      TPinMode.Input     : SetNibble(GPIOMem[GPIO]^.CRH,%0100,Bit4x);
+      //Enable Output Mode Push/Pull Fastest IO Speed
+      TPinMode.Output    : SetNibble(GPIOMem[GPIO]^.CRH,%0011,Bit4x);
+      //Enable Analog Mode no Pullup/Down
+      TPinMode.Analog    : SetNibble(GPIOMem[GPIO]^.CRH,%0000,Bit4x);
+      //Enable Alternate Mode, Push-Pull Fastest IO Speed
+      TPinMode.AF0       : SetNibble(GPIOMem[GPIO]^.CRH,%1011,Bit4x);
+    else
+      //Enable Alternate Node OpenDrain Fastest IO Speed
+      SetNibble(GPIOMem[GPIO]^.CRL,%1111,Bit4x);
     end;
   end;
 end;
 
 function TGPIO.GetPinValue(const Pin: TPinIdentifier): TPinValue;
 begin
-  if GPIOMem[Pin shr 4]^.IDR and (1 shl (Pin and $0f)) <> 0 then
-    Result := 1
-  else
-    Result := 0;
+  Result := GetBitValue(GPIOMem[Pin shr 4]^.IDR,Pin and $0f);
 end;
 
 procedure TGPIO.SetPinValue(const Pin: TPinIdentifier; const Value: TPinValue);
 begin
   if Value = 1 then
-    GPIOMem[Pin shr 4]^.BSRR := 1 shl (Pin and $0f)
+    SetBit(GPIOMem[Pin shr 4]^.BSRR,Pin and $0f)
   else
-    GPIOMem[Pin shr 4]^.BSRR := $10000 shl (Pin and $0f);
+    SetBit(GPIOMem[Pin shr 4]^.BSRR,(Pin and $0f)+16);
 end;
 
 function TGPIO.GetPinLevel(const Pin: TPinIdentifier): TPinLevel;
 begin
-  if GPIOMem[Pin shr 4]^.IDR and (1 shl (Pin and $0f)) <> 0 then
+  if GetBit(GPIOMem[Pin shr 4]^.IDR,Pin and $0f) <> 0 then
     Result := TPinLevel.High
   else
     Result := TPinLevel.Low;
@@ -311,246 +298,305 @@ end;
 procedure TGPIO.SetPinLevel(const Pin: TPinIdentifier; const Level: TPinLevel);
 begin
   if Level = TPinLevel.High then
-    GPIOMem[Pin shr 4]^.BSRR := 1 shl (Pin and $0f)
+    SetBit(GPIOMem[Pin shr 4]^.BSRR,Pin and $0f)
   else
-    GPIOMem[Pin shr 4]^.BSRR := $10000 shl (Pin and $0f);
+    SetBit(GPIOMem[Pin shr 4]^.BSRR,(Pin and $0f)+16);
 end;
 
 procedure TGPIO.SetPinLevelHigh(const Pin: TPinIdentifier);
 begin
-  GPIOMem[Pin shr 4]^.BSRR := 1 shl (Pin and $0f)
+  SetBit(GPIOMem[Pin shr 4]^.BSRR,Pin and $0f);
 end;
 
 procedure TGPIO.SetPinLevelLow(const Pin: TPinIdentifier);
 begin
-  GPIOMem[Pin shr 4]^.BRR := 1 shl (Pin and $0f);
+  SetBit(GPIOMem[Pin shr 4]^.BSRR,(Pin and $0f)+16);
 end;
 
 procedure TGPIO.TogglePinValue(const Pin: TPinIdentifier);
 begin
-  if GPIOMem[Pin shr 4]^.ODR and (1 shl (Pin and $0f)) = 0 then
-    GPIOMem[Pin shr 4]^.BSRR := 1 shl (Pin and $0f)
+  if GetBit(GPIOMem[Pin shr 4]^.ODR,Pin and $0f) = 0 then
+    SetBit(GPIOMem[Pin shr 4]^.BSRR,Pin and $0f)
   else
-    GPIOMem[Pin shr 4]^.BRR := 1 shl (Pin and $0f);
+    SetBit(GPIOMem[Pin shr 4]^.BSRR,(Pin and $0f)+16);
 end;
 
 procedure TGPIO.TogglePinLevel(const Pin: TPinIdentifier);
 begin
-  if GPIOMem[Pin shr 4]^.ODR and (1 shl (Pin and $0f)) = 0 then
-    GPIOMem[Pin shr 4]^.BSRR := 1 shl (Pin and $0f)
+  if GetBit(GPIOMem[Pin shr 4]^.ODR,Pin and $0f) = 0 then
+    SetBit(GPIOMem[Pin shr 4]^.BSRR,Pin and $0f)
   else
-    GPIOMem[Pin shr 4]^.BRR := 1 shl (Pin and $0f);
+    SetBit(GPIOMem[Pin shr 4]^.BSRR,(Pin and $0f)+16);
 end;
 
 function TGPIO.GetPinDrive(const Pin: TPinIdentifier): TPinDrive;
 var
-  Bit,Bit4x,GPIO : byte;
+  Bit,Bit4x,GPIO,Drive : byte;
 begin
   GPIO := Pin shr 4;
   Bit := Pin and $0f;
+  Bit4x := (Bit and %111) shl 2;
 
   if Bit < 8 then
-    Bit4x := Bit shl 2
+    Drive := GetNibble(GPIOMem[GPIO]^.CRL,Bit4x)
   else
-    Bit4x := (Bit and %111) shl 2;
+    Drive := GetNibble(GPIOMem[GPIO]^.CRH,Bit4x);
 
-  if Bit < 8 then
-  begin
-    case (GPIOMem[GPIO]^.CRL shr Bit4x) and %1111 of
-      %1000: begin
-               if GPIOMem[GPIO]^.ODR and (%1 shl Bit) = 0 then
-                 Result := TPinDrive.PullDown
-               else
-                 Result := TPinDrive.PullUp;
-      end
-      else
-             Result := TPinDrive.None;
-    end;
-  end
+  if (Drive and %0011 <> 0) or (Drive = %0000) or (Drive = %0001) then
+    Result := TPinDrive.None
   else
-  begin
-    case (GPIOMem[GPIO]^.CRH shr Bit4x) and %1111 of
-      %1000: begin
-               if GPIOMem[GPIO]^.ODR and (%1 shl Bit) = 0 then
-                 Result := TPinDrive.PullDown
-               else
-                 Result := TPinDrive.PullUp;
-      end
-      else
-             Result := TPinDrive.None;
-    end;
-  end;
+    if GetBit(GPIOMem[GPIO]^.ODR,Bit) = 0 then
+      Result := TPinDrive.PullDown
+    else
+      Result := TPinDrive.PullUp;
 end;
 
 procedure TGPIO.SetPinDrive(const Pin: TPinIdentifier; const Value: TPinDrive);
 var
-  Bit4xMask,Bit4xValue : longWord;
+  Drive : byte;
   Bit,Bit4x,GPIO : byte;
 begin
   GPIO := Pin shr 4;
   Bit := Pin and $0f;
+  Bit4x := (Bit and %111) shl 2;
 
   if Bit < 8 then
-    Bit4x := Bit shl 2
+    Drive := GetNibble(GPIOMem[GPIO]^.CRL,Bit4x)
   else
-    Bit4x := (Bit and %111) shl 2;
+    Drive := GetNibble(GPIOMem[GPIO]^.CRH,Bit4x);
 
-  Bit4xMask := not(%1111 shl Bit4x);
-
-  if Bit < 8 then
+  if not((Drive and %0011 <> 0) or (Drive = %0000)) then
   begin
-    Bit4xValue := (GPIOMem[GPIO]^.CRL and Bit4xMask) shr Bit4x;
-    if Bit4xValue and %11 = 0 then
-    begin
-      if (Bit4xValue = %0100) and (Value <> TPinDrive.None) then
-      begin
-        GPIOMem[GPIO]^.CRL := (GPIOMem[GPIO]^.CRL and Bit4xMask) or longWord(%1000 shl Bit4x);
-        if Value =  TPinDrive.PullDown then
-          GPIOMem[GPIO]^.BRR := %1 shl Bit
-        else
-          GPIOMem[GPIO]^.BSRR := %1 shl Bit;
-      end;
-      if (Bit4xValue = %1000) then
-      begin
-        if Value = TPinDrive.None then
-          GPIOMem[GPIO]^.CRL := (GPIOMem[GPIO]^.CRL and Bit4xMask) or longWord(%0100 shl Bit4x)
-        else
-        begin
-          if Value =  TPinDrive.PullDown then
-            GPIOMem[GPIO]^.BRR := %1 shl Bit
-          else
-            GPIOMem[GPIO]^.BSRR := %1 shl Bit;
-        end;
-      end;
-    end;
-  end
-  else
-  begin
-    Bit4xValue := (GPIOMem[GPIO]^.CRH and Bit4xMask) shr Bit4x;
-    if Bit4xValue and %11 = 0 then
-    begin
-      if (Bit4xValue = %0100) and (Value <> TPinDrive.None) then
-      begin
-        GPIOMem[GPIO]^.CRH := (GPIOMem[GPIO]^.CRL and Bit4xMask) or longWord(%1000 shl Bit4x);
-        if Value =  TPinDrive.PullDown then
-          GPIOMem[GPIO]^.BRR := %1 shl (Bit and %111)
-        else
-          GPIOMem[GPIO]^.BSRR := %1 shl (Bit and %111);
-      end;
-      if (Bit4xValue = %1000) then
-      begin
-        if Value = TPinDrive.None then
-          GPIOMem[GPIO]^.CRH := (GPIOMem[GPIO]^.CRH and Bit4xMask) or longWord(%0100 shl Bit4x)
-        else
-        begin
-          if Value =  TPinDrive.PullDown then
-            GPIOMem[GPIO]^.BRR := %1 shl (Bit and %111)
-          else
-            GPIOMem[GPIO]^.BSRR := %1 shl (Bit and %111);
-        end;
-      end;
-    end;
+    if Value = TPinDrive.PullUp then
+      SetBit(GPIOMem[GPIO]^.ODR,Bit);
+    if Value = TPinDrive.PullUp then
+      ClearBit(GPIOMem[GPIO]^.ODR,Bit);
+    if Value = TPinDrive.None then
+      if Bit < 8 then
+        SetNibble(GPIOMem[GPIO]^.CRL,%0001,Bit4x)
+      else
+        SetNibble(GPIOMem[GPIO]^.CRH,%0001,Bit4x);
   end;
 end;
 
 function TGPIO.GetPinOutputMode(const Pin: TPinIdentifier): TPinOutputMode;
 var
-  Bit,Bit4x,GPIO : byte;
+  Bit,Bit4x,GPIO,Drive : byte;
 begin
   GPIO := Pin shr 4;
   Bit := Pin and $0f;
+  Bit4x := (Bit and %111) shl 2;
 
   if Bit < 8 then
-    Bit4x := Bit shl 2
+    Drive := GetNibble(GPIOMem[GPIO]^.CRL,Bit4x)
   else
-    Bit4x := (Bit and %111) shl 2;
-
-  if Bit < 8 then
-    Result := TPinOutputMode((GPIOMem[GPIO]^.CRL shr (Bit4x+2) and %1))
+    Drive := GetNibble(GPIOMem[GPIO]^.CRH,Bit4x);
+  if Drive and %0100 = 0 then
+    Result := TPinOutputMode.PushPull
   else
-  Result := TPinOutputMode((GPIOMem[GPIO]^.CRH shr (Bit4x+2) and %1));
+    Result := TPinOutputMode.OpenDrain;
 end;
 
 procedure TGPIO.SetPinOutputMode(const Pin: TPinIdentifier; const Value: TPinOutputMode);
 var
-  Bit4xMask : longWord;
-  Bit,Bit4x,GPIO : byte;
+  Bit,Bit4x,GPIO,Drive : byte;
 begin
   GPIO := Pin shr 4;
   Bit := Pin and $0f;
-
-  if Bit < 8 then
-    Bit4x := Bit shl 2
-  else
-    Bit4x := (Bit and %111) shl 2;
-
-  Bit4xMask := not(%1111 shl Bit4x);
+  Bit4x := (Bit and %111) shl 2;
 
   if Bit < 8 then
   begin
-    if ((GPIOMem[GPIO]^.CRL and Bit4xMask) shr Bit4x) and %0011 <> 0 then
-      if Value = TPinOutputMode.PushPull then
-       GPIOMem[GPIO]^.CRL := GPIOMem[GPIO]^.CRL and not( %1 shl (Bit4x+2) )
-      else
-        GPIOMem[GPIO]^.CRL := GPIOMem[GPIO]^.CRL or longWord( %1 shl (Bit4x+2) )
+    Drive := GetNibble(GPIOMem[GPIO]^.CRL,Bit4x);
+    if (Value = TPinOutputMode.PushPull) and ((Drive and %11) > 0) then
+    begin
+      Drive := Drive and %1011;
+      SetNibble(GPIOMem[GPIO]^.CRL,Drive,Bit4x);
+    end;
+    if (Value = TPinOutputMode.OpenDrain) and ((Drive and %11) > 0) then
+    begin
+      Drive := Drive or %0100;
+      SetNibble(GPIOMem[GPIO]^.CRL,Drive,Bit4x);
+    end;
   end
   else
+  begin
+    Drive := GetNibble(GPIOMem[GPIO]^.CRH,Bit4x);
+    if (Value = TPinOutputMode.PushPull) and ((Drive and %11) > 0) then
     begin
-    if ((GPIOMem[GPIO]^.CRH and Bit4xMask) shr Bit4x) and %0011 <> 0 then
-      if Value = TPinOutputMode.PushPull then
-       GPIOMem[GPIO]^.CRH := GPIOMem[GPIO]^.CRH and not( %1 shl (Bit4x+2) )
-      else
-        GPIOMem[GPIO]^.CRH := GPIOMem[GPIO]^.CRH or longWord( %1 shl (Bit4x+2) )
-  end;
+      Drive := Drive and %1011;
+      SetNibble(GPIOMem[GPIO]^.CRH,Drive,Bit4x);
+    end;
+    if (Value = TPinOutputMode.OpenDrain) and ((Drive and %11) > 0) then
+    begin
+      Drive := Drive or %0100;
+      SetNibble(GPIOMem[GPIO]^.CRH,Drive,Bit4x);
+    end;
+  end
 end;
 
 function TGPIO.GetPinOutputSpeed(const Pin: TPinIdentifier): TPinOutputSpeed;
 var
-  Bit4xMask : longWord;
-  Bit,Bit4x,GPIO : byte;
+  Bit,Bit4x,GPIO,Drive : byte;
 begin
   GPIO := Pin shr 4;
   Bit := Pin and $0f;
+  Bit4x := (Bit and %111) shl 2;
 
   if Bit < 8 then
-    Bit4x := Bit shl 2
+    Drive := GetNibble(GPIOMem[GPIO]^.CRL,Bit4x)
   else
-    Bit4x := (Bit and %111) shl 2;
+    Drive := GetNibble(GPIOMem[GPIO]^.CRH,Bit4x);
 
-  Bit4xMask := not(%1111 shl Bit4x);
-
-  if Bit < 8 then
-    Result := TPinOutputSpeed(((GPIOMem[GPIO]^.CRL and Bit4xMask) shr Bit4x) and %11)
-  else
-  Result := TPinOutputSpeed(((GPIOMem[GPIO]^.CRH and Bit4xMask) shr Bit4x) and %11);
+  Result := TPinOutputSpeed(Drive and %0011);
 end;
 
 procedure TGPIO.SetPinOutputSpeed(const Pin: TPinIdentifier; const Value: TPinOutputSpeed);
 var
-  Bit4xlMask : longWord;
-  Bit,Bit4x,GPIO : byte;
+  Bit,Bit4x,GPIO,Drive : byte;
 begin
   GPIO := Pin shr 4;
   Bit := Pin and $0f;
-
-  if Bit < 8 then
-    Bit4x := Bit shl 2
-  else
-    Bit4x := (Bit and %111) shl 2;
-
-  Bit4xlMask := not(%11 shl Bit4x);
+  Bit4x := (Bit and %111) shl 2;
 
   if Bit < 8 then
   begin
-    if (Value <> TPinOutputSpeed.Invalid) and (GPIOMem[GPIO]^.CRL and (%11 shl Bit4x) <> 0) then
-      GPIOMem[GPIO]^.CRL := (GPIOMem[GPIO]^.CRL and Bit4xlMask) or (longWord(Value) shl Bit4x);
+    Drive := GetNibble(GPIOMem[GPIO]^.CRL,Bit4x);
+    if (Drive and %11) > 0 then
+    begin
+      Drive := (Drive and %1100) or byte(Value);
+      SetNibble(GPIOMem[GPIO]^.CRL,Drive,Bit4x);
+    end;
   end
   else
   begin
-    if (Value <> TPinOutputSpeed.Invalid) and (GPIOMem[GPIO]^.CRH and (%11 shl Bit4x) <> 0) then
-      GPIOMem[GPIO]^.CRL := (GPIOMem[GPIO]^.CRH and Bit4xlMask) or (longWord(Value) shl Bit4x);
+    Drive := GetNibble(GPIOMem[GPIO]^.CRH,Bit4x);
+    if (Drive and %11) > 0 then
+    begin
+      Drive := (Drive and %1100) or byte(Value);
+      SetNibble(GPIOMem[GPIO]^.CRH,Drive,Bit4x);
+    end;
   end;
+end;
 
+procedure TGPIOPort.Initialize;
+begin
+end;
+
+function TGPIOPort.GetPortValues : word; inline;
+begin
+  Result := Self.IDR;
+end;
+
+function TGPIOPort.GetPortBits : TBitSet; inline;
+begin
+  Result := TBitSet(Self.IDR);
+end;
+
+procedure TGPIOPort.SetPortValues(const Values : word); inline;
+begin
+  Self.ODR := Values;
+end;
+
+procedure TGPIOPort.SetPortBits(const Bits : TBitSet); inline;
+begin
+  Self.BSRR := longWord(Bits);
+end;
+
+procedure TGPIOPort.ClearPortBits(const Bits : TBitSet); inline;
+begin
+  Self.BSRR := longWord(Bits) shl 16;
+end;
+
+procedure TGPIOPort.SetPortMode(PortMode : TPinMode); inline;
+begin
+  case longWord(@Self) of
+    longWord(@GPIOA): EnableGPIOPort(0);
+    longWord(@GPIOB): EnableGPIOPort(1);
+    longWord(@GPIOC): EnableGPIOPort(2);
+    {$ifdef has_gpiod}longWord(@GPIOD): EnableGPIOPort(3);{$endif}
+    {$ifdef has_gpioe}longWord(@GPIOE): EnableGPIOPort(4);{$endif}
+    {$ifdef has_gpiof}longWord(@GPIOF): EnableGPIOPort(5);{$endif}
+    {$ifdef has_gpiog}longWord(@GPIOG): EnableGPIOPort(6);{$endif}
+    {$ifdef has_gpioh}longWord(@GPIOH): EnableGPIOPort(7);{$endif}
+    {$ifdef has_gpioi}longWord(@GPIOI): EnableGPIOPort(8);{$endif}
+  end;
+  if PortMode = TPinMode.Input then
+  begin
+    Self.CRL:= %01000100010001000100010001000100;
+    Self.CRH:= %01000100010001000100010001000100;
+  end
+  else if PortMode = TPinMode.Output then
+  begin
+    Self.CRL := %00110011001100110011001100110011;
+    Self.CRH := %00110011001100110011001100110011;
+  end
+  else if PortMode = TPinMode.Analog then
+  begin
+    Self.CRL := %00000000000000000000000000000000;
+    Self.CRH := %00000000000000000000000000000000;
+  end
+  else
+  begin
+    Self.CRL := %10111011101110111011101110111011;
+    Self.CRH := %10111011101110111011101110111011;
+    //TODO Set AF Modes, but it is a rare usecase
+  end;
+end;
+
+procedure TGPIOPort.SetPortOutputSpeed(Speed : TPinOutputSpeed); inline;
+begin
+  if Speed = TPinOutputSpeed.Slow then
+  begin
+    Self.CRL := (Self.CRL and %11001100110011001100110011001100) or %00100010001000100010001000100010;
+    Self.CRH := (Self.CRH and %11001100110011001100110011001100) or %00100010001000100010001000100010;
+  end
+  else if Speed = TPinOutputSpeed.Medium then
+  begin
+    Self.CRL := (Self.CRL and %11001100110011001100110011001100) or %00010001000100010001000100010001;
+    Self.CRH := (Self.CRH and %11001100110011001100110011001100) or %00010001000100010001000100010001;
+  end
+  else if Speed = TPinOutputSpeed.High then
+  begin
+    Self.CRL := (Self.CRL and %11001100110011001100110011001100) or %00110011001100110011001100110011;
+    Self.CRH := (Self.CRH and %11001100110011001100110011001100) or %00110011001100110011001100110011;
+  end;
+end;
+
+procedure TGPIOPort.SetPortDrive(Drive : TPinDrive); inline;
+begin
+  if Drive = TPinDrive.None then
+  begin
+    Self.CRL := %01000100010001000100010001000100;
+    Self.CRH := %01000100010001000100010001000100;
+  end
+  else if Drive = TPinDrive.PullDown then
+  begin
+    Self.CRL := %10001000100010001000100010001000;
+    Self.CRH := %10001000100010001000100010001000;
+    Self.ODR := %0000000000000000;
+  end
+  else
+  begin
+    Self.CRL := %10001000100010001000100010001000;
+    Self.CRH := %10001000100010001000100010001000;
+    Self.ODR := %1111111111111111;
+  end;
+end;
+
+procedure TGPIOPort.SetPortOutputMode(OutputMode : TPinOutputMode); inline;
+begin
+  if OutputMode = TPinOutputMode.PushPull then
+  begin
+    Self.CRL := (Self.CRL and %11101110111011101110111011101110);
+    Self.CRH := (Self.CRH and %11101110111011101110111011101110);
+  end
+  else
+  begin
+    Self.CRL := (Self.CRL and %11101110111011101110111011101110) or %00010001000100010001000100010001;
+    Self.CRH := (Self.CRH and %11101110111011101110111011101110) or %00010001000100010001000100010001;
+  end;
 end;
 
 end.
+
