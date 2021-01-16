@@ -7,6 +7,7 @@ ls -1 */*${FILTER}*lpi | while read lpi ; do
   if [ "$?" != 0 ]; then  
     printf "Building %-60s" $lpi
     cd $curdir/$(dirname $lpi)
+    rm -rf lib
 #    lazbuild --build-all $(basename $lpi) | grep -v Hint | grep -v Info | grep -v Note | grep -v Warning | grep -v TCodeToolManager.HandleException | grep -v Compiling | grep -v "Linking" | grep -v "Assembling"
     lazbuild --build-all $(basename $lpi) >../compile
     if [ "$?" != "0" ]; then
@@ -15,6 +16,7 @@ ls -1 */*${FILTER}*lpi | while read lpi ; do
       printf "[OK]    "
       cat ../compile  | grep "lines compiled" | sed "s~^.*sec,~~g"
     fi
+    rm -f ../compile
   fi
 done
 echo ""

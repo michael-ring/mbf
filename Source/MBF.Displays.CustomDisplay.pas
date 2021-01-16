@@ -29,7 +29,7 @@ uses
   MBF.__CONTROLLERTYPE__.GPIO;
 
 type
-  TDisplayBitDepth = (OneBit=1,SixteenBits=16);
+  TDisplayBitDepth = (OneBit=1,TwoBits=2,SixteenBits=16);
 
   TFontData = array [0..MaxInt-1] of byte;
   TRowBuffer = array [0..MaxInt-1] of byte;

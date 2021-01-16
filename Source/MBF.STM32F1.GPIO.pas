@@ -21,7 +21,6 @@ unit MBF.STM32F1.GPIO;
   STM32F101xx, STM32F102xx, STM32F103xx, STM32F105xx and STM32F107xx advanced Arm
   http://www.st.com/resource/en/reference_manual/CD00171190.pdf
 }
-
 interface
 
 {$include MBF.Config.inc}
@@ -510,16 +509,16 @@ end;
 
 procedure TGPIOPort.SetPortMode(PortMode : TPinMode); inline;
 begin
-  case longWord(@Self) of
-    longWord(@GPIOA): EnableGPIOPort(0);
-    longWord(@GPIOB): EnableGPIOPort(1);
-    longWord(@GPIOC): EnableGPIOPort(2);
-    {$ifdef has_gpiod}longWord(@GPIOD): EnableGPIOPort(3);{$endif}
-    {$ifdef has_gpioe}longWord(@GPIOE): EnableGPIOPort(4);{$endif}
-    {$ifdef has_gpiof}longWord(@GPIOF): EnableGPIOPort(5);{$endif}
-    {$ifdef has_gpiog}longWord(@GPIOG): EnableGPIOPort(6);{$endif}
-    {$ifdef has_gpioh}longWord(@GPIOH): EnableGPIOPort(7);{$endif}
-    {$ifdef has_gpioi}longWord(@GPIOI): EnableGPIOPort(8);{$endif}
+  case {%H-}longWord(@Self) of
+    {%H-}longWord(@GPIOA): EnableGPIOPort(0);
+    {%H-}longWord(@GPIOB): EnableGPIOPort(1);
+    {%H-}longWord(@GPIOC): EnableGPIOPort(2);
+    {$ifdef has_gpiod}{%H-}longWord(@GPIOD): EnableGPIOPort(3);{$endif}
+    {$ifdef has_gpioe}{%H-}longWord(@GPIOE): EnableGPIOPort(4);{$endif}
+    {$ifdef has_gpiof}{%H-}longWord(@GPIOF): EnableGPIOPort(5);{$endif}
+    {$ifdef has_gpiog}{%H-}longWord(@GPIOG): EnableGPIOPort(6);{$endif}
+    {$ifdef has_gpioh}{%H-}longWord(@GPIOH): EnableGPIOPort(7);{$endif}
+    {$ifdef has_gpioi}{%H-}longWord(@GPIOI): EnableGPIOPort(8);{$endif}
   end;
   if PortMode = TPinMode.Input then
   begin

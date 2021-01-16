@@ -248,6 +248,7 @@ type
     {$DEFINE INTERFACE}
     {$I MBF.STM32.SPI.inc}
     {$UNDEF INTERFACE}
+  end;
 
   {$IF DEFINED(HAS_ARDUINOPINS)}
   var
@@ -257,6 +258,10 @@ type
 implementation
 uses
   MBF.BitHelpers;
+
+type
+  TByteArray = array of byte;
+  pTByteArray = ^TByteArray;
 
 var
   NSSPins : array[1..SPICount] of longInt;
@@ -330,11 +335,11 @@ begin
         NSSPins[4] := longInt(aNSSPin);
       end;
       {$endif}
-      {$ifdef has_spi2}SPI5_BASE : begin
+      {$ifdef has_spi5}SPI5_BASE : begin
         NSSPins[5] := longInt(aNSSPin);
       end;
       {$endif}
-      {$ifdef has_spi2}SPI6_BASE : begin
+      {$ifdef has_spi6}SPI6_BASE : begin
         NSSPins[6] := longInt(aNSSPin);
       end;
       {$endif}
@@ -436,18 +441,6 @@ end;
 function TSPIRegistersHelper.GetOperatingMode: TSPIOperatingMode;
 begin
   Result := TSPIOperatingMode(GetBitValue(CR1,2));
-end;
-
-procedure TSPIRegistersHelper.WaitForTXFinished;
-var
-  Dummy : word;
-begin
-  //Make sure are Data is shifted out
-  WaitBitIsSet(SR,1);
-  //Wait for Busy Flag to be cleared
-  WaitBitIsCleared(SR,7);
-  //Clear Overflow
-  dummy := DR;
 end;
 
 procedure TSPIRegistersHelper.BeginTransaction;

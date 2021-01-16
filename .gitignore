@@ -40,3 +40,5 @@ lib/
 
 # Intellij directories
 .idea
+.DS_Store
+**/compile

@@ -156,9 +156,7 @@ begin
   GPIO.PinMode[TArduinoPin.D3] := TPinMode.Output;
   GPIO.PinMode[TArduinoPin.D4] := TPinMode.Input;
 
-  UART.Initialize;
-  UART.RxPin := TUARTRXPins.D0_UART;
-  UART.TxPin := TUARTTXPins.D1_UART;
+  UART.Initialize(TUARTRXPins.D0_UART,TUARTTXPins.D1_UART);
 
   repeat
     Duration := Systemcore.GetTickCount;

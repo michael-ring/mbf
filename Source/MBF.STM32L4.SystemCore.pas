@@ -105,16 +105,16 @@ implementation
 
 {$IF DEFINED(CortexM0)}
 uses
-  cortexm0;
+  MBF.BitHelpers,cortexm0;
 {$ELSEIF DEFINED(CortexM3)}
 uses
-  cortexm3;
+  MBF.BitHelpers,cortexm3;
 {$ELSEIF DEFINED(CortexM4)}
 uses
-  cortexm4;
+  MBF.BitHelpers,cortexm4;
 {$ELSEIF DEFINED(CortexM7)}
 uses
-  cortexm7;
+  MBF.BitHelpers,cortexm7;
 {$ENDIF}
 
 {$DEFINE IMPLEMENTATION}

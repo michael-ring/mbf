@@ -25,9 +25,8 @@
       <Unit0>
         <Filename Value="Blinky.lpr"/>
         <IsPartOfProject Value="True"/>
-        <IsVisibleTab Value="True"/>
         <CursorPos Y="28"/>
-        <UsageCount Value="60"/>
+        <UsageCount Value="63"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
       </Unit0>
@@ -36,7 +35,7 @@
         <EditorIndex Value="4"/>
         <TopLine Value="50"/>
         <CursorPos X="13" Y="62"/>
-        <UsageCount Value="28"/>
+        <UsageCount Value="30"/>
         <Loaded Value="True"/>
       </Unit1>
       <Unit2>
@@ -44,7 +43,7 @@
         <EditorIndex Value="5"/>
         <TopLine Value="12"/>
         <CursorPos X="23" Y="34"/>
-        <UsageCount Value="28"/>
+        <UsageCount Value="30"/>
         <Loaded Value="True"/>
       </Unit2>
       <Unit3>
@@ -52,24 +51,25 @@
         <EditorIndex Value="2"/>
         <TopLine Value="111"/>
         <CursorPos Y="131"/>
-        <UsageCount Value="28"/>
+        <UsageCount Value="30"/>
         <Loaded Value="True"/>
       </Unit3>
       <Unit4>
         <Filename Value="../../Source/MBF.STM32F1.SystemCore.pas"/>
         <UnitName Value="mbf.stm32f1.systemcore"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="3"/>
-        <TopLine Value="88"/>
-        <CursorPos Y="113"/>
-        <UsageCount Value="28"/>
+        <TopLine Value="230"/>
+        <CursorPos X="29" Y="146"/>
+        <UsageCount Value="30"/>
         <Loaded Value="True"/>
       </Unit4>
       <Unit5>
         <Filename Value="../../Source/MBF.STM32F1.GPIO.pas"/>
         <EditorIndex Value="1"/>
-        <TopLine Value="232"/>
-        <CursorPos Y="299"/>
-        <UsageCount Value="28"/>
+        <TopLine Value="500"/>
+        <CursorPos X="28" Y="521"/>
+        <UsageCount Value="30"/>
         <Loaded Value="True"/>
       </Unit5>
       <Unit6>
@@ -96,7 +96,7 @@
         <UsageCount Value="12"/>
       </Unit8>
     </Units>
-    <JumpHistory Count="14" HistoryIndex="13">
+    <JumpHistory Count="17" HistoryIndex="16">
       <Position1>
         <Filename Value="Blinky.lpr"/>
         <Caret Line="25"/>
@@ -153,6 +153,18 @@
         <Filename Value="Blinky.lpr"/>
         <Caret Line="26"/>
       </Position14>
+      <Position15>
+        <Filename Value="Blinky.lpr"/>
+        <Caret Line="28"/>
+      </Position15>
+      <Position16>
+        <Filename Value="../../Source/MBF.STM32F1.GPIO.pas"/>
+        <Caret Line="523" TopLine="501"/>
+      </Position16>
+      <Position17>
+        <Filename Value="../../Source/MBF.STM32F1.GPIO.pas"/>
+        <Caret Line="521" Column="28" TopLine="500"/>
+      </Position17>
     </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>
@@ -188,7 +200,7 @@
     </Other>
   </CompilerOptions>
   <Debugging>
-    <BreakPoints Count="2">
+    <BreakPoints Count="4">
       <Item1>
         <Kind Value="bpkSource"/>
         <WatchScope Value="wpsLocal"/>
@@ -203,6 +215,20 @@
         <Source Value="/usr/local/share/lazarus/components/lazdebuggergdbmi/gdbmidebugger.pp"/>
         <Line Value="48"/>
       </Item2>
+      <Item3>
+        <Kind Value="bpkSource"/>
+        <WatchScope Value="wpsLocal"/>
+        <WatchKind Value="wpkWrite"/>
+        <Source Value="../../Source/MBF.STM32F1.GPIO.pas"/>
+        <Line Value="510"/>
+      </Item3>
+      <Item4>
+        <Kind Value="bpkSource"/>
+        <WatchScope Value="wpsLocal"/>
+        <WatchKind Value="wpkWrite"/>
+        <Source Value="../../Source/MBF.STM32F1.GPIO.pas"/>
+        <Line Value="509"/>
+      </Item4>
     </BreakPoints>
   </Debugging>
 </CONFIG>

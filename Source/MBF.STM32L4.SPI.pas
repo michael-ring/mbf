@@ -32,6 +32,7 @@ interface
 {$INCLUDE MBF.Config.inc}
 
 uses
+  MBF.STM32L4.SystemCore,
   MBF.STM32L4.GPIO;
 
 {$REGION PinDefinitions}
@@ -156,15 +157,12 @@ type
     function  GetOperatingMode: TSPIOperatingMode;
     procedure SetOperatingMode(const aOperatingMode: TSPIOperatingMode);
 
-    procedure SetMOSIPin(const aMOSIPin : TSPIMOSIPins);
-    procedure SetMISOPin(const aMISOPin : TSPIMISOPins);
-    procedure SetSCLKPin(const aSCLKPin : TSPISCLKPins);
-    procedure SetNSSPin( const aNSSPin : TSPINSSPins);
-    procedure SetNSSPinLow(const SoftNSSPin : TPinIdentifier = TNativePin.None);
-    procedure SetNSSPinHigh(const SoftNSSPin : TPinIdentifier = TNativePin.None);
-
   public
-    procedure Initialize;
+    property Baudrate : longWord read getBaudrate write setBaudrate;
+    property Mode : TSPIMode read getMode write setMode;
+    property BitsPerWord : TSPIBitsPerWord read getBitsPerWord write setBitsPerWord;
+    property OperatingMode : TSPIOperatingMode read getOperatingMode write setOperatingMode;
+
     procedure Initialize(const AMosiPin : TSPIMOSIPins;
                          const AMisoPin : TSPIMISOPins;
                          const ASCLKPin : TSPISCLKPins;
@@ -172,39 +170,31 @@ type
     function  Disable : boolean;
     procedure Enable;
 
-    procedure WaitForTXFinished;
     procedure BeginTransaction; inline;
     procedure EndTransaction; inline;
     procedure BeginTransaction(const SoftNSSPin : TPinIdentifier); inline;
     procedure EndTransaction(const SoftNSSPin : TPinIdentifier); inline;
 
-    function ReadByte(var aByte: byte; const TimeOut: TMilliSeconds=0):boolean; inline;
-    function WriteByte(const aByte: byte; const TimeOut: TMilliSeconds=0) : boolean; inline;
-    function TransferByte(const aWriteByte : byte; var aReadByte : byte; const TimeOut: TMilliSeconds=0) : boolean; inline;
+    procedure WaitForTXReady; inline;
+    procedure WaitForRXReady; inline;
+    procedure WaitForTXFinished; inline;
 
-    function ReadByte(var aBuffer: array of byte; aCount : integer=-1; const TimeOut: TMilliSeconds=0):boolean;
-    function WriteByte(const aBuffer: array of byte; aCount : integer=-1; const TimeOut: TMilliSeconds=0) : boolean;
-    function TransferByte(const aWriteBuffer: array of byte; var aReadBuffer : array of byte; aCount : integer=-1; const TimeOut: TMilliSeconds=0) : boolean;
+    function  WaitForTXReady(EndTime : TMilliSeconds):boolean; inline;
+    function  WaitForRXReady(EndTime : TMilliSeconds):boolean; inline;
+    function  WaitForTXFinished(EndTime : TMilliSeconds):boolean; inline;
 
-    function ReadWord(var aWord: word; const TimeOut: TMilliSeconds=0):boolean; inline;
-    function WriteWord(const aWord: word; const TimeOut: TMilliSeconds=0) : boolean; inline;
-    function TransferWord(const aWriteWord: word; var aReadWord : word; const TimeOut: TMilliSeconds=0) : boolean; inline;
+    procedure WriteDR(const Value : byte); inline;
+    function ReadDR:byte; inline;
 
-    function ReadWord(var aBuffer: array of word; aCount : integer=-1; const TimeOut: TMilliSeconds=0):boolean;
-    function WriteWord(const aBuffer: array of word; aCount : integer=-1; const TimeOut: TMilliSeconds=0) : boolean;
-    function TransferWord(const aWriteBuffer: array of word; var aReadBuffer : array of word; aCount : integer=-1; const TimeOut: TMilliSeconds=0) : boolean;
+    {$IF Defined(HAS_SPI_16Bits)}
+    procedure WriteDRWord(const Value : word); inline;
+    function ReadDRWord:word; inline;
+    {$ENDIF}
 
-    function WriteBuffer(pBuffer: pByte; aCount : longWord; const TimeOut: TMilliSeconds=0) : boolean;
+    {$DEFINE INTERFACE}
+    {$I MBF.STM32.SPI.inc}
+    {$UNDEF INTERFACE}
 
-    property Baudrate : longWord read getBaudrate write setBaudrate;
-    property Mode : TSPIMode read getMode write setMode;
-    //property BitsPerWord : TSPIBitsPerWord read getBitsPerWord write setBitsPerWord;
-    property OperatingMode : TSPIOperatingMode read getOperatingMode write setOperatingMode;
-
-    property MOSIPin : TSPIMOSIPins write setMOSIPin;
-    property MISOPin : TSPIMISOPins write setMISOPin;
-    property SCLKPin : TSPISCLKPins write setSCLKPin;
-    property NSSPin  : TSPINSSPins  write setNSSPin;
   end;
 
   {$IF DEFINED(HAS_ARDUINOPINS)}
@@ -219,13 +209,19 @@ type
 
 implementation
 uses
-  MBF.BitHelpers,
-  MBF.STM32L4.SystemCore;
+  MBF.BitHelpers;
+
+type
+  TByteArray = array of byte;
+  pTByteArray = ^TByteArray;
 
 var
   NSSPins : array[1..3] of longInt;
 
-procedure TSPIRegistersHelper.Initialize;
+procedure TSPIRegistersHelper.Initialize(const AMosiPin : TSPIMOSIPins;
+                     const AMisoPin : TSPIMISOPins;
+                     const ASCLKPin : TSPISCLKPins;
+                     const ANSSPin  : TSPINSSPins); overload;
 var
   i : longWord;
 begin
@@ -252,14 +248,7 @@ begin
 
   // Set correct Polarity and Phase aka as Mode 0-3
   setBitsMasked(CR1,longWord(TSPIMode.Mode0),%11 shl 0,0);
-end;
 
-procedure TSPIRegistersHelper.Initialize(const AMosiPin : TSPIMOSIPins;
-                     const AMisoPin : TSPIMISOPins;
-                     const ASCLKPin : TSPISCLKPins;
-                     const ANSSPin  : TSPINSSPins); overload;
-begin
-  Initialize;
   setBaudRate(DefaultSPIBaudrate);
   setBitsPerWord(TSPIBitsPerWord.Eight);
 
@@ -268,80 +257,25 @@ begin
   GPIO.PinMode[longWord(AMOSIPin) and $ff] := TPinMode((LongWord(AMOSIPin) shr 8) and $0f);
   GPIO.PinMode[longWord(AMISOPin) and $ff] := TPinMode((LongWord(AMISOPin) shr 8) and $0f);
   GPIO.PinMode[longWord(ASCLKPin) and $ff] := TPinMode((LongWord(ASCLKPin) shr 8) and $0f);
-  // Some special handling needed
-  setNSSPin(ANSSPin);
-end;
 
-procedure TSPIRegistersHelper.SetMOSIPin(const aMOSIPin : TSPIMOSIPins);
-begin
-  GPIO.PinMode[longWord(aMOSIPin) and $ff] := TPinMode((longWord(aMOSIPin) shr 8) and $0f);
-end;
-
-procedure TSPIRegistersHelper.setMISOPin(const aMISOPIN : TSPIMISOPins);
-begin
-  GPIO.PinMode[longWord(aMISOPin) and $ff] := TPinMode((longWord(aMISOPin) shr 8) and $0f);
-end;
-
-procedure TSPIRegistersHelper.setSCLKPin(const aSCLKPin : TSPISCLKPins);
-begin
-  GPIO.PinMode[longWord(aSCLKPin) and $ff] := TPinMode((longWord(aSCLKPin) shr 8) and $0f);
-end;
-
-procedure TSPIRegistersHelper.setNSSPin(const aNSSPin : TSPINSSPins);
-begin
-  if longInt(aNSSPin) >= 0 then
-  begin
-    GPIO.PinMode[longWord(aNSSPin) and $ff] := TPinMode.Output;
-    GPIO.SetPinLevelHigh(longWord(aNSSPin) and $ff);
-  end;
+  GPIO.PinMode[longWord(aNSSPin) and $ff] := TPinMode.Output;
+  GPIO.SetPinLevelHigh(longWord(aNSSPin) and $ff);
 
   case longWord(@Self) of
-      {$ifdef has_spi1}SPI1_BASE : NSSPins[1] := longInt(aNSSPin);{$endif}
-      {$ifdef has_spi2}SPI2_BASE : NSSPins[2] := longInt(aNSSPin);{$endif}
-      {$ifdef has_spi3}SPI3_BASE : NSSPins[3] := longInt(aNSSPin);{$endif}
+    {$ifdef has_spi1}SPI1_BASE : begin
+      NSSPins[1] := longInt(aNSSPin);
+    end;
+    {$endif}
+    {$ifdef has_spi2}SPI2_BASE : begin
+      NSSPins[2] := longInt(aNSSPin);
+    end;
+    {$endif}
+    {$ifdef has_spi2}SPI3_BASE : begin
+      NSSPins[3] := longInt(aNSSPin);
+    end;
+    {$endif}
   end;
-end;
-
-procedure TSPIRegistersHelper.SetNSSPinLow(const SoftNSSPin : TPinIdentifier = TNativePin.None);
-var
-  _NSSPin : longWord;
-begin
-  if SoftNSSPin > TNativePin.None then
-  begin
-    GPIO.SetPinLevelLow(SoftNSSPin and $ff);
-    exit;
-  end;
-
-  case longWord(@Self) of
-    {$ifdef has_spi1}SPI1_BASE : _NSSPin := NSSPins[1];{$endif}
-    {$ifdef has_spi2}SPI2_BASE : _NSSPin := NSSPins[2];{$endif}
-    {$ifdef has_spi3}SPI3_BASE : _NSSPin := NSSPins[3];{$endif}
-    {$ifdef has_spi4}SPI4_BASE : _NSSPin := NSSPins[4];{$endif}
-  end;
-
-  //Take the NSS Pin Low in software Mode (start transfer)
-  GPIO.SetPinLevelLow(_NSSPin and $ff);
-end;
-
-procedure TSPIRegistersHelper.SetNSSPinHigh(const SoftNSSPin : TPinIdentifier = TNativePin.None);
-var
-  _NSSPin : longWord;
-begin
-  if SoftNSSPin > TNativePin.None then
-  begin
-    GPIO.SetPinLevelHigh(SoftNSSPin and $ff);
-    exit;
-  end;
-
-  case longWord(@Self) of
-    {$ifdef has_spi1}SPI1_BASE : _NSSPin := NSSPins[1];{$endif}
-    {$ifdef has_spi2}SPI2_BASE : _NSSPin := NSSPins[2];{$endif}
-    {$ifdef has_spi3}SPI3_BASE : _NSSPin := NSSPins[3];{$endif}
-    {$ifdef has_spi4}SPI4_BASE : _NSSPin := NSSPins[4];{$endif}
-  end;
-
-  //Take the NSS Pin High in software Mode (end transfer)
-  GPIO.SetPinLevelHigh(_NSSPin);
+  Enable;
 end;
 
 function TSPIRegistersHelper.Disable : boolean;
@@ -440,6 +374,47 @@ begin
   Result := TSPIOperatingMode(GetBitValue(CR1,2));
 end;
 
+procedure TSPIRegistersHelper.BeginTransaction;
+begin
+  case longWord(@Self) of
+    {$ifdef has_spi1}SPI1_BASE : GPIO.SetPinLevelLow(NSSPins[1] and $ff);{$endif}
+    {$ifdef has_spi2}SPI2_BASE : GPIO.SetPinLevelLow(NSSPins[2] and $ff);{$endif}
+    {$ifdef has_spi3}SPI3_BASE : GPIO.SetPinLevelLow(NSSPins[3] and $ff);{$endif}
+  end;
+end;
+
+procedure TSPIRegistersHelper.EndTransaction;
+begin
+  WaitForTXFinished;
+  case longWord(@Self) of
+    {$ifdef has_spi1}SPI1_BASE : GPIO.SetPinLevelHigh(NSSPins[1] and $ff);{$endif}
+    {$ifdef has_spi2}SPI2_BASE : GPIO.SetPinLevelHigh(NSSPins[2] and $ff);{$endif}
+    {$ifdef has_spi3}SPI3_BASE : GPIO.SetPinLevelHigh(NSSPins[3] and $ff);{$endif}
+  end;
+end;
+
+procedure TSPIRegistersHelper.BeginTransaction(const SoftNSSPin : TPinIdentifier);
+begin
+  GPIO.SetPinLevelLow(SoftNSSPin);
+end;
+
+procedure TSPIRegistersHelper.EndTransaction(const SoftNSSPin : TPinIdentifier);
+begin
+  WaitForTXFinished;
+  GPIO.SetPinLevelHigh(SoftNSSPin);
+end;
+
+
+procedure TSPIRegistersHelper.WaitForTXReady; inline;
+begin
+  WaitBitIsSet(self.SR,1);
+end;
+
+procedure TSPIRegistersHelper.WaitForRXReady; inline;
+begin
+  WaitBitIsSet(self.SR,0);
+end;
+
 procedure TSPIRegistersHelper.WaitForTXFinished;
 begin
   // Wait for TX Fifo empty
@@ -448,580 +423,54 @@ begin
   WaitBitIsCleared(SR,7);
 end;
 
-procedure TSPIRegistersHelper.BeginTransaction; inline;
+function TSPIRegistersHelper.WaitForTXReady(EndTime : TMilliSeconds):boolean; inline;
 begin
-  Enable;
-  SetNSSPinLow;
+  Result := WaitBitIsSet(self.SR,1,EndTime);
 end;
 
-procedure TSPIRegistersHelper.EndTransaction; inline;
+function TSPIRegistersHelper.WaitForRXReady(EndTime : TMilliSeconds):boolean; inline;
 begin
-  WaitForTXFinished;
-  SetNSSPinHigh;
+  Result := WaitBitIsSet(self.SR,0,EndTime);
 end;
 
-procedure TSPIRegistersHelper.BeginTransaction(const SoftNSSPin : TPinIdentifier); inline;
+function TSPIRegistersHelper.WaitForTXFinished(EndTime : TMilliSeconds):boolean; inline;
 begin
-  Enable;
-  SetNSSPinLow(SoftNSSPin);
-end;
-
-procedure TSPIRegistersHelper.EndTransaction(const SoftNSSPin : TPinIdentifier); inline;
-begin
-  WaitForTXFinished;
-  SetNSSPinHigh(SoftNSSPin);
-end;
-
-function TSPIRegistersHelper.TransferByte(const aWriteByte : Byte; var aReadByte : Byte; const TimeOut: TMilliSeconds=0): boolean;
-var
-  EndTime : longWord;
-begin
-  Result := true;
-  if TimeOut = 0 then
-    WaitBitIsSet(SR,1)
-  else
-  begin
-    EndTime := SystemCore.GetTickCount + TimeOut;
-    if WaitBitIsSet(SR,1,EndTime) = false then
-      exit(false);
-  end;
-  pByte(@DR)^ := aWriteByte;
-
-  // RXNE Wait until data is completely shifted out
-  if TimeOut = 0 then
-    WaitBitIsSet(SR,0)
-  else
-    if WaitBitIsSet(SR,0,EndTime) = false then
-      exit(false);
-  aReadByte := pByte(@DR)^;
-end;
-
-function TSPIRegistersHelper.WriteByte(const aByte: byte; const TimeOut: TMilliSeconds=0) : boolean;
-var
-  EndTime : longWord;
-  dummy : byte;
-begin
-  Result := true;
-  // Wait for TX Buffer empty
-  if TimeOut = 0 then
-    WaitBitIsSet(SR,1)
-  else
-  begin
-    EndTime := SystemCore.GetTickCount + TimeOut;
-    if WaitBitIsSet(SR,1,EndTime) = false then
-      exit(false);
-  end;
-  pbyte(@DR)^ := aByte;
-  // RXNE Wait until data is completely shifted out
-  if TimeOut = 0 then
-    WaitBitIsSet(SR,0)
-  else
-    if WaitBitIsSet(SR,0,EndTime) = false then
-      exit(false);
-  dummy := pByte(@DR)^;
-end;
-
-function TSPIRegistersHelper.ReadByte(var aByte: byte; const TimeOut: TMilliSeconds=0):boolean;
-begin
-  Result := TransferByte($ff,aByte,TimeOut);
-end;
-
-function TSPIRegistersHelper.TransferByte(const aWriteBuffer: array of byte; var aReadBuffer : array of byte; aCount : integer=-1; const TimeOut: TMilliSeconds=0) : boolean;
-var
-  i : longWord;
-  EndTime : longWord;
-begin
-  Result := true;
-  if length(aWriteBuffer) <> length(aReadBuffer) then
+  //Make sure are Data is shifted out
+  if WaitBitIsSet(SR,1,EndTime) = false then
     exit(false);
-
-  if aCount = -1 then
-    aCount := High(aWriteBuffer) - Low(aWriteBuffer)
-  else
-    dec(aCount); // to fix loop count
-
-  if TimeOut = 0 then
-  begin
-    for i := Low(aWritebuffer) to Low(aWritebuffer)+aCount do
-    begin
-      WaitBitIsSet(SR,1);
-      pByte(@DR)^ := aWriteBuffer[i];
-      WaitBitIsSet(SR,0);
-      aReadBuffer[i] := pByte(@DR)^;
-    end;
-  end
-  else
-  begin
-    EndTime := SystemCore.GetTickCount + TimeOut;
-    for i := Low(aWritebuffer) to Low(aWritebuffer)+aCount do
-    begin
-      if WaitBitIsSet(SR,1,EndTime) = false then
-        exit(false);
-      pByte(@DR)^ := aWriteBuffer[i];
-      if WaitBitIsSet(SR,0,EndTime) = false then
-        exit(false);
-      aReadBuffer[i] := pByte(@DR)^;
-    end;
-  end;
-end;
-
-function TSPIRegistersHelper.WriteByte(const aBuffer: array of byte; aCount : integer=-1; const TimeOut: TMilliSeconds=0) : boolean;
-var
-  i : longWord;
-  EndTime : longWord;
-  dummy : byte;
-begin
-  Result := true;
-  if aCount = -1 then
-    aCount := High(aBuffer) - Low(aBuffer)
-  else
-    dec(aCount); // to fix loop count
-
-  if TimeOut = 0 then
-  begin
-    for i := Low(aBuffer) to Low(aBuffer)+aCount do
-    begin
-      WaitBitIsSet(SR,1);
-      pByte(@DR)^ := aBuffer[i];
-      WaitBitIsSet(SR,0);
-      dummy := pByte(@DR)^;
-    end;
-  end
-  else
-  begin
-    EndTime := SystemCore.GetTickCount + TimeOut;
-    for i := Low(aBuffer) to Low(aBuffer)+aCount do
-    begin
-      if WaitBitIsSet(SR,1,EndTime) = false then
-        exit(false);
-      pByte(@DR)^ := aBuffer[i];
-      if WaitBitIsSet(SR,0,EndTime) = false then
-        exit(false);
-      dummy := pByte(@DR)^;
-    end;
-  end;
-end;
-
-function TSPIRegistersHelper.ReadByte(var aBuffer: array of byte; aCount : integer=-1; const TimeOut: TMilliSeconds=0):boolean;
-var
-  i : longWord;
-  EndTime : longWord;
-begin
-  Result := true;
-
-  if aCount = -1 then
-    aCount := High(aBuffer) - Low(aBuffer)
-  else
-    dec(aCount); // to fix loop count
-
-  if TimeOut = 0 then
-  begin
-    for i := Low(aBuffer) to Low(aBuffer)+aCount do
-    begin
-      WaitBitIsSet(SR,1);
-      pByte(@DR)^ := $ff;
-      WaitBitIsSet(SR,0);
-      aBuffer[i] := pByte(@DR)^;
-    end;
-  end
-  else
-  begin
-    EndTime := SystemCore.GetTickCount + TimeOut;
-    for i := Low(aBuffer) to Low(aBuffer)+aCount do
-    begin
-      if WaitBitIsSet(SR,1,EndTime) = false then
-        exit(false);
-      pByte(@DR)^ := $ff;
-      if WaitBitIsSet(SR,0,EndTime) = false then
-        exit(false);
-      aBuffer[i] := pByte(@DR)^;
-    end;
-  end;
-end;
-
-function TSPIRegistersHelper.TransferWord(const aWriteWord : Word; var aReadWord : Word; const TimeOut: TMilliSeconds=0): boolean;
-var
-  EndTime : longWord;
-begin
-  Result := true;
-  // Wait for TX Buffer empty
-  if TimeOut = 0 then
-    WaitBitIsSet(SR,1)
-  else
-  begin
-    EndTime := SystemCore.GetTickCount + TimeOut;
-    if WaitBitIsSet(SR,1,EndTime) = false then
-      exit(false);
-  end;
-
-  if GetBitsPerWord > TSPIBitsPerWord.Eight then
-  begin
-    DR := aWriteWord;
-
-  // TXE Wait until data is completely shifted out
-    if TimeOut = 0 then
-      WaitBitIsSet(SR,0)
-    else
-      if WaitBitIsSet(SR,0,EndTime) = false then
-        exit(false);
-    aReadWord := DR;
-  end
-  else
-  begin
-    pByte(@DR)^ := aWriteWord shr 8;
-    // TXE Wait until data is completely shifted out
-    if TimeOut = 0 then
-      WaitBitIsSet(SR,0)
-    else
-      if WaitBitIsSet(SR,1,EndTime) = false then
-        exit(false);
-    aReadWord := pByte(@DR)^ shl 8;
-
-    if TimeOut = 0 then
-      WaitBitIsSet(SR,1)
-    else
-    begin
-      EndTime := SystemCore.GetTickCount + TimeOut;
-      if WaitBitIsSet(SR,1,EndTime) = false then
-        exit(false);
-    end;
-
-    pByte(@DR)^ := aWriteWord and $ff;
-    // TXE Wait until data is completely shifted out
-    if TimeOut = 0 then
-      WaitBitIsSet(SR,0)
-    else
-      if WaitBitIsSet(SR,1,EndTime) = false then
-        exit(false);
-    aReadWord := aReadWord or pByte(@DR)^;
-  end;
-end;
-
-function TSPIRegistersHelper.WriteWord(const aWord: word; const TimeOut: TMilliSeconds=0) : boolean;
-var
-  EndTime : longWord;
-  dummy : word;
-begin
-  Result := true;
-  // Wait for TX Buffer empty
-  if TimeOut = 0 then
-    WaitBitIsSet(SR,1)
-  else
-  begin
-    EndTime := SystemCore.GetTickCount + TimeOut;
-    if WaitBitIsSet(SR,1,EndTime) = false then
-      exit(false);
-  end;
-
-  if GetBitsPerWord > TSPIBitsPerWord.Eight then
-  begin
-    DR := aWord;
-
-  // TXE Wait until data is completely shifted out
-    if TimeOut = 0 then
-      WaitBitIsSet(SR,0)
-    else
-      if WaitBitIsSet(SR,0,EndTime) = false then
-        exit(false);
-    dummy := DR;
-  end
-  else
-  begin
-    pByte(@DR)^ := aWord shr 8;
-    // TXE Wait until data is completely shifted out
-    if TimeOut = 0 then
-      WaitBitIsSet(SR,0)
-    else
-      if WaitBitIsSet(SR,1,EndTime) = false then
-        exit(false);
-    dummy := pByte(@DR)^;
-
-    if TimeOut = 0 then
-      WaitBitIsSet(SR,1)
-    else
-    begin
-      EndTime := SystemCore.GetTickCount + TimeOut;
-      if WaitBitIsSet(SR,1,EndTime) = false then
-        exit(false);
-    end;
-
-    pByte(@DR)^ := aWord and $ff;
-    // TXE Wait until data is completely shifted out
-    if TimeOut = 0 then
-      WaitBitIsSet(SR,0)
-    else
-      if WaitBitIsSet(SR,1,EndTime) = false then
-        exit(false);
-    dummy := pByte(@DR)^;
-  end;
-end;
-
-function TSPIRegistersHelper.ReadWord(var aWord: word; const TimeOut: TMilliSeconds=0):boolean;
-begin
-  Result := TransferWord($ffff,aWord,TimeOut);
-end;
-
-function TSPIRegistersHelper.TransferWord(const aWriteBuffer: array of word; var aReadBuffer : array of word; aCount : integer=-1; const TimeOut: TMilliSeconds=0) : boolean;
-var
-  i : longWord;
-  EndTime : longWord;
-begin
-  Result := true;
-  if length(aWriteBuffer) <> length(aReadBuffer) then
+  //Wait for Busy Flag to be cleared
+  if WaitBitIsCleared(SR,7,EndTime) = false then
     exit(false);
-  if aCount = -1 then
-    aCount := High(aWriteBuffer) - Low(aWriteBuffer)
-  else
-    dec(aCount); // to fix loop count
-
-  if GetBitsPerWord > TSPIBitsPerWord.Eight then
-  begin
-    if TimeOut = 0 then
-    begin
-      for i := Low(aWritebuffer) to Low(aWritebuffer)+aCount do
-      begin
-        WaitBitIsSet(SR,1);
-        DR := aWriteBuffer[i];
-        WaitBitIsSet(SR,0);
-        aReadBuffer[i] := DR;
-      end;
-    end
-    else
-    begin
-      EndTime := SystemCore.GetTickCount + TimeOut;
-      for i := Low(aWriteBuffer) to Low(aWriteBuffer)+aCount do
-      begin
-        if WaitBitIsSet(SR,1,EndTime) = false then
-          exit(false);
-        DR := aWriteBuffer[i];
-        if WaitBitIsSet(SR,0,EndTime) = false then
-          exit(false);
-        aReadBuffer[i] := DR;
-      end;
-    end
-  end
-  else
-  begin
-    if TimeOut = 0 then
-    begin
-      for i := Low(aWritebuffer) to Low(aWritebuffer)+aCount do
-      begin
-        WaitBitIsSet(SR,1);
-        pByte(@DR)^ := aWriteBuffer[i] shr 8;
-        WaitBitIsSet(SR,0);
-        aReadBuffer[i] := pByte(@DR)^ shl 8;
-        WaitBitIsSet(SR,1);
-        pByte(@DR)^ := aWriteBuffer[i] and $ff;
-        WaitBitIsSet(SR,0);
-        aReadBuffer[i] := aReadBuffer[i] or pByte(@DR)^;
-      end;
-    end
-    else
-    begin
-      EndTime := SystemCore.GetTickCount + TimeOut;
-      for i := Low(aWriteBuffer) to Low(aWriteBuffer)+aCount do
-      begin
-        if WaitBitIsSet(SR,1,EndTime) = false then
-          exit(false);
-        pByte(@DR)^ := aWriteBuffer[i] shr 8;
-        if WaitBitIsSet(SR,0,EndTime) = false then
-          exit(false);
-        aReadBuffer[i] := pByte(@DR)^ shl 8;
-        if WaitBitIsSet(SR,1,EndTime) = false then
-          exit(false);
-        pByte(@DR)^ := aWriteBuffer[i] and $ff;
-        if WaitBitIsSet(SR,0,EndTime) = false then
-          exit(false);
-        aReadBuffer[i] := aReadBuffer[i] or pByte(@DR)^;
-      end;
-    end
-  end;
-end;
-
-function TSPIRegistersHelper.WriteWord(const aBuffer: array of Word; aCount : integer=-1; const TimeOut: TMilliSeconds=0) : boolean;
-var
-  i : longWord;
-  EndTime : longWord;
-  dummy : word;
-begin
+  //Clear Overflow
+  ReadDR;
   Result := true;
-  if aCount = -1 then
-    aCount := High(aBuffer) - Low(aBuffer)
-  else
-    dec(aCount); // to fix loop count
-
-  if GetBitsPerWord > TSPIBitsPerWord.Eight then
-  begin
-    if TimeOut = 0 then
-    begin
-      for i := Low(aBuffer) to Low(aBuffer)+aCount do
-      begin
-        WaitBitIsSet(SR,1);
-        DR := aBuffer[i];
-        WaitBitIsSet(SR,0);
-        dummy := DR;
-      end;
-    end
-    else
-    begin
-      EndTime := SystemCore.GetTickCount + TimeOut;
-      for i := Low(aBuffer) to Low(aBuffer)+aCount do
-      begin
-        if WaitBitIsSet(SR,1,EndTime) = false then
-          exit(false);
-        DR := aBuffer[i];
-        if WaitBitIsSet(SR,0,EndTime) = false then
-          exit(false);
-        dummy := DR;
-      end;
-    end
-  end
-  else
-  begin
-    if TimeOut = 0 then
-    begin
-      for i := Low(aBuffer) to Low(aBuffer)+aCount do
-      begin
-        WaitBitIsSet(SR,1);
-        pByte(@DR)^ := aBuffer[i] shr 8;
-        WaitBitIsSet(SR,0);
-        dummy := pByte(@DR)^ shl 8;
-        WaitBitIsSet(SR,1);
-        pByte(@DR)^ := aBuffer[i] and $ff;
-        WaitBitIsSet(SR,0);
-        dummy := pByte(@DR)^;
-      end;
-    end
-    else
-    begin
-      EndTime := SystemCore.GetTickCount + TimeOut;
-      for i := Low(aBuffer) to Low(aBuffer)+aCount do
-      begin
-        if WaitBitIsSet(SR,1,EndTime) = false then
-          exit(false);
-        pByte(@DR)^ := aBuffer[i] shr 8;
-        if WaitBitIsSet(SR,0,EndTime) = false then
-          exit(false);
-        dummy := pByte(@DR)^ shl 8;
-        if WaitBitIsSet(SR,1,EndTime) = false then
-          exit(false);
-        pByte(@DR)^ := aBuffer[i] and $ff;
-        if WaitBitIsSet(SR,0,EndTime) = false then
-          exit(false);
-        dummy := pByte(@DR)^;
-      end;
-    end
-  end;
 end;
 
-function TSPIRegistersHelper.ReadWord(var aBuffer: array of word; aCount : integer=-1; const TimeOut: TMilliSeconds=0):boolean;
-var
-  i : longWord;
-  EndTime : longWord;
+procedure TSPIRegistersHelper.WriteDR(const Value : byte); inline;
 begin
-  Result := true;
-  if aCount = -1 then
-    aCount := High(aBuffer) - Low(aBuffer)
-  else
-    dec(aCount); // to fix loop count
-
-  if GetBitsPerWord > TSPIBitsPerWord.Eight then
-  begin
-    if TimeOut = 0 then
-    begin
-      for i := Low(aBuffer) to Low(aBuffer)+aCount do
-      begin
-        WaitBitIsSet(SR,1);
-        DR := $ffff;
-        WaitBitIsSet(SR,0);
-        aBuffer[i] := DR;
-      end;
-    end
-    else
-    begin
-      EndTime := SystemCore.GetTickCount + TimeOut;
-      for i := Low(aBuffer) to Low(aBuffer)+aCount do
-      begin
-        if WaitBitIsSet(SR,1,EndTime) = false then
-          exit(false);
-        DR := $ffff;
-        if WaitBitIsSet(SR,0,EndTime) = false then
-          exit(false);
-        aBuffer[i] := DR;
-      end;
-    end
-  end
-  else
-  begin
-    if TimeOut = 0 then
-    begin
-      for i := Low(aBuffer) to Low(aBuffer)+aCount do
-      begin
-        WaitBitIsSet(SR,1);
-        pByte(@DR)^ := $ff;
-        WaitBitIsSet(SR,0);
-        aBuffer[i] := pByte(@DR)^ shl 8;
-        WaitBitIsSet(SR,1);
-        pByte(@DR)^ := $ff;
-        WaitBitIsSet(SR,0);
-        aBuffer[i] := aBuffer[i] or pByte(@DR)^;
-      end;
-    end
-    else
-    begin
-      EndTime := SystemCore.GetTickCount + TimeOut;
-      for i := Low(aBuffer) to Low(aBuffer)+aCount do
-      begin
-        if WaitBitIsSet(SR,1,EndTime) = false then
-          exit(false);
-        pByte(@DR)^ := $ff;
-        if WaitBitIsSet(SR,0,EndTime) = false then
-          exit(false);
-        aBuffer[i] := pByte(@DR)^ shl 8;
-        if WaitBitIsSet(SR,1,EndTime) = false then
-          exit(false);
-        pByte(@DR)^ := $ff;
-        if WaitBitIsSet(SR,0,EndTime) = false then
-          exit(false);
-        aBuffer[i] := aBuffer[i] or pByte(@DR)^;
-      end;
-    end
-  end;
+  pByte(@self.DR)^ := Value;
 end;
 
-function TSPIRegistersHelper.WriteBuffer(pBuffer: pByte; aCount : longWord; const TimeOut: TMilliSeconds=0) : boolean;
-var
-  i : longWord;
-  EndTime : longWord;
-  dummy : byte;
+function TSPIRegistersHelper.ReadDR : byte ; inline;
 begin
-  Result := true;
-
-  if TimeOut = 0 then
-  begin
-    for i := 1 to aCount do
-    begin
-      WaitBitIsSet(SR,1);
-      pByte(@DR)^ := pBuffer^;
-      inc(pBuffer);
-      WaitBitIsSet(SR,0);
-      dummy := pByte(@DR)^;
-    end;
-  end
-  else
-  begin
-    EndTime := SystemCore.GetTickCount + TimeOut;
-    for i := 1 to aCount do
-    begin
-      if WaitBitIsSet(SR,1,EndTime) = false then
-        exit(false);
-      pByte(@DR)^ := pBuffer^;
-      inc(pBuffer);
-      if WaitBitIsSet(SR,0,EndTime) = false then
-        exit(false);
-      dummy := pByte(@DR)^;
-    end;
-  end;
+  Result := pByte(@self.DR)^;
 end;
 
+{$IF Defined(HAS_SPI_16Bits)}
+procedure TSPIRegistersHelper.WriteDRWord(const Value : word); inline;
+begin
+  self.DR := Value;
+end;
+
+function TSPIRegistersHelper.ReadDRWord : word ; inline;
+begin
+  Result := self.DR;
+end;
+{$ENDIF}
+
+{$DEFINE IMPLEMENTATION}
+{$I MBF.STM32.SPI.inc}
+{$UNDEF IMPLEMENTATION}
+
+{$ENDREGION}
 end.

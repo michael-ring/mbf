@@ -142,6 +142,9 @@ begin
               Result := Result * temp;
           {$endif}
         end;
+     %11: begin
+       //Make compiler happy
+     end;
   end;
 end;
 

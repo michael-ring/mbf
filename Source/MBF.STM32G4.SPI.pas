@@ -1,4 +1,4 @@
-unit mbf.stm32g0.spi;
+unit mbf.stm32g4.spi;
 {
   This file is part of Pascal Microcontroller Board Framework (MBF)
   Copyright (c) 2015 -  Michael Ring
