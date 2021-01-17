@@ -31,7 +31,12 @@ var
 begin
   // Initialize the Board and the SystemTimer
   SystemCore.Initialize;
-  SystemCore.SetCPUFrequency(SystemCore.getMaxCPUFrequency);
+
+  // We must define the Clock of the on-board Resonator/XTAL before calling SetCPUFrequency
+  HSEClockFrequency := 8000000;
+  // Use TClockType.PLLHSE to use the on Board Resonator/XTAL. This is the only way to reach 72MHz
+  // with TClockType.PLLHSI max Speed is 64MHz
+  SystemCore.SetCPUFrequency(SystemCore.getMaxCPUFrequency,TClockType.PLLHSE);
 
   // Initialize the GPIO subsystem
   GPIO.Initialize;

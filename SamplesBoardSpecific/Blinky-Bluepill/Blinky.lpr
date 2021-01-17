@@ -18,12 +18,16 @@ program Blinky;
 {$INCLUDE MBF.Config.inc}
 
 uses
-  MBF.__CONTROLLERTYPE__.SystemCore,
-  MBF.__CONTROLLERTYPE__.GPIO;
+  MBF.STM32F1.SystemCore,
+  MBF.STM32F1.GPIO;
 
 begin
   SystemCore.Initialize;
-  SystemCore.SetCPUFrequency(SystemCore.getMaxCPUFrequency);
+  // We must define the Clock of the on-board Resonator/XTAL before calling SetCPUFrequency
+  HSEClockFrequency := 8000000;
+  // Use TClockType.PLLHSE to use the on Board Resonator/XTAL. This is the only way to reach 72MHz
+  // with TClockType.PLLHSI max Speed is 64MHz
+  SystemCore.SetCPUFrequency(SystemCore.getMaxCPUFrequency,TClockType.PLLHSE);
 
   GPIO.Initialize;
   GPIO.PinMode[TNativePin.PC13] := TPinMode.Output;

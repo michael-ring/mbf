@@ -424,7 +424,9 @@ begin
         {$else}
         SetBitValue(RCC.CFGR,Params.PREDIV,17);
         {$endif}
-        SetBit(RCC.CFGR,16);
+        //Make sure that PD0 and PD1 are used for XTAL
+        ClearBit(AFIO.MAPR,15);
+        SetBit(RCC.CR,16);
         WaitBitIsSet(RCC.CR,17);
         {$if defined(STM32F105_107)}
         SetNibble(RCC.CFGR2,Params.PREDIV,0);
@@ -432,6 +434,8 @@ begin
         SetBitValue(RCC.CFGR,Params.PREDIV,17);
         {$endif}
         SetNibble(RCC.CFGR,Params.AHBPRE,4);
+        // Set HSE as PLL Source
+        SetBit(RCC.CFGR,16);
       end;
 
       //PLLON Enable PLL

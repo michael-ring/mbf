@@ -107,7 +107,7 @@ procedure TSystemCore.setCoreTimerReloadCompare(value : longWord);
     Result := SysTickOverflow + (TicksPerMillisecond-SysTick.VAL);
   end;
 
-procedure SysTick_interrupt; interrupt; [public, alias: 'SysTick_Handler'];
+procedure SysTick_interrupt; interrupt; public name 'SysTick_Handler';
 begin
   Inc(SysTickCounter);
   Inc(SysTickOverflow,TicksPerMilliSecond);
