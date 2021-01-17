@@ -156,14 +156,14 @@ type
       property StopBits : TUARTStopBits read getStopBits write setStopBits;
       property ClockSource : TUARTClockSource read getClockSource;
 
-      procedure WaitForTXReady; inline;
-      procedure WaitForRXReady; inline;
+      procedure WaitForTXReady; //inline;
+      procedure WaitForRXReady; //inline;
 
-      function  WaitForTXReady(EndTime : TMilliSeconds):boolean; inline;
-      function  WaitForRXReady(EndTime : TMilliSeconds):boolean; inline;
+      function  WaitForTXReady(EndTime : TMilliSeconds):boolean; //inline;
+      function  WaitForRXReady(EndTime : TMilliSeconds):boolean; //inline;
 
-      procedure WriteDR(const Value : byte); inline;
-      function ReadDR:byte; inline;
+      procedure WriteDR(const Value : byte); //inline;
+      function ReadDR:byte; //inline;
 
       {$DEFINE INTERFACE}
       {$I MBF.STM32.UART.inc}
@@ -245,13 +245,13 @@ begin
   Enable;
 end;
 
-function TUARTRegistersHelper.Disable:boolean; inline;
+function TUARTRegistersHelper.Disable:boolean; //inline;
 begin
   Result := GetBit(self.CR1,0) > 0;
   ClearBit(self.CR1,0);
 end;
 
-procedure TUARTRegistersHelper.Enable; inline;
+procedure TUARTRegistersHelper.Enable; //inline;
 begin
   SetBit(self.CR1,0);
 end;
@@ -350,32 +350,32 @@ begin
     Enable;
 end;
 
-procedure TUARTRegistersHelper.WaitForTXReady; inline;
+procedure TUARTRegistersHelper.WaitForTXReady; //inline;
 begin
   WaitBitIsSet(self.ISR,7);
 end;
 
-procedure TUARTRegistersHelper.WaitForRXReady; inline;
+procedure TUARTRegistersHelper.WaitForRXReady; //inline;
 begin
   WaitBitIsSet(self.ISR,5);
 end;
 
-function TUARTRegistersHelper.WaitForTXReady(EndTime : TMilliSeconds):boolean; inline;
+function TUARTRegistersHelper.WaitForTXReady(EndTime : TMilliSeconds):boolean; //inline;
 begin
   Result := WaitBitIsSet(self.ISR,7,EndTime);
 end;
 
-function TUARTRegistersHelper.WaitForRXReady(EndTime : TMilliSeconds):boolean; inline;
+function TUARTRegistersHelper.WaitForRXReady(EndTime : TMilliSeconds):boolean; //inline;
 begin
   Result := WaitBitIsSet(self.ISR,5,EndTime);
 end;
 
-procedure TUARTRegistersHelper.WriteDR(const Value : byte); inline;
+procedure TUARTRegistersHelper.WriteDR(const Value : byte); //inline;
 begin
   self.TDR := Value;
 end;
 
-function TUARTRegistersHelper.ReadDR : byte ; inline;
+function TUARTRegistersHelper.ReadDR : byte ; //inline;
 begin
   Result := self.RDR;
 end;

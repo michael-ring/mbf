@@ -482,32 +482,32 @@ procedure TGPIOPort.Initialize;
 begin
 end;
 
-function TGPIOPort.GetPortValues : word; inline;
+function TGPIOPort.GetPortValues : word; //inline;
 begin
   Result := Self.IDR;
 end;
 
-function TGPIOPort.GetPortBits : TBitSet; inline;
+function TGPIOPort.GetPortBits : TBitSet; //inline;
 begin
   Result := TBitSet(Self.IDR);
 end;
 
-procedure TGPIOPort.SetPortValues(const Values : word); inline;
+procedure TGPIOPort.SetPortValues(const Values : word); //inline;
 begin
   Self.ODR := Values;
 end;
 
-procedure TGPIOPort.SetPortBits(const Bits : TBitSet); inline;
+procedure TGPIOPort.SetPortBits(const Bits : TBitSet); //inline;
 begin
   Self.BSRR := longWord(Bits);
 end;
 
-procedure TGPIOPort.ClearPortBits(const Bits : TBitSet); inline;
+procedure TGPIOPort.ClearPortBits(const Bits : TBitSet); //inline;
 begin
   Self.BSRR := longWord(Bits) shl 16;
 end;
 
-procedure TGPIOPort.SetPortMode(PortMode : TPinMode); inline;
+procedure TGPIOPort.SetPortMode(PortMode : TPinMode); //inline;
 begin
   case {%H-}longWord(@Self) of
     {%H-}longWord(@GPIOA): EnableGPIOPort(0);
@@ -543,7 +543,7 @@ begin
   end;
 end;
 
-procedure TGPIOPort.SetPortOutputSpeed(Speed : TPinOutputSpeed); inline;
+procedure TGPIOPort.SetPortOutputSpeed(Speed : TPinOutputSpeed); //inline;
 begin
   if Speed = TPinOutputSpeed.Slow then
   begin
@@ -562,7 +562,7 @@ begin
   end;
 end;
 
-procedure TGPIOPort.SetPortDrive(Drive : TPinDrive); inline;
+procedure TGPIOPort.SetPortDrive(Drive : TPinDrive); //inline;
 begin
   if Drive = TPinDrive.None then
   begin
@@ -583,7 +583,7 @@ begin
   end;
 end;
 
-procedure TGPIOPort.SetPortOutputMode(OutputMode : TPinOutputMode); inline;
+procedure TGPIOPort.SetPortOutputMode(OutputMode : TPinOutputMode); //inline;
 begin
   if OutputMode = TPinOutputMode.PushPull then
   begin

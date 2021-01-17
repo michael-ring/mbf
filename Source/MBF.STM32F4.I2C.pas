@@ -109,14 +109,14 @@ type
     function  Disable : boolean;
     procedure Enable;
 
-    procedure WaitForReady; inline;
-    //function WaitForReady(EndTime : TMilliSeconds):boolean; //inline;
+    procedure WaitForReady; //inline;
+    //function WaitForReady(EndTime : TMilliSeconds):boolean; ////inline;
 
-    function BeginWriteTransaction(const Address : byte):boolean; //inline;
-    function BeginReadTransaction(const Address : byte):boolean; //inline;
-    function RestartWriteTransaction(const Address : byte):boolean; //inline;
-    function RestartReadTransaction(const Address : byte):boolean; //inline;
-    procedure EndTransaction; //inline;
+    function BeginWriteTransaction(const Address : byte):boolean; ////inline;
+    function BeginReadTransaction(const Address : byte):boolean; ////inline;
+    function RestartWriteTransaction(const Address : byte):boolean; ////inline;
+    function RestartReadTransaction(const Address : byte):boolean; ////inline;
+    procedure EndTransaction; ////inline;
     function ReadByte(out aReadByte: byte):boolean;
     function WriteByte(const aWriteByte: byte):boolean;
     function ReadRegister(const aAddress,aRegister : byte; out aReadByte : byte):boolean;
@@ -230,12 +230,12 @@ begin
   Enable;
 end;
 
-procedure TI2CRegistersHelper.WaitForReady; inline;
+procedure TI2CRegistersHelper.WaitForReady; //inline;
 begin
 
 end;
 
-function TI2CRegistersHelper.BeginWriteTransaction(const Address : byte):boolean; //inline;
+function TI2CRegistersHelper.BeginWriteTransaction(const Address : byte):boolean; ////inline;
 var
   Temp : byte;
 begin
@@ -252,7 +252,7 @@ begin
   Temp := Self.SR2;
 end;
 
-function TI2CRegistersHelper.BeginReadTransaction(const Address : byte):boolean; //inline;
+function TI2CRegistersHelper.BeginReadTransaction(const Address : byte):boolean; ////inline;
 var
   Temp : byte;
 begin
@@ -269,15 +269,15 @@ begin
   Temp := Self.SR2;
 end;
 
-function TI2CRegistersHelper.RestartWriteTransaction(const Address : byte):boolean; //inline;
+function TI2CRegistersHelper.RestartWriteTransaction(const Address : byte):boolean; ////inline;
 begin
 end;
 
-function TI2CRegistersHelper.RestartReadTransaction(const Address : byte):boolean; //inline;
+function TI2CRegistersHelper.RestartReadTransaction(const Address : byte):boolean; ////inline;
 begin
 end;
 
-procedure TI2CRegistersHelper.EndTransaction; //inline;
+procedure TI2CRegistersHelper.EndTransaction; ////inline;
 begin
   // Only wait for Send Buffer to get empty if AF Bit is cleared (we have no NACK)
   if GetBit(Self.SR1,10)=0 then

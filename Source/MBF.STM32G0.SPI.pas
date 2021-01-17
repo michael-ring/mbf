@@ -157,25 +157,25 @@ type
     function  Disable : boolean;
     procedure Enable;
 
-    procedure BeginTransaction; inline;
-    procedure EndTransaction; inline;
-    procedure BeginTransaction(const SoftNSSPin : TPinIdentifier); inline;
-    procedure EndTransaction(const SoftNSSPin : TPinIdentifier); inline;
+    procedure BeginTransaction; //inline;
+    procedure EndTransaction; //inline;
+    procedure BeginTransaction(const SoftNSSPin : TPinIdentifier); //inline;
+    procedure EndTransaction(const SoftNSSPin : TPinIdentifier); //inline;
 
-    procedure WaitForTXReady; inline;
-    procedure WaitForRXReady; inline;
-    procedure WaitForTXFinished; inline;
+    procedure WaitForTXReady; //inline;
+    procedure WaitForRXReady; //inline;
+    procedure WaitForTXFinished; //inline;
 
-    function  WaitForTXReady(EndTime : TMilliSeconds):boolean; inline;
-    function  WaitForRXReady(EndTime : TMilliSeconds):boolean; inline;
-    function  WaitForTXFinished(EndTime : TMilliSeconds):boolean; inline;
+    function  WaitForTXReady(EndTime : TMilliSeconds):boolean; //inline;
+    function  WaitForRXReady(EndTime : TMilliSeconds):boolean; //inline;
+    function  WaitForTXFinished(EndTime : TMilliSeconds):boolean; //inline;
 
-    procedure WriteDR(const Value : byte); inline;
-    function ReadDR:byte; inline;
+    procedure WriteDR(const Value : byte); //inline;
+    function ReadDR:byte; //inline;
 
     {$IF Defined(HAS_SPI_16Bits)}
-    procedure WriteDRWord(const Value : word); inline;
-    function ReadDRWord:word; inline;
+    procedure WriteDRWord(const Value : word); //inline;
+    function ReadDRWord:word; //inline;
     {$ENDIF}
 
     {$DEFINE INTERFACE}
@@ -347,7 +347,7 @@ begin
   Result := TSPIOperatingMode(GetBitValue(CR1,2));
 end;
 
-procedure TSPIRegistersHelper.BeginTransaction; inline;
+procedure TSPIRegistersHelper.BeginTransaction; //inline;
 begin
   {$PUSH}
   {$WARN 4055 off : Conversion between ordinals and pointers is not portable}
@@ -358,7 +358,7 @@ begin
   {$POP}
 end;
 
-procedure TSPIRegistersHelper.EndTransaction; inline;
+procedure TSPIRegistersHelper.EndTransaction; //inline;
 begin
   WaitForTXFinished;
   {$PUSH}
@@ -370,28 +370,28 @@ begin
   {$POP}
 end;
 
-procedure TSPIRegistersHelper.BeginTransaction(const SoftNSSPin : TPinIdentifier); inline;
+procedure TSPIRegistersHelper.BeginTransaction(const SoftNSSPin : TPinIdentifier); //inline;
 begin
   GPIO.SetPinLevelLow(SoftNSSPin);
 end;
 
-procedure TSPIRegistersHelper.EndTransaction(const SoftNSSPin : TPinIdentifier); inline;
+procedure TSPIRegistersHelper.EndTransaction(const SoftNSSPin : TPinIdentifier); //inline;
 begin
   WaitForTXFinished;
   GPIO.SetPinLevelHigh(SoftNSSPin);
 end;
 
-procedure TSPIRegistersHelper.WaitForTXReady; inline;
+procedure TSPIRegistersHelper.WaitForTXReady; //inline;
 begin
   WaitBitIsSet(self.SR,1);
 end;
 
-procedure TSPIRegistersHelper.WaitForRXReady; inline;
+procedure TSPIRegistersHelper.WaitForRXReady; //inline;
 begin
   WaitBitIsSet(self.SR,0);
 end;
 
-procedure TSPIRegistersHelper.WaitForTXFinished; inline;
+procedure TSPIRegistersHelper.WaitForTXFinished; //inline;
 begin
   //Make sure are Data is shifted out
   WaitBitIsSet(SR,1);
@@ -401,17 +401,17 @@ begin
   ReadDR;
 end;
 
-function TSPIRegistersHelper.WaitForTXReady(EndTime : TMilliSeconds):boolean; inline;
+function TSPIRegistersHelper.WaitForTXReady(EndTime : TMilliSeconds):boolean; //inline;
 begin
   Result := WaitBitIsSet(self.SR,1,EndTime);
 end;
 
-function TSPIRegistersHelper.WaitForRXReady(EndTime : TMilliSeconds):boolean; inline;
+function TSPIRegistersHelper.WaitForRXReady(EndTime : TMilliSeconds):boolean; //inline;
 begin
   Result := WaitBitIsSet(self.SR,0,EndTime);
 end;
 
-function TSPIRegistersHelper.WaitForTXFinished(EndTime : TMilliSeconds):boolean; inline;
+function TSPIRegistersHelper.WaitForTXFinished(EndTime : TMilliSeconds):boolean; //inline;
 begin
   //Make sure are Data is shifted out
   if WaitBitIsSet(SR,1,EndTime) = false then
@@ -424,25 +424,25 @@ begin
   Result := true;
 end;
 
-procedure TSPIRegistersHelper.WriteDR(const Value : byte); inline;
+procedure TSPIRegistersHelper.WriteDR(const Value : byte); //inline;
 begin
   //We need to force 8 Bit access here otherwise a 16bit transfer is done on G0 Chips (data packing feature of fifo's)
   pByte(@self.DR)^ := Value;
 end;
 
-function TSPIRegistersHelper.ReadDR : byte ; inline;
+function TSPIRegistersHelper.ReadDR : byte ; //inline;
 begin
   //We need to force 8 Bit access here otherwise a 16bit transfer is done on G0 Chips (data packing feature of fifo's)
   Result := pByte(@self.DR)^;
 end;
 
 {$IF Defined(HAS_SPI_16Bits)}
-procedure TSPIRegistersHelper.WriteDRWord(const Value : word); inline;
+procedure TSPIRegistersHelper.WriteDRWord(const Value : word); //inline;
 begin
   self.DR := Value;
 end;
 
-function TSPIRegistersHelper.ReadDRWord : word ; inline;
+function TSPIRegistersHelper.ReadDRWord : word ; //inline;
 begin
   Result := self.DR;
 end;

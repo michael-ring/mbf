@@ -3,7 +3,7 @@
 { Reads a byte from UART port.
   Will block indefinitely until data has been read.
   @returns(The Byte of Data that was read) }
-function  ReadByte:Byte; inline;
+function  ReadByte:Byte; //inline;
 
 { Attempts to read a byte from UART port.
   @param(TimeOut defines maximum time in milliseconds to wait for successful write)
@@ -13,7 +13,7 @@ function  ReadByte(var aReadByte: byte; const TimeOut: TMilliSeconds):boolean;
 { Writes a byte to UART port.
   Will block indefinitely until the byte has been written.
   @param(aWriteByte The Data to write)}
-procedure WriteByte(const aWriteByte: byte); inline;
+procedure WriteByte(const aWriteByte: byte); //inline;
 
 { Attempts to Write a byte to UART port.
   @param(aWriteByte The Data to write)
@@ -124,7 +124,7 @@ function  WriteBuffer(const aWriteBuffer: Pointer; const aWriteCount : integer; 
 
 {$IF DEFINED(IMPLEMENTATION)}
 
-function TUARTRegistersHelper.ReadByte:byte; inline;
+function TUARTRegistersHelper.ReadByte:byte; //inline;
 begin
   WaitForRXReady;
   result := ReadDR;
@@ -141,7 +141,7 @@ begin
   result := true;
 end;
 
-procedure TUARTRegistersHelper.WriteByte(const aWriteByte: byte); inline;
+procedure TUARTRegistersHelper.WriteByte(const aWriteByte: byte); //inline;
 begin
   WaitForTXReady;
   WriteDR(aWriteByte);

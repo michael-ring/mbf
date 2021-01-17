@@ -1,10 +1,10 @@
 {$IF DEFINED(INTERFACE)}
-function  ReadByte:byte; inline;
-function  ReadByte(out aReadByte: byte; const TimeOut : TMilliSeconds):boolean; inline;
-procedure WriteByte(const aWriteByte: byte); inline;
-function  WriteByte(const aWriteByte: byte; const TimeOut : TMilliSeconds) : boolean; inline;
-function  TransferByte(const aWriteByte : byte) : byte; inline;
-function  TransferByte(const aWriteByte : byte; out aReadByte : byte; const TimeOut : TMilliSeconds) : boolean; inline;
+function  ReadByte:byte; //inline;
+function  ReadByte(out aReadByte: byte; const TimeOut : TMilliSeconds):boolean; //inline;
+procedure WriteByte(const aWriteByte: byte); //inline;
+function  WriteByte(const aWriteByte: byte; const TimeOut : TMilliSeconds) : boolean; //inline;
+function  TransferByte(const aWriteByte : byte) : byte; //inline;
+function  TransferByte(const aWriteByte : byte; out aReadByte : byte; const TimeOut : TMilliSeconds) : boolean; //inline;
 
 procedure ReadBytes(out aReadBuffer: array of byte);
 procedure ReadBytes(out aReadBuffer: array of byte; aReadCount : integer);
@@ -18,14 +18,14 @@ procedure TransferBytes(const aWriteBuffer: array of byte; out aReadBuffer : arr
 procedure TransferBytes(const aWriteBuffer: array of byte; out aReadBuffer : array of byte; aTransferCount : integer);
 function  TransferBytes(const aWriteBuffer: array of byte; out aReadBuffer : array of byte; aTransferCount : integer; const TimeOut : TMilliSeconds) : boolean;
 
-function  ReadWord: word; inline;
-function  ReadWord(out aReadWord: word; const TimeOut : TMilliSeconds):boolean; inline;
+function  ReadWord: word; //inline;
+function  ReadWord(out aReadWord: word; const TimeOut : TMilliSeconds):boolean; //inline;
 
-procedure WriteWord(const aWriteWord: word); inline;
-function  WriteWord(const aWriteWord: word; const TimeOut : TMilliSeconds) : boolean; inline;
+procedure WriteWord(const aWriteWord: word); //inline;
+function  WriteWord(const aWriteWord: word; const TimeOut : TMilliSeconds) : boolean; //inline;
 
-function  TransferWord(const aWriteWord: word) : word; inline;
-function  TransferWord(const aWriteWord: word; out aReadWord : word; const TimeOut : TMilliSeconds) : boolean; inline;
+function  TransferWord(const aWriteWord: word) : word; //inline;
+function  TransferWord(const aWriteWord: word; out aReadWord : word; const TimeOut : TMilliSeconds) : boolean; //inline;
 
 procedure ReadWords(out aReadBuffer: array of word);
 procedure ReadWords(out aReadBuffer: array of word; const aReadCount : integer);
@@ -44,7 +44,7 @@ function  WriteBuffer(const pWriteBuffer: pByte; var aWriteCount : Word; const T
 {$ENDIF}
 
 {$IF DEFINED(IMPLEMENTATION)}
-function TSPIRegistersHelper.ReadByte : byte; inline;
+function TSPIRegistersHelper.ReadByte : byte; //inline;
 begin
   WaitForTXReady;
   WriteDR($ff);
@@ -52,7 +52,7 @@ begin
   Result := ReadDR;
 end;
 
-function TSPIRegistersHelper.ReadByte(out aReadByte: byte; const TimeOut : TMilliSeconds):boolean; inline;
+function TSPIRegistersHelper.ReadByte(out aReadByte: byte; const TimeOut : TMilliSeconds):boolean; //inline;
 var
   EndTime : longWord;
 begin
@@ -87,7 +87,7 @@ begin
   Result := true;
 end;
 
-function TSPIRegistersHelper.TransferByte(const aWriteByte : byte) : byte; inline;
+function TSPIRegistersHelper.TransferByte(const aWriteByte : byte) : byte; //inline;
 begin
   WaitForTXReady;
   WriteDR(aWriteByte);
@@ -96,7 +96,7 @@ begin
   Result := ReadDR;
 end;
 
-function TSPIRegistersHelper.TransferByte(const aWriteByte : byte; out aReadByte : byte; const TimeOut : TMilliSeconds) : boolean; inline;
+function TSPIRegistersHelper.TransferByte(const aWriteByte : byte; out aReadByte : byte; const TimeOut : TMilliSeconds) : boolean; //inline;
 var
   EndTime : longWord;
 begin
@@ -262,7 +262,7 @@ begin
   Result := true;
 end;
 
-function TSPIRegistersHelper.ReadWord : word; inline;
+function TSPIRegistersHelper.ReadWord : word; //inline;
 begin
   {$IF defined(HAS_SPI_16Bits)}
   if GetBitsPerWord > TSPIBitsPerWord.Eight then
@@ -286,7 +286,7 @@ begin
   end;
 end;
 
-function TSPIRegistersHelper.ReadWord(out aReadWord: word; const TimeOut : TMilliSeconds):boolean; inline;
+function TSPIRegistersHelper.ReadWord(out aReadWord: word; const TimeOut : TMilliSeconds):boolean; //inline;
 var
   EndTime : longWord;
 begin
@@ -324,7 +324,7 @@ begin
   Result := true;
 end;
 
-procedure TSPIRegistersHelper.WriteWord(const aWriteWord: word); inline;
+procedure TSPIRegistersHelper.WriteWord(const aWriteWord: word); //inline;
 begin
   {$IF defined(HAS_SPI_16Bits)}
   if GetBitsPerWord > TSPIBitsPerWord.Eight then
@@ -342,7 +342,7 @@ begin
   end;
 end;
 
-function TSPIRegistersHelper.WriteWord(const aWriteWord: word; const TimeOut : TMilliSeconds) : boolean; inline;
+function TSPIRegistersHelper.WriteWord(const aWriteWord: word; const TimeOut : TMilliSeconds) : boolean; //inline;
 var
   EndTime : longWord;
 begin
@@ -367,7 +367,7 @@ begin
   end
 end;
 
-function TSPIRegistersHelper.TransferWord(const aWriteWord: word) : word; inline;
+function TSPIRegistersHelper.TransferWord(const aWriteWord: word) : word; //inline;
 begin
   {$IF defined(HAS_SPI_16Bits)}
   if GetBitsPerWord > TSPIBitsPerWord.Eight then
@@ -394,7 +394,7 @@ begin
   end;
 end;
 
-function TSPIRegistersHelper.TransferWord(const aWriteWord: word; out aReadWord : word; const TimeOut : TMilliSeconds) : boolean; inline;
+function TSPIRegistersHelper.TransferWord(const aWriteWord: word; out aReadWord : word; const TimeOut : TMilliSeconds) : boolean; //inline;
 var
   EndTime : longWord;
 begin

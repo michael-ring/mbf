@@ -148,20 +148,20 @@ type
     procedure BeginTransaction(const SoftNSSPin : TPinIdentifier);
     procedure EndTransaction(const SoftNSSPin : TPinIdentifier);
 
-    procedure WaitForTXReady; inline;
-    procedure WaitForRXReady; inline;
-    procedure WaitForTXFinished; inline;
+    procedure WaitForTXReady; //inline;
+    procedure WaitForRXReady; //inline;
+    procedure WaitForTXFinished; //inline;
 
-    function  WaitForTXReady(EndTime : TMilliSeconds):boolean; inline;
-    function  WaitForRXReady(EndTime : TMilliSeconds):boolean; inline;
-    function  WaitForTXFinished(EndTime : TMilliSeconds):boolean; inline;
+    function  WaitForTXReady(EndTime : TMilliSeconds):boolean; //inline;
+    function  WaitForRXReady(EndTime : TMilliSeconds):boolean; //inline;
+    function  WaitForTXFinished(EndTime : TMilliSeconds):boolean; //inline;
 
-    procedure WriteDR(const Value : byte); inline;
-    function ReadDR:byte; inline;
+    procedure WriteDR(const Value : byte); //inline;
+    function ReadDR:byte; //inline;
 
     {$IF Defined(HAS_SPI_16Bits)}
-    procedure WriteDRWord(const Value : word); inline;
-    function ReadDRWord:word; inline;
+    procedure WriteDRWord(const Value : word); //inline;
+    function ReadDRWord:word; //inline;
     {$ENDIF}
 
     {$DEFINE INTERFACE}
@@ -350,17 +350,17 @@ begin
   GPIO.SetPinLevelHigh(SoftNSSPin);
 end;
 
-procedure TSPIRegistersHelper.WaitForTXReady; inline;
+procedure TSPIRegistersHelper.WaitForTXReady; //inline;
 begin
   WaitBitIsSet(self.SR,1);
 end;
 
-procedure TSPIRegistersHelper.WaitForRXReady; inline;
+procedure TSPIRegistersHelper.WaitForRXReady; //inline;
 begin
   WaitBitIsSet(self.SR,0);
 end;
 
-procedure TSPIRegistersHelper.WaitForTXFinished; inline;
+procedure TSPIRegistersHelper.WaitForTXFinished; //inline;
 begin
   //Make sure are Data is shifted out
   WaitBitIsSet(Self.SR,1);
@@ -370,17 +370,17 @@ begin
   ReadDR;
 end;
 
-function TSPIRegistersHelper.WaitForTXReady(EndTime : TMilliSeconds):boolean; inline;
+function TSPIRegistersHelper.WaitForTXReady(EndTime : TMilliSeconds):boolean; //inline;
 begin
   Result := WaitBitIsSet(self.SR,1,EndTime);
 end;
 
-function TSPIRegistersHelper.WaitForRXReady(EndTime : TMilliSeconds):boolean; inline;
+function TSPIRegistersHelper.WaitForRXReady(EndTime : TMilliSeconds):boolean; //inline;
 begin
   Result := WaitBitIsSet(self.SR,0,EndTime);
 end;
 
-function TSPIRegistersHelper.WaitForTXFinished(EndTime : TMilliSeconds):boolean; inline;
+function TSPIRegistersHelper.WaitForTXFinished(EndTime : TMilliSeconds):boolean; //inline;
 begin
   //Make sure are Data is shifted out
   if WaitBitIsSet(SR,1,EndTime) = false then
@@ -393,23 +393,23 @@ begin
   Result := true;
 end;
 
-procedure TSPIRegistersHelper.WriteDR(const Value : byte); inline;
+procedure TSPIRegistersHelper.WriteDR(const Value : byte); //inline;
 begin
   pByte(@self.DR)^ := Value;
 end;
 
-function TSPIRegistersHelper.ReadDR : byte ; inline;
+function TSPIRegistersHelper.ReadDR : byte ; //inline;
 begin
   Result := pByte(@self.DR)^;
 end;
 
 {$IF Defined(HAS_SPI_16Bits)}
-procedure TSPIRegistersHelper.WriteDRWord(const Value : word); inline;
+procedure TSPIRegistersHelper.WriteDRWord(const Value : word); //inline;
 begin
   self.DR := Value;
 end;
 
-function TSPIRegistersHelper.ReadDRWord : word ; inline;
+function TSPIRegistersHelper.ReadDRWord : word ; //inline;
 begin
   Result := self.DR;
 end;

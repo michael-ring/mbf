@@ -172,32 +172,32 @@ procedure TGPIOPort.Initialize;
 begin
 end;
 
-function TGPIOPort.GetPortValues : word; inline;
+function TGPIOPort.GetPortValues : word; //inline;
 begin
   Result := Self.IDR;
 end;
 
-function TGPIOPort.GetPortBits : TBitSet; inline;
+function TGPIOPort.GetPortBits : TBitSet; //inline;
 begin
   Result := TBitSet(Self.IDR);
 end;
 
-procedure TGPIOPort.SetPortValues(const Values : word); inline;
+procedure TGPIOPort.SetPortValues(const Values : word); //inline;
 begin
   Self.ODR := Values;
 end;
 
-procedure TGPIOPort.SetPortBits(const Bits : TBitSet); inline;
+procedure TGPIOPort.SetPortBits(const Bits : TBitSet); //inline;
 begin
   Self.BSRR := longWord(Bits);
 end;
 
-procedure TGPIOPort.ClearPortBits(const Bits : TBitSet); inline;
+procedure TGPIOPort.ClearPortBits(const Bits : TBitSet); //inline;
 begin
   Self.BSRR := longWord(Bits) shl 16;
 end;
 
-procedure TGPIOPort.SetPortMode(PortMode : TPinMode); inline;
+procedure TGPIOPort.SetPortMode(PortMode : TPinMode); //inline;
 begin
   {$PUSH}
   {$WARN 4055 off : Conversion between ordinals and pointers is not portable}
@@ -228,7 +228,7 @@ begin
   end;
 end;
 
-procedure TGPIOPort.SetPortOutputSpeed(Speed : TPinOutputSpeed); inline;
+procedure TGPIOPort.SetPortOutputSpeed(Speed : TPinOutputSpeed); //inline;
 begin
   if Speed = TPinOutputSpeed.Slow then
     Self.OSPEEDR:= 0
@@ -240,7 +240,7 @@ begin
     Self.OSPEEDR := %11111111111111111111111111111111;
 end;
 
-procedure TGPIOPort.SetPortDrive(Drive : TPinDrive); inline;
+procedure TGPIOPort.SetPortDrive(Drive : TPinDrive); //inline;
 begin
   if Drive = TPinDrive.None then
     Self.PUPDR:= 0
@@ -250,7 +250,7 @@ begin
     Self.MODER := %10101010101010101010101010101010;
 end;
 
-procedure TGPIOPort.SetPortOutputMode(OutputMode : TPinOutputMode); inline;
+procedure TGPIOPort.SetPortOutputMode(OutputMode : TPinOutputMode); //inline;
 begin
   if OutputMode = TPinOutputMode.PushPull then
     Self.OTYPER:= 0

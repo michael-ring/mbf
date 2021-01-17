@@ -178,14 +178,14 @@ type
     property StopBits : TUARTStopBits read getStopBits write setStopBits;
     property ClockSource : TUARTClockSource read getClockSource write setClockSource;
 
-    procedure WaitForTXReady; inline;
-    procedure WaitForRXReady; inline;
+    procedure WaitForTXReady; //inline;
+    procedure WaitForRXReady; //inline;
 
-    function  WaitForTXReady(EndTime : TMilliSeconds):boolean; inline;
-    function  WaitForRXReady(EndTime : TMilliSeconds):boolean; inline;
+    function  WaitForTXReady(EndTime : TMilliSeconds):boolean; //inline;
+    function  WaitForRXReady(EndTime : TMilliSeconds):boolean; //inline;
 
-    procedure WriteDR(const Value : byte); inline;
-    function ReadDR:byte; inline;
+    procedure WriteDR(const Value : byte); //inline;
+    function ReadDR:byte; //inline;
     {$DEFINE INTERFACE}
     {$I MBF.STM32.UART.inc}
     {$UNDEF INTERFACE}
@@ -366,32 +366,32 @@ begin
     Enable;
 end;
 
-procedure TUARTRegistersHelper.WaitForTXReady; inline;
+procedure TUARTRegistersHelper.WaitForTXReady; //inline;
 begin
   WaitBitIsSet(self.SR,7);
 end;
 
-procedure TUARTRegistersHelper.WaitForRXReady; inline;
+procedure TUARTRegistersHelper.WaitForRXReady; //inline;
 begin
   WaitBitIsSet(self.SR,5);
 end;
 
-function TUARTRegistersHelper.WaitForTXReady(EndTime : TMilliSeconds):boolean; inline;
+function TUARTRegistersHelper.WaitForTXReady(EndTime : TMilliSeconds):boolean; //inline;
 begin
   Result := WaitBitIsSet(self.SR,7,EndTime);
 end;
 
-function TUARTRegistersHelper.WaitForRXReady(EndTime : TMilliSeconds):boolean; inline;
+function TUARTRegistersHelper.WaitForRXReady(EndTime : TMilliSeconds):boolean; //inline;
 begin
   Result := WaitBitIsSet(self.SR,5,EndTime);
 end;
 
-procedure TUARTRegistersHelper.WriteDR(const Value : byte); inline;
+procedure TUARTRegistersHelper.WriteDR(const Value : byte); //inline;
 begin
   self.DR := Value;
 end;
 
-function TUARTRegistersHelper.ReadDR : byte ; inline;
+function TUARTRegistersHelper.ReadDR : byte ; //inline;
 begin
   Result := self.DR;
 end;
