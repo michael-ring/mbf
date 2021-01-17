@@ -83,7 +83,7 @@ type
     function GetAPB1TimerClockFrequency : longWord;
     function GetAPB2PeripheralClockFrequency : longWord;
     function GetAPB2TimerClockFrequency : longWord;
-    procedure SetCPUFrequency(const Value: longWord; aClockType : TClockType = TClockType.PLLHSI);
+    procedure SetCPUFrequency(const Value: longWord; aClockType : TClockType = TClockType.PLLHSI; aHSEFrequency : longword =0);
     function GetCPUFrequency : longWord;
     function getMaxCPUFrequency : longWord;
     procedure DisableJTAGInterface;
@@ -267,7 +267,7 @@ begin
           {$if defined(STM32F105_107)}
           for PLLN := 4 to 10 do
           {$else}
-          for PLLN := 2 to 16 do
+          for PLLN := 4 to 16 do
           {$endif}
           begin
             {$if defined(STM32F105_107)}
@@ -295,7 +295,7 @@ begin
                   else
                     Result.PLLN := PLLN-2;
                   {$else}
-                  Result.PLLN := PLLN-1;
+                  Result.PLLN := PLLN-2;
                   {$endif}
                   Result.AHBPRE := AHBPRE;
                   Result.USBPRE := -1;
@@ -315,11 +315,13 @@ begin
     Result.AHBPRE := 0;
 end;
 
-procedure TSTM32SystemCore.SetCPUFrequency(const Value: longWord; aClockType : TClockType = TClockType.PLLHSI);
+procedure TSTM32SystemCore.SetCPUFrequency(const Value: longWord; aClockType : TClockType = TClockType.PLLHSI;aHSEFrequency : longWord=0);
 var
   WaitStates : byte;
   Params : TOscParameters;
 begin
+  if aHSEFrequency > 0 then
+    HSEClockFrequency := aHSEFrequency;
   //Make sure that HSI Clock is enabled
   if GetBit(RCC.CR,0) = 0 then
     SetBit(RCC.CR,0);
