@@ -99,7 +99,7 @@ type
     function  GetStopBits: TUARTStopBits;
     procedure SetStopBits(const aStopBit: TUARTStopBits);
     function  GetClockSource : TUARTClockSource;
-    procedure SetClockSource(const aClockSource : TUARTClockSource);
+    procedure SetClockSource(const {%H-}aClockSource : TUARTClockSource);
   public
     procedure initialize(const ARxPin : TUARTRXPins;
                        const ATxPin : TUARTTXPins);
@@ -162,12 +162,12 @@ end;
 procedure TUARTRegistersHelper.initialize(const ARxPin : TUARTRXPins;
                        const ATxPin : TUARTTXPins);
 begin
-  case longWord(@Self) of
-    USART1_BASE : RCC.APB2ENR := RCC.APB2ENR or (1 shl 14);
-    USART2_BASE : RCC.APB1ENR := RCC.APB1ENR or (1 shl 17);
-    {$if defined(has_usart3)}USART3_BASE : RCC.APB1ENR := RCC.APB1ENR or (1 shl 18);{$endif}
-    {$if defined(has_uart4)}  UART4_BASE : RCC.APB1ENR := RCC.APB1ENR or (1 shl 19);{$endif}
-    {$if defined(has_uart5)}  UART5_BASE : RCC.APB1ENR := RCC.APB1ENR or (1 shl 20);{$endif}
+  case {%H-}longWord(@Self) of
+    USART1_BASE : setBit(RCC.APB2ENR,14);
+    USART2_BASE : setBit(RCC.APB1ENR,17);
+    {$if defined(has_usart3)}USART3_BASE : setBit(RCC.APB1ENR,18);{$endif}
+    {$if defined(has_uart4)}  UART4_BASE : setBit(RCC.APB1ENR,19);{$endif}
+    {$if defined(has_uart5)}  UART5_BASE : setBit(RCC.APB1ENR,20);{$endif}
   end;
   // First, load Reset Value, this also turns off the UART
   // Create the basic config for all n81 use cases
@@ -184,8 +184,24 @@ begin
   setBit(self.CR1,3);
 
   setBaudRate(DefaultUARTBaudRate);
-  GPIO.PinMode[longWord(aRxPin) and $ff] := TPinMode((longWord(aRxPin) shr 8));
-  GPIO.PinMode[longWord(aTxPin) and $ff] := TPinMode((longWord(aTxPin) shr 8));
+  GPIO.PinMode[longWord(aRxPin) and $ff] := TPinMode.AF0;
+  GPIO.PinMode[longWord(aTxPin) and $ff] := TPinMode.AF0;
+  // Set the (very limited) Pin Remapping, RX Pins follow TX Pins as there is only one config bit
+  case longWord(aTxPin) and $ff of
+    TNativePin.PA9 : ClearBit(AFIO.MAPR,2);
+    TNativePin.PA2 : ClearBit(AFIO.MAPR,3);
+    TNativePin.PB10 : SetCrumb(AFIO.MAPR,%00,4);
+    TNativePin.PB6 : SetBit(AFIO.MAPR,2);
+    {$if defined(has_gpiod)}
+    TNativePin.PD5 : SetBit(AFIO.MAPR,3);
+    {$endif}
+    {$if defined(has_gpioc)}
+    TNativePin.PC10 : SetCrumb(AFIO.MAPR,%01,4);
+    {$endif}
+    {$if defined(has_gpiod)}
+    TNativePin.PD8 :  SetCrumb(AFIO.MAPR,%11,4);
+    {$endif}
+  end;
   Enable;
 end;
 
@@ -205,7 +221,7 @@ var
   ClockFreq : longWord;
 begin
   case GetClockSource of
-    TUARTClockSource.APB1orAPB2 : if longWord(@self) = USART1_BASE then ClockFreq := SystemCore.GetAPB2PeripheralClockFrequency
+    TUARTClockSource.APB1orAPB2 : if {%H-}longWord(@self) = USART1_BASE then ClockFreq := SystemCore.GetAPB2PeripheralClockFrequency
                                                   else ClockFreq := SystemCore.GetAPB1PeripheralClockFrequency;
   end;
   Result := (ClockFreq*16 div self.BRR) shr 4;
@@ -221,11 +237,13 @@ begin
    ReEnable := Disable;
 
     case GetClockSource of
-      TUARTClockSource.APB1orAPB2 : if longWord(@self) = USART1_BASE then ClockFreq := SystemCore.GetAPB2PeripheralClockFrequency
-                                                    else ClockFreq := SystemCore.GetAPB1PeripheralClockFrequency;
+      TUARTClockSource.APB1orAPB2 : if {%H-}longWord(@self) = USART1_BASE then
+                                      ClockFreq := SystemCore.GetAPB2PeripheralClockFrequency
+                                    else
+                                      ClockFreq := SystemCore.GetAPB1PeripheralClockFrequency;
     end;
     Mantissa := ((ClockFreq*25) div (4*aBaudrate)) div 100;
-    Fraction := (longWord(((((ClockFreq*25) div (4*aBaudrate)) - Mantissa*100)*16+50) div 100) and $0f);
+    Fraction := (longWord(((((ClockFreq*25) div (4*aBaudrate)) {%H-}- Mantissa*100)*16+50) div 100) and $0f);
     self.BRR := Mantissa shl 4 or Fraction;
     if ReEnable = true then
       Enable;

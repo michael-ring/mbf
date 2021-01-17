@@ -10,7 +10,7 @@
     </BuildModes>
     <Units Count="1">
       <Unit0>
-        <Filename Value="Blinky.lpr"/>
+        <Filename Value="SerialPort.lpr"/>
         <IsPartOfProject Value="True"/>
         <IsVisibleTab Value="True"/>
         <Loaded Value="True"/>
@@ -20,7 +20,7 @@
   <CompilerOptions>
     <Version Value="11"/>
     <Target>
-      <Filename Value="Blinky"/>
+      <Filename Value="SerialPort"/>
     </Target>
     <SearchPaths>
       <IncludeFiles Value="../../Source;$(ProjOutDir)"/>

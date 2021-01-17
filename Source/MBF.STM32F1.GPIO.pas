@@ -268,7 +268,7 @@ begin
       TPinMode.AF0       : SetNibble(GPIOMem[GPIO]^.CRH,%1011,Bit4x);
     else
       //Enable Alternate Node OpenDrain Fastest IO Speed
-      SetNibble(GPIOMem[GPIO]^.CRL,%1111,Bit4x);
+      SetNibble(GPIOMem[GPIO]^.CRH,%1111,Bit4x);
     end;
   end;
 end;

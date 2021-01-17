@@ -267,7 +267,7 @@ begin
           {$if defined(STM32F105_107)}
           for PLLN := 4 to 10 do
           {$else}
-          for PLLN := 2 to 15 do
+          for PLLN := 2 to 16 do
           {$endif}
           begin
             {$if defined(STM32F105_107)}
@@ -379,13 +379,13 @@ begin
   begin
     SetBitsMasked(RCC.CFGR,%000,%111 shl 8,8);
     repeat
-    until GetBitsMasked(RCC.CFGR,%111 shl 8,8) = %000;
+    until GetBitsMasked(RCC.CFGR,%111 shl 8,8) < 8;
   end;
 
   //Configure APB2 (fast) clock
   SetBitsMasked(RCC.CFGR,%000,%111 shl 11,11);
   repeat
-  until GetBitsMasked(RCC.CFGR,%111 shl 11,11) = %111;
+  until GetBitsMasked(RCC.CFGR,%111 shl 11,11) < 8;
 
   case aClockType of
     TClockType.HSI :

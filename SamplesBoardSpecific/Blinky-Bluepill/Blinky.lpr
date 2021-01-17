@@ -23,7 +23,7 @@ uses
 
 begin
   SystemCore.Initialize;
-  //SystemCore.SetCPUFrequency(SystemCore.getMaxCPUFrequency);
+  SystemCore.SetCPUFrequency(SystemCore.getMaxCPUFrequency);
 
   GPIO.Initialize;
   GPIO.PinMode[TNativePin.PC13] := TPinMode.Output;
