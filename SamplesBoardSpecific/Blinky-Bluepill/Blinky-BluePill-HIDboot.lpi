@@ -44,11 +44,9 @@
     <Other>
       <CustomOptions Value="
 -Wpbluepill
--dbluepill
 -godwarfsets
 -godwarfcpp
 -k-Ttext=0x08000800
-
 
 
       "/>

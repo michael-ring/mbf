@@ -18,24 +18,24 @@
 
 // first, convert user friendly controller names to the real controller used in the design
 
-{$if defined(nucleol152re) }
+{$if defined(fpc_mcu_nucleol152re) }
   {$define nucleo}
   {$define has_arduinopins}
   {$define has_morphopins}
   {$define stm32l152re}
 {$endif}
 
-{$if defined(stm32l100cdiscovery) }
+{$if defined(fpc_mcu_stm32l100cdiscovery) }
   {$define discovery}
   {$define stm32l100rc}
 {$endif}
 
-{$if defined(stm32ldiscovery) }
+{$if defined(fpc_mcu_stm32ldiscovery) }
   {$define discovery}
   {$define stm32l152rb}
 {$endif}
 
-{$if defined(stm32l152cdiscovery) }
+{$if defined(fpc_mcu_stm32l152cdiscovery) }
   {$define discovery}
   {$define stm32l152rc}
 {$endif}

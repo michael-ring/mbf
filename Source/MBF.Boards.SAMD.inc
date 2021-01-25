@@ -19,24 +19,24 @@
 
 // first, convert user friendly controller names to the real controller used in the design
 
-{$if defined(ARDUINOZERO)}
+{$if defined(FPC_MCU_ARDUINOZERO)}
   {$define has_arduinopins}
   {$define SAMD21G18A}
 {$endif}
 
-{$if defined(SAMD10XMINI)}
+{$if defined(FPC_MCU_SAMD10XMINI)}
   {$define has_arduinopins}
   {$define has_samd10_xplained_mini}
   {$define SAMD10D14A}
 {$endif}
 
-{$if defined(SAMD20XPRO)}
+{$if defined(FPC_MCU_SAMD20XPRO)}
   {$define has_arduinopins}
   {$define has_samd20_xplained_pro}
   {$define SAMD20J18}
 {$endif}
 
-{$if defined(SAMD21XPRO)}
+{$if defined(FPC_MCU_SAMD21XPRO)}
   {$define has_arduinopins}
   {$define has_samd21_xplained_pro}
   {$define SAMD21J18A}

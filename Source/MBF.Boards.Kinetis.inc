@@ -19,25 +19,25 @@
 
 // first, convert user friendly controller names to the real controller used in the design
 
-{$if defined(teensy30) }
+{$if defined(fpc_mcu_teensy30) }
   {$define teensy}
   {$define has_arduinopins}
   {$define mk20dx128vlh5}
 {$endif}
 
-{$if defined(teensy31) or defined(teensy32) }
+{$if defined(fpc_mcu_teensy31) or defined(fpc_mcu_teensy32) }
   {$define teensy}
   {$define has_arduinopins}
   {$define mk20dx256vlh7}
 {$endif}
 
-{$if defined(freedom_k22f) }
+{$if defined(fpc_mcu_freedom_k22f) }
   {$define freedom}
   {$define has_arduinopins}
   {$define mk22fn512vlh12}
 {$endif}
 
-{$if defined(freedom_k64f) }
+{$if defined(fpc_mcu_freedom_k64f) }
   {$define freedom}
   {$define has_arduinopins}
   {$define mk64fn1m0vll12}

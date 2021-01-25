@@ -229,7 +229,6 @@
     </Linking>
     <Other>
       <CustomOptions Value="-Wpbluepill
--dbluepill
 -godwarfsets
 -godwarfcpp"/>
     </Other>

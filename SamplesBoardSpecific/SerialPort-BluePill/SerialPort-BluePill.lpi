@@ -44,7 +44,6 @@
     <Other>
       <CustomOptions Value="
 -Wpbluepill
--dbluepill
 -godwarfsets
 -godwarfcpp
 

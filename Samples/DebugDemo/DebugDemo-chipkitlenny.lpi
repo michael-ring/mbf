@@ -44,7 +44,6 @@
     <Other>
       <CustomOptions Value="
 -Wpchipkitlenny
--dchipkitlenny
 -godwarfsets
 -godwarfcpp
 

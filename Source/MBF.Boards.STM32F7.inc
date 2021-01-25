@@ -18,53 +18,53 @@
 
 // first, convert user friendly controller names to the real controller used in the design
 
-{$if defined(nucleof746zg) }
+{$if defined(fpc_mcu_nucleof746zg) }
   {$define nucleo}
   {$define has_arduinopins}
   {$define has_ziopins}
   {$define stm32f746zg}
 {$endif}
 
-{$if defined(nucleof767zi) }
+{$if defined(fpc_mcu_nucleof767zi) }
   {$define nucleo}
   {$define has_arduinopins}
   {$define has_ziopins}
   {$define stm32f767zi}
 {$endif}
 
-{$if defined(nucleof722ze) }
+{$if defined(fpc_mcu_nucleof722ze) }
   {$define nucleo}
   {$define has_arduinopins}
   {$define has_ziopins}
   {$define stm32f722ze}
 {$endif}
 
-{$if defined(stm32f746gdiscovery) }
+{$if defined(fpc_mcu_stm32f746gdiscovery) }
   {$define discovery}
   {$define stm32f746ng}
 {$endif}
 
-{$if defined(stm32f769idiscovery) }
+{$if defined(fpc_mcu_stm32f769idiscovery) }
   {$define discovery}
   {$define stm32f769ni}
 {$endif}
 
-{$if defined(stm32f769idiscovery) }
+{$if defined(fpc_mcu_stm32f769idiscovery) }
   {$define discovery}
   {$define stm32f769ni}
 {$endif}
 
-{$if defined(stm32f723ediscovery) }
+{$if defined(fpc_mcu_stm32f723ediscovery) }
   {$define discovery}
   {$define stm32f723ie}
 {$endif}
 
-{$if defined(stm32f7308dk) }
+{$if defined(fpc_mcu_stm32f7308dk) }
   {$define discovery}
   {$define stm32f730i8}
 {$endif}
 
-{$if defined(stm32f7508dk) }
+{$if defined(fpc_mcu_stm32f7508dk) }
   {$define discovery}
   {$define stm32f750n8}
 {$endif}

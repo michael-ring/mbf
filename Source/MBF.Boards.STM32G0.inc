@@ -18,32 +18,32 @@
 
 // first, convert user friendly controller names to the real controller used in the design
 
-{$if defined(nucleog031k8) }
+{$if defined(fpc_mcu_nucleog031k8) }
   {$define nucleo}
   {$define has_arduinominipins}
   {$define stm32g031k8}
 {$endif}
 
-{$if defined(nucleog071rb) }
+{$if defined(fpc_mcu_nucleog071rb) }
   {$define nucleo}
   {$define has_arduinopins}
   {$define has_morphopins}
   {$define stm32g071rb}
 {$endif}
 
-{$if defined(nucleog070rb) }
+{$if defined(fpc_mcu_nucleog070rb) }
   {$define nucleo}
   {$define has_arduinopins}
   {$define has_morphopins}
   {$define stm32g070rb}
 {$endif}
 
-{$if defined(stm32g071bdiscovery) }
+{$if defined(fpc_mcu_stm32g071bdiscovery) }
   {$define discovery}
   {$define stm32g071rb}
 {$endif}
 
-{$if defined(stm32g0316discovery) }
+{$if defined(fpc_mcu_stm32g0316discovery) }
   {$define discovery}
   {$define stm32g031j6}
 {$endif}

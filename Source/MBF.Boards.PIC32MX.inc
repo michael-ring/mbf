@@ -18,27 +18,27 @@
 
 // first, convert user friendly controller names to the real controller used in the design
 
-{$if defined(pinguino) }
+{$if defined(fpc_mcu_pinguino) }
   {$define has_arduinopins}
   {$define PIC32MX440F256H}
 {$endif}
 
-{$if defined(picduino150) }
+{$if defined(fpc_mcu_picduino150) }
   {$define has_arduinopins}
   {$define PIC32MX150F128B}
 {$endif}
 
-{$if defined(picduino270) }
+{$if defined(fpc_mcu_picduino270) }
   {$define has_arduinopins}
   {$define PIC32MX270F256D}
 {$endif}
 
-{$if defined(picduino274) }
+{$if defined(fpc_mcu_picduino274) }
   {$define has_arduinopins}
   {$define PIC32MX274F256D}
 {$endif}
 
-{$if defined(chipkitlenny) }
+{$if defined(fpc_mcu_chipkitlenny) }
   {$define has_arduinopins}
   {$define pic32mx270f256d}
 {$endif}

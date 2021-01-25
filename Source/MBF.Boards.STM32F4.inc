@@ -18,93 +18,93 @@
 
 // first, convert user friendly controller names to the real controller used in the design
 
-{$if defined(nucleof401re) }
+{$if defined(fpc_mcu_nucleof401re) }
   {$define nucleo}
   {$define has_arduinopins}
   {$define has_morphopins}
   {$define stm32f401re}
 {$endif}
 
-{$if defined(nucleof411re) }
+{$if defined(fpc_mcu_nucleof411re) }
   {$define nucleo}
   {$define has_arduinopins}
   {$define has_morphopins}
   {$define stm32f411re}
 {$endif}
 
-{$if defined(nucleof446re) }
+{$if defined(fpc_mcu_nucleof446re) }
   {$define nucleo}
   {$define has_arduinopins}
   {$define has_morphopins}
   {$define stm32f446re}
 {$endif}
 
-{$if defined(nucleof410rb) }
+{$if defined(fpc_mcu_nucleof410rb) }
   {$define nucleo}
   {$define has_arduinopins}
   {$define has_morphopins}
   {$define stm32f410rb}
 {$endif}
 
-{$if defined(nucleof429zi) }
+{$if defined(fpc_mcu_nucleof429zi) }
   {$define nucleo}
   {$define has_arduinopins}
   {$define has_ziopins}
   {$define stm32f429zi}
 {$endif}
 
-{$if defined(nucleof446ze) }
+{$if defined(fpc_mcu_nucleof446ze) }
   {$define nucleo}
   {$define has_arduinopins}
   {$define has_ziopins}
   {$define stm32f446ze}
 {$endif}
 
-{$if defined(nucleof412zg) }
+{$if defined(fpc_mcu_nucleof412zg) }
   {$define nucleo}
   {$define has_arduinopins}
   {$define has_ziopins}
   {$define stm32f412zg}
 {$endif}
 
-{$if defined(nucleof413zh) }
+{$if defined(fpc_mcu_nucleof413zh) }
   {$define nucleo}
   {$define has_arduinopins}
   {$define has_ziopins}
   {$define stm32f413zh}
 {$endif}
 
-{$if defined(stm32f401cdiscovery) }
+{$if defined(fpc_mcu_stm32f401cdiscovery) }
   {$define discovery}
   {$define stm32f401vc}
 {$endif}
 
-{$if defined(stm32f411ediscovery) }
+{$if defined(fpc_mcu_stm32f411ediscovery) }
   {$define discovery}
   {$define stm32f411ve}
 {$endif}
 
-{$if defined(stm32f407gdiscovery) }
+{$if defined(fpc_mcu_stm32f407gdiscovery) }
   {$define discovery}
   {$define stm32f407vg}
 {$endif}
 
-{$if defined(stm32f429idiscovery) }
+{$if defined(fpc_mcu_stm32f429idiscovery) }
   {$define discovery}
   {$define stm32f429zi}
 {$endif}
 
-{$if defined(stm32f469idiscovery) }
+{$if defined(fpc_mcu_stm32f469idiscovery) }
   {$define discovery}
   {$define stm32f469ni}
 {$endif}
 
-{$if defined(stm32f412gdiscovery) }
+{$if defined(fpc_mcu_stm32f412gdiscovery) }
   {$define discovery}
   {$define stm32f412zg}
 {$endif}
 
-{$if defined(stm32f413hdiscovery) }
+{$if defined(fpc_mcu_stm32f413hdiscovery) }
   {$define discovery}
   {$define stm32f413zh}
 {$endif}

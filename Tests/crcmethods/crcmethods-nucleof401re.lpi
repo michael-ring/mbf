@@ -44,7 +44,6 @@
     <Other>
       <CustomOptions Value="
 -Wpnucleof401re
--dnucleof401re
 -godwarfsets
 -godwarfcpp
 

@@ -81,7 +81,7 @@ type
     TArduinoPin = record
     const
       None=-1;
-      {$if defined(nucleof302re)}
+      {$if defined(fpc_mcu_nucleof302re)}
       D0 =TNativePin.PA3;  D1 =TNativePin.PA2;  D2 =TNativePin.PA10;  D3 =TNativePin.PB3;
       D4 =TNativePin.PB5;  D5 =TNativePin.PB4;  D6 =TNativePin.PB10;  D7 =TNativePin.PA8;
       D8 =TNativePin.PA9;  D9 =TNativePin.PC7;  D10=TNativePin.PB6;   D11=TNativePin.PB15;
@@ -128,7 +128,7 @@ type
     TMorphoCN10Pin = record
     const
       None=-1;
-      {$if defined(nucleof302re)}
+      {$if defined(fpc_mcu_nucleof302re)}
       P1 =TNativePin.PC9;  P2 =TNativePin.PC8;  P3 =TNativePin.PB8;  P4 =TNativePin.PC6;
       P5 =TNativePin.PB9;  P6 =TNativePin.PC5;  P11=TNativePin.PB13; P12=TNativePin.PA12;
       P13=TNativePin.PB14; P14=TNativePin.PA11; P15=TNativePin.PB15; P16=TNativePin.PB12;

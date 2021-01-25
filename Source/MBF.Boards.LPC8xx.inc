@@ -18,13 +18,13 @@
 
 // first, convert user friendly controller names to the real controller used in the design
 
-{$if defined(lpcxpresso812max) }
+{$if defined(fpc_mcu_lpcxpresso812max) }
   {$define lpcxpresso}
   {$define has_arduinopins}
   {$define lpc812m101jdh20}
 {$endif}
 
-{$if defined(lpcxpresso824max) }
+{$if defined(fpc_mcu_lpcxpresso824max) }
   {$define lpcxpresso}
   {$define has_arduinopins}
   {$define lpc824m201jhi33}

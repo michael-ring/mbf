@@ -18,7 +18,7 @@
 
 // first, convert user friendly controller names to the real controller used in the design
 
-{$if defined(nucleof207zg) }
+{$if defined(fpc_mcu_nucleof207zg) }
   {$define nucleo}
   {$define has_arduinopins}
   {$define has_ziopins}

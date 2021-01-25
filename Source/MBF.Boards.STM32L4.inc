@@ -18,97 +18,97 @@
 
 // first, convert user friendly controller names to the real controller used in the design
 
-{$if defined(nucleol432kc) }
+{$if defined(fpc_mcu_nucleol432kc) }
   {$define nucleo}
   {$define has_arduinominipins}
   {$define stm32l432kc}
 {$endif}
 
-{$if defined(nucleol412kb) }
+{$if defined(fpc_mcu_nucleol412kb) }
   {$define nucleo}
   {$define has_arduinominipins}
   {$define stm32l412kb}
 {$endif}
 
-{$if defined(nucleol476rg) }
+{$if defined(fpc_mcu_nucleol476rg) }
   {$define nucleo}
   {$define has_arduinopins}
   {$define has_morphopins}
   {$define stm32l476rg}
 {$endif}
 
-{$if defined(nucleol452re) }
+{$if defined(fpc_mcu_nucleol452re) }
   {$define nucleo}
   {$define has_arduinopins}
   {$define has_morphopins}
   {$define stm32l452re}
 {$endif}
 
-{$if defined(nucleol452rep) }
+{$if defined(fpc_mcu_nucleol452rep) }
   {$define nucleo}
   {$define has_arduinopins}
   {$define has_morphopins}
   {$define stm32l452ret}
 {$endif}
 
-{$if defined(nucleol433rcp) }
+{$if defined(fpc_mcu_nucleol433rcp) }
   {$define nucleo}
   {$define has_arduinopins}
   {$define has_morphopins}
   {$define stm32l433rct}
 {$endif}
 
-{$if defined(nucleol412rbp) }
+{$if defined(fpc_mcu_nucleol412rbp) }
   {$define nucleo}
   {$define has_arduinopins}
   {$define has_morphopins}
   {$define stm32l412rbt}
 {$endif}
 
-{$if defined(nucleol496zg) }
+{$if defined(fpc_mcu_nucleol496zg) }
   {$define nucleo}
   {$define has_arduinopins}
   {$define has_ziopins}
   {$define stm32l496zg}
 {$endif}
 
-{$if defined(nucleol496zgp) }
+{$if defined(fpc_mcu_nucleol496zgp) }
   {$define nucleo}
   {$define has_arduinopins}
   {$define has_ziopins}
   {$define stm32l496zgt}
 {$endif}
 
-{$if defined(nucleol4r5zi) }
+{$if defined(fpc_mcu_nucleol4r5zi) }
   {$define nucleo}
   {$define has_arduinopins}
   {$define has_ziopins}
   {$define stm32l4r5zi}
 {$endif}
 
-{$if defined(nucleol4r5zip) }
+{$if defined(fpc_mcu_nucleol4r5zip) }
   {$define nucleo}
   {$define has_arduinopins}
   {$define has_ziopins}
   {$define stm32l4r5zit}
 {$endif}
 
-{$if defined(stm32l476gdiscovery) }
+{$if defined(fpc_mcu_stm32l476gdiscovery) }
   {$define discovery}
   {$define stm32l476vg}
 {$endif}
 
-{$if defined(stm32l496gdiscovery) }
+{$if defined(fpc_mcu_stm32l496gdiscovery) }
   {$define discovery}
   {$define stm32l496ag}
 {$endif}
 
-{$if defined(bl475eiot01a1) }
+{$if defined(fpc_mcu_bl475eiot01a1) }
   {$define discovery}
   {$define stm32l475vg}
 {$endif}
 
-{$if defined(stm32l4r9idiscovery) }
+{$if defined(fpc_mcu_stm32l4r9idiscovery) }
   {$define discovery}
   {$define stm32l4r9ai}
 {$endif}

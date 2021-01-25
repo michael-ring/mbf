@@ -18,7 +18,7 @@
 
 // first, convert user friendly controller names to the real controller used in the design
 
-{$if defined(SAMC21XPRO) }
+{$if defined(FPC_MCU_SAMC21XPRO) }
   {$define SAMC21J18A}
   {$define has_arduinopins}
   {$define has_samc21_xplained_pro}

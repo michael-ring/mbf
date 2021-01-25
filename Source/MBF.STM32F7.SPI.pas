@@ -41,7 +41,7 @@ uses
 
 {$REGION PinDefinitions}
 
-{$if defined(has_arduinopins) and defined(nucleof302r8)}
+{$if defined(has_arduinopins) and defined(fpc_mcu_nucleof302r8)}
   {$undefine has_arduinopins}
   {$define has_arduinopins2}
 {$endif}

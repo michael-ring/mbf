@@ -18,18 +18,18 @@
 
 // first, convert user friendly controller names to the real controller used in the design
 
-{$if defined(bbcmicrobit) }
+{$if defined(fpc_mcu_bbcmicrobit) }
   {$define microbit}
   {$define has_microbitpins}
   {$define nRF51822_XXAA}
 {$endif}
 
-{$if defined(nrf51dk) }
+{$if defined(fpc_mcu_nrf51dk) }
   {$define has_arduinopins}
   {$define nRF51822_XXAA}
 {$endif}
 
-{$if defined(nrf51dongle) }
+{$if defined(fpc_mcu_nrf51dongle) }
   {$define nRF51822_XXAA}
 {$endif}
 

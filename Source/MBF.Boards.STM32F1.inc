@@ -18,19 +18,19 @@
 
 // first, convert user friendly controller names to the real controller used in the design
 
-{$if defined(nucleof103rb) }
+{$if defined(fpc_mcu_nucleof103rb) }
   {$define nucleo}
   {$define has_arduinopins}
   {$define has_morphopins}
   {$define stm32f103rb}
 {$endif}
 
-{$if defined(stm32vldiscovery) }
+{$if defined(fpc_mcu_stm32vldiscovery) }
   {$define discovery}
   {$define stm32f100rb}
 {$endif}
 
-{$if defined(bluepill) }
+{$if defined(fpc_mcu_bluepill) }
   {$define stm32f103c8}
 {$endif}
 

@@ -44,7 +44,6 @@
     <Other>
       <CustomOptions Value="
 -Wpnucleog431kb
--dnucleog431kb
 -godwarfsets
 -godwarfcpp
 

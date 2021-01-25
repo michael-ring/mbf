@@ -18,46 +18,46 @@
 
 // first, convert user friendly controller names to the real controller used in the design
 
-{$if defined(nucleof303k8) }
+{$if defined(fpc_mcu_nucleof303k8) }
   {$define nucleo}
   {$define has_arduinominipins}
   {$define stm32f303k8}
 {$endif}
 
-{$if defined(nucleof302r8) }
+{$if defined(fpc_mcu_nucleof302r8) }
   {$define nucleo}
   {$define has_arduinopins}
   {$define has_morphopins}
   {$define stm32f302r8}
 {$endif}
 
-{$if defined(nucleof303re) }
+{$if defined(fpc_mcu_nucleof303re) }
   {$define nucleo}
   {$define has_arduinopins}
   {$define has_morphopins}
   {$define stm32f303re}
 {$endif}
 
-{$if defined(nucleof334r8) }
+{$if defined(fpc_mcu_nucleof334r8) }
   {$define nucleo}
   {$define has_arduinopins}
   {$define has_morphopins}
   {$define stm32f334r8}
 {$endif}
 
-{$if defined(nucleof303ze) }
+{$if defined(fpc_mcu_nucleof303ze) }
   {$define nucleo}
   {$define has_arduinopins}
   {$define has_ziopins}
   {$define stm32f303ze}
 {$endif}
 
-{$if defined(stm32f3discovery) }
+{$if defined(fpc_mcu_stm32f3discovery) }
   {$define discovery}
   {$define stm32f303vc}
 {$endif}
 
-{$if defined(stm32f3348discovery) }
+{$if defined(fpc_mcu_stm32f3348discovery) }
   {$define discovery}
   {$define stm32f334c8}
 {$endif}
