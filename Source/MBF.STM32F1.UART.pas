@@ -184,7 +184,8 @@ begin
   setBit(self.CR1,3);
 
   setBaudRate(DefaultUARTBaudRate);
-  GPIO.PinMode[longWord(aRxPin) and $ff] := TPinMode.AF0;
+  GPIO.PinMode[longWord(aRxPin) and $ff] := TPinMode.Input;
+  GPIO.PinDrive[longWord(aRxPin) and $ff] := TPinDrive.None;
   GPIO.PinMode[longWord(aTxPin) and $ff] := TPinMode.AF0;
   // Set the (very limited) Pin Remapping, RX Pins follow TX Pins as there is only one config bit
   case longWord(aTxPin) and $ff of
