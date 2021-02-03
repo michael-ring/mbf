@@ -341,13 +341,15 @@ begin
   else
     Drive := GetNibble(GPIOMem[GPIO]^.CRH,Bit4x);
 
-  if (Drive and %0011 <> 0) or (Drive = %0000) or (Drive = %0001) then
-    Result := TPinDrive.None
-  else
+  if Drive=%1000 then
+  begin
     if GetBit(GPIOMem[GPIO]^.ODR,Bit) = 0 then
       Result := TPinDrive.PullDown
     else
       Result := TPinDrive.PullUp;
+  end
+  else
+    Result := TPinDrive.None;
 end;
 
 procedure TGPIO.SetPinDrive(const Pin: TPinIdentifier; const Value: TPinDrive);
@@ -364,17 +366,31 @@ begin
   else
     Drive := GetNibble(GPIOMem[GPIO]^.CRH,Bit4x);
 
-  if not((Drive and %0011 <> 0) or (Drive = %0000)) then
+  if (Drive=%0100) or (Drive=%1000) then
   begin
-    if Value = TPinDrive.PullUp then
-      SetBit(GPIOMem[GPIO]^.ODR,Bit);
-    if Value = TPinDrive.PullUp then
-      ClearBit(GPIOMem[GPIO]^.ODR,Bit);
     if Value = TPinDrive.None then
       if Bit < 8 then
-        SetNibble(GPIOMem[GPIO]^.CRL,%0001,Bit4x)
+        SetNibble(GPIOMem[GPIO]^.CRL,%0100,Bit4x)
       else
-        SetNibble(GPIOMem[GPIO]^.CRH,%0001,Bit4x);
+        SetNibble(GPIOMem[GPIO]^.CRH,%0100,Bit4x);
+      
+    if Value = TPinDrive.PullUp then
+    begin  
+      SetBit(GPIOMem[GPIO]^.ODR,Bit);
+      if Bit < 8 then
+        SetNibble(GPIOMem[GPIO]^.CRL,%1000,Bit4x)
+      else
+        SetNibble(GPIOMem[GPIO]^.CRH,%1000,Bit4x);
+    end;
+
+    if Value = TPinDrive.PullDown then
+    begin
+      ClearBit(GPIOMem[GPIO]^.ODR,Bit);
+      if Bit < 8 then
+        SetNibble(GPIOMem[GPIO]^.CRL,%1000,Bit4x)
+      else
+        SetNibble(GPIOMem[GPIO]^.CRH,%1000,Bit4x);
+    end;
   end;
 end;
 
